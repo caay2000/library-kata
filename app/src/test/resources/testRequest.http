@@ -1,0 +1,6 @@
+###
+POST http://localhost:8080/account HTTP/1.1
+Content-Type: application/json
+
+{"email": "{{$random.email}}", "name": "{{$random.alphabetic(4)}} {{$random.alphabetic(10)}}"}
+
