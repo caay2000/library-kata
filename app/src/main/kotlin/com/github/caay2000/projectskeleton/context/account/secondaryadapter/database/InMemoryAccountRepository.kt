@@ -25,8 +25,10 @@ class InMemoryAccountRepository(private val datasource: InMemoryDatasource) : Ac
     override fun findBy(criteria: FindAccountCriteria): Either<RepositoryError, Account> =
         Either.catch {
             when (criteria) {
-                is FindAccountCriteria.ByAccountNumber -> datasource.getById<Account>(TABLE_NAME, criteria.accountNumber.toString())!!
-                is FindAccountCriteria.ByEmail -> datasource.getById<Account>(TABLE_NAME, criteria.email.toString())!!
+                is FindAccountCriteria.ById -> datasource.getById<Account>(TABLE_NAME, criteria.id.toString())!!
+                is FindAccountCriteria.ByIdentityNumber -> datasource.getAll<Account>(TABLE_NAME).first { it.identityNumber == criteria.identityNumber }
+                is FindAccountCriteria.ByEmail -> datasource.getAll<Account>(TABLE_NAME).first { it.email == criteria.email }
+                is FindAccountCriteria.ByPhone -> datasource.getAll<Account>(TABLE_NAME).first { it.phonePrefix == criteria.phonePrefix && it.phoneNumber == criteria.phoneNumber }
             }
         }.mapLeft { error ->
             when (error) {

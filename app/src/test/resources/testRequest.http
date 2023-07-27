@@ -1,12 +1,39 @@
-###
+### Create Account
 POST http://localhost:8080/account HTTP/1.1
 Content-Type: application/json
 
 {
-  "email": "{{$random.email}}",
-  "phoneNumber": "{{$random.integer(600,699)}}{{$random.integer(100,999)}}{{$random.integer(100,999)}}",
-  "phonePrefix": "+{{$random.integer(1,999)}}",
+  "identityNumber": "{{$random.alphanumeric(12)}}",
   "name": "{{$random.alphabetic(6)}}",
   "surname": "{{$random.alphabetic(10)}}",
-  "birthDate": "{{$random.integer(1970, 2002)}}-0{{$random.integer(1, 9)}}-{{$random.integer(10, 28)}}"
+  "birthDate": "{{$random.integer(1970, 2002)}}-0{{$random.integer(1, 9)}}-{{$random.integer(10, 28)}}",
+  "email": "{{$random.email}}",
+  "phonePrefix": "+{{$random.integer(1,999)}}",
+  "phoneNumber": "{{$random.integer(600,699)}}{{$random.integer(100,999)}}{{$random.integer(100,999)}}"
+}
+
+
+### Create Book
+POST http://localhost:8080/book HTTP/1.1
+Content-Type: application/json
+
+{
+  "isbn": "{{$random.alphanumeric(12)}}",
+  "title": "{{$random.alphabetic(8)}} {{$random.alphabetic(16)}}",
+  "author": "{{$random.alphabetic(8)}} {{$random.alphabetic(16)}}",
+  "pages": "{{$random.integer(50,1500)}}",
+  "publisher": "{{$random.alphabetic(14)}}"
+}
+
+### Search All Books
+GET http://localhost:8080/book HTTP/1.1
+
+
+### Create Loan
+POST http://localhost:8080/loan HTTP/1.1
+Content-Type: application/json
+
+{
+  "userId": "{{$random.alphanumeric(12)}}",
+  "bookId": "{{$random.alphanumeric(12)}}"
 }

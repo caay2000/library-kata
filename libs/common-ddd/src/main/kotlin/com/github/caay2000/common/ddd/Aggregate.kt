@@ -1,6 +1,6 @@
 package com.github.caay2000.common.ddd
 
-import com.github.caay2000.common.event.api.DomainEvent
+import com.github.caay2000.common.event.DomainEvent
 
 abstract class Aggregate {
     private var events: MutableSet<DomainEvent> = mutableSetOf()

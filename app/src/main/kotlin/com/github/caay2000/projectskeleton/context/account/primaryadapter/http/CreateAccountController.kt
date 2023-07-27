@@ -1,7 +1,7 @@
 package com.github.caay2000.projectskeleton.context.account.primaryadapter.http
 
 import com.github.caay2000.common.dateprovider.DateProvider
-import com.github.caay2000.common.event.api.DomainEventPublisher
+import com.github.caay2000.common.event.DomainEventPublisher
 import com.github.caay2000.common.http.Controller
 import com.github.caay2000.common.idgenerator.IdGenerator
 import com.github.caay2000.projectskeleton.context.account.application.AccountRepository
@@ -9,6 +9,9 @@ import com.github.caay2000.projectskeleton.context.account.application.create.Cr
 import com.github.caay2000.projectskeleton.context.account.application.create.CreateAccountCommandHandler
 import com.github.caay2000.projectskeleton.context.account.application.find.FindAccountByIdQuery
 import com.github.caay2000.projectskeleton.context.account.application.find.FindAccountByIdQueryHandler
+import com.github.caay2000.projectskeleton.context.account.domain.AccountId
+import com.github.caay2000.projectskeleton.context.account.primaryadapter.http.serialization.CreateAccountRequestDocument
+import com.github.caay2000.projectskeleton.context.account.primaryadapter.http.serialization.toAccountDetailsDocument
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.ApplicationCall
 import io.ktor.server.request.receive
@@ -16,9 +19,10 @@ import io.ktor.server.response.respond
 import mu.KLogger
 import mu.KotlinLogging
 import java.time.LocalDateTime
+import java.util.UUID
 
 class CreateAccountController(
-    private val accountNumberGenerator: IdGenerator,
+    private val idGenerator: IdGenerator,
     private val dateProvider: DateProvider,
     accountRepository: AccountRepository,
     eventPublisher: DomainEventPublisher,
@@ -31,23 +35,24 @@ class CreateAccountController(
 
     override suspend fun handle(call: ApplicationCall) {
         val request = call.receive<CreateAccountRequestDocument>()
-        val accountNumber = accountNumberGenerator.generate()
+        val accountId = UUID.fromString(idGenerator.generate())
         val registerDate = dateProvider.dateTime()
-        commandHandler.invoke(request.toCommand(accountNumber, registerDate))
+        commandHandler.invoke(request.toCommand(accountId, registerDate))
 
-        val queryResult = queryHandler.handle(FindAccountByIdQuery(accountNumber))
+        val queryResult = queryHandler.handle(FindAccountByIdQuery(AccountId(accountId)))
         call.respond(HttpStatusCode.Created, queryResult.account.toAccountDetailsDocument())
     }
 
-    private fun CreateAccountRequestDocument.toCommand(accountNumber: String, registerDate: LocalDateTime): CreateAccountCommand =
+    private fun CreateAccountRequestDocument.toCommand(accountId: UUID, registerDate: LocalDateTime): CreateAccountCommand =
         CreateAccountCommand(
-            accountNumber = accountNumber,
+            accountId = accountId,
+            identityNumber = identityNumber,
             email = email,
             phoneNumber = phoneNumber,
             phonePrefix = phonePrefix,
             name = name,
             surname = surname,
-            birthDate = birthDate,
+            birthdate = birthdate,
             registerDate = registerDate,
         )
 }

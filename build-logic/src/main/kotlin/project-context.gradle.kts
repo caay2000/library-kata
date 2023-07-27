@@ -6,7 +6,7 @@ plugins {
     `java-library`
 }
 
-dependencies{
+dependencies {
     implementation(project(":libs:common-arrow"))
     implementation(project(":libs:common-cqrs"))
     implementation(project(":libs:common-database"))
@@ -27,4 +27,6 @@ dependencies{
     implementation("io.arrow-kt:arrow-core")
 
     implementation("io.github.microutils:kotlin-logging-jvm")
+
+    testImplementation(project(":libs:common-test"))
 }

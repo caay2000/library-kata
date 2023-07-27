@@ -1,0 +1,17 @@
+package com.github.caay2000.common.event
+
+import com.github.caay2000.eventbus.EventSubscriber
+import mu.KLogger
+
+abstract class DomainEventSubscriber<in EVENT : DomainEvent> : EventSubscriber<EVENT> {
+
+    protected abstract val logger: KLogger
+
+    abstract fun handleEvent(event: EVENT)
+
+    override fun handle(event: EVENT) {
+        this.logger.info { "consuming $event" }
+        handleEvent(event)
+        this.logger.info { "processed $event" }
+    }
+}

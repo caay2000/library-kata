@@ -2,51 +2,57 @@ package com.github.caay2000.projectskeleton.context.account.domain
 
 import com.github.caay2000.common.ddd.Aggregate
 import com.github.caay2000.common.ddd.DomainId
-import com.github.caay2000.common.event.events.account.AccountCreatedEvent
+import com.github.caay2000.projectskeleton.events.account.AccountCreatedEvent
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.util.UUID
 
 data class Account(
-    val accountNumber: AccountNumber,
-    val email: Email,
-    val phoneNumber: PhoneNumber,
-    val phonePrefix: PhonePrefix,
+    override val id: AccountId,
+    val identityNumber: IdentityNumber,
     val name: Name,
     val surname: Surname,
-    val birthDate: BirthDate,
+    val birthdate: Birthdate,
+    val email: Email,
+    val phonePrefix: PhonePrefix,
+    val phoneNumber: PhoneNumber,
     val registerDate: RegisterDate,
 ) : Aggregate() {
 
-    override val id: DomainId
-        get() = accountNumber
-
     companion object {
         fun create(request: CreateAccountRequest) = Account(
-            accountNumber = request.accountNumber,
-            email = request.email,
-            phoneNumber = request.phoneNumber,
-            phonePrefix = request.phonePrefix,
+            id = request.accountId,
+            identityNumber = request.identityNumber,
             name = request.name,
             surname = request.surname,
-            birthDate = request.birthDate,
+            birthdate = request.birthdate,
+            email = request.email,
+            phonePrefix = request.phonePrefix,
+            phoneNumber = request.phoneNumber,
             registerDate = request.registerDate,
         ).also { account -> account.pushEvent(account.toAccountCreatedEvent()) }
     }
 
     private fun toAccountCreatedEvent() = AccountCreatedEvent(
-        accountNumber = accountNumber.value,
-        email = email.value,
-        phoneNumber = phoneNumber.value,
-        phonePrefix = phonePrefix.value,
+        id = id.value,
+        identityNumber = identityNumber.value,
         name = name.value,
         surname = surname.value,
-        birthDate = birthDate.value,
+        birthdate = birthdate.value,
+        email = email.value,
+        phonePrefix = phonePrefix.value,
+        phoneNumber = phoneNumber.value,
         registerDate = registerDate.value,
     )
 }
 
 @JvmInline
-value class AccountNumber(val value: String) : DomainId
+value class AccountId(val value: UUID) : DomainId {
+    override fun toString(): String = value.toString()
+}
+
+@JvmInline
+value class IdentityNumber(val value: String)
 
 @JvmInline
 value class Email(val value: String)
@@ -64,18 +70,19 @@ value class Name(val value: String)
 value class Surname(val value: String)
 
 @JvmInline
-value class BirthDate(val value: LocalDate)
+value class Birthdate(val value: LocalDate)
 
 @JvmInline
 value class RegisterDate(val value: LocalDateTime)
 
 data class CreateAccountRequest(
-    val accountNumber: AccountNumber,
-    val email: Email,
-    val phoneNumber: PhoneNumber,
-    val phonePrefix: PhonePrefix,
+    val accountId: AccountId,
+    val identityNumber: IdentityNumber,
     val name: Name,
     val surname: Surname,
-    val birthDate: BirthDate,
+    val birthdate: Birthdate,
+    val email: Email,
+    val phonePrefix: PhonePrefix,
+    val phoneNumber: PhoneNumber,
     val registerDate: RegisterDate,
 )

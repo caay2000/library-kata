@@ -6,7 +6,7 @@
         </layout>
     </appender>
 
-    <logger name="com.github.caay2000.mobilitykata" level="INFO">
+    <logger name="com.github.caay2000" level="INFO">
         <appender-ref ref="CONSOLE"/>
     </logger>
 

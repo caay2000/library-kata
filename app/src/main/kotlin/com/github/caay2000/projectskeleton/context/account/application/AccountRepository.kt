@@ -4,8 +4,11 @@ import arrow.core.Either
 import com.github.caay2000.common.database.Repository
 import com.github.caay2000.common.database.RepositoryError
 import com.github.caay2000.projectskeleton.context.account.domain.Account
-import com.github.caay2000.projectskeleton.context.account.domain.AccountNumber
+import com.github.caay2000.projectskeleton.context.account.domain.AccountId
 import com.github.caay2000.projectskeleton.context.account.domain.Email
+import com.github.caay2000.projectskeleton.context.account.domain.IdentityNumber
+import com.github.caay2000.projectskeleton.context.account.domain.PhoneNumber
+import com.github.caay2000.projectskeleton.context.account.domain.PhonePrefix
 
 interface AccountRepository : Repository {
 
@@ -15,6 +18,8 @@ interface AccountRepository : Repository {
 }
 
 sealed class FindAccountCriteria {
-    class ByAccountNumber(val accountNumber: AccountNumber) : FindAccountCriteria()
+    class ById(val id: AccountId) : FindAccountCriteria()
+    class ByIdentityNumber(val identityNumber: IdentityNumber) : FindAccountCriteria()
     class ByEmail(val email: Email) : FindAccountCriteria()
+    class ByPhone(val phonePrefix: PhonePrefix, val phoneNumber: PhoneNumber) : FindAccountCriteria()
 }
