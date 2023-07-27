@@ -5,7 +5,7 @@ plugins {
 }
 
 project.ext["kotlin_version"] = "1.8.21"
-project.ext["kotlinx_coroutines_version"] = "1.7.2"
+project.ext["kotlinx_coroutines_version"] = "1.7.3"
 project.ext["kotlinx_serialization_version"] = "1.5.1"
 project.ext["arrow_version"] = "1.2.0"
 project.ext["ktor_version"] = "2.3.2"
