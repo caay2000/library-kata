@@ -68,7 +68,7 @@ class CreateAccountControllerTest {
         testUseCases.`account is created`(account)
             .assertStatus(HttpStatusCode.Created)
 
-        val response = testUseCases.`account is created`(samePhoneAccount)
+        testUseCases.`account is created`(samePhoneAccount)
             .assertStatus(HttpStatusCode.InternalServerError)
             .assertErrorMessage("an account with phone ${account.phonePrefix.value} ${account.phoneNumber.value} already exists")
     }
