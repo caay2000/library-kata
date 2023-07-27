@@ -13,16 +13,11 @@ interface Controller {
         try {
             handle(call)
         } catch (e: Exception) {
-            try {
-                val response = handleExceptions(call, e)
-                call.respond(
-                    response.status,
-                    ErrorResponseDocument(response.message),
-                )
-            } catch (e: Exception) {
-                logger.error { "error: $e" }
-                call.respond(HttpStatusCode.InternalServerError)
-            }
+            val response = handleExceptions(call, e)
+            call.respond(
+                response.status,
+                ErrorResponseDocument(response.message),
+            )
         }
     }
 

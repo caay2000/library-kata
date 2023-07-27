@@ -9,12 +9,14 @@ plugins {
 dependencies{
     implementation(project(":libs:common-arrow"))
     implementation(project(":libs:common-cqrs"))
+    implementation(project(":libs:common-database"))
     implementation(project(":libs:common-http"))
+    implementation(project(":libs:common-date"))
     implementation(project(":libs:common-ddd"))
     implementation(project(":libs:common-event"))
     implementation(project(":libs:common-id-generator"))
-    implementation(project(":libs:lib-memory-database"))
     implementation(project(":libs:lib-dependency-injection"))
+    implementation(project(":libs:lib-memory-database"))
 
     implementation("io.ktor:ktor-server-core")
     implementation("io.ktor:ktor-server-netty")

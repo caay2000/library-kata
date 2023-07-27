@@ -1,10 +1,16 @@
 package com.github.caay2000.common.event.events.account
 
 import com.github.caay2000.common.event.api.DomainEvent
-import java.util.UUID
+import java.time.LocalDate
+import java.time.LocalDateTime
 
 data class AccountCreatedEvent(
-    val accountId: UUID,
+    val accountNumber: String,
     val email: String,
+    val phoneNumber: String,
+    val phonePrefix: String,
     val name: String,
-) : DomainEvent(accountId)
+    val surname: String,
+    val birthDate: LocalDate,
+    val registerDate: LocalDateTime,
+) : DomainEvent(accountNumber)

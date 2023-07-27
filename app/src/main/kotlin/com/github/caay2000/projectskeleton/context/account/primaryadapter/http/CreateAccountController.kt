@@ -1,5 +1,6 @@
 package com.github.caay2000.projectskeleton.context.account.primaryadapter.http
 
+import com.github.caay2000.common.dateprovider.DateProvider
 import com.github.caay2000.common.event.api.DomainEventPublisher
 import com.github.caay2000.common.http.Controller
 import com.github.caay2000.common.idgenerator.IdGenerator
@@ -14,10 +15,11 @@ import io.ktor.server.request.receive
 import io.ktor.server.response.respond
 import mu.KLogger
 import mu.KotlinLogging
-import java.util.UUID
+import java.time.LocalDateTime
 
 class CreateAccountController(
-    private val idGenerator: IdGenerator,
+    private val accountNumberGenerator: IdGenerator,
+    private val dateProvider: DateProvider,
     accountRepository: AccountRepository,
     eventPublisher: DomainEventPublisher,
 ) : Controller {
@@ -29,13 +31,23 @@ class CreateAccountController(
 
     override suspend fun handle(call: ApplicationCall) {
         val request = call.receive<CreateAccountRequestDocument>()
-        val accountId = UUID.fromString(idGenerator.generate())
-        commandHandler.invoke(request.toCommand(accountId))
+        val accountNumber = accountNumberGenerator.generate()
+        val registerDate = dateProvider.dateTime()
+        commandHandler.invoke(request.toCommand(accountNumber, registerDate))
 
-        val queryResult = queryHandler.handle(FindAccountByIdQuery(accountId))
+        val queryResult = queryHandler.handle(FindAccountByIdQuery(accountNumber))
         call.respond(HttpStatusCode.Created, queryResult.account.toAccountDetailsDocument())
     }
 
-    private fun CreateAccountRequestDocument.toCommand(id: UUID): CreateAccountCommand =
-        CreateAccountCommand(accountId = id, email = email, name = name)
+    private fun CreateAccountRequestDocument.toCommand(accountNumber: String, registerDate: LocalDateTime): CreateAccountCommand =
+        CreateAccountCommand(
+            accountNumber = accountNumber,
+            email = email,
+            phoneNumber = phoneNumber,
+            phonePrefix = phonePrefix,
+            name = name,
+            surname = surname,
+            birthDate = birthDate,
+            registerDate = registerDate,
+        )
 }

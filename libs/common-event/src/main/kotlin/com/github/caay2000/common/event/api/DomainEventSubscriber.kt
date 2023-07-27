@@ -12,5 +12,6 @@ abstract class DomainEventSubscriber<in EVENT : DomainEvent> : EventSubscriber<E
     override fun handle(event: EVENT) {
         this.logger.info { "consuming $event" }
         handleEvent(event)
+        this.logger.info { "processed $event" }
     }
 }
