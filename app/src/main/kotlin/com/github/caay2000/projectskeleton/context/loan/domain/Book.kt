@@ -16,7 +16,7 @@ data class Book(
 
     val isAvailable: Boolean = available.value
 
-    fun updateAvailability(available: Boolean): Book = copy(available = BookAvailable(available))
+    fun updateAvailability(available: BookAvailable): Book = copy(available = available)
 }
 
 @JvmInline

@@ -21,6 +21,9 @@ import com.github.caay2000.projectskeleton.context.book.domain.BookTitle
 import com.github.caay2000.projectskeleton.context.book.primaryadapter.http.serialization.BookByIdDocument
 import com.github.caay2000.projectskeleton.context.book.primaryadapter.http.serialization.BookCreateRequestDocument
 import com.github.caay2000.projectskeleton.context.book.primaryadapter.http.serialization.BookDocument
+import com.github.caay2000.projectskeleton.context.loan.domain.UserId
+import com.github.caay2000.projectskeleton.context.loan.primaryadapter.http.serialization.LoanDocument
+import com.github.caay2000.projectskeleton.context.loan.primaryadapter.http.serialization.LoanRequestDocument
 import io.ktor.client.request.get
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
@@ -33,6 +36,7 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.decodeFromJsonElement
+import com.github.caay2000.projectskeleton.context.loan.domain.BookId as LoanBookId
 
 class LibraryClient {
 
@@ -93,36 +97,19 @@ class LibraryClient {
     fun findBookByIsbn(isbn: BookIsbn): HttpDataResponse<BookDocument> =
         runBlocking { client.get("/book?isbn=${isbn.value}").toHttpDataResponse() }
 
-//
-//    context(ApplicationTestBuilder)
-//    fun bookBrowse(): HttpDataResponse<AllBooksDocument> =
-//        runBlocking {
-//            client.get("/books") {
-//                contentType(ContentType.Application.Json)
-//            }.toHttpDataResponse()
-//        }
-//
-//    context(ApplicationTestBuilder)
-//    fun bookRetrieve(
-//        email: Email,
-//        bookId: BookId,
-//    ): HttpDataResponse<LoanDocument> =
-//        runBlocking {
-//            client.post("/retrieve") {
-//                val request = BookRetrieveRequestDocument(email.toString(), bookId.value.toString())
-//                setBody(Json.encodeToString(request))
-//                contentType(ContentType.Application.Json)
-//            }.toHttpDataResponse()
-//        }
-//
-//    context(ApplicationTestBuilder)
-//    fun bookReturn(bookId: BookId): HttpDataResponse<Unit> =
-//        runBlocking {
-//            client.post("/return/${bookId.value}") {
-//                contentType(ContentType.Application.Json)
-//            }.toHttpDataResponse()
-//        }
-//
+    context(ApplicationTestBuilder)
+    fun createLoan(
+        bookId: LoanBookId,
+        userId: UserId,
+    ): HttpDataResponse<LoanDocument> =
+        runBlocking {
+            client.post("/loan") {
+                val request = LoanRequestDocument(bookId = bookId.value, userId = userId.value)
+                setBody(Json.encodeToString(request))
+                contentType(ContentType.Application.Json)
+            }.toHttpDataResponse()
+        }
+
     private suspend inline fun <reified T> HttpResponse.toHttpDataResponse(): HttpDataResponse<T> {
         val body = bodyAsText()
 

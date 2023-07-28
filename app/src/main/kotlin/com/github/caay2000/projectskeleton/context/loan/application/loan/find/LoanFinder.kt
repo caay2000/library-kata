@@ -1,4 +1,4 @@
-package com.github.caay2000.projectskeleton.context.loan.application.find
+package com.github.caay2000.projectskeleton.context.loan.application.loan.find
 
 import arrow.core.Either
 import com.github.caay2000.common.database.RepositoryError

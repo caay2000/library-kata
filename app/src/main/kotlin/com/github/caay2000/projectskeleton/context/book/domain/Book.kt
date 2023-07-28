@@ -35,6 +35,10 @@ data class Book(
         pages = pages.value,
         publisher = publisher.toString(),
     )
+
+    val isAvailable: Boolean = available.value
+
+    fun updateAvailability(available: BookAvailable): Book = copy(available = available)
 }
 
 @JvmInline

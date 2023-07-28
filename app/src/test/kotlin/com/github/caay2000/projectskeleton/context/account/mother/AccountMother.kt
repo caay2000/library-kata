@@ -1,5 +1,6 @@
 package com.github.caay2000.projectskeleton.context.account.mother
 
+import com.github.caay2000.common.test.RandomStringGenerator
 import com.github.caay2000.projectskeleton.context.account.domain.Account
 import com.github.caay2000.projectskeleton.context.account.domain.AccountId
 import com.github.caay2000.projectskeleton.context.account.domain.Birthdate
@@ -10,19 +11,21 @@ import com.github.caay2000.projectskeleton.context.account.domain.PhoneNumber
 import com.github.caay2000.projectskeleton.context.account.domain.PhonePrefix
 import com.github.caay2000.projectskeleton.context.account.domain.RegisterDate
 import com.github.caay2000.projectskeleton.context.account.domain.Surname
+import java.time.LocalDate
+import java.time.LocalDateTime
 
 object AccountMother {
 
     fun random(
         id: AccountId = AccountIdMother.random(),
-        identityNumber: IdentityNumber = IdentityNumberMother.random(),
-        name: Name = NameMother.random(),
-        surname: Surname = SurnameMother.random(),
-        birthdate: Birthdate = BirthdateMother.random(),
-        email: Email = EmailMother.random(),
-        phonePrefix: PhonePrefix = PhonePrefixMother.random(),
-        phoneNumber: PhoneNumber = PhoneNumberMother.random(),
-        registerDate: RegisterDate = RegisterDateMother.random(),
+        identityNumber: IdentityNumber = IdentityNumber(RandomStringGenerator.randomUppercaseLetter() + RandomStringGenerator.randomNumber(8)),
+        name: Name = Name(RandomStringGenerator.randomName()),
+        surname: Surname = Surname(RandomStringGenerator.randomSurname()),
+        birthdate: Birthdate = Birthdate(LocalDate.now()),
+        email: Email = Email(RandomStringGenerator.randomEmail()),
+        phonePrefix: PhonePrefix = PhonePrefix("+" + RandomStringGenerator.randomNumber(3)),
+        phoneNumber: PhoneNumber = PhoneNumber("6" + RandomStringGenerator.randomNumber(8)),
+        registerDate: RegisterDate = RegisterDate(LocalDateTime.now()),
     ): Account = Account(
         id = id,
         identityNumber = identityNumber,

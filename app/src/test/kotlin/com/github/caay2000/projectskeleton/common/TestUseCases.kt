@@ -19,10 +19,16 @@ import com.github.caay2000.projectskeleton.context.book.domain.BookPublisher
 import com.github.caay2000.projectskeleton.context.book.domain.BookTitle
 import com.github.caay2000.projectskeleton.context.book.primaryadapter.http.serialization.BookByIdDocument
 import com.github.caay2000.projectskeleton.context.book.primaryadapter.http.serialization.BookDocument
+import com.github.caay2000.projectskeleton.context.loan.domain.CreatedAt
+import com.github.caay2000.projectskeleton.context.loan.domain.Loan
+import com.github.caay2000.projectskeleton.context.loan.domain.LoanId
+import com.github.caay2000.projectskeleton.context.loan.domain.UserId
+import com.github.caay2000.projectskeleton.context.loan.primaryadapter.http.serialization.LoanDocument
 import io.ktor.server.testing.ApplicationTestBuilder
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.UUID
+import com.github.caay2000.projectskeleton.context.loan.domain.BookId as LoanBookId
 
 class TestUseCases(
     private val libraryClient: LibraryClient = LibraryClient(),
@@ -81,6 +87,22 @@ class TestUseCases(
 
     context(ApplicationTestBuilder)
     fun `find book by isbn`(isbn: BookIsbn): HttpDataResponse<BookDocument> = libraryClient.findBookByIsbn(isbn)
+
+    context(ApplicationTestBuilder)
+    fun `loan is created`(
+        loan: Loan,
+        id: LoanId? = null,
+        bookId: LoanBookId? = null,
+        userId: UserId? = null,
+        createdAt: CreatedAt? = null,
+    ): HttpDataResponse<LoanDocument> {
+        `id will be mocked`(id?.value ?: loan.id.value)
+        `datetime will be mocked`(createdAt?.value ?: loan.createdAt.value)
+        return libraryClient.createLoan(
+            bookId = bookId ?: loan.bookId,
+            userId = userId ?: loan.userId,
+        )
+    }
 
 //
 //    context(ApplicationTestBuilder)

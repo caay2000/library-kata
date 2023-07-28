@@ -1,4 +1,4 @@
-package com.github.caay2000.projectskeleton.context.loan.application.create
+package com.github.caay2000.projectskeleton.context.loan.application.loan.create
 
 import com.github.caay2000.common.arrow.getOrThrow
 import com.github.caay2000.common.event.DomainEventPublisher

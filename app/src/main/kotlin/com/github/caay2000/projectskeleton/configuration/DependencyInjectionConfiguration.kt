@@ -3,6 +3,7 @@ package com.github.caay2000.projectskeleton.configuration
 import com.github.caay2000.common.dateprovider.LocalDateProvider
 import com.github.caay2000.common.event.AsyncDomainEventBus
 import com.github.caay2000.common.event.DomainEventBus
+import com.github.caay2000.common.event.subscribe
 import com.github.caay2000.common.idgenerator.UUIDGenerator
 import com.github.caay2000.dikt.DiKt
 import com.github.caay2000.eventbus.EventBus
@@ -10,11 +11,15 @@ import com.github.caay2000.memorydb.InMemoryDatasource
 import com.github.caay2000.projectskeleton.context.account.primaryadapter.http.CreateAccountController
 import com.github.caay2000.projectskeleton.context.account.primaryadapter.http.FindAccountController
 import com.github.caay2000.projectskeleton.context.account.secondaryadapter.database.InMemoryAccountRepository
+import com.github.caay2000.projectskeleton.context.book.primaryadapter.event.UpdateBookAvailabilityOnLoanCreatedEventSubscriber
 import com.github.caay2000.projectskeleton.context.book.primaryadapter.http.CreateBookController
 import com.github.caay2000.projectskeleton.context.book.primaryadapter.http.FindBookByIdController
 import com.github.caay2000.projectskeleton.context.book.primaryadapter.http.SearchBookByIsbnController
 import com.github.caay2000.projectskeleton.context.book.primaryadapter.http.SearchBookController
 import com.github.caay2000.projectskeleton.context.book.secondaryadapter.database.InMemoryBookRepository
+import com.github.caay2000.projectskeleton.context.loan.primaryadapter.event.CreateBookOnBookCreatedEventSubscriber
+import com.github.caay2000.projectskeleton.context.loan.primaryadapter.event.CreateUserOnAccountCreatedEventSubscriber
+import com.github.caay2000.projectskeleton.context.loan.primaryadapter.event.UpdateLoanBookAvailabilityOnLoanCreatedEventSubscriber
 import com.github.caay2000.projectskeleton.context.loan.primaryadapter.http.CreateLoanController
 import com.github.caay2000.projectskeleton.context.loan.secondaryadapter.database.InMemoryLoanRepository
 import com.github.caay2000.projectskeleton.context.loan.secondaryadapter.database.InMemoryUserRepository
@@ -41,9 +46,10 @@ val DependencyInjectionConfiguration = createApplicationPlugin(name = "Dependenc
     DiKt.register { EventBus(numPartitions = 3) }
     DiKt.register { AsyncDomainEventBus(DiKt.bind()) }
     DiKt.get<DomainEventBus>()
-//        .subscribe(CreateContactDetailsOnUserCreatedEventSubscriber(DiKt.bind()))
-//        .subscribe(ProcessCommunicationRequestOnUserCreatedEventSubscriber(DiKt.bind(name = "uuidGenerator"), DiKt.bind(), DiKt.bind(), DiKt.bind(), DiKt.bind()))
-//        .subscribe(SendCommunicationRequestOnCommunicationRequestCreatedEventSubscriber(DiKt.bind(), DiKt.bind(), DiKt.bind(), DiKt.bind(), DiKt.bind(), DiKt.bind()))
+        .subscribe(CreateUserOnAccountCreatedEventSubscriber(DiKt.bind()))
+        .subscribe(CreateBookOnBookCreatedEventSubscriber(DiKt.bind()))
+        .subscribe(UpdateBookAvailabilityOnLoanCreatedEventSubscriber(DiKt.get()))
+        .subscribe(UpdateLoanBookAvailabilityOnLoanCreatedEventSubscriber(DiKt.get()))
 
     DiKt.register { CreateAccountController(DiKt.bind(), DiKt.bind(), DiKt.bind(), DiKt.bind()) }
     DiKt.register { FindAccountController(DiKt.bind()) }

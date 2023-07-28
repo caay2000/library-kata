@@ -1,4 +1,4 @@
-package com.github.caay2000.projectskeleton.context.loan.application.create
+package com.github.caay2000.projectskeleton.context.loan.application.loan.create
 
 import arrow.core.Either
 import arrow.core.flatMap
@@ -30,15 +30,15 @@ class LoanCreator(
         bookId: BookId,
         createdAt: CreatedAt,
     ): Either<LoanCreatorError, Unit> =
-        checkBook(bookId)
+        guardBookAvailability(bookId)
             .flatMap { checkUser(userId) }
             .map { Loan.create(id = loanId, bookId = bookId, userId = userId, createdAt = createdAt) }
             .flatMap { loan -> loan.save() }
             .flatMap { loan -> loan.publishEvents() }
 
-    private fun checkBook(bookId: BookId): Either<LoanCreatorError, Unit> =
+    private fun guardBookAvailability(bookId: BookId): Either<LoanCreatorError, Unit> =
         findBook(bookId)
-            .map { book -> book.checkAvailability() }
+            .flatMap { book -> book.checkAvailability() }
 
     private fun findBook(bookId: BookId): Either<LoanCreatorError, Book> =
         bookRepository.findById(bookId)

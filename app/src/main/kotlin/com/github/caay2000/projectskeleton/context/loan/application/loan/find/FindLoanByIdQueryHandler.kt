@@ -1,4 +1,4 @@
-package com.github.caay2000.projectskeleton.context.loan.application.find
+package com.github.caay2000.projectskeleton.context.loan.application.loan.find
 
 import com.github.caay2000.common.arrow.getOrThrow
 import com.github.caay2000.projectskeleton.common.cqrs.Query

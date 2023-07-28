@@ -7,10 +7,10 @@ import com.github.caay2000.common.idgenerator.IdGenerator
 import com.github.caay2000.projectskeleton.context.loan.application.BookRepository
 import com.github.caay2000.projectskeleton.context.loan.application.LoanRepository
 import com.github.caay2000.projectskeleton.context.loan.application.UserRepository
-import com.github.caay2000.projectskeleton.context.loan.application.create.CreateLoanCommand
-import com.github.caay2000.projectskeleton.context.loan.application.create.CreateLoanCommandHandler
-import com.github.caay2000.projectskeleton.context.loan.application.find.FindLoanByIdQuery
-import com.github.caay2000.projectskeleton.context.loan.application.find.FindLoanByIdQueryHandler
+import com.github.caay2000.projectskeleton.context.loan.application.loan.create.CreateLoanCommand
+import com.github.caay2000.projectskeleton.context.loan.application.loan.create.CreateLoanCommandHandler
+import com.github.caay2000.projectskeleton.context.loan.application.loan.find.FindLoanByIdQuery
+import com.github.caay2000.projectskeleton.context.loan.application.loan.find.FindLoanByIdQueryHandler
 import com.github.caay2000.projectskeleton.context.loan.primaryadapter.http.serialization.LoanRequestDocument
 import com.github.caay2000.projectskeleton.context.loan.primaryadapter.http.serialization.toLoanDocument
 import io.ktor.http.HttpStatusCode
@@ -44,7 +44,7 @@ class CreateLoanController(
         commandHandler.invoke(request.toCreateLoanCommand(loanId, datetime))
 
         val queryResponse = queryHandler.handle(FindLoanByIdQuery(loanId))
-        call.respond(HttpStatusCode.OK, queryResponse.loan.toLoanDocument())
+        call.respond(HttpStatusCode.Created, queryResponse.loan.toLoanDocument())
     }
 
     private fun LoanRequestDocument.toCreateLoanCommand(loanId: UUID, datetime: LocalDateTime) =
