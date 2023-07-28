@@ -13,6 +13,7 @@ interface Controller {
         try {
             handle(call)
         } catch (e: Exception) {
+            logger.error { e.message }
             val response = handleExceptions(call, e)
             call.respond(
                 response.status,

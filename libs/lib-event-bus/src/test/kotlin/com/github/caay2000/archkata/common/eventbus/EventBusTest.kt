@@ -1,4 +1,4 @@
-package com.github.caay2000.projectskeleton.common.eventbus
+package com.github.caay2000.librarykata.common.eventbus
 
 import com.github.caay2000.common.test.awaitAssertion
 import com.github.caay2000.eventbus.Event

@@ -1,4 +1,4 @@
-package com.github.caay2000.projectskeleton.common.cqrs
+package com.github.caay2000.common.cqrs
 
 interface QueryHandler<Q : Query, R : QueryResponse> {
 

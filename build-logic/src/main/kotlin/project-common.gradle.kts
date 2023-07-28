@@ -35,6 +35,7 @@ dependencies {
         implementation("io.ktor:ktor-server-content-negotiation:${project.ext["ktor_version"]}")
         implementation("io.ktor:ktor-serialization-kotlinx-json:${project.ext["ktor_version"]}")
         implementation("io.ktor:ktor-server-call-logging:${project.ext["ktor_version"]}")
+        implementation("io.ktor:ktor-server-call-id:${project.ext["ktor_version"]}")
 
         implementation("io.arrow-kt:arrow-core:${project.ext["arrow_version"]}")
         implementation("io.arrow-kt:arrow-fx-coroutines:${project.ext["arrow_version"]}")
