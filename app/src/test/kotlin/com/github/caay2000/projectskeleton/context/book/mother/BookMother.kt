@@ -9,14 +9,13 @@ import com.github.caay2000.projectskeleton.context.book.domain.BookIsbn
 import com.github.caay2000.projectskeleton.context.book.domain.BookPages
 import com.github.caay2000.projectskeleton.context.book.domain.BookPublisher
 import com.github.caay2000.projectskeleton.context.book.domain.BookTitle
-import java.util.UUID
 import kotlin.random.Random
 
 object BookMother {
 
     fun random(
         id: BookId = BookIdMother.random(),
-        isbn: String = UUID.randomUUID().toString(),
+        isbn: String = BookIsbnMother.random().value,
         title: String = RandomStringGenerator.randomString(),
         author: String = RandomStringGenerator.randomString(),
         pages: Int = Random.nextInt(20, 1000),

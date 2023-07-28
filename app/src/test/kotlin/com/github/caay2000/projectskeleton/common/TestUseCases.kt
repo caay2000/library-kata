@@ -17,18 +17,21 @@ import com.github.caay2000.projectskeleton.context.book.domain.BookIsbn
 import com.github.caay2000.projectskeleton.context.book.domain.BookPages
 import com.github.caay2000.projectskeleton.context.book.domain.BookPublisher
 import com.github.caay2000.projectskeleton.context.book.domain.BookTitle
+import com.github.caay2000.projectskeleton.context.book.mother.BookIdMother
+import com.github.caay2000.projectskeleton.context.book.mother.BookIsbnMother
 import com.github.caay2000.projectskeleton.context.book.primaryadapter.http.serialization.BookByIdDocument
 import com.github.caay2000.projectskeleton.context.book.primaryadapter.http.serialization.BookDocument
 import com.github.caay2000.projectskeleton.context.loan.domain.CreatedAt
 import com.github.caay2000.projectskeleton.context.loan.domain.Loan
 import com.github.caay2000.projectskeleton.context.loan.domain.LoanId
 import com.github.caay2000.projectskeleton.context.loan.domain.UserId
+import com.github.caay2000.projectskeleton.context.loan.mother.LoanMother
 import com.github.caay2000.projectskeleton.context.loan.primaryadapter.http.serialization.LoanDocument
 import io.ktor.server.testing.ApplicationTestBuilder
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.UUID
-import com.github.caay2000.projectskeleton.context.loan.domain.BookId as LoanBookId
+import com.github.caay2000.projectskeleton.context.loan.domain.BookIsbn as LoanBookIsbn
 
 class TestUseCases(
     private val libraryClient: LibraryClient = LibraryClient(),
@@ -83,6 +86,17 @@ class TestUseCases(
     }
 
     context(ApplicationTestBuilder)
+    fun `multiple copies of the same book are created`(book: Book, copies: Int) {
+        repeat(copies) { index ->
+            if (index == 1) {
+                `book is created`(book)
+            } else {
+                `book is created`(book, id = BookIdMother.random())
+            }
+        }
+    }
+
+    context(ApplicationTestBuilder)
     fun `find book by id`(id: BookId): HttpDataResponse<BookByIdDocument> = libraryClient.findBookById(id)
 
     context(ApplicationTestBuilder)
@@ -90,66 +104,19 @@ class TestUseCases(
 
     context(ApplicationTestBuilder)
     fun `loan is created`(
-        loan: Loan,
+        loan: Loan = LoanMother.random(),
+        bookIsbn: BookIsbn? = null,
         id: LoanId? = null,
-        bookId: LoanBookId? = null,
         userId: UserId? = null,
         createdAt: CreatedAt? = null,
     ): HttpDataResponse<LoanDocument> {
         `id will be mocked`(id?.value ?: loan.id.value)
         `datetime will be mocked`(createdAt?.value ?: loan.createdAt.value)
         return libraryClient.createLoan(
-            bookId = bookId ?: loan.bookId,
+            bookIsbn = LoanBookIsbn(bookIsbn?.value ?: BookIsbnMother.random().value),
             userId = userId ?: loan.userId,
         )
     }
-
-//
-//    context(ApplicationTestBuilder)
-//    fun `register a banned user`(
-//        user: User,
-//        id: UserId? = null,
-//        email: Email? = null,
-//        name: Name? = null,
-//    ): HttpDataResponse<UserDocument> {
-//        `user is registered`(user, id, email, name)
-//        val book = BookMother.random()
-//        `book is created`(book)
-//        `book is retrieved`(user = user, book = book, date = LocalDate.now().minusMonths(1))
-//        `book is returned`(book)
-//        return `find user`(user)
-//    }
-//
-
-//
-//    context(ApplicationTestBuilder)
-//    fun `books are browsed`(): HttpDataResponse<AllBooksDocument> = libraryClient.bookBrowse()
-//
-//    context(ApplicationTestBuilder)
-//    fun `book is retrieved`(
-//        user: User,
-//        book: Book,
-//        email: Email? = null,
-//        id: LoanId? = null,
-//        date: LocalDate? = null,
-//    ): HttpDataResponse<LoanDocument> {
-//        `id will be mocked`(id?.value ?: UUID.randomUUID())
-//        `date will be mocked`(date ?: LocalDate.now())
-//
-//        return libraryClient.bookRetrieve(
-//            email = email ?: user.email,
-//            bookId = book.id,
-//        )
-//    }
-//
-//    context(ApplicationTestBuilder)
-//    fun `book is returned`(
-//        book: Book,
-//        date: LocalDate? = null,
-//    ): HttpDataResponse<Unit> {
-//        `date will be mocked`(date ?: LocalDate.now())
-//        return libraryClient.bookReturn(bookId = book.id)
-//    }
 
     private fun `id will be mocked`(id: UUID): UUID = mockIdGenerator?.mock(id).let { id }
     private fun `date will be mocked`(date: LocalDate): LocalDate = mockDateProvider?.mock(date).let { date }

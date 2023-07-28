@@ -1,4 +1,4 @@
-package com.github.caay2000.projectskeleton.context.loan.mother.mother
+package com.github.caay2000.projectskeleton.context.loan.mother
 
 import com.github.caay2000.projectskeleton.context.loan.domain.BookId
 import com.github.caay2000.projectskeleton.context.loan.domain.CreatedAt
@@ -29,13 +29,9 @@ object LoanMother {
         id: UUID = UUID.randomUUID(),
         bookId: UUID = UUID.randomUUID(),
         userId: UUID = UUID.randomUUID(),
-        createdAt: CreatedAt = CreatedAt(LocalDateTime.now()),
-        finishedAt: FinishedAt? = null,
-    ) = Loan(
-        LoanId(id),
-        BookId(bookId),
-        UserId(userId),
-        createdAt,
-        finishedAt,
+    ) = random(
+        id = LoanId(id),
+        bookId = BookId(bookId),
+        userId = UserId(userId),
     )
 }

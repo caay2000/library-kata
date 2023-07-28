@@ -6,6 +6,7 @@ import com.github.caay2000.memorydb.InMemoryDatasource
 import com.github.caay2000.projectskeleton.context.loan.application.BookRepository
 import com.github.caay2000.projectskeleton.context.loan.domain.Book
 import com.github.caay2000.projectskeleton.context.loan.domain.BookId
+import com.github.caay2000.projectskeleton.context.loan.domain.BookIsbn
 
 class InMemoryBookRepository(private val datasource: InMemoryDatasource) : BookRepository {
 
@@ -27,4 +28,8 @@ class InMemoryBookRepository(private val datasource: InMemoryDatasource) : BookR
                     else -> RepositoryError.Unknown(error)
                 }
             }
+
+    override fun searchByIsbn(isbn: BookIsbn): Either<RepositoryError, List<Book>> =
+        Either.catch { datasource.getAll<Book>(TABLE_NAME).filter { it.isbn == isbn } }
+            .mapLeft { error -> RepositoryError.Unknown(error) }
 }

@@ -4,7 +4,7 @@ import io.ktor.http.HttpStatusCode
 import org.assertj.core.api.Assertions.assertThat
 
 fun <T> HttpDataResponse<T>.assertStatus(status: HttpStatusCode): HttpDataResponse<T> =
-    assertThat(httpResponse.status).isEqualTo(status)
+    assertThat(httpResponse.status).withFailMessage { error?.message }.isEqualTo(status)
         .let { this }
 
 fun <T> HttpDataResponse<T>.assertResponse(response: T): HttpDataResponse<T> =

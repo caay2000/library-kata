@@ -12,7 +12,9 @@ class SearchAllBooksQueryHandler(bookRepository: BookRepository) : QueryHandler<
 
     private val searcher = BookSearcher(bookRepository)
 
-    override fun handle(@Suppress("UNUSED_PARAMETER") query: SearchAllBooksQuery): SearchAllBooksQueryResponse =
+    override fun handle(
+        @Suppress("UNUSED_PARAMETER") query: SearchAllBooksQuery,
+    ): SearchAllBooksQueryResponse =
         searcher.invoke(SearchBookCriteria.All)
             .map { books -> SearchAllBooksQueryResponse(books) }
             .getOrThrow()

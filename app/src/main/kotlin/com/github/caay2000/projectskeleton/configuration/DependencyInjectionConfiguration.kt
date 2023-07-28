@@ -20,6 +20,7 @@ import com.github.caay2000.projectskeleton.context.book.secondaryadapter.databas
 import com.github.caay2000.projectskeleton.context.loan.primaryadapter.event.CreateBookOnBookCreatedEventSubscriber
 import com.github.caay2000.projectskeleton.context.loan.primaryadapter.event.CreateUserOnAccountCreatedEventSubscriber
 import com.github.caay2000.projectskeleton.context.loan.primaryadapter.event.UpdateLoanBookAvailabilityOnLoanCreatedEventSubscriber
+import com.github.caay2000.projectskeleton.context.loan.primaryadapter.event.UpdateUserCurrentLoansOnLoanCreatedEventSubscriber
 import com.github.caay2000.projectskeleton.context.loan.primaryadapter.http.CreateLoanController
 import com.github.caay2000.projectskeleton.context.loan.secondaryadapter.database.InMemoryLoanRepository
 import com.github.caay2000.projectskeleton.context.loan.secondaryadapter.database.InMemoryUserRepository
@@ -50,6 +51,7 @@ val DependencyInjectionConfiguration = createApplicationPlugin(name = "Dependenc
         .subscribe(CreateBookOnBookCreatedEventSubscriber(DiKt.bind()))
         .subscribe(UpdateBookAvailabilityOnLoanCreatedEventSubscriber(DiKt.get()))
         .subscribe(UpdateLoanBookAvailabilityOnLoanCreatedEventSubscriber(DiKt.get()))
+        .subscribe(UpdateUserCurrentLoansOnLoanCreatedEventSubscriber(DiKt.get()))
 
     DiKt.register { CreateAccountController(DiKt.bind(), DiKt.bind(), DiKt.bind(), DiKt.bind()) }
     DiKt.register { FindAccountController(DiKt.bind()) }

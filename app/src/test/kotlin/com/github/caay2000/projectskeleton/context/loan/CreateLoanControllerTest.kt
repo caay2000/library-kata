@@ -1,4 +1,4 @@
-package com.github.caay2000.projectskeleton.context.loan.mother
+package com.github.caay2000.projectskeleton.context.loan
 
 import com.github.caay2000.common.test.http.assertErrorMessage
 import com.github.caay2000.common.test.http.assertResponse
@@ -9,7 +9,8 @@ import com.github.caay2000.dikt.DiKt
 import com.github.caay2000.projectskeleton.common.TestUseCases
 import com.github.caay2000.projectskeleton.context.account.mother.AccountMother
 import com.github.caay2000.projectskeleton.context.book.mother.BookMother
-import com.github.caay2000.projectskeleton.context.loan.mother.mother.LoanMother
+import com.github.caay2000.projectskeleton.context.loan.domain.UserId
+import com.github.caay2000.projectskeleton.context.loan.mother.LoanMother
 import com.github.caay2000.projectskeleton.context.loan.primaryadapter.http.serialization.toLoanDocument
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.testing.testApplication
@@ -37,7 +38,7 @@ class CreateLoanControllerTest {
         testUseCases.`account is created`(account)
             .assertStatus(HttpStatusCode.Created)
 
-        testUseCases.`loan is created`(loan)
+        testUseCases.`loan is created`(loan, book.isbn)
             .assertStatus(HttpStatusCode.Created)
             .assertResponse(loan.toLoanDocument())
     }
@@ -48,56 +49,28 @@ class CreateLoanControllerTest {
             .assertStatus(HttpStatusCode.Created)
         testUseCases.`account is created`(account)
             .assertStatus(HttpStatusCode.Created)
-        testUseCases.`loan is created`(loan)
+        testUseCases.`loan is created`(loan, book.isbn)
             .assertStatus(HttpStatusCode.Created)
 
-        testUseCases.`loan is created`(loan)
+        testUseCases.`loan is created`(loan, book.isbn)
             .assertStatus(HttpStatusCode.InternalServerError)
-            .assertErrorMessage("book ${book.id.value} is not available")
+            .assertErrorMessage("book with isbn ${book.isbn.value} is not available")
     }
 
-//    @Test
-//    fun `a book can be retrieved by Id`() = testApplication {
-//        testUseCases.`book is created`(book)
-//            .assertStatus(HttpStatusCode.Created)
-//
-//        testUseCases.`find book by id`(book.id)
-//            .assertStatus(HttpStatusCode.OK)
-//            .assertResponse(book.toBookByIdDocument())
-//    }
-//
-//    @Test
-//    fun `a book can be retrieved by Isbn`() = testApplication {
-//        testUseCases.`book is created`(book)
-//            .assertStatus(HttpStatusCode.Created)
-//
-//        testUseCases.`find book by isbn`(book.isbn)
-//            .assertStatus(HttpStatusCode.OK)
-//            .assertResponse(book.toBookDocument())
-//    }
-//
-//    @Test
-//    fun `multiple books with same isbn will have different id`() = testApplication {
-//        testUseCases.`book is created`(book)
-//            .assertStatus(HttpStatusCode.Created)
-//            .assertResponse(book.toBookByIdDocument())
-//
-//        testUseCases.`book is created`(differentIdBook)
-//            .assertStatus(HttpStatusCode.Created)
-//            .assertResponse(differentIdBook.toBookByIdDocument())
-//    }
-//
-//    @Test
-//    fun `a book with multiple copies can be retrieved by Isbn`() = testApplication {
-//        testUseCases.`book is created`(book)
-//            .assertStatus(HttpStatusCode.Created)
-//        testUseCases.`book is created`(differentIdBook)
-//            .assertStatus(HttpStatusCode.Created)
-//
-//        testUseCases.`find book by isbn`(book.isbn)
-//            .assertStatus(HttpStatusCode.OK)
-//            .assertResponse(book.toBookDocument().copy(copies = 2, availableCopies = 2))
-//    }
+    @Test
+    fun `an account with 5 loans cannot retrieve more books`() = testApplication {
+        testUseCases.`multiple copies of the same book are created`(book, 6)
+        testUseCases.`account is created`(account)
+            .assertStatus(HttpStatusCode.Created)
+        repeat(5) {
+            testUseCases.`loan is created`(userId = UserId(account.id.value), bookIsbn = book.isbn)
+                .assertStatus(HttpStatusCode.Created)
+        }
+
+        testUseCases.`loan is created`(loan, book.isbn)
+            .assertStatus(HttpStatusCode.InternalServerError)
+            .assertErrorMessage("user ${account.id} has too many loans")
+    }
 
     private val account = AccountMother.random()
     private val book = BookMother.random()

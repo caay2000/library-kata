@@ -36,7 +36,7 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.decodeFromJsonElement
-import com.github.caay2000.projectskeleton.context.loan.domain.BookId as LoanBookId
+import com.github.caay2000.projectskeleton.context.loan.domain.BookIsbn as LoanBookIsbn
 
 class LibraryClient {
 
@@ -99,12 +99,12 @@ class LibraryClient {
 
     context(ApplicationTestBuilder)
     fun createLoan(
-        bookId: LoanBookId,
+        bookIsbn: LoanBookIsbn,
         userId: UserId,
     ): HttpDataResponse<LoanDocument> =
         runBlocking {
             client.post("/loan") {
-                val request = LoanRequestDocument(bookId = bookId.value, userId = userId.value)
+                val request = LoanRequestDocument(bookIsbn = bookIsbn.value, userId = userId.value)
                 setBody(Json.encodeToString(request))
                 contentType(ContentType.Application.Json)
             }.toHttpDataResponse()

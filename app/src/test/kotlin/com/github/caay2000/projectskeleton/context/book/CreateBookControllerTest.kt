@@ -11,7 +11,7 @@ import com.github.caay2000.projectskeleton.context.book.mother.BookIdMother
 import com.github.caay2000.projectskeleton.context.book.mother.BookMother
 import com.github.caay2000.projectskeleton.context.book.primaryadapter.http.serialization.toBookByIdDocument
 import com.github.caay2000.projectskeleton.context.book.primaryadapter.http.serialization.toBookDocument
-import com.github.caay2000.projectskeleton.context.loan.mother.mother.LoanMother
+import com.github.caay2000.projectskeleton.context.loan.mother.LoanMother
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.testing.testApplication
 import org.junit.jupiter.api.BeforeEach
@@ -90,7 +90,7 @@ class CreateBookControllerTest {
         testUseCases.`book is created`(differentIdBook)
             .assertStatus(HttpStatusCode.Created)
 
-        testUseCases.`loan is created`(loan)
+        testUseCases.`loan is created`(loan, book.isbn)
             .assertStatus(HttpStatusCode.Created)
 
         testUseCases.`find book by isbn`(book.isbn)

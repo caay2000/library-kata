@@ -20,9 +20,7 @@ data class Book(
 }
 
 @JvmInline
-value class BookIsbn(val value: String) {
-    override fun toString(): String = value
-}
+value class BookIsbn(val value: String)
 
 @JvmInline
 value class BookAvailable(val value: Boolean)

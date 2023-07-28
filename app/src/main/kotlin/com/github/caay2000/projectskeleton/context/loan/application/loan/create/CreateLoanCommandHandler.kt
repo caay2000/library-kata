@@ -7,7 +7,7 @@ import com.github.caay2000.projectskeleton.common.cqrs.CommandHandler
 import com.github.caay2000.projectskeleton.context.loan.application.BookRepository
 import com.github.caay2000.projectskeleton.context.loan.application.LoanRepository
 import com.github.caay2000.projectskeleton.context.loan.application.UserRepository
-import com.github.caay2000.projectskeleton.context.loan.domain.BookId
+import com.github.caay2000.projectskeleton.context.loan.domain.BookIsbn
 import com.github.caay2000.projectskeleton.context.loan.domain.CreatedAt
 import com.github.caay2000.projectskeleton.context.loan.domain.LoanId
 import com.github.caay2000.projectskeleton.context.loan.domain.UserId
@@ -27,7 +27,7 @@ class CreateLoanCommandHandler(
         creator.invoke(
             loanId = LoanId(command.loanId),
             userId = UserId(command.userId),
-            bookId = BookId(command.bookId),
+            bookIsbn = BookIsbn(command.bookIsbn),
             createdAt = CreatedAt(command.createdAt),
         ).getOrThrow()
 }
@@ -35,6 +35,6 @@ class CreateLoanCommandHandler(
 data class CreateLoanCommand(
     val loanId: UUID,
     val userId: UUID,
-    val bookId: UUID,
+    val bookIsbn: String,
     val createdAt: LocalDateTime,
 ) : Command

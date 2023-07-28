@@ -51,7 +51,7 @@ class CreateLoanController(
         CreateLoanCommand(
             loanId = loanId,
             userId = userId,
-            bookId = bookId,
+            bookIsbn = bookIsbn,
             createdAt = datetime,
         )
 }

@@ -29,11 +29,11 @@ data class Book(
 
     private fun bookCreatedEvent() = BookCreatedEvent(
         bookId = id.value,
-        isbn = isbn.toString(),
-        title = title.toString(),
-        author = author.toString(),
+        isbn = isbn.value,
+        title = title.value,
+        author = author.value,
         pages = pages.value,
-        publisher = publisher.toString(),
+        publisher = publisher.value,
     )
 
     val isAvailable: Boolean = available.value
