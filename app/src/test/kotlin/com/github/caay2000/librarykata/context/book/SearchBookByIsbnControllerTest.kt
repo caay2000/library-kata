@@ -6,15 +6,17 @@ import com.github.caay2000.common.test.mock.MockDateProvider
 import com.github.caay2000.common.test.mock.MockIdGenerator
 import com.github.caay2000.dikt.DiKt
 import com.github.caay2000.librarykata.common.TestUseCases
+import com.github.caay2000.librarykata.context.account.mother.AccountMother
 import com.github.caay2000.librarykata.context.book.mother.BookIdMother
 import com.github.caay2000.librarykata.context.book.mother.BookMother
-import com.github.caay2000.librarykata.context.book.primaryadapter.http.serialization.toBookByIdDocument
+import com.github.caay2000.librarykata.context.book.primaryadapter.http.serialization.toBookDocument
+import com.github.caay2000.librarykata.context.loan.domain.UserId
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.testing.testApplication
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
-class CreateBookControllerTest {
+class SearchBookByIsbnControllerTest {
 
     private val mockIdGenerator = MockIdGenerator()
     private val mockDateProvider = MockDateProvider()
@@ -28,33 +30,47 @@ class CreateBookControllerTest {
     }
 
     @Test
-    fun `a book can be created`() = testApplication {
-        testUseCases.`book is created`(book)
-            .assertStatus(HttpStatusCode.Created)
-            .assertResponse(book.toBookByIdDocument())
-    }
-
-    @Test
-    fun `a book can be retrieved by Id`() = testApplication {
+    fun `a book can be retrieved by Isbn`() = testApplication {
         testUseCases.`book is created`(book)
             .assertStatus(HttpStatusCode.Created)
 
-        testUseCases.`find book by id`(book.id)
+        testUseCases.`find book by isbn`(book.isbn)
             .assertStatus(HttpStatusCode.OK)
-            .assertResponse(book.toBookByIdDocument())
+            .assertResponse(book.toBookDocument())
     }
 
     @Test
-    fun `multiple books with same isbn will have different id`() = testApplication {
+    fun `a book with multiple copies can be retrieved by Isbn`() = testApplication {
         testUseCases.`book is created`(book)
             .assertStatus(HttpStatusCode.Created)
-            .assertResponse(book.toBookByIdDocument())
-
         testUseCases.`book is created`(differentIdBook)
             .assertStatus(HttpStatusCode.Created)
-            .assertResponse(differentIdBook.toBookByIdDocument())
+
+        testUseCases.`find book by isbn`(book.isbn)
+            .assertStatus(HttpStatusCode.OK)
+            .assertResponse(book.toBookDocument().copy(copies = 2, availableCopies = 2))
+    }
+
+    @Test
+    fun `a book with multiple copies and some of them booked can be retrieved by Isbn and returns de correct amount of copies`() = testApplication {
+        testUseCases.`account is created`(account)
+            .assertStatus(HttpStatusCode.Created)
+
+        testUseCases.`book is created`(book)
+            .assertStatus(HttpStatusCode.Created)
+        testUseCases.`book is created`(differentIdBook)
+            .assertStatus(HttpStatusCode.Created)
+
+        testUseCases.`loan is created`(bookIsbn = book.isbn, userId = UserId(account.id.value))
+            .assertStatus(HttpStatusCode.Created)
+
+        testUseCases.`find book by isbn`(book.isbn)
+            .assertStatus(HttpStatusCode.OK)
+            .assertResponse(book.toBookDocument().copy(copies = 2, availableCopies = 1))
     }
 
     private val book = BookMother.random()
     private val differentIdBook = book.copy(id = BookIdMother.random())
+
+    private val account = AccountMother.random()
 }

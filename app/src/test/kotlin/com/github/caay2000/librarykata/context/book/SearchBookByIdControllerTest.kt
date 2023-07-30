@@ -6,15 +6,17 @@ import com.github.caay2000.common.test.mock.MockDateProvider
 import com.github.caay2000.common.test.mock.MockIdGenerator
 import com.github.caay2000.dikt.DiKt
 import com.github.caay2000.librarykata.common.TestUseCases
-import com.github.caay2000.librarykata.context.book.mother.BookIdMother
+import com.github.caay2000.librarykata.context.account.mother.AccountMother
+import com.github.caay2000.librarykata.context.book.domain.BookAvailable
 import com.github.caay2000.librarykata.context.book.mother.BookMother
 import com.github.caay2000.librarykata.context.book.primaryadapter.http.serialization.toBookByIdDocument
+import com.github.caay2000.librarykata.context.loan.domain.UserId
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.testing.testApplication
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
-class CreateBookControllerTest {
+class SearchBookByIdControllerTest {
 
     private val mockIdGenerator = MockIdGenerator()
     private val mockDateProvider = MockDateProvider()
@@ -28,13 +30,6 @@ class CreateBookControllerTest {
     }
 
     @Test
-    fun `a book can be created`() = testApplication {
-        testUseCases.`book is created`(book)
-            .assertStatus(HttpStatusCode.Created)
-            .assertResponse(book.toBookByIdDocument())
-    }
-
-    @Test
     fun `a book can be retrieved by Id`() = testApplication {
         testUseCases.`book is created`(book)
             .assertStatus(HttpStatusCode.Created)
@@ -45,16 +40,19 @@ class CreateBookControllerTest {
     }
 
     @Test
-    fun `multiple books with same isbn will have different id`() = testApplication {
+    fun `a lent book can be retrieved by Id`() = testApplication {
         testUseCases.`book is created`(book)
             .assertStatus(HttpStatusCode.Created)
-            .assertResponse(book.toBookByIdDocument())
-
-        testUseCases.`book is created`(differentIdBook)
+        testUseCases.`account is created`(account)
             .assertStatus(HttpStatusCode.Created)
-            .assertResponse(differentIdBook.toBookByIdDocument())
+        testUseCases.`loan is created`(bookIsbn = book.isbn, userId = UserId(account.id.value))
+
+        testUseCases.`find book by id`(book.id)
+            .assertStatus(HttpStatusCode.OK)
+            .assertResponse(notAvailableBook.toBookByIdDocument())
     }
 
+    private val account = AccountMother.random()
     private val book = BookMother.random()
-    private val differentIdBook = book.copy(id = BookIdMother.random())
+    private val notAvailableBook = book.copy(available = BookAvailable.notAvailable())
 }

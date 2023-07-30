@@ -35,6 +35,7 @@ data class BookDocument(
 
 fun List<Book>.toAllBooksDocument() =
     this.groupBy { it.isbn }
+        .toSortedMap(compareBy { it.value })
         .map { (key, books) ->
             val sample = books.first()
             BookDocument(
@@ -60,13 +61,7 @@ fun Book.toBookDocument() =
         availableCopies = if (available.value) 1 else 0,
     )
 
-fun List<Book>.toBookDocument() =
-    this.fold(initial = first().toBookDocument().copy(copies = 0, availableCopies = 0)) { result, item ->
-        result.copy(
-            copies = result.copies + 1,
-            availableCopies = result.availableCopies + if (item.available.value) 1 else 0,
-        )
-    }
+fun List<Book>.toBookDocument() = toAllBooksDocument().books.first()
 
 fun Book.toBookByIdDocument() = BookByIdDocument(
     id = id.value,

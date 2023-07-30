@@ -18,7 +18,16 @@ class UpdateUserCurrentLoansCommandHandler(userRepository: UserRepository) : Com
         updater.invoke(userId = UserId(command.userId), command.value).getOrThrow()
 }
 
-data class UpdateUserCurrentLoansCommand(
-    val userId: UUID,
+sealed class UpdateUserCurrentLoansCommand(
     val value: Int,
-) : Command
+) : Command {
+    abstract val userId: UUID
+}
+
+data class IncreaseUserCurrentLoansCommand(
+    override val userId: UUID,
+) : UpdateUserCurrentLoansCommand(1)
+
+data class DecreaseUserCurrentLoansCommand(
+    override val userId: UUID,
+) : UpdateUserCurrentLoansCommand(-1)

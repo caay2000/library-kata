@@ -21,4 +21,4 @@ A Project Skeleton to build Kotlin apps with Gradle and Ktor
     - Un usuario solo puede tener prestados un maximo de 5 libros a la vez
 
 - Devolver un libro
-    - Un usuario deberia poder devolver un libro prestado.
+    - Un usuario ha de poder devolver un libro prestado.

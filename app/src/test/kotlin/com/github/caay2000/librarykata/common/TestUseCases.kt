@@ -9,6 +9,7 @@ import com.github.caay2000.librarykata.context.account.domain.Email
 import com.github.caay2000.librarykata.context.account.domain.IdentityNumber
 import com.github.caay2000.librarykata.context.account.domain.PhoneNumber
 import com.github.caay2000.librarykata.context.account.domain.PhonePrefix
+import com.github.caay2000.librarykata.context.account.mother.AccountMother
 import com.github.caay2000.librarykata.context.account.primaryadapter.http.serialization.AccountDetailsDocument
 import com.github.caay2000.librarykata.context.book.domain.Book
 import com.github.caay2000.librarykata.context.book.domain.BookAuthor
@@ -19,9 +20,11 @@ import com.github.caay2000.librarykata.context.book.domain.BookPublisher
 import com.github.caay2000.librarykata.context.book.domain.BookTitle
 import com.github.caay2000.librarykata.context.book.mother.BookIdMother
 import com.github.caay2000.librarykata.context.book.mother.BookIsbnMother
+import com.github.caay2000.librarykata.context.book.primaryadapter.http.serialization.AllBooksDocument
 import com.github.caay2000.librarykata.context.book.primaryadapter.http.serialization.BookByIdDocument
 import com.github.caay2000.librarykata.context.book.primaryadapter.http.serialization.BookDocument
 import com.github.caay2000.librarykata.context.loan.domain.CreatedAt
+import com.github.caay2000.librarykata.context.loan.domain.FinishedAt
 import com.github.caay2000.librarykata.context.loan.domain.Loan
 import com.github.caay2000.librarykata.context.loan.domain.LoanId
 import com.github.caay2000.librarykata.context.loan.domain.UserId
@@ -31,6 +34,7 @@ import io.ktor.server.testing.ApplicationTestBuilder
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.UUID
+import com.github.caay2000.librarykata.context.loan.domain.BookId as LoanBookId
 import com.github.caay2000.librarykata.context.loan.domain.BookIsbn as LoanBookIsbn
 
 class TestUseCases(
@@ -41,7 +45,7 @@ class TestUseCases(
 
     context(ApplicationTestBuilder)
     fun `account is created`(
-        account: Account,
+        account: Account = AccountMother.random(),
         accountId: AccountId? = null,
         identityNumber: IdentityNumber? = null,
         email: Email? = null,
@@ -103,6 +107,9 @@ class TestUseCases(
     fun `find book by isbn`(isbn: BookIsbn): HttpDataResponse<BookDocument> = libraryClient.findBookByIsbn(isbn)
 
     context(ApplicationTestBuilder)
+    fun `search all books`(): HttpDataResponse<AllBooksDocument> = libraryClient.searchBooks()
+
+    context(ApplicationTestBuilder)
     fun `loan is created`(
         loan: Loan = LoanMother.random(),
         bookIsbn: BookIsbn? = null,
@@ -116,6 +123,17 @@ class TestUseCases(
             bookIsbn = LoanBookIsbn(bookIsbn?.value ?: BookIsbnMother.random().value),
             userId = userId ?: loan.userId,
         )
+    }
+
+    context(ApplicationTestBuilder)
+    fun `loan is finished`(
+        loan: Loan = LoanMother.random(),
+        bookId: LoanBookId? = null,
+        finishedAt: FinishedAt? = null,
+    ): HttpDataResponse<Unit> {
+        val finishDateTime = finishedAt?.value ?: loan.finishedAt?.value ?: LocalDateTime.now()
+        `datetime will be mocked`(finishDateTime)
+        return libraryClient.finishLoan(bookId = bookId ?: loan.bookId)
     }
 
     private fun `id will be mocked`(id: UUID): UUID = mockIdGenerator?.mock(id).let { id }

@@ -1,6 +1,7 @@
 package com.github.caay2000.librarykata.context.loan.domain
 
 import java.util.UUID
+import kotlin.math.abs
 
 data class User(
     val id: UserId,
@@ -11,7 +12,7 @@ data class User(
         if (value > 0) {
             copy(currentLoans = currentLoans.increase(value))
         } else {
-            copy(currentLoans = currentLoans.decrease(value))
+            copy(currentLoans = currentLoans.decrease(abs(value)))
         }
 
     fun hasReachedLoanLimit(): Boolean = currentLoans.value >= 5

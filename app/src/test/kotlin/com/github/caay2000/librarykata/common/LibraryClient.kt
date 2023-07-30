@@ -18,6 +18,7 @@ import com.github.caay2000.librarykata.context.book.domain.BookIsbn
 import com.github.caay2000.librarykata.context.book.domain.BookPages
 import com.github.caay2000.librarykata.context.book.domain.BookPublisher
 import com.github.caay2000.librarykata.context.book.domain.BookTitle
+import com.github.caay2000.librarykata.context.book.primaryadapter.http.serialization.AllBooksDocument
 import com.github.caay2000.librarykata.context.book.primaryadapter.http.serialization.BookByIdDocument
 import com.github.caay2000.librarykata.context.book.primaryadapter.http.serialization.BookCreateRequestDocument
 import com.github.caay2000.librarykata.context.book.primaryadapter.http.serialization.BookDocument
@@ -36,6 +37,7 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.decodeFromJsonElement
+import com.github.caay2000.librarykata.context.loan.domain.BookId as LoanBookId
 import com.github.caay2000.librarykata.context.loan.domain.BookIsbn as LoanBookIsbn
 
 class LibraryClient {
@@ -98,6 +100,10 @@ class LibraryClient {
         runBlocking { client.get("/book?isbn=${isbn.value}").toHttpDataResponse() }
 
     context(ApplicationTestBuilder)
+    fun searchBooks(): HttpDataResponse<AllBooksDocument> =
+        runBlocking { client.get("/book").toHttpDataResponse() }
+
+    context(ApplicationTestBuilder)
     fun createLoan(
         bookIsbn: LoanBookIsbn,
         userId: UserId,
@@ -108,6 +114,12 @@ class LibraryClient {
                 setBody(Json.encodeToString(request))
                 contentType(ContentType.Application.Json)
             }.toHttpDataResponse()
+        }
+
+    context(ApplicationTestBuilder)
+    fun finishLoan(bookId: LoanBookId): HttpDataResponse<Unit> =
+        runBlocking {
+            client.post("/loan/${bookId.value}").toHttpDataResponse()
         }
 
     private suspend inline fun <reified T> HttpResponse.toHttpDataResponse(): HttpDataResponse<T> {

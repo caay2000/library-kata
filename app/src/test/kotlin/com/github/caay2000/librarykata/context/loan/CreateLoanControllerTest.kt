@@ -9,6 +9,7 @@ import com.github.caay2000.dikt.DiKt
 import com.github.caay2000.librarykata.common.TestUseCases
 import com.github.caay2000.librarykata.context.account.mother.AccountMother
 import com.github.caay2000.librarykata.context.book.mother.BookMother
+import com.github.caay2000.librarykata.context.loan.domain.BookId
 import com.github.caay2000.librarykata.context.loan.domain.UserId
 import com.github.caay2000.librarykata.context.loan.mother.LoanMother
 import com.github.caay2000.librarykata.context.loan.primaryadapter.http.serialization.toLoanDocument
@@ -70,6 +71,23 @@ class CreateLoanControllerTest {
         testUseCases.`loan is created`(loan, book.isbn)
             .assertStatus(HttpStatusCode.InternalServerError)
             .assertErrorMessage("user ${account.id} has too many loans")
+    }
+
+    @Test
+    fun `an account with 5 loans can retrieve more books if finish one of the previous loans`() = testApplication {
+        testUseCases.`multiple copies of the same book are created`(book, 6)
+        testUseCases.`account is created`(account)
+            .assertStatus(HttpStatusCode.Created)
+        repeat(5) {
+            testUseCases.`loan is created`(userId = UserId(account.id.value), bookIsbn = book.isbn)
+                .assertStatus(HttpStatusCode.Created)
+        }
+
+        testUseCases.`loan is finished`(bookId = BookId(book.id.value))
+            .assertStatus(HttpStatusCode.Accepted)
+
+        testUseCases.`loan is created`(loan, book.isbn)
+            .assertStatus(HttpStatusCode.Created)
     }
 
     private val account = AccountMother.random()
