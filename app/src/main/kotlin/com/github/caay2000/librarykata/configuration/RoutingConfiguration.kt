@@ -8,6 +8,7 @@ import com.github.caay2000.librarykata.context.book.primaryadapter.http.CreateBo
 import com.github.caay2000.librarykata.context.book.primaryadapter.http.FindBookByIdController
 import com.github.caay2000.librarykata.context.book.primaryadapter.http.SearchBookByIsbnController
 import com.github.caay2000.librarykata.context.book.primaryadapter.http.SearchBookController
+import com.github.caay2000.librarykata.context.book.primaryadapter.http.SearchLoanByUserIdController
 import com.github.caay2000.librarykata.context.loan.primaryadapter.http.CreateLoanController
 import com.github.caay2000.librarykata.context.loan.primaryadapter.http.FinishLoanController
 import io.ktor.server.application.call
@@ -25,6 +26,9 @@ val RoutingConfiguration = createApplicationPlugin(name = "RoutingConfiguration"
         get("/book") { DiKt.get<SearchBookController>().invoke(this.call) }
         get("/book/{id}") { DiKt.get<FindBookByIdController>().invoke(this.call) }
         post("/book") { DiKt.get<CreateBookController>().invoke(this.call) }
+
+        // TODO should this be /account/{id}/loans ?
+        get("/loan", queryParam = "userId") { DiKt.get<SearchLoanByUserIdController>().invoke(this.call) }
 
         post("/loan") { DiKt.get<CreateLoanController>().invoke(this.call) }
         post("/loan/{bookId}") { DiKt.get<FinishLoanController>().invoke(this.call) }

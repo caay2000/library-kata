@@ -25,6 +25,10 @@ object LoanMother {
         finishedAt,
     )
 
+    fun finishedLoan(
+        finishedAt: FinishedAt = FinishedAt(LocalDateTime.now()),
+    ) = random(createdAt = CreatedAt(finishedAt.value.minusDays(3)), finishedAt = finishedAt)
+
     fun random(
         id: UUID = UUID.randomUUID(),
         bookId: UUID = UUID.randomUUID(),

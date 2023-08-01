@@ -22,6 +22,7 @@ import com.github.caay2000.librarykata.context.book.primaryadapter.http.serializ
 import com.github.caay2000.librarykata.context.book.primaryadapter.http.serialization.BookByIdDocument
 import com.github.caay2000.librarykata.context.book.primaryadapter.http.serialization.BookCreateRequestDocument
 import com.github.caay2000.librarykata.context.book.primaryadapter.http.serialization.BookDocument
+import com.github.caay2000.librarykata.context.book.primaryadapter.http.serialization.LoanByUserIdDocument
 import com.github.caay2000.librarykata.context.loan.domain.UserId
 import com.github.caay2000.librarykata.context.loan.primaryadapter.http.serialization.LoanDocument
 import com.github.caay2000.librarykata.context.loan.primaryadapter.http.serialization.LoanRequestDocument
@@ -102,6 +103,10 @@ class LibraryClient {
     context(ApplicationTestBuilder)
     fun searchBooks(): HttpDataResponse<AllBooksDocument> =
         runBlocking { client.get("/book").toHttpDataResponse() }
+
+    context(ApplicationTestBuilder)
+    fun searchLoanByUserId(userId: UserId): HttpDataResponse<LoanByUserIdDocument> =
+        runBlocking { client.get("/loan?userId=${userId.value}").toHttpDataResponse() }
 
     context(ApplicationTestBuilder)
     fun createLoan(
