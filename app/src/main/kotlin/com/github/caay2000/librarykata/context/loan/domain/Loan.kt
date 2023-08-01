@@ -41,6 +41,7 @@ data class Loan(
         loanId = id.value,
         bookId = bookId.value,
         userId = userId.value,
+        createdAt = createdAt.value,
     )
 
     private fun toLoanFinishedEvent() = LoanFinishedEvent(

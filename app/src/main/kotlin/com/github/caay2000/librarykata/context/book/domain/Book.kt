@@ -36,8 +36,6 @@ data class Book(
         publisher = publisher.value,
     )
 
-    val isAvailable: Boolean = available.value
-
     fun updateAvailability(available: BookAvailable): Book = copy(available = available)
 }
 

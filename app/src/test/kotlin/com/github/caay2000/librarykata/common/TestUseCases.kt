@@ -23,6 +23,7 @@ import com.github.caay2000.librarykata.context.book.mother.BookIsbnMother
 import com.github.caay2000.librarykata.context.book.primaryadapter.http.serialization.AllBooksDocument
 import com.github.caay2000.librarykata.context.book.primaryadapter.http.serialization.BookByIdDocument
 import com.github.caay2000.librarykata.context.book.primaryadapter.http.serialization.BookDocument
+import com.github.caay2000.librarykata.context.book.primaryadapter.http.serialization.LoanByUserIdDocument
 import com.github.caay2000.librarykata.context.loan.domain.CreatedAt
 import com.github.caay2000.librarykata.context.loan.domain.FinishedAt
 import com.github.caay2000.librarykata.context.loan.domain.Loan
@@ -108,6 +109,9 @@ class TestUseCases(
 
     context(ApplicationTestBuilder)
     fun `search all books`(): HttpDataResponse<AllBooksDocument> = libraryClient.searchBooks()
+
+    context(ApplicationTestBuilder)
+    fun `search all loans by UserId`(userId: UserId): HttpDataResponse<LoanByUserIdDocument> = libraryClient.searchLoanByUserId(userId)
 
     context(ApplicationTestBuilder)
     fun `loan is created`(
