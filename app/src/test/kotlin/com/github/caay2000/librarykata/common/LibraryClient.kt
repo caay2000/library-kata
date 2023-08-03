@@ -12,6 +12,7 @@ import com.github.caay2000.librarykata.context.account.domain.PhonePrefix
 import com.github.caay2000.librarykata.context.account.domain.Surname
 import com.github.caay2000.librarykata.context.account.primaryadapter.http.serialization.AccountDetailsDocument
 import com.github.caay2000.librarykata.context.account.primaryadapter.http.serialization.CreateAccountRequestDocument
+import com.github.caay2000.librarykata.context.account.primaryadapter.http.serialization.LoanByUserIdDocument
 import com.github.caay2000.librarykata.context.book.domain.BookAuthor
 import com.github.caay2000.librarykata.context.book.domain.BookId
 import com.github.caay2000.librarykata.context.book.domain.BookIsbn
@@ -22,7 +23,6 @@ import com.github.caay2000.librarykata.context.book.primaryadapter.http.serializ
 import com.github.caay2000.librarykata.context.book.primaryadapter.http.serialization.BookByIdDocument
 import com.github.caay2000.librarykata.context.book.primaryadapter.http.serialization.BookCreateRequestDocument
 import com.github.caay2000.librarykata.context.book.primaryadapter.http.serialization.BookDocument
-import com.github.caay2000.librarykata.context.book.primaryadapter.http.serialization.LoanByUserIdDocument
 import com.github.caay2000.librarykata.context.loan.domain.UserId
 import com.github.caay2000.librarykata.context.loan.primaryadapter.http.serialization.LoanDocument
 import com.github.caay2000.librarykata.context.loan.primaryadapter.http.serialization.LoanRequestDocument
@@ -77,6 +77,10 @@ class LibraryClient {
         runBlocking { client.get("/account/${id.value}").toHttpDataResponse() }
 
     context(ApplicationTestBuilder)
+    fun searchLoanByAccountId(accountId: AccountId): HttpDataResponse<LoanByUserIdDocument> =
+        runBlocking { client.get("/account/${accountId.value}/loan").toHttpDataResponse() }
+
+    context(ApplicationTestBuilder)
     fun createBook(
         isbn: BookIsbn,
         title: BookTitle,
@@ -103,10 +107,6 @@ class LibraryClient {
     context(ApplicationTestBuilder)
     fun searchBooks(): HttpDataResponse<AllBooksDocument> =
         runBlocking { client.get("/book").toHttpDataResponse() }
-
-    context(ApplicationTestBuilder)
-    fun searchLoanByUserId(userId: UserId): HttpDataResponse<LoanByUserIdDocument> =
-        runBlocking { client.get("/loan?userId=${userId.value}").toHttpDataResponse() }
 
     context(ApplicationTestBuilder)
     fun createLoan(

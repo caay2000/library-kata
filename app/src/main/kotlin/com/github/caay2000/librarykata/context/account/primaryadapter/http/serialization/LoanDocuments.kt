@@ -1,9 +1,9 @@
-package com.github.caay2000.librarykata.context.book.primaryadapter.http.serialization
+package com.github.caay2000.librarykata.context.account.primaryadapter.http.serialization
 
 import com.github.caay2000.common.serialization.LocalDateTimeSerializer
 import com.github.caay2000.common.serialization.UUIDSerializer
-import com.github.caay2000.librarykata.context.book.domain.Book
-import com.github.caay2000.librarykata.context.book.domain.Loan
+import com.github.caay2000.librarykata.context.account.domain.Book
+import com.github.caay2000.librarykata.context.account.domain.Loan
 import kotlinx.serialization.Serializable
 import java.time.LocalDateTime
 import java.util.UUID
@@ -11,7 +11,7 @@ import java.util.UUID
 @Serializable
 data class LoanByUserIdDocument(
     @Serializable(with = UUIDSerializer::class)
-    val userId: UUID,
+    val accountId: UUID,
     val loans: List<LoanDocument>,
 )
 

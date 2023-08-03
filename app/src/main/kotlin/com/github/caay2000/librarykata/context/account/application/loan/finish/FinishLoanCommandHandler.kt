@@ -1,11 +1,11 @@
-package com.github.caay2000.librarykata.context.book.application.loan.finish
+package com.github.caay2000.librarykata.context.account.application.loan.finish
 
 import com.github.caay2000.common.arrow.getOrThrow
 import com.github.caay2000.common.cqrs.Command
 import com.github.caay2000.common.cqrs.CommandHandler
-import com.github.caay2000.librarykata.context.book.application.LoanRepository
-import com.github.caay2000.librarykata.context.book.domain.FinishLoanDateTime
-import com.github.caay2000.librarykata.context.book.domain.LoanId
+import com.github.caay2000.librarykata.context.account.application.LoanRepository
+import com.github.caay2000.librarykata.context.account.domain.FinishLoanDateTime
+import com.github.caay2000.librarykata.context.account.domain.LoanId
 import mu.KLogger
 import mu.KotlinLogging
 import java.time.LocalDateTime

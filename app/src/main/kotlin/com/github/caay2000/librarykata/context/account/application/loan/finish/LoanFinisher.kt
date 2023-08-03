@@ -1,12 +1,12 @@
-package com.github.caay2000.librarykata.context.book.application.loan.finish
+package com.github.caay2000.librarykata.context.account.application.loan.finish
 
 import arrow.core.Either
 import arrow.core.flatMap
 import com.github.caay2000.common.database.RepositoryError
-import com.github.caay2000.librarykata.context.book.application.LoanRepository
-import com.github.caay2000.librarykata.context.book.domain.FinishLoanDateTime
-import com.github.caay2000.librarykata.context.book.domain.Loan
-import com.github.caay2000.librarykata.context.book.domain.LoanId
+import com.github.caay2000.librarykata.context.account.application.LoanRepository
+import com.github.caay2000.librarykata.context.account.domain.FinishLoanDateTime
+import com.github.caay2000.librarykata.context.account.domain.Loan
+import com.github.caay2000.librarykata.context.account.domain.LoanId
 
 class LoanFinisher(private val loanRepository: LoanRepository) {
 

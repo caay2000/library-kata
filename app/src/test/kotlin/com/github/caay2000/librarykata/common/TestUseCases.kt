@@ -11,6 +11,7 @@ import com.github.caay2000.librarykata.context.account.domain.PhoneNumber
 import com.github.caay2000.librarykata.context.account.domain.PhonePrefix
 import com.github.caay2000.librarykata.context.account.mother.AccountMother
 import com.github.caay2000.librarykata.context.account.primaryadapter.http.serialization.AccountDetailsDocument
+import com.github.caay2000.librarykata.context.account.primaryadapter.http.serialization.LoanByUserIdDocument
 import com.github.caay2000.librarykata.context.book.domain.Book
 import com.github.caay2000.librarykata.context.book.domain.BookAuthor
 import com.github.caay2000.librarykata.context.book.domain.BookId
@@ -23,7 +24,6 @@ import com.github.caay2000.librarykata.context.book.mother.BookIsbnMother
 import com.github.caay2000.librarykata.context.book.primaryadapter.http.serialization.AllBooksDocument
 import com.github.caay2000.librarykata.context.book.primaryadapter.http.serialization.BookByIdDocument
 import com.github.caay2000.librarykata.context.book.primaryadapter.http.serialization.BookDocument
-import com.github.caay2000.librarykata.context.book.primaryadapter.http.serialization.LoanByUserIdDocument
 import com.github.caay2000.librarykata.context.loan.domain.CreatedAt
 import com.github.caay2000.librarykata.context.loan.domain.FinishedAt
 import com.github.caay2000.librarykata.context.loan.domain.Loan
@@ -111,7 +111,7 @@ class TestUseCases(
     fun `search all books`(): HttpDataResponse<AllBooksDocument> = libraryClient.searchBooks()
 
     context(ApplicationTestBuilder)
-    fun `search all loans by UserId`(userId: UserId): HttpDataResponse<LoanByUserIdDocument> = libraryClient.searchLoanByUserId(userId)
+    fun `search all loans by AccountId`(accountId: AccountId): HttpDataResponse<LoanByUserIdDocument> = libraryClient.searchLoanByAccountId(accountId)
 
     context(ApplicationTestBuilder)
     fun `loan is created`(
