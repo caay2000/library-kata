@@ -1,11 +1,11 @@
-package com.github.caay2000.librarykata.context.book.secondaryadapter.database
+package com.github.caay2000.librarykata.context.account.secondaryadapter.database
 
 import arrow.core.Either
 import com.github.caay2000.common.database.RepositoryError
-import com.github.caay2000.librarykata.context.book.application.LoanRepository
-import com.github.caay2000.librarykata.context.book.domain.Loan
-import com.github.caay2000.librarykata.context.book.domain.LoanId
-import com.github.caay2000.librarykata.context.book.domain.UserId
+import com.github.caay2000.librarykata.context.account.application.LoanRepository
+import com.github.caay2000.librarykata.context.account.domain.AccountId
+import com.github.caay2000.librarykata.context.account.domain.Loan
+import com.github.caay2000.librarykata.context.account.domain.LoanId
 import com.github.caay2000.memorydb.InMemoryDatasource
 
 class InMemoryLoanRepository(private val datasource: InMemoryDatasource) : LoanRepository {
@@ -15,9 +15,9 @@ class InMemoryLoanRepository(private val datasource: InMemoryDatasource) : LoanR
             .mapLeft { RepositoryError.Unknown(it) }
             .map { }
 
-    override fun searchByUserId(userId: UserId): Either<RepositoryError, List<Loan>> =
+    override fun searchByAccountId(accountId: AccountId): Either<RepositoryError, List<Loan>> =
         Either.catch {
-            datasource.getAll<Loan>(TABLE_NAME).filter { it.userId == userId }
+            datasource.getAll<Loan>(TABLE_NAME).filter { it.accountId == accountId }
         }.mapLeft { RepositoryError.Unknown(it) }
 
     override fun findById(id: LoanId): Either<RepositoryError, Loan> =
@@ -31,6 +31,6 @@ class InMemoryLoanRepository(private val datasource: InMemoryDatasource) : LoanR
             }
 
     companion object {
-        private const val TABLE_NAME = "book.loan"
+        private const val TABLE_NAME = "account.loan"
     }
 }

@@ -1,9 +1,9 @@
-package com.github.caay2000.librarykata.context.book.primaryadapter.event
+package com.github.caay2000.librarykata.context.account.primaryadapter.event
 
 import com.github.caay2000.common.event.DomainEventSubscriber
-import com.github.caay2000.librarykata.context.book.application.LoanRepository
-import com.github.caay2000.librarykata.context.book.application.loan.start.StartLoanCommand
-import com.github.caay2000.librarykata.context.book.application.loan.start.StartLoanCommandHandler
+import com.github.caay2000.librarykata.context.account.application.LoanRepository
+import com.github.caay2000.librarykata.context.account.application.loan.start.StartLoanCommand
+import com.github.caay2000.librarykata.context.account.application.loan.start.StartLoanCommandHandler
 import com.github.caay2000.librarykata.events.loan.LoanCreatedEvent
 import mu.KLogger
 import mu.KotlinLogging
@@ -19,8 +19,8 @@ class StartLoanOnLoanCreatedEventSubscriber(
         commandHandler.invoke(
             StartLoanCommand(
                 id = event.loanId,
+                accountId = event.userId,
                 bookId = event.bookId,
-                userId = event.userId,
                 startedAt = event.createdAt,
             ),
         )

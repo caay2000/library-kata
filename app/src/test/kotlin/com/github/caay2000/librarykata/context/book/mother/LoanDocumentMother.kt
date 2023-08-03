@@ -1,8 +1,8 @@
 package com.github.caay2000.librarykata.context.book.mother
 
+import com.github.caay2000.librarykata.context.account.domain.LoanId
+import com.github.caay2000.librarykata.context.account.primaryadapter.http.serialization.LoanDocument
 import com.github.caay2000.librarykata.context.book.domain.Book
-import com.github.caay2000.librarykata.context.book.domain.LoanId
-import com.github.caay2000.librarykata.context.book.primaryadapter.http.serialization.LoanDocument
 import java.time.LocalDateTime
 
 object LoanDocumentMother {

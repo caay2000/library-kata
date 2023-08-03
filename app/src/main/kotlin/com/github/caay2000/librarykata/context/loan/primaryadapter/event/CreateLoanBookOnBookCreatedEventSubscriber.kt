@@ -8,7 +8,7 @@ import com.github.caay2000.librarykata.events.book.BookCreatedEvent
 import mu.KLogger
 import mu.KotlinLogging
 
-class CreateBookOnBookCreatedEventSubscriber(bookRepository: BookRepository) : DomainEventSubscriber<BookCreatedEvent>() {
+class CreateLoanBookOnBookCreatedEventSubscriber(bookRepository: BookRepository) : DomainEventSubscriber<BookCreatedEvent>() {
 
     override val logger: KLogger = KotlinLogging.logger {}
     private val commandHandler = CreateBookCommandHandler(bookRepository)
