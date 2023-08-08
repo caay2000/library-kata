@@ -22,7 +22,7 @@ class FindBookByIdController(bookRepository: BookRepository) : Controller {
     override suspend fun handle(call: ApplicationCall) {
         val bookId = BookId(UUID.fromString(call.parameters["id"]!!))
 
-        val queryResponse = queryHandler.handle(FindBookByIdQuery(bookId))
+        val queryResponse = queryHandler.invoke(FindBookByIdQuery(bookId))
         call.respond(HttpStatusCode.OK, queryResponse.value.toBookByIdDocument())
     }
 }

@@ -22,7 +22,7 @@ class FindAccountController(accountRepository: AccountRepository) : Controller {
     override suspend fun handle(call: ApplicationCall) {
         val accountId = AccountId(UUID.fromString(call.parameters["id"]!!))
 
-        val queryResult = queryHandler.handle(FindAccountByIdQuery(accountId))
+        val queryResult = queryHandler.invoke(FindAccountByIdQuery(accountId))
         call.respond(HttpStatusCode.OK, queryResult.account.toAccountDetailsDocument())
     }
 }

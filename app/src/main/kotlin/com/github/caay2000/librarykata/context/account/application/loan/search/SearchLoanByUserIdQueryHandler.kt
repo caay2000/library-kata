@@ -7,10 +7,14 @@ import com.github.caay2000.common.cqrs.QueryResponse
 import com.github.caay2000.librarykata.context.account.application.LoanRepository
 import com.github.caay2000.librarykata.context.account.domain.AccountId
 import com.github.caay2000.librarykata.context.account.domain.Loan
+import mu.KLogger
+import mu.KotlinLogging
 
 class SearchLoanByUserIdQueryHandler(
     loanRepository: LoanRepository,
 ) : QueryHandler<SearchLoanByAccountIdQuery, SearchLoanByAccountIdQueryResponse> {
+
+    override val logger: KLogger = KotlinLogging.logger {}
 
     private val searcher = LoanSearcher(loanRepository)
 

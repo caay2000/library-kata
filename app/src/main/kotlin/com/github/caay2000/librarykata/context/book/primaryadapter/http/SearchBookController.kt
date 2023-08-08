@@ -18,7 +18,7 @@ class SearchBookController(bookRepository: BookRepository) : Controller {
     private val queryHandler = SearchAllBooksQueryHandler(bookRepository)
 
     override suspend fun handle(call: ApplicationCall) {
-        val books = queryHandler.handle(SearchAllBooksQuery())
+        val books = queryHandler.invoke(SearchAllBooksQuery())
         val document = books.values.toAllBooksDocument()
         call.respond(HttpStatusCode.OK, document)
     }

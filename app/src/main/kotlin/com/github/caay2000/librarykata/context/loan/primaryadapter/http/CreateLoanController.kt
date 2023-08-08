@@ -43,7 +43,7 @@ class CreateLoanController(
         val datetime = dateProvider.dateTime()
         commandHandler.invoke(request.toCreateLoanCommand(loanId, datetime))
 
-        val queryResponse = queryHandler.handle(FindLoanByIdQuery(loanId))
+        val queryResponse = queryHandler.invoke(FindLoanByIdQuery(loanId))
         call.respond(HttpStatusCode.Created, queryResponse.loan.toLoanDocument())
     }
 

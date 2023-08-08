@@ -16,5 +16,5 @@ interface BookRepository {
 
 sealed class SearchBookCriteria {
     object All : SearchBookCriteria()
-    class ByIsbn(val isbn: BookIsbn) : SearchBookCriteria()
+    data class ByIsbn(val isbn: BookIsbn) : SearchBookCriteria()
 }

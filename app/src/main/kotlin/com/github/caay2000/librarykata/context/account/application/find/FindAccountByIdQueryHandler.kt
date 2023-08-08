@@ -7,8 +7,12 @@ import com.github.caay2000.common.cqrs.QueryResponse
 import com.github.caay2000.librarykata.context.account.application.AccountRepository
 import com.github.caay2000.librarykata.context.account.domain.Account
 import com.github.caay2000.librarykata.context.account.domain.AccountId
+import mu.KLogger
+import mu.KotlinLogging
 
 class FindAccountByIdQueryHandler(accountRepository: AccountRepository) : QueryHandler<FindAccountByIdQuery, FindAccountByIdQueryResponse> {
+
+    override val logger: KLogger = KotlinLogging.logger {}
 
     private val finder = AccountFinder(accountRepository)
 

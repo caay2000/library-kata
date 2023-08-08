@@ -5,15 +5,14 @@ import com.github.caay2000.common.database.Datasource
 @Suppress("UNCHECKED_CAST")
 class InMemoryDatasource : Datasource {
 
-    private val database: MutableMap<String, Map<String, *>> = mutableMapOf()
+    private val database: MutableMap<String, MutableMap<String, Any>> = mutableMapOf()
 
     fun <T> save(table: String, key: String, value: T): T {
-        val actualTable: Map<String, *>? = database[table]
+        val actualTable: MutableMap<String, *>? = database[table]
         if (actualTable == null) {
-            database[table] = mapOf(key to value)
-        } else {
-            database[table] = actualTable + mapOf(key to value)
+            database[table] = mutableMapOf()
         }
+        database[table]!![key] = value as Any
         return value
     }
 

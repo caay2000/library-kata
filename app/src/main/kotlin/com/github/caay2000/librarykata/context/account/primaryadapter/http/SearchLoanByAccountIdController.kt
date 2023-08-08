@@ -30,12 +30,12 @@ class SearchLoanByAccountIdController(
     override suspend fun handle(call: ApplicationCall) {
         val accountId = AccountId(UUID.fromString(call.parameters["id"]!!))
 
-        val loans = loanQueryHandler.handle(SearchLoanByAccountIdQuery(accountId)).value
+        val loans = loanQueryHandler.invoke(SearchLoanByAccountIdQuery(accountId)).value
 
         val document = LoanByUserIdDocument(
             accountId = accountId.value,
             loans = loans.map { loan ->
-                loan.toLoanDocument(bookQueryHandler.handle(FindBookByIdQuery(loan.bookId)).value)
+                loan.toLoanDocument(bookQueryHandler.invoke(FindBookByIdQuery(loan.bookId)).value)
             },
         )
 

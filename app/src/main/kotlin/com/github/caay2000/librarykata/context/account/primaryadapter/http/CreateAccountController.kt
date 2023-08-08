@@ -39,7 +39,7 @@ class CreateAccountController(
         val registerDate = dateProvider.dateTime()
         commandHandler.invoke(request.toCommand(accountId, registerDate))
 
-        val queryResult = queryHandler.handle(FindAccountByIdQuery(AccountId(accountId)))
+        val queryResult = queryHandler.invoke(FindAccountByIdQuery(AccountId(accountId)))
         call.respond(HttpStatusCode.Created, queryResult.account.toAccountDetailsDocument())
     }
 
