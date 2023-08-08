@@ -7,8 +7,12 @@ import com.github.caay2000.common.cqrs.QueryResponse
 import com.github.caay2000.librarykata.context.book.application.BookRepository
 import com.github.caay2000.librarykata.context.book.domain.Book
 import com.github.caay2000.librarykata.context.book.domain.BookId
+import mu.KLogger
+import mu.KotlinLogging
 
 class FindBookByIdQueryHandler(bookRepository: BookRepository) : QueryHandler<FindBookByIdQuery, FindBookByIdQueryResponse> {
+
+    override val logger: KLogger = KotlinLogging.logger {}
 
     private val finder = BookFinder(bookRepository)
 

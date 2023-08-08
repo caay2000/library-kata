@@ -21,7 +21,7 @@ class SearchBookByIsbnController(bookRepository: BookRepository) : Controller {
     override suspend fun handle(call: ApplicationCall) {
         val isbn = BookIsbn(call.parameters["isbn"]!!)
 
-        val queryResponse = queryHandler.handle(SearchBookByIsbnQuery(isbn))
+        val queryResponse = queryHandler.invoke(SearchBookByIsbnQuery(isbn))
         call.respond(HttpStatusCode.OK, queryResponse.value.toBookDocument())
     }
 }

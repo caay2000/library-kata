@@ -8,8 +8,12 @@ import com.github.caay2000.librarykata.context.book.application.BookRepository
 import com.github.caay2000.librarykata.context.book.application.SearchBookCriteria
 import com.github.caay2000.librarykata.context.book.domain.Book
 import com.github.caay2000.librarykata.context.book.domain.BookIsbn
+import mu.KLogger
+import mu.KotlinLogging
 
 class SearchBookByIsbnQueryHandler(bookRepository: BookRepository) : QueryHandler<SearchBookByIsbnQuery, SearchBookByIsbnQueryResponse> {
+
+    override val logger: KLogger = KotlinLogging.logger {}
 
     private val searcher = BookSearcher(bookRepository)
 

@@ -7,8 +7,12 @@ import com.github.caay2000.common.cqrs.QueryResponse
 import com.github.caay2000.librarykata.context.book.application.BookRepository
 import com.github.caay2000.librarykata.context.book.application.SearchBookCriteria
 import com.github.caay2000.librarykata.context.book.domain.Book
+import mu.KLogger
+import mu.KotlinLogging
 
 class SearchAllBooksQueryHandler(bookRepository: BookRepository) : QueryHandler<SearchAllBooksQuery, SearchAllBooksQueryResponse> {
+
+    override val logger: KLogger = KotlinLogging.logger {}
 
     private val searcher = BookSearcher(bookRepository)
 

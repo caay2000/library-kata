@@ -35,7 +35,7 @@ class CreateBookController(
         val bookId = UUID.fromString(idGenerator.generate())
         commandHandler.invoke(request.toCreateBookCommand(bookId))
 
-        val queryResponse = queryHandler.handle(FindBookByIdQuery(BookId(bookId)))
+        val queryResponse = queryHandler.invoke(FindBookByIdQuery(BookId(bookId)))
         call.respond(HttpStatusCode.Created, queryResponse.value.toBookByIdDocument())
     }
 
