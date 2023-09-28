@@ -8,7 +8,8 @@ plugins {
 
 rootProject.name = "library-kata"
 include(
-    "app",
+    "app-hexagonal-cqrs",
+    "app-event-driven",
     "libs:common-arrow",
     "libs:common-cqrs",
     "libs:common-database",
