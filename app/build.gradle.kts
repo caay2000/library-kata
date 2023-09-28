@@ -4,8 +4,8 @@ plugins {
     id("plugin-kotlin-serialization")
 }
 dependencies {
-    implementation("io.ktor:ktor-server-call-logging-jvm:2.3.2")
-    implementation("io.ktor:ktor-server-call-id-jvm:2.3.2")
+    implementation("io.ktor:ktor-server-call-logging-jvm:${project.ext["ktor_version"]}")
+    implementation("io.ktor:ktor-server-call-id-jvm:${project.ext["ktor_version"]}")
 }
 
 tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile::class).all {
