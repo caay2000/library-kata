@@ -4,7 +4,7 @@ plugins {
     `kotlin-dsl`
 }
 
-project.ext["kotlin_version"] =  "1.8.21"
+project.ext["kotlin_version"] =  "1.9.10"
 project.ext["spotless_version"] =  "6.20.0"
 project.ext["dependencies_version"] =  "0.47.0"
 
@@ -14,7 +14,7 @@ repositories {
 }
 
 tasks.wrapper {
-    gradleVersion = "8.2.1"
+    gradleVersion = "8.3"
     distributionType = Wrapper.DistributionType.ALL
 }
 
