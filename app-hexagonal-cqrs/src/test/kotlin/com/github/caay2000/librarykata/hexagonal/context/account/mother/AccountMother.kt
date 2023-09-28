@@ -4,6 +4,7 @@ import com.github.caay2000.common.test.RandomStringGenerator
 import com.github.caay2000.librarykata.hexagonal.context.domain.Account
 import com.github.caay2000.librarykata.hexagonal.context.domain.AccountId
 import com.github.caay2000.librarykata.hexagonal.context.domain.Birthdate
+import com.github.caay2000.librarykata.hexagonal.context.domain.CurrentLoans
 import com.github.caay2000.librarykata.hexagonal.context.domain.Email
 import com.github.caay2000.librarykata.hexagonal.context.domain.IdentityNumber
 import com.github.caay2000.librarykata.hexagonal.context.domain.Name
@@ -36,5 +37,6 @@ object AccountMother {
         phonePrefix = phonePrefix,
         phoneNumber = phoneNumber,
         registerDate = registerDate,
+        currentLoans = CurrentLoans(0),
     )
 }

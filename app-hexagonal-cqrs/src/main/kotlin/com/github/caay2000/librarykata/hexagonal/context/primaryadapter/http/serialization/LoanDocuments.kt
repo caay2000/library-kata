@@ -49,5 +49,5 @@ fun Loan.toLoanDocument(book: Book) =
 data class LoanRequestDocument(
     val bookIsbn: String,
     @Serializable(with = UUIDSerializer::class)
-    val userId: UUID,
+    val accountId: UUID,
 )

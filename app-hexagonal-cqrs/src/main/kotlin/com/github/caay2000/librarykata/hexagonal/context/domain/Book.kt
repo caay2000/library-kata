@@ -23,6 +23,7 @@ data class Book(
     }
 
     fun updateAvailability(available: BookAvailable): Book = copy(available = available)
+    val isAvailable: Boolean = available.value
 }
 
 @JvmInline

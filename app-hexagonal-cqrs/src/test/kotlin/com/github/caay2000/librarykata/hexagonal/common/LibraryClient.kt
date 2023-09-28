@@ -113,7 +113,7 @@ class LibraryClient {
     ): HttpDataResponse<LoanDocument> =
         runBlocking {
             client.post("/loan") {
-                val request = LoanRequestDocument(bookIsbn = bookIsbn.value, userId = UUID.fromString(accountId.value))
+                val request = LoanRequestDocument(bookIsbn = bookIsbn.value, accountId = UUID.fromString(accountId.value))
                 setBody(Json.encodeToString(request))
                 contentType(ContentType.Application.Json)
             }.toHttpDataResponse()
