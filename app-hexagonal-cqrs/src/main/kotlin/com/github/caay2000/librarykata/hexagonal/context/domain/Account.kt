@@ -63,8 +63,8 @@ value class RegisterDate(val value: LocalDateTime)
 
 @JvmInline
 value class CurrentLoans(val value: Int) {
-    fun increase(value: Int): CurrentLoans = CurrentLoans(this.value + value)
-    fun decrease(value: Int): CurrentLoans = CurrentLoans(Math.max(this.value - value, 0))
+    fun increase(value: Int = 1): CurrentLoans = CurrentLoans(this.value + value)
+    fun decrease(value: Int = 1): CurrentLoans = CurrentLoans(Math.max(this.value - value, 0))
 }
 
 data class CreateAccountRequest(

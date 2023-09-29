@@ -2,6 +2,8 @@ package com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.lo
 
 import com.github.caay2000.common.dateprovider.DateProvider
 import com.github.caay2000.common.http.Controller
+import com.github.caay2000.librarykata.hexagonal.context.application.account.AccountRepository
+import com.github.caay2000.librarykata.hexagonal.context.application.book.BookRepository
 import com.github.caay2000.librarykata.hexagonal.context.application.loan.LoanRepository
 import com.github.caay2000.librarykata.hexagonal.context.application.loan.finish.FinishLoanCommand
 import com.github.caay2000.librarykata.hexagonal.context.application.loan.finish.FinishLoanCommandHandler
@@ -15,11 +17,13 @@ import java.util.UUID
 class FinishLoanController(
     private val dateProvider: DateProvider,
     loanRepository: LoanRepository,
+    bookRepository: BookRepository,
+    accountRepository: AccountRepository,
 ) : Controller {
 
     override val logger: KLogger = KotlinLogging.logger {}
 
-    private val commandHandler = FinishLoanCommandHandler(loanRepository)
+    private val commandHandler = FinishLoanCommandHandler(loanRepository, bookRepository, accountRepository)
 
     override suspend fun handle(call: ApplicationCall) {
         val bookId = UUID.fromString(call.parameters["bookId"])

@@ -48,6 +48,26 @@ class FinishLoanControllerTest {
             .assertStatus(HttpStatusCode.Accepted)
     }
 
+    @Test
+    fun `after finishing a book it can be lended again`() = testApplication {
+        testUseCases.`book is created`(book)
+            .assertStatus(HttpStatusCode.Created)
+
+        testUseCases.`account is created`(account)
+            .assertStatus(HttpStatusCode.Created)
+
+        testUseCases.`loan is created`(loan, book.isbn)
+            .assertStatus(HttpStatusCode.Created)
+            .assertResponse(loan.toLoanDocument(book))
+
+        testUseCases.`loan is finished`(bookId = BookId(book.id.value))
+            .assertStatus(HttpStatusCode.Accepted)
+
+        testUseCases.`loan is created`(loan, book.isbn)
+            .assertStatus(HttpStatusCode.Created)
+            .assertResponse(loan.toLoanDocument(book))
+    }
+
     private val account = AccountMother.random()
     private val book = BookMother.random()
     private val loan = LoanMother.random(bookId = book.id, userId = account.id)

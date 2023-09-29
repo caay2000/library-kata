@@ -73,7 +73,7 @@ class CreateLoanControllerTest {
 
         testUseCases.`loan is created`(loan, book.isbn)
             .assertStatus(HttpStatusCode.InternalServerError)
-            .assertErrorMessage("user ${account.id} has too many loans")
+            .assertErrorMessage("user ${account.id.value} has too many loans")
     }
 
     @Test

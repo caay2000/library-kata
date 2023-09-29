@@ -39,5 +39,5 @@ val DependencyInjectionConfiguration = createApplicationPlugin(name = "Dependenc
     DiKt.register { SearchLoanByAccountIdController(DiKt.bind(), DiKt.bind()) }
 
     DiKt.register { CreateLoanController(DiKt.bind(), DiKt.bind(), DiKt.bind(), DiKt.bind(), DiKt.bind()) }
-    DiKt.register { FinishLoanController(DiKt.bind(), DiKt.bind()) }
+    DiKt.register { FinishLoanController(DiKt.bind(), DiKt.bind(), DiKt.bind(), DiKt.bind()) }
 }
