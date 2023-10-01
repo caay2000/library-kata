@@ -21,3 +21,6 @@ sealed class SearchBookCriteria {
     data object All : SearchBookCriteria()
     data class ByIsbn(val isbn: BookIsbn) : SearchBookCriteria()
 }
+
+fun <E> BookRepository.saveOrElse(book: Book, onError: (Throwable) -> E): Either<E, Book> =
+    save(book).mapLeft { onError(it) }.map { book }

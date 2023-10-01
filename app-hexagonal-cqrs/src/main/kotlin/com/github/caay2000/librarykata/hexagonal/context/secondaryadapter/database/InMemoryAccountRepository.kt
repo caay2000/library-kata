@@ -4,7 +4,6 @@ import arrow.core.Either
 import com.github.caay2000.common.database.RepositoryError
 import com.github.caay2000.librarykata.hexagonal.context.application.account.AccountRepository
 import com.github.caay2000.librarykata.hexagonal.context.application.account.FindAccountCriteria
-import com.github.caay2000.librarykata.hexagonal.context.application.account.SearchAccountCriteria
 import com.github.caay2000.librarykata.hexagonal.context.domain.Account
 import com.github.caay2000.memorydb.InMemoryDatasource
 
@@ -30,11 +29,6 @@ class InMemoryAccountRepository(private val datasource: InMemoryDatasource) : Ac
                 else -> RepositoryError.Unknown(error)
             }
         }
-
-    override fun search(criteria: SearchAccountCriteria): Either<RepositoryError, List<Account>> =
-        when (criteria) {
-            SearchAccountCriteria.All -> Either.catch { datasource.getAll<Account>(TABLE_NAME) }
-        }.mapLeft { RepositoryError.Unknown(it) }
 
     companion object {
         private const val TABLE_NAME = "account"

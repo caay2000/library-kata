@@ -2,17 +2,20 @@ package com.github.caay2000.librarykata.hexagonal.context.application.loan.finis
 
 import arrow.core.Either
 import arrow.core.flatMap
-import com.github.caay2000.common.database.RepositoryError
 import com.github.caay2000.librarykata.hexagonal.context.application.account.AccountRepository
 import com.github.caay2000.librarykata.hexagonal.context.application.account.FindAccountCriteria
+import com.github.caay2000.librarykata.hexagonal.context.application.account.findOrElse
+import com.github.caay2000.librarykata.hexagonal.context.application.account.saveOrElse
 import com.github.caay2000.librarykata.hexagonal.context.application.book.BookRepository
 import com.github.caay2000.librarykata.hexagonal.context.application.book.FindBookCriteria
+import com.github.caay2000.librarykata.hexagonal.context.application.book.saveOrElse
 import com.github.caay2000.librarykata.hexagonal.context.application.loan.FindLoanCriteria
 import com.github.caay2000.librarykata.hexagonal.context.application.loan.LoanRepository
+import com.github.caay2000.librarykata.hexagonal.context.application.loan.findOrElse
+import com.github.caay2000.librarykata.hexagonal.context.application.loan.saveOrElse
 import com.github.caay2000.librarykata.hexagonal.context.domain.Account
 import com.github.caay2000.librarykata.hexagonal.context.domain.AccountId
 import com.github.caay2000.librarykata.hexagonal.context.domain.Book
-import com.github.caay2000.librarykata.hexagonal.context.domain.BookAvailable
 import com.github.caay2000.librarykata.hexagonal.context.domain.BookId
 import com.github.caay2000.librarykata.hexagonal.context.domain.FinishedAt
 import com.github.caay2000.librarykata.hexagonal.context.domain.Loan
@@ -28,48 +31,57 @@ class LoanFinisher(
         finishedAt: FinishedAt,
     ): Either<LoanFinisherError, Unit> =
         findLoan(bookId)
-            .map { loan -> loan.finishLoan(finishedAt) }
-            .flatMap { loan -> loan.save() }
-            .flatMap { loan -> findAccount(loan.accountId) }
-            .map { account -> account.updateCurrentLoans() }
-            .flatMap { account -> account.save() }
-            .flatMap { findBook(bookId) }
-            .map { book -> book.updateToAvailable() }
-            .flatMap { book -> book.save() }
+            .flatMap { ctx -> ctx.findBook(bookId) }
+            .flatMap { ctx -> ctx.findAccount(ctx.loan.accountId) }
+            .map { ctx -> ctx.finishLoan(finishedAt) }
+            .flatMap { ctx -> ctx.save() }
 
-    private fun findLoan(bookId: BookId): Either<LoanFinisherError, Loan> =
-        loanRepository.find(FindLoanCriteria.ByBookIdAndNotFinished(bookId))
-            .mapLeft { error ->
-                when (error) {
-                    is RepositoryError.NotFoundError -> LoanFinisherError.LoanNotFound(bookId)
-                    else -> LoanFinisherError.UnknownError(error)
-                }
-            }
+    private fun findLoan(bookId: BookId): Either<LoanFinisherError, LoanFinisherContext> =
+        loanRepository.findOrElse(
+            criteria = FindLoanCriteria.ByBookIdAndNotFinished(bookId),
+            onResourceDoesNotExist = { LoanFinisherError.LoanNotFound(bookId) },
+            onUnexpectedError = { LoanFinisherError.UnknownError(it) },
+        ).map { LoanFinisherContext().withLoan(it) }
 
-    private fun findAccount(accountId: AccountId): Either<LoanFinisherError, Account> =
-        accountRepository.find(FindAccountCriteria.ById(accountId))
-            .mapLeft { LoanFinisherError.UnknownError(it) }
-
-    private fun Account.updateCurrentLoans() = copy(currentLoans = currentLoans.decrease())
-
-    private fun findBook(bookId: BookId): Either<LoanFinisherError, Book> =
+    private fun LoanFinisherContext.findBook(bookId: BookId): Either<LoanFinisherError, LoanFinisherContext> =
         bookRepository.find(FindBookCriteria.ById(bookId))
+            .map { book -> withBook(book) }
             .mapLeft { LoanFinisherError.UnknownError(it) }
 
-    private fun Loan.save(): Either<LoanFinisherError, Loan> =
-        loanRepository.save(this)
-            .mapLeft { LoanFinisherError.UnknownError(it) }
-            .map { this }
+    private fun LoanFinisherContext.findAccount(accountId: AccountId): Either<LoanFinisherError, LoanFinisherContext> =
+        accountRepository.findOrElse(
+            criteria = FindAccountCriteria.ById(accountId),
+            onUnexpectedError = { LoanFinisherError.UnknownError(it) },
+        ).map { account -> withAccount(account) }
 
-    private fun Account.save(): Either<LoanFinisherError, Unit> =
-        accountRepository.save(this)
-            .mapLeft { LoanFinisherError.UnknownError(it) }
+    private fun LoanFinisherContext.finishLoan(finishedAt: FinishedAt) =
+        withLoan(loan.finishLoan(finishedAt))
+            .withAccount(account.decreaseLoans())
+            .withBook(book.available())
 
-    private fun Book.updateToAvailable(): Book = updateAvailability(BookAvailable.available())
+    private fun LoanFinisherContext.save() =
+        loanRepository.saveOrElse(loan) { LoanFinisherError.UnknownError(it) }
+            .flatMap { accountRepository.saveOrElse(account) { LoanFinisherError.UnknownError(it) } }
+            .flatMap { bookRepository.saveOrElse(book) { LoanFinisherError.UnknownError(it) } }
+            .map { }
 
-    private fun Book.save(): Either<LoanFinisherError, Unit> =
-        bookRepository.save(this)
-            .mapLeft { LoanFinisherError.UnknownError(it) }
+    data class LoanFinisherContext(private val map: Map<String, Any> = mapOf()) {
+        val loan: Loan
+            get() = map["loan"]!! as Loan
+        val book: Book
+            get() = map["book"]!! as Book
+        val account: Account
+            get() = map["account"]!! as Account
+
+        fun withLoan(loan: Loan): LoanFinisherContext =
+            LoanFinisherContext(map + mutableMapOf("loan" to loan))
+
+        fun withBook(book: Book): LoanFinisherContext =
+            LoanFinisherContext(map + mutableMapOf("book" to book))
+
+        fun withAccount(account: Account): LoanFinisherContext =
+            LoanFinisherContext(map + mutableMapOf("account" to account))
+    }
 }
 
 sealed class LoanFinisherError : RuntimeException {

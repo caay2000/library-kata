@@ -14,7 +14,6 @@ interface AccountRepository : Repository {
 
     fun save(account: Account): Either<RepositoryError, Unit>
     fun find(criteria: FindAccountCriteria): Either<RepositoryError, Account>
-    fun search(criteria: SearchAccountCriteria): Either<RepositoryError, List<Account>>
 }
 
 sealed class FindAccountCriteria {
@@ -24,6 +23,18 @@ sealed class FindAccountCriteria {
     class ByPhone(val phonePrefix: PhonePrefix, val phoneNumber: PhoneNumber) : FindAccountCriteria()
 }
 
-sealed class SearchAccountCriteria {
-    data object All : SearchAccountCriteria()
-}
+fun <E> AccountRepository.saveOrElse(account: Account, onError: (Throwable) -> E): Either<E, Account> =
+    save(account).mapLeft { onError(it) }.map { account }
+
+fun <E> AccountRepository.findOrElse(
+    criteria: FindAccountCriteria,
+    onUnexpectedError: (Throwable) -> E,
+    onResourceDoesNotExist: (Throwable) -> E = { onUnexpectedError(it) },
+): Either<E, Account> =
+    find(criteria).mapLeft { error ->
+        if (error is RepositoryError.NotFoundError) {
+            onResourceDoesNotExist(error)
+        } else {
+            onUnexpectedError(error)
+        }
+    }

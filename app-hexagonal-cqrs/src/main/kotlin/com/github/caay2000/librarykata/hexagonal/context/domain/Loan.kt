@@ -28,8 +28,7 @@ data class Loan(
     val isFinished: Boolean = finishedAt != null
     val isNotFinished: Boolean = isFinished.not()
 
-    fun finishLoan(finishedAt: FinishedAt) =
-        copy(finishedAt = finishedAt)
+    fun finishLoan(finishedAt: FinishedAt) = copy(finishedAt = finishedAt)
 }
 
 @JvmInline

@@ -8,6 +8,7 @@ import arrow.core.right
 import com.github.caay2000.common.database.RepositoryError
 import com.github.caay2000.librarykata.hexagonal.context.application.book.BookRepository
 import com.github.caay2000.librarykata.hexagonal.context.application.book.FindBookCriteria
+import com.github.caay2000.librarykata.hexagonal.context.application.book.saveOrElse
 import com.github.caay2000.librarykata.hexagonal.context.domain.Book
 import com.github.caay2000.librarykata.hexagonal.context.domain.BookId
 import com.github.caay2000.librarykata.hexagonal.context.domain.CreateBookRequest
@@ -37,8 +38,7 @@ class BookCreator(
             .mapLeft { BookCreatorError.Unknown(it) }
 
     private fun Book.save(): Either<BookCreatorError, Unit> =
-        bookRepository.save(this)
-            .mapLeft { BookCreatorError.Unknown(it) }
+        bookRepository.saveOrElse<BookCreatorError>(this) { BookCreatorError.Unknown(it) }.map { }
 }
 
 sealed class BookCreatorError : RuntimeException {

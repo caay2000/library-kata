@@ -22,3 +22,19 @@ sealed class FindLoanCriteria {
 sealed class SearchLoanCriteria {
     class ByAccountId(val accountId: AccountId) : SearchLoanCriteria()
 }
+
+fun <E> LoanRepository.saveOrElse(loan: Loan, onError: (Throwable) -> E): Either<E, Loan> =
+    save(loan).mapLeft { onError(it) }.map { loan }
+
+fun <E> LoanRepository.findOrElse(
+    criteria: FindLoanCriteria,
+    onResourceDoesNotExist: () -> E,
+    onUnexpectedError: (Throwable) -> E,
+): Either<E, Loan> = find(criteria)
+    .mapLeft { error ->
+        if (error is RepositoryError.NotFoundError) {
+            onResourceDoesNotExist()
+        } else {
+            onUnexpectedError(error)
+        }
+    }

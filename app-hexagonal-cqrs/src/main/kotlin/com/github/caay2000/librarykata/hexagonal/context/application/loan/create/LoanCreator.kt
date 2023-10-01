@@ -4,18 +4,19 @@ import arrow.core.Either
 import arrow.core.flatMap
 import arrow.core.left
 import arrow.core.right
-import com.github.caay2000.common.database.RepositoryError
+import com.github.caay2000.common.arrow.firstOrElse
 import com.github.caay2000.librarykata.hexagonal.context.application.account.AccountRepository
 import com.github.caay2000.librarykata.hexagonal.context.application.account.FindAccountCriteria
+import com.github.caay2000.librarykata.hexagonal.context.application.account.findOrElse
+import com.github.caay2000.librarykata.hexagonal.context.application.account.saveOrElse
 import com.github.caay2000.librarykata.hexagonal.context.application.book.BookRepository
-import com.github.caay2000.librarykata.hexagonal.context.application.book.FindBookCriteria
 import com.github.caay2000.librarykata.hexagonal.context.application.book.SearchBookCriteria
+import com.github.caay2000.librarykata.hexagonal.context.application.book.saveOrElse
 import com.github.caay2000.librarykata.hexagonal.context.application.loan.LoanRepository
+import com.github.caay2000.librarykata.hexagonal.context.application.loan.saveOrElse
 import com.github.caay2000.librarykata.hexagonal.context.domain.Account
 import com.github.caay2000.librarykata.hexagonal.context.domain.AccountId
 import com.github.caay2000.librarykata.hexagonal.context.domain.Book
-import com.github.caay2000.librarykata.hexagonal.context.domain.BookAvailable
-import com.github.caay2000.librarykata.hexagonal.context.domain.BookId
 import com.github.caay2000.librarykata.hexagonal.context.domain.BookIsbn
 import com.github.caay2000.librarykata.hexagonal.context.domain.CreatedAt
 import com.github.caay2000.librarykata.hexagonal.context.domain.Loan
@@ -33,68 +34,58 @@ class LoanCreator(
         bookIsbn: BookIsbn,
         createdAt: CreatedAt,
     ): Either<LoanCreatorError, Unit> =
-        checkAccount(accountId)
-            .flatMap { checkBookAvailability(bookIsbn) }
-            .map { book -> Loan.create(id = loanId, bookId = book.id, accountId = accountId, createdAt = createdAt) }
-            .flatMap { loan -> loan.save() }
-            .flatMap { loan -> findBook(loan.bookId) }
-            .map { book -> book.bookUnavailable() }
-            .flatMap { book -> book.save() }
-            .flatMap { findAccount(accountId) }
-            .map { account -> account.updateAccountLoans() }
-            .flatMap { account -> account.save() }
+        guardAccountCurrentLoans(accountId)
+            .flatMap { ctx -> ctx.guardBookAvailability(bookIsbn) }
+            .map { ctx -> ctx.createLoan(loanId = loanId, createdAt = createdAt) }
+            .flatMap { ctx -> ctx.save() }
 
-    private fun findBook(bookId: BookId): Either<LoanCreatorError, Book> =
-        bookRepository.find(FindBookCriteria.ById(bookId))
-            .mapLeft { LoanCreatorError.UnknownError(it) }
-
-    private fun checkBookAvailability(bookIsbn: BookIsbn): Either<LoanCreatorError, Book> =
-        searchAllBooksByIsbn(bookIsbn)
-            .flatMap { books -> books.getFirstAvailableBook(bookIsbn) }
-
-    private fun searchAllBooksByIsbn(bookIsbn: BookIsbn): Either<LoanCreatorError, List<Book>> =
-        bookRepository.search(SearchBookCriteria.ByIsbn(bookIsbn))
-            .mapLeft { LoanCreatorError.UnknownError(it) }
-
-    private fun List<Book>.getFirstAvailableBook(isbn: BookIsbn): Either<LoanCreatorError, Book> =
-        Either.catch { first { it.isAvailable } }
-            .mapLeft { LoanCreatorError.BookNotAvailable(isbn) }
-
-    private fun Book.bookUnavailable(): Book = updateAvailability(BookAvailable.notAvailable())
-
-    private fun checkAccount(accountId: AccountId): Either<LoanCreatorError, Unit> =
-        findAccount(accountId)
-            .flatMap { book -> book.checkCurrentLoans() }
-
-    private fun findAccount(accountId: AccountId): Either<LoanCreatorError, Account> =
-        accountRepository.find(FindAccountCriteria.ById(accountId))
-            .mapLeft { error ->
-                when (error) {
-                    is RepositoryError.NotFoundError -> LoanCreatorError.UserNotFound(accountId)
-                    else -> LoanCreatorError.UnknownError(error)
-                }
+    private fun guardAccountCurrentLoans(accountId: AccountId): Either<LoanCreatorError, LoanCreatorContext> =
+        accountRepository.findOrElse(
+            criteria = FindAccountCriteria.ById(accountId),
+            onResourceDoesNotExist = { LoanCreatorError.UserNotFound(accountId) },
+            onUnexpectedError = { LoanCreatorError.UnknownError(it) },
+        ).flatMap { account ->
+            if (account.hasReachedLoanLimit()) {
+                LoanCreatorError.UserHasTooManyLoans(account.id).left()
+            } else {
+                LoanCreatorContext().withAccount(account).right()
             }
-
-    private fun Account.checkCurrentLoans(): Either<LoanCreatorError, Unit> =
-        when {
-            hasReachedLoanLimit() -> LoanCreatorError.UserHasTooManyLoans(id).left()
-            else -> Unit.right()
         }
 
-    private fun Account.updateAccountLoans() = this.copy(currentLoans = currentLoans.increase())
-
-    private fun Book.save(): Either<LoanCreatorError, Unit> =
-        bookRepository.save(this)
+    private fun LoanCreatorContext.guardBookAvailability(bookIsbn: BookIsbn): Either<LoanCreatorError, LoanCreatorContext> =
+        bookRepository.search(SearchBookCriteria.ByIsbn(bookIsbn))
             .mapLeft { LoanCreatorError.UnknownError(it) }
+            .flatMap { books -> books.firstOrElse(predicate = { it.isAvailable }) { LoanCreatorError.BookNotAvailable(bookIsbn) } }
+            .map { book -> withBook(book) }
 
-    private fun Loan.save(): Either<LoanCreatorError, Loan> =
-        loanRepository.save(this)
-            .mapLeft { LoanCreatorError.UnknownError(it) }
-            .map { this }
+    private fun LoanCreatorContext.createLoan(loanId: LoanId, createdAt: CreatedAt): LoanCreatorContext =
+        withLoan(Loan.create(id = loanId, bookId = book.id, accountId = account.id, createdAt = createdAt))
+            .withBook(book.unavailable())
+            .withAccount(account.increaseLoans())
 
-    private fun Account.save(): Either<LoanCreatorError, Unit> =
-        accountRepository.save(this)
-            .mapLeft { LoanCreatorError.UnknownError(it) }
+    private fun LoanCreatorContext.save() =
+        loanRepository.saveOrElse(loan) { LoanCreatorError.UnknownError(it) }
+            .flatMap { accountRepository.saveOrElse(account) { LoanCreatorError.UnknownError(it) } }
+            .flatMap { bookRepository.saveOrElse(book) { LoanCreatorError.UnknownError(it) } }
+            .map { }
+
+    data class LoanCreatorContext(private val map: Map<String, Any> = mapOf()) {
+        val loan: Loan
+            get() = map["loan"]!! as Loan
+        val book: Book
+            get() = map["book"]!! as Book
+        val account: Account
+            get() = map["account"]!! as Account
+
+        fun withLoan(loan: Loan): LoanCreatorContext =
+            LoanCreatorContext(map + mutableMapOf("loan" to loan))
+
+        fun withBook(book: Book): LoanCreatorContext =
+            LoanCreatorContext(map + mutableMapOf("book" to book))
+
+        fun withAccount(account: Account): LoanCreatorContext =
+            LoanCreatorContext(map + mutableMapOf("account" to account))
+    }
 }
 
 sealed class LoanCreatorError : RuntimeException {

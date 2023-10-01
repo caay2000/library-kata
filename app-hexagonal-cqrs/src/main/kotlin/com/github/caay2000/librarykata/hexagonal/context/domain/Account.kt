@@ -31,6 +31,8 @@ data class Account(
         )
     }
 
+    fun increaseLoans(): Account = copy(currentLoans = currentLoans.increase())
+    fun decreaseLoans(): Account = copy(currentLoans = currentLoans.decrease())
     fun hasReachedLoanLimit(): Boolean = currentLoans.value >= 5
 }
 
@@ -63,8 +65,8 @@ value class RegisterDate(val value: LocalDateTime)
 
 @JvmInline
 value class CurrentLoans(val value: Int) {
-    fun increase(value: Int = 1): CurrentLoans = CurrentLoans(this.value + value)
-    fun decrease(value: Int = 1): CurrentLoans = CurrentLoans(Math.max(this.value - value, 0))
+    internal fun increase(value: Int = 1): CurrentLoans = CurrentLoans(this.value + value)
+    internal fun decrease(value: Int = 1): CurrentLoans = CurrentLoans(Math.max(this.value - value, 0))
 }
 
 data class CreateAccountRequest(

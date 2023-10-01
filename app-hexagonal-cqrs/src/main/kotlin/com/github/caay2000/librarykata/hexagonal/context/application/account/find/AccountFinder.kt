@@ -1,22 +1,19 @@
 package com.github.caay2000.librarykata.hexagonal.context.application.account.find
 
 import arrow.core.Either
-import com.github.caay2000.common.database.RepositoryError
 import com.github.caay2000.librarykata.hexagonal.context.application.account.AccountRepository
 import com.github.caay2000.librarykata.hexagonal.context.application.account.FindAccountCriteria
+import com.github.caay2000.librarykata.hexagonal.context.application.account.findOrElse
 import com.github.caay2000.librarykata.hexagonal.context.domain.Account
 import com.github.caay2000.librarykata.hexagonal.context.domain.AccountId
 
 class AccountFinder(private val accountRepository: AccountRepository) {
 
     fun invoke(accountId: AccountId): Either<AccountFinderError, Account> =
-        accountRepository.find(FindAccountCriteria.ById(accountId))
-            .mapLeft { error ->
-                when (error) {
-                    is RepositoryError.NotFoundError -> AccountFinderError.AccountNotFoundError(accountId)
-                    else -> AccountFinderError.Unknown(error)
-                }
-            }
+        accountRepository.findOrElse(
+            criteria = FindAccountCriteria.ById(accountId),
+            onUnexpectedError = { AccountFinderError.Unknown(it) },
+        ) { AccountFinderError.AccountNotFoundError(accountId) }
 }
 
 sealed class AccountFinderError : RuntimeException {
