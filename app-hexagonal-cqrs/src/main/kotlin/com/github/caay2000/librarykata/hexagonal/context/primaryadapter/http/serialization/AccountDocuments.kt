@@ -23,7 +23,7 @@ data class AccountDetailsDocument(
 )
 
 fun Account.toAccountDetailsDocument() = AccountDetailsDocument(
-    id = id.toString(),
+    id = id.value,
     identityNumber = identityNumber.value,
     name = name.value,
     surname = surname.value,

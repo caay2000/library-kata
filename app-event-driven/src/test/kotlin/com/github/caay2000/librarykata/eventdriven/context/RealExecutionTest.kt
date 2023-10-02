@@ -49,9 +49,9 @@ class RealExecutionTest {
 
     context(ApplicationTestBuilder)
     private fun startLoan() {
-        logger.info { "Start new LOAN" }
         val book = availableBooks.keys.random()
         val account = existingAccounts.keys.random()
+        logger.info { "Start new LOAN, book[$book], account[$account]" }
         if (existingAccounts[account]!! < 5 && availableBooks[book]!! > 0) {
             libraryClient.createLoan(BookIsbn(book.isbn.value), UserId(account.id.value))
             availableBooks[book] = availableBooks[book]!!.dec()
@@ -62,8 +62,8 @@ class RealExecutionTest {
     context(ApplicationTestBuilder)
     private fun finishLoan() {
         if (existingLoans.size > 10) {
-            logger.info { "Finishing LOAN" }
             val loan = existingLoans.random()
+            logger.info { "Finishing LOAN, loan[$loan]" }
             libraryClient.finishLoan(loan.bookId)
             val returnedBook = availableBooks.keys.first { it.id == BookId(loan.bookId.value) }
             val account = existingAccounts.keys.first { it.id == AccountId(loan.userId.value) }

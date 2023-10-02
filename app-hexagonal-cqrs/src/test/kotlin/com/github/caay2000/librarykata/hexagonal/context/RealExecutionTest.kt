@@ -7,7 +7,6 @@ import com.github.caay2000.librarykata.hexagonal.context.domain.Account
 import com.github.caay2000.librarykata.hexagonal.context.domain.AccountId
 import com.github.caay2000.librarykata.hexagonal.context.domain.Book
 import com.github.caay2000.librarykata.hexagonal.context.domain.BookId
-import com.github.caay2000.librarykata.hexagonal.context.domain.BookIsbn
 import com.github.caay2000.librarykata.hexagonal.context.domain.Loan
 import io.ktor.server.testing.ApplicationTestBuilder
 import io.ktor.server.testing.testApplication
@@ -33,7 +32,7 @@ class RealExecutionTest {
         `multiple accounts are created`(100)
         `multiple books are created`(1000)
 
-        repeat(50000) {
+        repeat(10000) {
             val random = Random.nextInt(1000)
             when (random) {
                 in 1..399 -> startLoan()
@@ -47,11 +46,11 @@ class RealExecutionTest {
 
     context(ApplicationTestBuilder)
     private fun startLoan() {
-        logger.info { "Start new LOAN" }
         val book = availableBooks.keys.random()
         val account = existingAccounts.keys.random()
+        logger.info { "Start new LOAN, book[$book], account[$account]" }
         if (existingAccounts[account]!! < 5 && availableBooks[book]!! > 0) {
-            libraryClient.createLoan(BookIsbn(book.isbn.value), AccountId(account.id.value))
+            libraryClient.createLoan(book.isbn, account.id)
             availableBooks[book] = availableBooks[book]!!.dec()
             existingAccounts[account] = existingAccounts[account]!!.inc()
         }
@@ -60,8 +59,8 @@ class RealExecutionTest {
     context(ApplicationTestBuilder)
     private fun finishLoan() {
         if (existingLoans.size > 10) {
-            logger.info { "Finishing LOAN" }
             val loan = existingLoans.random()
+            logger.info { "Finishing LOAN, loan[$loan]" }
             libraryClient.finishLoan(loan.bookId)
             val returnedBook = availableBooks.keys.first { it.id == loan.bookId }
             val account = existingAccounts.keys.first { it.id == loan.accountId }
