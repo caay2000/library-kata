@@ -1,12 +1,11 @@
 plugins {
-    // Support convention plugins written in Kotlin.
-    // Convention plugins are build scripts in 'src/main' that automatically become available as plugins in the main build.
     `kotlin-dsl`
 }
 
 project.ext["kotlin_version"] =  "1.9.10"
 project.ext["spotless_version"] =  "6.20.0"
 project.ext["dependencies_version"] =  "0.47.0"
+project.ext["jib_version"] =  "3.4.0"
 
 repositories {
     // Use the plugin portal to apply community plugins in convention plugins.
@@ -23,4 +22,5 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-serialization:${project.ext["kotlin_version"]}")
     implementation("com.diffplug.spotless:spotless-plugin-gradle:${project.ext["spotless_version"]}")
     implementation("com.github.ben-manes:gradle-versions-plugin:${project.ext["dependencies_version"]}")
+    implementation("com.google.cloud.tools:jib-gradle-plugin:${project.ext["jib_version"]}")
 }
