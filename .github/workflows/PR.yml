@@ -25,4 +25,4 @@ jobs:
         run: echo "$COMMIT_COUNT=git rev-list --count HEAD" >> $GITHUB_ENV
 
       - name: Run Build
-        run: gradle clean spotlessCheck build --no-build-cache --parallel --Pversion="0.0.${{COMMIT_COUNT}}"
+        run: gradle clean spotlessCheck build --no-build-cache --parallel --Pversion="0.0.${{ env.COMMIT_COUNT }}"
