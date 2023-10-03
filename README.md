@@ -13,7 +13,7 @@ A Project Skeleton to build Kotlin apps with Gradle and Ktor
 
 - Añadir libros a la biblioteca
     - Un administrador podra añadir libros nuevos a la biblioteca
-    - Un libro debe tener informacio sobre su ISBN, titulo, autor, numero de pagina, editorial y año de publicacion
+    - Un libro debe tener informacion sobre su ISBN, titulo, autor, numero de paginas, editorial y año de publicacion
     - La biblioteca puede tener varias copias del mismo libro
 
 - Retirar un libro
