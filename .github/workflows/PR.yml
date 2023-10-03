@@ -13,6 +13,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
 
       - name: Setup Java JDK
         uses: actions/setup-java@v3
@@ -22,7 +24,9 @@ jobs:
           cache: 'gradle'
 
       - name: Set outputs
-        run: echo "COMMIT_COUNT=$(git rev-list --count HEAD)" >> $GITHUB_ENV
+        run: |
+          echo "COMMIT_COUNT=$(git rev-list --count HEAD)" >> $GITHUB_ENV
+          echo "${{ env.COMMIT_COUNT }}"
 
       - name: Run Build
         run: gradle clean spotlessCheck build --no-build-cache --parallel --Pversion="0.0.${{ env.COMMIT_COUNT }}"
