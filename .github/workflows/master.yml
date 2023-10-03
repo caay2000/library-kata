@@ -17,5 +17,10 @@ jobs:
           distribution: 'temurin'
           cache: 'gradle'
 
+      - name: Set Version
+        run: |
+          commitCount=$(git rev-list --count HEAD)
+          echo "VERSION=0.0.$commitCount" >> $GITHUB_ENV
+
       - name: Run Build
-        run: gradle clean build --no-build-cache --parallel
+        run: gradle clean build --no-build-cache --parallel -Pversion="0.0.${{ env.VERSION }}"
