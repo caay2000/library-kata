@@ -9,11 +9,15 @@ import com.github.caay2000.librarykata.hexagonal.context.domain.BookId
 
 class BookFinder(private val bookRepository: BookRepository) {
 
-    fun invoke(id: BookId): Either<BookFinderError, Book> =
-        bookRepository.find(FindBookCriteria.ById(id))
+    fun invoke(criteria: FindBookCriteria): Either<BookFinderError, Book> =
+        bookRepository.find(criteria)
             .mapLeft {
                 when (it) {
-                    is RepositoryError.NotFoundError -> BookFinderError.BookNotFound(id)
+                    is RepositoryError.NotFoundError -> {
+                        when (criteria) {
+                            is FindBookCriteria.ById -> BookFinderError.BookNotFoundById(criteria.id)
+                        }
+                    }
                     is RepositoryError.Unknown -> BookFinderError.UnknownError(it)
                 }
             }
@@ -24,5 +28,5 @@ sealed class BookFinderError : RuntimeException {
     constructor(throwable: Throwable) : super(throwable)
 
     class UnknownError(error: Throwable) : BookFinderError(error)
-    class BookNotFound(bookId: BookId) : BookFinderError("Book ${bookId.value} not found")
+    class BookNotFoundById(bookId: BookId) : BookFinderError("Book ${bookId.value} not found")
 }

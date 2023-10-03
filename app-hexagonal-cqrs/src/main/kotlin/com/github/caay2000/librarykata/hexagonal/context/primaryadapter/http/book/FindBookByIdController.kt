@@ -5,7 +5,7 @@ import com.github.caay2000.librarykata.hexagonal.context.application.book.BookRe
 import com.github.caay2000.librarykata.hexagonal.context.application.book.find.FindBookByIdQuery
 import com.github.caay2000.librarykata.hexagonal.context.application.book.find.FindBookByIdQueryHandler
 import com.github.caay2000.librarykata.hexagonal.context.domain.BookId
-import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.serialization.toBookByIdDocument
+import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.serialization.toBookDocument
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.ApplicationCall
 import io.ktor.server.response.respond
@@ -23,6 +23,6 @@ class FindBookByIdController(bookRepository: BookRepository) : Controller {
         val bookId = BookId(UUID.fromString(call.parameters["id"]!!).toString())
 
         val queryResponse = queryHandler.invoke(FindBookByIdQuery(bookId))
-        call.respond(HttpStatusCode.OK, queryResponse.value.toBookByIdDocument())
+        call.respond(HttpStatusCode.OK, queryResponse.value.toBookDocument())
     }
 }

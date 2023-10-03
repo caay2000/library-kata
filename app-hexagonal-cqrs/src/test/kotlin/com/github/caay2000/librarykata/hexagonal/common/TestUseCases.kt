@@ -24,10 +24,10 @@ import com.github.caay2000.librarykata.hexagonal.context.domain.LoanId
 import com.github.caay2000.librarykata.hexagonal.context.domain.PhoneNumber
 import com.github.caay2000.librarykata.hexagonal.context.domain.PhonePrefix
 import com.github.caay2000.librarykata.hexagonal.context.loan.mother.LoanMother
-import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.serialization.AccountDetailsDocument
-import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.serialization.AllBooksDocument
-import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.serialization.BookByIdDocument
+import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.serialization.AccountDocument
 import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.serialization.BookDocument
+import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.serialization.BookViewDocument
+import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.serialization.BookViewListDocument
 import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.serialization.LoanByAccountIdDocument
 import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.serialization.LoanDocument
 import io.ktor.server.testing.ApplicationTestBuilder
@@ -49,7 +49,7 @@ class TestUseCases(
         email: Email? = null,
         phonePrefix: PhonePrefix? = null,
         phoneNumber: PhoneNumber? = null,
-    ): HttpDataResponse<AccountDetailsDocument> {
+    ): HttpDataResponse<AccountDocument> {
         val id = accountId?.value ?: account.id.value
         `id will be mocked`(UUID.fromString(id))
         `datetime will be mocked`(account.registerDate.value)
@@ -65,7 +65,7 @@ class TestUseCases(
     }
 
     context(ApplicationTestBuilder)
-    fun `find account`(id: AccountId): HttpDataResponse<AccountDetailsDocument> = libraryClient.findAccount(id)
+    fun `find account`(id: AccountId): HttpDataResponse<AccountDocument> = libraryClient.findAccount(id)
 
     context(ApplicationTestBuilder)
     fun `book is created`(
@@ -76,7 +76,7 @@ class TestUseCases(
         author: BookAuthor? = null,
         pages: BookPages? = null,
         publisher: BookPublisher? = null,
-    ): HttpDataResponse<BookByIdDocument> {
+    ): HttpDataResponse<BookDocument> {
         `id will be mocked`(UUID.fromString(id?.value ?: book.id.value))
         return libraryClient.createBook(
             isbn = isbn ?: book.isbn,
@@ -99,13 +99,13 @@ class TestUseCases(
     }
 
     context(ApplicationTestBuilder)
-    fun `find book by id`(id: BookId): HttpDataResponse<BookByIdDocument> = libraryClient.findBookById(id)
+    fun `find book by id`(id: BookId): HttpDataResponse<BookDocument> = libraryClient.findBookById(id)
 
     context(ApplicationTestBuilder)
-    fun `find book by isbn`(isbn: BookIsbn): HttpDataResponse<BookDocument> = libraryClient.findBookByIsbn(isbn)
+    fun `find book by isbn`(isbn: BookIsbn): HttpDataResponse<BookViewDocument> = libraryClient.findBookByIsbn(isbn)
 
     context(ApplicationTestBuilder)
-    fun `search all books`(): HttpDataResponse<AllBooksDocument> = libraryClient.searchBooks()
+    fun `search all books`(): HttpDataResponse<BookViewListDocument> = libraryClient.searchBooks()
 
     context(ApplicationTestBuilder)
     fun `search all loans by AccountId`(accountId: AccountId): HttpDataResponse<LoanByAccountIdDocument> =

@@ -97,10 +97,10 @@ class RealExecutionTest {
                 author = author,
                 pages = pages,
                 publisher = publisher,
-            ).value!!.id
-            availableBooks[this.copy(id = BookId(id.toString()))] = 0
+            ).value!!.data.id
+            availableBooks[this.copy(id = BookId(id))] = 0
 
-            val size = libraryClient.searchBooks().value!!.books.size
+            val size = libraryClient.searchBooks().value!!.data.size
             logger.info { "Current Total books: $size" }
         }
 
@@ -118,7 +118,7 @@ class RealExecutionTest {
             val book = availableBooks.keys.first { it.isbn == this.isbn }
             availableBooks[book] = availableBooks[this]!!.inc()
 
-            val size = libraryClient.searchBooks().value!!.books.size
+            val size = libraryClient.searchBooks().value!!.data.size
             logger.info { "Current Total books: $size" }
         }
 
@@ -134,7 +134,7 @@ class RealExecutionTest {
                 email = email,
                 phonePrefix = phonePrefix,
                 phoneNumber = phoneNumber,
-            ).value!!.id
+            ).value!!.data.id
             existingAccounts[this.copy(id = AccountId(id))] = 0
         }
 }

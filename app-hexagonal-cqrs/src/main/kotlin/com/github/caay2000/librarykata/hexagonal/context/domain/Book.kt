@@ -25,6 +25,7 @@ data class Book(
     fun available(): Book = updateAvailability(BookAvailable.available())
     fun unavailable(): Book = updateAvailability(BookAvailable.notAvailable())
     private fun updateAvailability(available: BookAvailable): Book = copy(available = available)
+
     val isAvailable: Boolean = available.value
 }
 

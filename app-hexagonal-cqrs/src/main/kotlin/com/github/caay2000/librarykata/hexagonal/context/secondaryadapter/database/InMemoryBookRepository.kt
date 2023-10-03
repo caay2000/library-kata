@@ -28,7 +28,7 @@ class InMemoryBookRepository(private val datasource: InMemoryDatasource) : BookR
 
     override fun search(criteria: SearchBookCriteria): Either<RepositoryError, List<Book>> =
         when (criteria) {
-            SearchBookCriteria.All -> Either.catch { datasource.getAll<Book>(TABLE_NAME) }
+            SearchBookCriteria.All -> Either.catch { datasource.getAll(TABLE_NAME) }
             is SearchBookCriteria.ByIsbn -> Either.catch { datasource.getAll<Book>(TABLE_NAME).filter { it.isbn == criteria.isbn } }
         }.mapLeft { RepositoryError.Unknown(it) }
 

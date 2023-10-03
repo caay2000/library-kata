@@ -8,8 +8,8 @@ import com.github.caay2000.librarykata.hexagonal.context.application.book.create
 import com.github.caay2000.librarykata.hexagonal.context.application.book.find.FindBookByIdQuery
 import com.github.caay2000.librarykata.hexagonal.context.application.book.find.FindBookByIdQueryHandler
 import com.github.caay2000.librarykata.hexagonal.context.domain.BookId
-import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.serialization.BookCreateRequestDocument
-import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.serialization.toBookByIdDocument
+import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.serialization.BookRequestDocument
+import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.serialization.toBookDocument
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.ApplicationCall
 import io.ktor.server.request.receive
@@ -29,21 +29,21 @@ class CreateBookController(
     private val queryHandler = FindBookByIdQueryHandler(bookRepository)
 
     override suspend fun handle(call: ApplicationCall) {
-        val request = call.receive<BookCreateRequestDocument>()
+        val request = call.receive<BookRequestDocument>()
         val bookId = idGenerator.generate()
         commandHandler.invoke(request.toCreateBookCommand(bookId))
 
         val queryResponse = queryHandler.invoke(FindBookByIdQuery(BookId(bookId)))
-        call.respond(HttpStatusCode.Created, queryResponse.value.toBookByIdDocument())
+        call.respond(HttpStatusCode.Created, queryResponse.value.toBookDocument())
     }
 
-    private fun BookCreateRequestDocument.toCreateBookCommand(bookId: String) =
+    private fun BookRequestDocument.toCreateBookCommand(bookId: String) =
         CreateBookCommand(
             id = UUID.fromString(bookId),
-            isbn = isbn,
-            title = title,
-            author = author,
-            pages = pages,
-            publisher = publisher,
+            isbn = data.attributes.isbn,
+            title = data.attributes.title,
+            author = data.attributes.author,
+            pages = data.attributes.pages,
+            publisher = data.attributes.publisher,
         )
 }

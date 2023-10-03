@@ -8,7 +8,7 @@ import com.github.caay2000.common.test.mock.MockIdGenerator
 import com.github.caay2000.dikt.DiKt
 import com.github.caay2000.librarykata.hexagonal.common.TestUseCases
 import com.github.caay2000.librarykata.hexagonal.context.account.mother.AccountMother
-import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.serialization.toAccountDetailsDocument
+import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.serialization.toAccountDocument
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.testing.testApplication
 import org.junit.jupiter.api.BeforeEach
@@ -31,7 +31,7 @@ class CreateAccountControllerTest {
     fun `an account can be created`() = testApplication {
         testUseCases.`account is created`(account)
             .assertStatus(HttpStatusCode.Created)
-            .assertResponse(account.toAccountDetailsDocument())
+            .assertResponse(account.toAccountDocument())
     }
 
     @Test
@@ -40,7 +40,7 @@ class CreateAccountControllerTest {
 
         testUseCases.`find account`(account.id)
             .assertStatus(HttpStatusCode.OK)
-            .assertResponse(account.toAccountDetailsDocument())
+            .assertResponse(account.toAccountDocument())
     }
 
     @Test

@@ -5,6 +5,7 @@ import com.github.caay2000.common.cqrs.Query
 import com.github.caay2000.common.cqrs.QueryHandler
 import com.github.caay2000.common.cqrs.QueryResponse
 import com.github.caay2000.librarykata.hexagonal.context.application.book.BookRepository
+import com.github.caay2000.librarykata.hexagonal.context.application.book.FindBookCriteria
 import com.github.caay2000.librarykata.hexagonal.context.domain.Book
 import com.github.caay2000.librarykata.hexagonal.context.domain.BookId
 import mu.KLogger
@@ -17,7 +18,7 @@ class FindBookByIdQueryHandler(bookRepository: BookRepository) : QueryHandler<Fi
     private val finder = BookFinder(bookRepository)
 
     override fun handle(query: FindBookByIdQuery): FindBookByIdQueryResponse =
-        finder.invoke(query.id)
+        finder.invoke(FindBookCriteria.ById(query.id))
             .map { book -> FindBookByIdQueryResponse(book) }
             .getOrThrow()
 }

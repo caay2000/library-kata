@@ -16,12 +16,16 @@ import com.github.caay2000.librarykata.hexagonal.context.domain.Name
 import com.github.caay2000.librarykata.hexagonal.context.domain.PhoneNumber
 import com.github.caay2000.librarykata.hexagonal.context.domain.PhonePrefix
 import com.github.caay2000.librarykata.hexagonal.context.domain.Surname
-import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.serialization.AccountDetailsDocument
-import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.serialization.AllBooksDocument
-import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.serialization.BookByIdDocument
-import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.serialization.BookCreateRequestDocument
+import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.serialization.AccountDocument
+import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.serialization.AccountRequestAttributes
+import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.serialization.AccountRequestDocument
+import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.serialization.AccountRequestResource
 import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.serialization.BookDocument
-import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.serialization.CreateAccountRequestDocument
+import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.serialization.BookRequestAttributes
+import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.serialization.BookRequestDocument
+import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.serialization.BookRequestResource
+import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.serialization.BookViewDocument
+import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.serialization.BookViewListDocument
 import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.serialization.LoanByAccountIdDocument
 import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.serialization.LoanDocument
 import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.serialization.LoanRequestDocument
@@ -50,19 +54,23 @@ class LibraryClient {
         email: Email,
         phonePrefix: PhonePrefix,
         phoneNumber: PhoneNumber,
-    ): HttpDataResponse<AccountDetailsDocument> =
+    ): HttpDataResponse<AccountDocument> =
         runBlocking {
             client.post("/account") {
                 setBody(
                     Json.encodeToString(
-                        CreateAccountRequestDocument(
-                            identityNumber = identityNumber.value,
-                            name = name.value,
-                            surname = surname.value,
-                            birthdate = birthdate.value,
-                            email = email.value,
-                            phonePrefix = phonePrefix.value,
-                            phoneNumber = phoneNumber.value,
+                        AccountRequestDocument(
+                            data = AccountRequestResource(
+                                attributes = AccountRequestAttributes(
+                                    identityNumber = identityNumber.value,
+                                    name = name.value,
+                                    surname = surname.value,
+                                    birthdate = birthdate.value,
+                                    email = email.value,
+                                    phonePrefix = phonePrefix.value,
+                                    phoneNumber = phoneNumber.value,
+                                ),
+                            ),
                         ),
                     ),
                 )
@@ -71,7 +79,7 @@ class LibraryClient {
         }
 
     context(ApplicationTestBuilder)
-    fun findAccount(id: AccountId): HttpDataResponse<AccountDetailsDocument> =
+    fun findAccount(id: AccountId): HttpDataResponse<AccountDocument> =
         runBlocking { client.get("/account/${id.value}").toHttpDataResponse() }
 
     context(ApplicationTestBuilder)
@@ -85,25 +93,35 @@ class LibraryClient {
         author: BookAuthor,
         pages: BookPages,
         publisher: BookPublisher,
-    ): HttpDataResponse<BookByIdDocument> =
+    ): HttpDataResponse<BookDocument> =
         runBlocking {
             client.post("/book") {
-                val request = BookCreateRequestDocument(isbn.value, title.value, author.value, pages.value, publisher.value)
+                val request = BookRequestDocument(
+                    data = BookRequestResource(
+                        attributes = BookRequestAttributes(
+                            isbn.value,
+                            title.value,
+                            author.value,
+                            pages.value,
+                            publisher.value,
+                        ),
+                    ),
+                )
                 setBody(Json.encodeToString(request))
                 contentType(ContentType.Application.Json)
             }.toHttpDataResponse()
         }
 
     context(ApplicationTestBuilder)
-    fun findBookById(id: BookId): HttpDataResponse<BookByIdDocument> =
+    fun findBookById(id: BookId): HttpDataResponse<BookDocument> =
         runBlocking { client.get("/book/${id.value}").toHttpDataResponse() }
 
     context(ApplicationTestBuilder)
-    fun findBookByIsbn(isbn: BookIsbn): HttpDataResponse<BookDocument> =
+    fun findBookByIsbn(isbn: BookIsbn): HttpDataResponse<BookViewDocument> =
         runBlocking { client.get("/book?isbn=${isbn.value}").toHttpDataResponse() }
 
     context(ApplicationTestBuilder)
-    fun searchBooks(): HttpDataResponse<AllBooksDocument> =
+    fun searchBooks(): HttpDataResponse<BookViewListDocument> =
         runBlocking { client.get("/book").toHttpDataResponse() }
 
     context(ApplicationTestBuilder)

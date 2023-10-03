@@ -9,8 +9,8 @@ import com.github.caay2000.librarykata.hexagonal.context.application.account.cre
 import com.github.caay2000.librarykata.hexagonal.context.application.account.find.FindAccountByIdQuery
 import com.github.caay2000.librarykata.hexagonal.context.application.account.find.FindAccountByIdQueryHandler
 import com.github.caay2000.librarykata.hexagonal.context.domain.AccountId
-import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.serialization.CreateAccountRequestDocument
-import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.serialization.toAccountDetailsDocument
+import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.serialization.AccountRequestDocument
+import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.serialization.toAccountDocument
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.ApplicationCall
 import io.ktor.server.request.receive
@@ -31,25 +31,25 @@ class CreateAccountController(
     private val queryHandler = FindAccountByIdQueryHandler(accountRepository)
 
     override suspend fun handle(call: ApplicationCall) {
-        val request = call.receive<CreateAccountRequestDocument>()
+        val request = call.receive<AccountRequestDocument>()
         val accountId = idGenerator.generate()
         val registerDate = dateProvider.dateTime()
         commandHandler.invoke(request.toCommand(accountId, registerDate))
 
         val queryResult = queryHandler.invoke(FindAccountByIdQuery(AccountId(accountId)))
-        call.respond(HttpStatusCode.Created, queryResult.account.toAccountDetailsDocument())
+        call.respond(HttpStatusCode.Created, queryResult.account.toAccountDocument())
     }
 
-    private fun CreateAccountRequestDocument.toCommand(accountId: String, registerDate: LocalDateTime): CreateAccountCommand =
+    private fun AccountRequestDocument.toCommand(accountId: String, registerDate: LocalDateTime): CreateAccountCommand =
         CreateAccountCommand(
             accountId = accountId,
-            identityNumber = identityNumber,
-            email = email,
-            phoneNumber = phoneNumber,
-            phonePrefix = phonePrefix,
-            name = name,
-            surname = surname,
-            birthdate = birthdate,
+            identityNumber = data.attributes.identityNumber,
+            email = data.attributes.email,
+            phoneNumber = data.attributes.phoneNumber,
+            phonePrefix = data.attributes.phonePrefix,
+            name = data.attributes.name,
+            surname = data.attributes.surname,
+            birthdate = data.attributes.birthdate,
             registerDate = registerDate,
         )
 }
