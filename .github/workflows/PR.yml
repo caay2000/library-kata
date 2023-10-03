@@ -21,5 +21,8 @@ jobs:
           distribution: 'adopt'
           cache: 'gradle'
 
+      - name: Set outputs
+        run: echo "git rev-list --count HEAD" >> $COMMIT_COUNT
+
       - name: Run Build
-        run: gradle clean spotlessCheck build --no-build-cache --parallel -Pversion="0.0.${{git rev-list --count HEAD}}"
+        run: gradle clean spotlessCheck build --no-build-cache --parallel --Pversion="0.0.${{$COMMIT_COUNT}}"
