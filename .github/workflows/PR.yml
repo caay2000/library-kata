@@ -22,4 +22,4 @@ jobs:
           cache: 'gradle'
 
       - name: Run Build
-        run: gradle clean spotlessCheck build --no-build-cache --parallel
+        run: gradle clean spotlessCheck build --no-build-cache --parallel -Pversion="0.0.${git rev-list --count HEAD}"
