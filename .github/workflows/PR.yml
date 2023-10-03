@@ -23,10 +23,10 @@ jobs:
           distribution: 'adopt'
           cache: 'gradle'
 
-      - name: Set outputs
+      - name: Set Version
         run: |
           echo "COMMIT_COUNT=$(git rev-list --count HEAD)" >> $GITHUB_ENV
-          echo "${{ env.COMMIT_COUNT }}"
+          echo "VERSION=0.0.${{ env.COMMIT_COUNT }}" >> $GITHUB_ENV
 
       - name: Run Build
-        run: gradle clean spotlessCheck build --no-build-cache --parallel -Pversion="0.0.${{ env.COMMIT_COUNT }}"
+        run: gradle clean spotlessCheck build --no-build-cache --parallel -Pversion="0.0.${{ env.VERSION }}"
