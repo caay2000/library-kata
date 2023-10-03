@@ -29,4 +29,4 @@ jobs:
           echo "${{ env.COMMIT_COUNT }}"
 
       - name: Run Build
-        run: gradle clean spotlessCheck build --no-build-cache --parallel --Pversion="0.0.${{ env.COMMIT_COUNT }}"
+        run: gradle clean spotlessCheck build --no-build-cache --parallel -Pversion="0.0.${{ env.COMMIT_COUNT }}"
