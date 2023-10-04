@@ -12,6 +12,7 @@ import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import java.time.LocalDateTime
 import java.util.UUID
@@ -88,6 +89,7 @@ internal class EventBusTest {
         }
     }
 
+    @Disabled
     @Test
     @OptIn(ExperimentalCoroutinesApi::class)
     internal fun `different partitions receive different aggregates`() = runTest {

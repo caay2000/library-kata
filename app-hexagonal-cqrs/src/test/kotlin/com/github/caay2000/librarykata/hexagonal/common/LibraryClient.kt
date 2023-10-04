@@ -17,13 +17,9 @@ import com.github.caay2000.librarykata.hexagonal.context.domain.PhoneNumber
 import com.github.caay2000.librarykata.hexagonal.context.domain.PhonePrefix
 import com.github.caay2000.librarykata.hexagonal.context.domain.Surname
 import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.serialization.AccountDocument
-import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.serialization.AccountRequestAttributes
 import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.serialization.AccountRequestDocument
-import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.serialization.AccountRequestResource
 import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.serialization.BookDocument
-import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.serialization.BookRequestAttributes
 import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.serialization.BookRequestDocument
-import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.serialization.BookRequestResource
 import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.serialization.BookViewDocument
 import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.serialization.BookViewListDocument
 import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.serialization.LoanByAccountIdDocument
@@ -60,8 +56,8 @@ class LibraryClient {
                 setBody(
                     Json.encodeToString(
                         AccountRequestDocument(
-                            data = AccountRequestResource(
-                                attributes = AccountRequestAttributes(
+                            data = AccountRequestDocument.Resource(
+                                attributes = AccountRequestDocument.Resource.Attributes(
                                     identityNumber = identityNumber.value,
                                     name = name.value,
                                     surname = surname.value,
@@ -97,8 +93,8 @@ class LibraryClient {
         runBlocking {
             client.post("/book") {
                 val request = BookRequestDocument(
-                    data = BookRequestResource(
-                        attributes = BookRequestAttributes(
+                    data = BookRequestDocument.Resource(
+                        attributes = BookRequestDocument.Resource.Attributes(
                             isbn.value,
                             title.value,
                             author.value,

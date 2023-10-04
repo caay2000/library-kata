@@ -1,9 +1,9 @@
 package com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.serialization
 
-import com.github.caay2000.common.jsonapi.JsonApiAttributes
 import com.github.caay2000.common.jsonapi.JsonApiDocument
 import com.github.caay2000.common.jsonapi.JsonApiRelationshipResource
 import com.github.caay2000.common.jsonapi.JsonApiResource
+import com.github.caay2000.common.jsonapi.JsonApiResourceAttributes
 import com.github.caay2000.common.serialization.LocalDateSerializer
 import com.github.caay2000.common.serialization.LocalDateTimeSerializer
 import com.github.caay2000.librarykata.hexagonal.context.domain.Account
@@ -13,43 +13,45 @@ import java.time.LocalDateTime
 
 @Serializable
 data class AccountDocument(
-    override val data: AccountResource,
-    override val included: List<AccountRelationshipResource> = emptyList(),
-) : JsonApiDocument
+    override val data: Resource,
+    override val included: List<RelationshipResource> = emptyList(),
+) : JsonApiDocument {
 
-@Serializable
-data class AccountResource(
-    override val id: String,
-    override val type: String = "account",
-    override val attributes: AccountAttributes,
-    override val relationships: List<JsonApiRelationshipResource> = emptyList(),
-) : JsonApiResource
+    @Serializable
+    data class Resource(
+        override val id: String,
+        override val type: String = "account",
+        override val attributes: Attributes,
+        override val relationships: List<JsonApiRelationshipResource> = emptyList(),
+    ) : JsonApiResource {
 
-@Serializable
-data class AccountAttributes(
-    val identityNumber: String,
-    val name: String,
-    val surname: String,
-    @Serializable(with = LocalDateSerializer::class)
-    val birthdate: LocalDate,
-    val email: String,
-    val phonePrefix: String,
-    val phoneNumber: String,
-    @Serializable(with = LocalDateTimeSerializer::class)
-    val registerDate: LocalDateTime,
-) : JsonApiAttributes
+        @Serializable
+        data class Attributes(
+            val identityNumber: String,
+            val name: String,
+            val surname: String,
+            @Serializable(with = LocalDateSerializer::class)
+            val birthdate: LocalDate,
+            val email: String,
+            val phonePrefix: String,
+            val phoneNumber: String,
+            @Serializable(with = LocalDateTimeSerializer::class)
+            val registerDate: LocalDateTime,
+        ) : JsonApiResourceAttributes
+    }
 
-@Serializable
-data class AccountRelationshipResource(
-    override val id: String,
-    override val type: String,
-    override val attributes: List<JsonApiAttributes>,
-) : JsonApiRelationshipResource
+    @Serializable
+    data class RelationshipResource(
+        override val id: String,
+        override val type: String,
+        override val attributes: List<JsonApiResourceAttributes>,
+    ) : JsonApiRelationshipResource
+}
 
 fun Account.toAccountDocument() = AccountDocument(
-    data = AccountResource(
+    data = AccountDocument.Resource(
         id = id.value,
-        attributes = AccountAttributes(
+        attributes = AccountDocument.Resource.Attributes(
             identityNumber = identityNumber.value,
             name = name.value,
             surname = surname.value,

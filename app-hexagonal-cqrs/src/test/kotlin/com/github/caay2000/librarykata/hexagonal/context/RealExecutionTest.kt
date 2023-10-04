@@ -7,65 +7,86 @@ import com.github.caay2000.librarykata.hexagonal.context.domain.Account
 import com.github.caay2000.librarykata.hexagonal.context.domain.AccountId
 import com.github.caay2000.librarykata.hexagonal.context.domain.Book
 import com.github.caay2000.librarykata.hexagonal.context.domain.BookId
+import com.github.caay2000.librarykata.hexagonal.context.domain.BookIsbn
+import com.github.caay2000.librarykata.hexagonal.context.domain.CreatedAt
 import com.github.caay2000.librarykata.hexagonal.context.domain.Loan
+import com.github.caay2000.librarykata.hexagonal.context.domain.LoanId
 import io.ktor.server.testing.ApplicationTestBuilder
 import io.ktor.server.testing.testApplication
 import mu.KLogger
 import mu.KotlinLogging
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
+import java.time.LocalDateTime
 import kotlin.random.Random
 
 class RealExecutionTest {
 
     private val libraryClient: LibraryClient = LibraryClient()
 
-    private val availableBooks = mutableMapOf<Book, Int>()
+    private val books = mutableListOf<Book>()
+    private val availableBooks = mutableMapOf<BookIsbn, Int>()
     private val existingAccounts = mutableMapOf<Account, Int>()
-    private val existingLoans = mutableListOf<Loan>()
+    private val existingLoans = mutableMapOf<BookId, Loan>()
 
     private val logger: KLogger = KotlinLogging.logger {}
+
+    private val map = mutableMapOf<String, Int>()
 
     @Disabled
     @Test
     fun `real execution test`() = testApplication {
-        `multiple accounts are created`(100)
-        `multiple books are created`(1000)
+        `multiple accounts are created`(20)
+        `multiple books are created`(100)
 
         repeat(10000) {
             val random = Random.nextInt(1000)
             when (random) {
-                in 1..399 -> startLoan()
-                in 400..799 -> finishLoan()
-                in 800..849 -> `create book copy`()
-                in 849..949 -> `create new book`()
-                in 950..999 -> `create new account`()
+                in 1..349 -> startLoan()
+                in 350..699 -> finishLoan()
+                in 700..799 -> `create book copy`()
+                in 800..899 -> `create new book`()
+                in 900..999 -> `create new account`()
             }
         }
+
+        logger.info { map }
     }
 
     context(ApplicationTestBuilder)
     private fun startLoan() {
-        val book = availableBooks.keys.random()
+        val book = books.random()
         val account = existingAccounts.keys.random()
-        logger.info { "Start new LOAN, book[$book], account[$account]" }
-        if (existingAccounts[account]!! < 5 && availableBooks[book]!! > 0) {
-            libraryClient.createLoan(book.isbn, account.id)
-            availableBooks[book] = availableBooks[book]!!.dec()
+        val available = libraryClient.findBookById(book.id).value!!.data.attributes.available
+        if (available && existingAccounts[account]!! < 5 && availableBooks[book.isbn]!! > 0) {
+            logger.info { "Start new LOAN, book[$book], account[$account]" }
+            val loanDocument = libraryClient.createLoan(book.isbn, account.id).value!!
+            availableBooks[book.isbn] = availableBooks[book.isbn]!!.dec()
             existingAccounts[account] = existingAccounts[account]!!.inc()
+            existingLoans[book.id] = Loan(
+                id = LoanId(loanDocument.id.toString()),
+                bookId = book.id,
+                accountId = account.id,
+                createdAt = CreatedAt(LocalDateTime.now()),
+                finishedAt = null,
+
+            )
+            map["startLoan"] = map.getOrDefault("startLoan", 0) + 1
         }
     }
 
     context(ApplicationTestBuilder)
     private fun finishLoan() {
         if (existingLoans.size > 10) {
-            val loan = existingLoans.random()
+            val loan = existingLoans.values.random()
             logger.info { "Finishing LOAN, loan[$loan]" }
             libraryClient.finishLoan(loan.bookId)
-            val returnedBook = availableBooks.keys.first { it.id == loan.bookId }
+            val returnedBook = books.first { it.id == loan.bookId }
             val account = existingAccounts.keys.first { it.id == loan.accountId }
-            availableBooks[returnedBook] = availableBooks[returnedBook]!!.inc()
-            existingAccounts[account] = existingAccounts[account]!!.inc()
+            availableBooks[returnedBook.isbn] = availableBooks[returnedBook.isbn]!!.inc()
+            existingAccounts[account] = existingAccounts[account]!!.dec()
+            existingLoans.remove(returnedBook.id)
+            map["finishLoan"] = map.getOrDefault("finishLoan", 0) + 1
         }
     }
 
@@ -79,7 +100,7 @@ class RealExecutionTest {
     private fun `multiple books are created`(size: Int = 1000) =
         repeat(size) {
             val random = Random.nextInt(1000)
-            if (availableBooks.size > 10 && random < 50) {
+            if (books.size > 10 && random < 50) {
                 `create book copy`()
             } else {
                 `create new book`()
@@ -90,7 +111,6 @@ class RealExecutionTest {
     private fun `create new book`() =
         with(BookMother.random()) {
             logger.info { "Create new BOOK" }
-            availableBooks[this] = 1
             val id = libraryClient.createBook(
                 isbn = isbn,
                 title = title,
@@ -98,15 +118,17 @@ class RealExecutionTest {
                 pages = pages,
                 publisher = publisher,
             ).value!!.data.id
-            availableBooks[this.copy(id = BookId(id))] = 0
+            books.add(this.copy(id = BookId(id)))
+            availableBooks[this.isbn] = availableBooks.getOrDefault(this.isbn, 0) + 1
 
+            map["createBook"] = map.getOrDefault("createBook", 0) + 1
             val size = libraryClient.searchBooks().value!!.data.size
             logger.info { "Current Total books: $size" }
         }
 
     context(ApplicationTestBuilder)
     private fun `create book copy`() =
-        with(availableBooks.keys.random()) {
+        with(books.random()) {
             logger.info { "Create BOOK copy" }
             libraryClient.createBook(
                 isbn = isbn,
@@ -115,9 +137,10 @@ class RealExecutionTest {
                 pages = pages,
                 publisher = publisher,
             )
-            val book = availableBooks.keys.first { it.isbn == this.isbn }
-            availableBooks[book] = availableBooks[this]!!.inc()
+            val book = books.first { it.isbn == this.isbn }
+            availableBooks[book.isbn] = availableBooks[book.isbn]!!.inc()
 
+            map["createBookCopy"] = map.getOrDefault("createBookCopy", 0) + 1
             val size = libraryClient.searchBooks().value!!.data.size
             logger.info { "Current Total books: $size" }
         }
@@ -136,5 +159,7 @@ class RealExecutionTest {
                 phoneNumber = phoneNumber,
             ).value!!.data.id
             existingAccounts[this.copy(id = AccountId(id))] = 0
+
+            map["createAccount"] = map.getOrDefault("createAccount", 0) + 1
         }
 }

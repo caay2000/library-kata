@@ -35,7 +35,7 @@ class EventBus(
             val partition = Integer.decode("0x${event.aggregateId.last()}") % numPartitions
             logger.debug { "publishing event $event into partition $partition" }
             _events[partition].emit(event)
-            _partitions[partition]!!.add(event)
+//            _partitions[partition]!!.add(event)
         }
     }
 

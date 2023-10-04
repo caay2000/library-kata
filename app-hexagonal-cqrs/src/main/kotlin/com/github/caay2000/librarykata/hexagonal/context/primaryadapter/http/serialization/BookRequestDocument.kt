@@ -7,20 +7,22 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class BookRequestDocument(
-    override val data: BookRequestResource,
-) : JsonApiRequestDocument
+    override val data: Resource,
+) : JsonApiRequestDocument {
 
-@Serializable
-data class BookRequestResource(
-    override val type: String = "book",
-    override val attributes: BookRequestAttributes,
-) : JsonApiRequestResource
+    @Serializable
+    data class Resource(
+        override val type: String = "book",
+        override val attributes: Attributes,
+    ) : JsonApiRequestResource {
 
-@Serializable
-data class BookRequestAttributes(
-    val isbn: String,
-    val title: String,
-    val author: String,
-    val pages: Int,
-    val publisher: String,
-) : JsonApiRequestAttributes
+        @Serializable
+        data class Attributes(
+            val isbn: String,
+            val title: String,
+            val author: String,
+            val pages: Int,
+            val publisher: String,
+        ) : JsonApiRequestAttributes
+    }
+}

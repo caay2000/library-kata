@@ -9,23 +9,25 @@ import java.time.LocalDate
 
 @Serializable
 data class AccountRequestDocument(
-    override val data: AccountRequestResource,
-) : JsonApiRequestDocument
+    override val data: Resource,
+) : JsonApiRequestDocument {
 
-@Serializable
-data class AccountRequestResource(
-    override val type: String = "account",
-    override val attributes: AccountRequestAttributes,
-) : JsonApiRequestResource
+    @Serializable
+    data class Resource(
+        override val type: String = "account",
+        override val attributes: Attributes,
+    ) : JsonApiRequestResource {
 
-@Serializable
-data class AccountRequestAttributes(
-    val identityNumber: String,
-    val name: String,
-    val surname: String,
-    @Serializable(with = LocalDateSerializer::class)
-    val birthdate: LocalDate,
-    val email: String,
-    val phonePrefix: String,
-    val phoneNumber: String,
-) : JsonApiRequestAttributes
+        @Serializable
+        data class Attributes(
+            val identityNumber: String,
+            val name: String,
+            val surname: String,
+            @Serializable(with = LocalDateSerializer::class)
+            val birthdate: LocalDate,
+            val email: String,
+            val phonePrefix: String,
+            val phoneNumber: String,
+        ) : JsonApiRequestAttributes
+    }
+}

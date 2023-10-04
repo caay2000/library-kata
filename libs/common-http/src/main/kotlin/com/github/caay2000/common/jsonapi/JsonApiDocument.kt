@@ -12,14 +12,14 @@ interface JsonApiListDocument {
 interface JsonApiResource {
     val id: String?
     val type: String
-    val attributes: JsonApiAttributes
+    val attributes: JsonApiResourceAttributes
     val relationships: List<JsonApiRelationshipResource>
 }
 
-interface JsonApiAttributes
+interface JsonApiResourceAttributes
 
 interface JsonApiRelationshipResource {
     val id: String?
     val type: String
-    val attributes: List<JsonApiAttributes>
+    val attributes: List<JsonApiResourceAttributes>
 }

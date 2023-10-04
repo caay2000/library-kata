@@ -11,9 +11,9 @@ import com.github.caay2000.librarykata.hexagonal.context.book.mother.BookIdMothe
 import com.github.caay2000.librarykata.hexagonal.context.book.mother.BookMother
 import com.github.caay2000.librarykata.hexagonal.context.domain.AccountId
 import com.github.caay2000.librarykata.hexagonal.context.domain.Book
-import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.serialization.BookViewAttributes
 import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.serialization.BookViewDocument
 import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.serialization.BookViewResource
+import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.serialization.BookViewResourceAttributes
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.testing.testApplication
 import org.junit.jupiter.api.BeforeEach
@@ -83,7 +83,7 @@ class SearchBookByIsbnControllerTest {
         availableCopies: Int = if (isAvailable) 1 else 0,
     ) = BookViewDocument(
         data = BookViewResource(
-            attributes = BookViewAttributes(
+            attributes = BookViewResourceAttributes(
                 isbn = isbn.value,
                 title = title.value,
                 author = author.value,

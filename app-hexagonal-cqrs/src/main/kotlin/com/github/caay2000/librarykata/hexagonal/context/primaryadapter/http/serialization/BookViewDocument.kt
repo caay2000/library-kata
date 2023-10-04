@@ -1,10 +1,10 @@
 package com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.serialization
 
-import com.github.caay2000.common.jsonapi.JsonApiAttributes
 import com.github.caay2000.common.jsonapi.JsonApiDocument
 import com.github.caay2000.common.jsonapi.JsonApiListDocument
 import com.github.caay2000.common.jsonapi.JsonApiRelationshipResource
 import com.github.caay2000.common.jsonapi.JsonApiResource
+import com.github.caay2000.common.jsonapi.JsonApiResourceAttributes
 import com.github.caay2000.librarykata.hexagonal.context.domain.Book
 import kotlinx.serialization.Serializable
 
@@ -21,12 +21,12 @@ data class BookViewListDocument(override val data: List<BookViewResource>) : Jso
 data class BookViewResource(
     override val id: String? = null,
     override val type: String = "book",
-    override val attributes: BookViewAttributes,
+    override val attributes: BookViewResourceAttributes,
     override val relationships: List<JsonApiRelationshipResource> = emptyList(),
 ) : JsonApiResource
 
 @Serializable
-data class BookViewAttributes(
+data class BookViewResourceAttributes(
     val isbn: String,
     val title: String,
     val author: String,
@@ -34,13 +34,13 @@ data class BookViewAttributes(
     val publisher: String,
     val copies: Int,
     val availableCopies: Int,
-) : JsonApiAttributes
+) : JsonApiResourceAttributes
 
 @Serializable
 data class BookViewRelationshipResource(
     override val id: String,
     override val type: String,
-    override val attributes: List<JsonApiAttributes>,
+    override val attributes: List<JsonApiResourceAttributes>,
 ) : JsonApiRelationshipResource
 
 fun List<Book>.toBookViewDocument() = BookViewDocument(
@@ -60,7 +60,7 @@ private fun List<Book>.toGroupedBookViewAttributes() =
         .toSortedMap(compareBy { it.value })
         .map { (key, books) ->
             val sample = books.first()
-            BookViewAttributes(
+            BookViewResourceAttributes(
                 isbn = key.value,
                 title = sample.title.value,
                 author = sample.author.value,
