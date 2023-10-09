@@ -1,0 +1,14 @@
+version: '2.2'
+services:
+  zookeeper:
+    volumes:
+      - ./docker/zookeeper/data:/var/lib/zookeeper/data
+      - ./docker/zookeeper/logs:/var/lib/zookeeper/log
+
+  kafka:
+    volumes:
+      - ./docker/kafka/data:/var/lib/kafka/data
+
+  wiremock:
+    ports:
+      - 8333:8080

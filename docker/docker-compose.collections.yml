@@ -1,0 +1,566 @@
+version: '2.2'
+services:
+  collections-api:
+    build:
+      context: collections-api
+    environment:
+      KAFKA_BOOTSTRAP_SERVERS: SSL://kafka:29092
+      KAFKA_BROKER_HOST: kafka
+      KAFKA_BROKER_PORT: 29092
+      KEYSTORE_LOCATION: /opt/application/collections/kafka-secrets/ks.jks
+      KEYSTORE_PASSWORD: myexampledev
+      KEY_PASSWORD: myexampledev
+      SCHEMA_REGISTRY_HOST: schema-registry
+      SCHEMA_REGISTRY_PORT: 8081
+      TRUSTSTORE_LOCATION: /opt/application/collections/kafka-secrets/ts.jks
+      TRUSTSTORE_PASSWORD: myexampledev
+      TOPIC_PARTITION_COUNT: 1
+      TOPIC_REPLICATION_FACTOR: 1
+      SALESFORCE_LOGIN_URL: http://wiremock:8080
+      PUBLIC_JWKS_URL: http://collections-test-identityservice:50000/oauth/.well-known/openid-configuration/jwks
+      DATABASE_HOST: postgres
+      PAYMENT_PLAN_ALLOW_DATE_AFTER_DAY_28: "true"
+      ENABLE_JSON_LOG_FORMATTER: "false"
+      SALESFORCE_API_HOST: wiremock
+      SALESFORCE_API_PORT: 8080
+    volumes:
+      - ./docker/kafka/secrets:/opt/application/collections/kafka-secrets
+    ports:
+      - 8090:8080
+    depends_on:
+      schema-registry:
+        condition: service_healthy
+      kafka:
+        condition: service_started
+      postgres:
+        condition: service_started
+      collections-test-identityservice:
+        condition: service_started
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://0.0.0.0:8080/health" ]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  collections-admin-api:
+    build:
+      context: collections-admin-api
+    environment:
+      KAFKA_BOOTSTRAP_SERVERS: SSL://kafka:29092
+      KAFKA_BROKER_HOST: kafka
+      KAFKA_BROKER_PORT: 29092
+      KEYSTORE_LOCATION: /opt/application/collections/kafka-secrets/ks.jks
+      KEYSTORE_PASSWORD: myexampledev
+      KEY_PASSWORD: myexampledev
+      SCHEMA_REGISTRY_HOST: schema-registry
+      SCHEMA_REGISTRY_PORT: 8081
+      TRUSTSTORE_LOCATION: /opt/application/collections/kafka-secrets/ts.jks
+      TRUSTSTORE_PASSWORD: myexampledev
+      TOPIC_PARTITION_COUNT: 1
+      TOPIC_REPLICATION_FACTOR: 1
+      LDAP_AUTHORIZED_USERS: mickey.mouse@myexample.com, donald.duck@myexample.com
+      LDAP_HOST: ldap
+      LDAP_SEARCH_USER: cn=admin,dc=zopian,dc=ad,dc=myexample,dc=com
+      LDAP_SEARCH_PASSWORD: test1234
+      ENABLE_JSON_LOG_FORMATTER: "false"
+    volumes:
+      - ./docker/kafka/secrets:/opt/application/collections/kafka-secrets
+    ports:
+      - 8101:8080
+    depends_on:
+      schema-registry:
+        condition: service_healthy
+      kafka:
+        condition: service_started
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://0.0.0.0:8080/health" ]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  collections-cc-mapper:
+    build:
+      context: collections-cc-mapper
+    restart: on-failure
+    ports:
+      - 8091:8080
+    depends_on:
+      schema-registry:
+        condition: service_healthy
+      kafka:
+        condition: service_started
+    environment:
+      KAFKA_BROKER_HOST: kafka
+      KAFKA_BROKER_PORT: 29092
+      KAFKA_SSL_ENABLED: "true"
+      KEYSTORE_LOCATION: /opt/application/collections/kafka-secrets/ks.jks
+      KEYSTORE_PASSWORD: myexampledev
+      SCHEMA_REGISTRY_HOST: schema-registry
+      SCHEMA_REGISTRY_PORT: 8081
+      TRUSTSTORE_LOCATION: /opt/application/collections/kafka-secrets/ts.jks
+      TRUSTSTORE_PASSWORD: myexampledev
+      TOPIC_PARTITION_COUNT: 1
+      TOPIC_REPLICATION_FACTOR: 1
+      CARD_MANAGMENT_SYSTEM_API_URL: http://wiremock:8080
+      IDENTITY_SERVICE_URL: http://collections-test-identityservice:50000
+      KAFKA_TOPICS_CREDITCARDS_CREATE: "true"
+      ENABLE_JSON_LOG_FORMATTER: "false"
+    volumes:
+      - ./docker/kafka/secrets:/opt/application/collections/kafka-secrets
+
+  collections-read-model-sync:
+    build:
+      context: collections-read-model-sync
+    restart: on-failure
+    environment:
+      KAFKA_BOOTSTRAP_SERVERS: SSL://kafka:29092
+      KAFKA_BROKER_HOST: kafka
+      KAFKA_BROKER_PORT: 29092
+      KEYSTORE_LOCATION: /opt/application/collections/kafka-secrets/ks.jks
+      KEYSTORE_PASSWORD: myexampledev
+      KEY_PASSWORD: myexampledev
+      SCHEMA_REGISTRY_HOST: schema-registry
+      SCHEMA_REGISTRY_PORT: 8081
+      TRUSTSTORE_LOCATION: /opt/application/collections/kafka-secrets/ts.jks
+      TRUSTSTORE_PASSWORD: myexampledev
+      TOPIC_PARTITION_COUNT: 1
+      TOPIC_REPLICATION_FACTOR: 1
+      DATABASE_HOST: postgres
+      ENABLE_JSON_LOG_FORMATTER: "false"
+    ports:
+      - 8092:8080
+    volumes:
+      - ./docker/kafka/secrets:/opt/application/collections/kafka-secrets
+    depends_on:
+      schema-registry:
+        condition: service_healthy
+      kafka:
+        condition: service_started
+      postgres:
+        condition: service_started
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://0.0.0.0:8080/health" ]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  collections-sf-sync:
+    build:
+      context: collections-sf-sync
+    restart: on-failure
+    ports:
+      - 8093:8080
+    depends_on:
+      schema-registry:
+        condition: service_healthy
+      kafka:
+        condition: service_started
+    environment:
+      SALESFORCE_API_HOST: wiremock
+      SALESFORCE_API_PORT: 8080
+      KAFKA_BROKER_HOST: kafka
+      KAFKA_BROKER_PORT: 29092
+      KAFKA_SSL_ENABLED: "true"
+      KEYSTORE_LOCATION: /opt/application/collections/kafka-secrets/ks.jks
+      KEYSTORE_PASSWORD: myexampledev
+      KEY_PASSWORD: myexampledev
+      SCHEMA_REGISTRY_HOST: schema-registry
+      SCHEMA_REGISTRY_PORT: 8081
+      CARD_MANAGEMENT_SYSTEM_API_URL: http://wiremock:8080
+      IDENTITY_SERVICE_URL: http://collections-test-identityservice:50000
+      TRUSTSTORE_LOCATION: /opt/application/collections/kafka-secrets/ts.jks
+      TRUSTSTORE_PASSWORD: myexampledev
+      TOPIC_PARTITION_COUNT: 1
+      TOPIC_REPLICATION_FACTOR: 1
+      FEATURE_FLAG_SALESFORCE_POST_COLLECTIONS_CASE: "true"
+      ENABLE_JSON_LOG_FORMATTER: "false"
+    volumes:
+      - ./docker/kafka/secrets:/opt/application/collections/kafka-secrets
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://0.0.0.0:8080/health" ]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  collections-command-processor:
+    build:
+      context: collections-command-processor
+    restart: on-failure
+    ports:
+      - 8094:8080
+    depends_on:
+      schema-registry:
+        condition: service_healthy
+      kafka:
+        condition: service_started
+    environment:
+      KAFKA_BROKER_HOST: kafka
+      KAFKA_BROKER_PORT: 29092
+      KAFKA_SSL_ENABLED: "true"
+      KEYSTORE_LOCATION: /opt/application/collections/kafka-secrets/ks.jks
+      KEYSTORE_PASSWORD: myexampledev
+      KEY_PASSWORD: myexampledev
+      SCHEMA_REGISTRY_HOST: schema-registry
+      SCHEMA_REGISTRY_PORT: 8081
+      CARD_MANAGEMENT_SYSTEM_API_URL: http://wiremock:8080
+      LOAN_SERVICING_API_URL: http://wiremock:8080
+      IDENTITY_SERVICE_URL: http://collections-test-identityservice:50000
+      TRUSTSTORE_LOCATION: /opt/application/collections/kafka-secrets/ts.jks
+      TRUSTSTORE_PASSWORD: myexampledev
+      TOPIC_PARTITION_COUNT: 1
+      TOPIC_REPLICATION_FACTOR: 1
+      ENABLE_JSON_LOG_FORMATTER: "false"
+    volumes:
+      - ./docker/kafka/secrets:/opt/application/collections/kafka-secrets
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://0.0.0.0:8080/health" ]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  collections-membership-mapper:
+    build:
+      context: collections-membership-mapper
+    restart: on-failure
+    ports:
+      - 8096:8080
+    depends_on:
+      schema-registry:
+        condition: service_healthy
+      kafka:
+        condition: service_started
+    environment:
+      KAFKA_BROKER_HOST: kafka
+      KAFKA_BROKER_PORT: 29092
+      KAFKA_SSL_ENABLED: "true"
+      KEYSTORE_LOCATION: /opt/application/collections/kafka-secrets/ks.jks
+      KEYSTORE_PASSWORD: myexampledev
+      KEY_PASSWORD: myexampledev
+      SCHEMA_REGISTRY_HOST: schema-registry
+      SCHEMA_REGISTRY_PORT: 8081
+      TRUSTSTORE_LOCATION: /opt/application/collections/kafka-secrets/ts.jks
+      TRUSTSTORE_PASSWORD: myexampledev
+      TOPIC_PARTITION_COUNT: 1
+      TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TOPICS_MEMBERSHIP_CREATE: "true"
+      KAFKA_TOPICS_MEMBERSHIP_DELTAS_CREATE: "true"
+      ENABLE_JSON_LOG_FORMATTER: "false"
+    volumes:
+      - ./docker/kafka/secrets:/opt/application/collections/kafka-secrets
+
+  collections-scheduler:
+    build:
+      context: collections-scheduler
+    ports:
+      - 8095:8080
+    depends_on:
+      schema-registry:
+        condition: service_healthy
+      kafka:
+        condition: service_started
+      postgres:
+        condition: service_started
+    environment:
+      KAFKA_BROKER_HOST: kafka
+      KAFKA_BROKER_PORT: 29092
+      KAFKA_SSL_ENABLED: "true"
+      KEYSTORE_LOCATION: /opt/application/collections/kafka-secrets/ks.jks
+      KEYSTORE_PASSWORD: myexampledev
+      KEY_PASSWORD: myexampledev
+      SCHEMA_REGISTRY_HOST: schema-registry
+      SCHEMA_REGISTRY_PORT: 8081
+      TRUSTSTORE_LOCATION: /opt/application/collections/kafka-secrets/ts.jks
+      TRUSTSTORE_PASSWORD: myexampledev
+      TOPIC_PARTITION_COUNT: 1
+      TOPIC_REPLICATION_FACTOR: 1
+      DATABASE_HOST: postgres
+      BREATHING_SPACE_API_URL: http://collections-breathing-space:8080
+      IDENTITY_SERVICE_URL: http://collections-test-identityservice:50000
+      SCHEDULER_DATABASE_HOST: postgres
+      BREATHING_SPACE_DATABASE_HOST: postgres
+      ENABLE_JSON_LOG_FORMATTER: "false"
+      FEATURE_FLAG_SCHEDULER_BREATHING_SPACE_ENABLED: "true"
+    volumes:
+      - ./docker/kafka/secrets:/opt/application/collections/kafka-secrets
+
+  collections-marketingcloud-sync:
+    build:
+      context: collections-marketingcloud-sync
+    ports:
+      - 8097:8080
+    depends_on:
+      schema-registry:
+        condition: service_healthy
+      kafka:
+        condition: service_started
+    environment:
+      KAFKA_BROKER_HOST: kafka
+      KAFKA_BROKER_PORT: 29092
+      KAFKA_SSL_ENABLED: "true"
+      KEYSTORE_LOCATION: /opt/application/collections/kafka-secrets/ks.jks
+      KEYSTORE_PASSWORD: myexampledev
+      KEY_PASSWORD: myexampledev
+      SCHEMA_REGISTRY_HOST: schema-registry
+      SCHEMA_REGISTRY_PORT: 8081
+      TRUSTSTORE_LOCATION: /opt/application/collections/kafka-secrets/ts.jks
+      TRUSTSTORE_PASSWORD: myexampledev
+      TOPIC_PARTITION_COUNT: 1
+      TOPIC_REPLICATION_FACTOR: 1
+      MARKETINGCLOUD_LOGIN_URL: http://wiremock:8080
+      MARKETINGCLOUD_REST_URL: http://wiremock:8080
+      ENABLE_JSON_LOG_FORMATTER: "false"
+    volumes:
+      - ./docker/kafka/secrets:/opt/application/collections/kafka-secrets
+
+  collections-mapper-upl:
+    build:
+      context: collections-mapper-upl
+    restart: on-failure
+    ports:
+      - 8098:8080
+    depends_on:
+      schema-registry:
+        condition: service_healthy
+      kafka:
+        condition: service_started
+      wiremock:
+        condition: service_started
+    environment:
+      KAFKA_BROKER_HOST: kafka
+      KAFKA_BROKER_PORT: 29092
+      KAFKA_SSL_ENABLED: "true"
+      KEYSTORE_LOCATION: /opt/application/collections/kafka-secrets/ks.jks
+      KEYSTORE_PASSWORD: myexampledev
+      SCHEMA_REGISTRY_HOST: schema-registry
+      SCHEMA_REGISTRY_PORT: 8081
+      TRUSTSTORE_LOCATION: /opt/application/collections/kafka-secrets/ts.jks
+      TRUSTSTORE_PASSWORD: myexampledev
+      TOPIC_PARTITION_COUNT: 1
+      TOPIC_REPLICATION_FACTOR: 1
+      RIALTO_API_URL: http://wiremock:8080
+      DEFERRED_ARREARS_API_URL: http://wiremock:8080
+      AUTO_API_URL: http://wiremock:8080
+      IDENTITY_SERVICE_URL: http://collections-test-identityservice:50000
+      KAFKA_TOPICS_UPL_CREATE: "true"
+      ENABLE_JSON_LOG_FORMATTER: "false"
+      FEATURE_FLAG_MAPPER_ENABLE_ADJUSTED_ARREARS: "true"
+    volumes:
+      - ./docker/kafka/secrets:/opt/application/collections/kafka-secrets
+
+  collections-mapper-product-event:
+    build:
+      context: collections-mapper-product-event
+    restart: on-failure
+    ports:
+      - 8099:8080
+    depends_on:
+      schema-registry:
+        condition: service_healthy
+      kafka:
+        condition: service_started
+    environment:
+      KAFKA_BROKER_HOST: kafka
+      KAFKA_BROKER_PORT: 29092
+      KAFKA_SSL_ENABLED: "true"
+      KEYSTORE_LOCATION: /opt/application/collections/kafka-secrets/ks.jks
+      KEYSTORE_PASSWORD: myexampledev
+      SCHEMA_REGISTRY_HOST: schema-registry
+      SCHEMA_REGISTRY_PORT: 8081
+      TRUSTSTORE_LOCATION: /opt/application/collections/kafka-secrets/ts.jks
+      TRUSTSTORE_PASSWORD: myexampledev
+      TOPIC_PARTITION_COUNT: 1
+      TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TOPICS_UPL_CREATE: "true"
+      ENABLE_JSON_LOG_FORMATTER: "false"
+    volumes:
+      - ./docker/kafka/secrets:/opt/application/collections/kafka-secrets
+
+  collections-gateway-upl:
+    build:
+      context: collections-gateway-upl
+    restart: on-failure
+    ports:
+      - 8100:8080
+    depends_on:
+      schema-registry:
+        condition: service_healthy
+      kafka:
+        condition: service_started
+    environment:
+      KAFKA_BROKER_HOST: kafka
+      KAFKA_BROKER_PORT: 29092
+      KAFKA_SSL_ENABLED: "true"
+      KEYSTORE_LOCATION: /opt/application/collections/kafka-secrets/ks.jks
+      KEYSTORE_PASSWORD: myexampledev
+      SCHEMA_REGISTRY_HOST: schema-registry
+      SCHEMA_REGISTRY_PORT: 8081
+      TRUSTSTORE_LOCATION: /opt/application/collections/kafka-secrets/ts.jks
+      TRUSTSTORE_PASSWORD: myexampledev
+      TOPIC_PARTITION_COUNT: 1
+      TOPIC_REPLICATION_FACTOR: 1
+      COLLECTIONSV1_BASEURL: http://wiremock:8080
+      SALESFORCE_LOGIN_URL: http://wiremock:8080
+      DEFERRED_ARREARS_API_URL: http://wiremock:8080
+      LOAN_SERVICING_API_URL: http://wiremock:8080
+      IDENTITY_SERVICE_URL: http://collections-test-identityservice:50000
+      KAFKA_TOPICS_UPL_CREATE: "true"
+      RIALTO_API_URL: http://wiremock:8080
+      FEATURE_FLAG_REQUEST_LETTERS: "true"
+      FEATURE_FLAG_ENABLE_DEFAULT: "true"
+      ENABLE_JSON_LOG_FORMATTER: "false"
+    volumes:
+      - ./docker/kafka/secrets:/opt/application/collections/kafka-secrets
+
+  collections-events-rm-sync:
+    build:
+      context: collections-events-rm-sync
+    ports:
+      - 8102:8080
+    depends_on:
+      schema-registry:
+        condition: service_healthy
+      kafka:
+        condition: service_started
+    environment:
+      KAFKA_BOOTSTRAP_SERVERS: SSL://kafka:29092
+      KAFKA_BROKER_HOST: kafka
+      KAFKA_BROKER_PORT: 29092
+      KEYSTORE_LOCATION: /opt/application/collections/kafka-secrets/ks.jks
+      KEYSTORE_PASSWORD: myexampledev
+      KEY_PASSWORD: myexampledev
+      SCHEMA_REGISTRY_HOST: schema-registry
+      SCHEMA_REGISTRY_PORT: 8081
+      TRUSTSTORE_LOCATION: /opt/application/collections/kafka-secrets/ts.jks
+      TRUSTSTORE_PASSWORD: myexampledev
+      TOPIC_PARTITION_COUNT: 1
+      TOPIC_REPLICATION_FACTOR: 1
+      DATABASE_HOST: postgres
+      ENABLE_JSON_LOG_FORMATTER: "false"
+    volumes:
+      - ./docker/kafka/secrets:/opt/application/collections/kafka-secrets
+
+  collections-member-state-to-db:
+    build:
+      context: collections-member-state-to-db
+    ports:
+      - 8103:8080
+    depends_on:
+      schema-registry:
+        condition: service_healthy
+      kafka:
+        condition: service_started
+      collections-command-processor:
+        condition: service_healthy
+    environment:
+      KAFKA_BOOTSTRAP_SERVERS: SSL://kafka:29092
+      KAFKA_BROKER_HOST: kafka
+      KAFKA_BROKER_PORT: 29092
+      KEYSTORE_LOCATION: /opt/application/collections/kafka-secrets/ks.jks
+      KEYSTORE_PASSWORD: myexampledev
+      KEY_PASSWORD: myexampledev
+      SCHEMA_REGISTRY_HOST: schema-registry
+      SCHEMA_REGISTRY_PORT: 8081
+      TRUSTSTORE_LOCATION: /opt/application/collections/kafka-secrets/ts.jks
+      TRUSTSTORE_PASSWORD: myexampledev
+      TOPIC_PARTITION_COUNT: 1
+      TOPIC_REPLICATION_FACTOR: 1
+      DATABASE_HOST: postgres
+      ENABLE_JSON_LOG_FORMATTER: "false"
+    volumes:
+      - ./docker/kafka/secrets:/opt/application/collections/kafka-secrets
+
+  collections-breathing-space:
+    build:
+      context: collections-breathing-space
+    environment:
+      PUBLIC_JWKS_URL: http://collections-test-identityservice:50000/oauth/.well-known/openid-configuration/jwks
+      BREATHING_SPACE_DATABASE_HOST: postgres
+      INSOLVENCY_SERVICE_BASEURL: http://wiremock:8080
+      INSOLVENCY_SERVICE_TOKEN_URL: http://wiremock:8080
+      SALESFORCE_LOGIN_URL: http://wiremock:8080
+    ports:
+      - 8104:8080
+    depends_on:
+      postgres:
+        condition: service_started
+      collections-test-identityservice:
+        condition: service_started
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://0.0.0.0:8080/health" ]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  collections-mapper-communications:
+    build:
+      context: collections-mapper-communications
+    restart: on-failure
+    ports:
+      - 8105:8080
+    depends_on:
+      schema-registry:
+        condition: service_healthy
+      kafka:
+        condition: service_started
+    environment:
+      KAFKA_BROKER_HOST: kafka
+      KAFKA_BROKER_PORT: 29092
+      KAFKA_SSL_ENABLED: "true"
+      KEYSTORE_LOCATION: /opt/application/collections/kafka-secrets/ks.jks
+      KEYSTORE_PASSWORD: myexampledev
+      SCHEMA_REGISTRY_HOST: schema-registry
+      SCHEMA_REGISTRY_PORT: 8081
+      TRUSTSTORE_LOCATION: /opt/application/collections/kafka-secrets/ts.jks
+      TRUSTSTORE_PASSWORD: myexampledev
+      TOPIC_PARTITION_COUNT: 1
+      TOPIC_REPLICATION_FACTOR: 1
+      ENABLE_JSON_LOG_FORMATTER: "false"
+      FEATURE_FLAG_COMMUNICATIONS_PUBLISH_ENABLED: "true"
+    volumes:
+      - ./docker/kafka/secrets:/opt/application/collections/kafka-secrets
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://0.0.0.0:8080/health" ]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  collections-payment-plan-migration:
+      build:
+          context: collections-payment-plan-migration
+      environment:
+          KAFKA_BOOTSTRAP_SERVERS: SSL://kafka:29092
+          KAFKA_BROKER_HOST: kafka
+          KAFKA_BROKER_PORT: 29092
+          KEYSTORE_LOCATION: /opt/application/collections/kafka-secrets/ks.jks
+          KEYSTORE_PASSWORD: myexampledev
+          KEY_PASSWORD: myexampledev
+          SCHEMA_REGISTRY_HOST: schema-registry
+          SCHEMA_REGISTRY_PORT: 8081
+          TRUSTSTORE_LOCATION: /opt/application/collections/kafka-secrets/ts.jks
+          TRUSTSTORE_PASSWORD: myexampledev
+          TOPIC_PARTITION_COUNT: 1
+          TOPIC_REPLICATION_FACTOR: 1
+          LDAP_AUTHORIZED_USERS: mickey.mouse@myexample.com, donald.duck@myexample.com
+          LDAP_HOST: ldap
+          LDAP_SEARCH_USER: cn=admin,dc=zopian,dc=ad,dc=myexample,dc=com
+          LDAP_SEARCH_PASSWORD: test1234
+          ENABLE_JSON_LOG_FORMATTER: "false"
+          RIALTO_DATABASE_HOST: rialtodb
+          RIALTO_DATABASE_PORT: 1433
+          DATABASE_HOST: postgres
+      volumes:
+          - ./docker/kafka/secrets:/opt/application/collections/kafka-secrets
+      ports:
+          - 8106:8080
+      depends_on:
+          schema-registry:
+              condition: service_healthy
+          kafka:
+              condition: service_started
+          rialtodb:
+              condition: service_started
+      healthcheck:
+          test: [ "CMD", "curl", "-f", "http://0.0.0.0:8080/health" ]
+          interval: 30s
+          timeout: 10s
+          retries: 5
