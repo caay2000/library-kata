@@ -18,6 +18,7 @@ import mu.KLogger
 import mu.KotlinLogging
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.util.UUID
 
 class CreateAccountCommandHandler(
     accountRepository: AccountRepository,
@@ -29,7 +30,7 @@ class CreateAccountCommandHandler(
     override fun handle(command: CreateAccountCommand): Unit =
         creator.invoke(
             CreateAccountRequest(
-                accountId = AccountId(command.accountId),
+                accountId = AccountId(command.accountId.toString()),
                 identityNumber = IdentityNumber(command.identityNumber),
                 name = Name(command.name),
                 surname = Surname(command.surname),
@@ -43,7 +44,7 @@ class CreateAccountCommandHandler(
 }
 
 data class CreateAccountCommand(
-    val accountId: String,
+    val accountId: UUID,
     val identityNumber: String,
     val email: String,
     val phoneNumber: String,

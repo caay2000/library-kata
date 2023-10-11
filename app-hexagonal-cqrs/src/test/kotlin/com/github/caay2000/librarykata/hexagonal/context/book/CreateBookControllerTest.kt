@@ -8,7 +8,7 @@ import com.github.caay2000.dikt.DiKt
 import com.github.caay2000.librarykata.hexagonal.common.TestUseCases
 import com.github.caay2000.librarykata.hexagonal.context.book.mother.BookIdMother
 import com.github.caay2000.librarykata.hexagonal.context.book.mother.BookMother
-import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.serialization.toBookDocument
+import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.serialization.toBookByIdDocument
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.testing.testApplication
 import org.junit.jupiter.api.BeforeEach
@@ -31,18 +31,18 @@ class CreateBookControllerTest {
     fun `a book can be created`() = testApplication {
         testUseCases.`book is created`(book)
             .assertStatus(HttpStatusCode.Created)
-            .assertResponse(book.toBookDocument())
+            .assertResponse(book.toBookByIdDocument())
     }
 
     @Test
     fun `multiple books with same isbn will have different id`() = testApplication {
         testUseCases.`book is created`(book)
             .assertStatus(HttpStatusCode.Created)
-            .assertResponse(book.toBookDocument())
+            .assertResponse(book.toBookByIdDocument())
 
         testUseCases.`book is created`(differentIdBook)
             .assertStatus(HttpStatusCode.Created)
-            .assertResponse(differentIdBook.toBookDocument())
+            .assertResponse(differentIdBook.toBookByIdDocument())
     }
 
     private val book = BookMother.random()

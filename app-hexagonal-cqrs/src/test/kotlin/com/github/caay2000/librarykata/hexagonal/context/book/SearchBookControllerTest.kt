@@ -7,9 +7,9 @@ import com.github.caay2000.common.test.mock.MockIdGenerator
 import com.github.caay2000.dikt.DiKt
 import com.github.caay2000.librarykata.hexagonal.common.TestUseCases
 import com.github.caay2000.librarykata.hexagonal.context.account.mother.AccountMother
+import com.github.caay2000.librarykata.hexagonal.context.book.mother.BookByIsbnListDocumentMother
 import com.github.caay2000.librarykata.hexagonal.context.book.mother.BookCopies
 import com.github.caay2000.librarykata.hexagonal.context.book.mother.BookMother
-import com.github.caay2000.librarykata.hexagonal.context.book.mother.BookViewListDocumentMother
 import com.github.caay2000.librarykata.hexagonal.context.domain.AccountId
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.testing.testApplication
@@ -40,7 +40,7 @@ class SearchBookControllerTest {
         testUseCases.`search all books`()
             .assertStatus(HttpStatusCode.OK)
             .assertJsonResponse(
-                BookViewListDocumentMother.from(
+                BookByIsbnListDocumentMother.from(
                     BookCopies(book, 5, 4),
                     BookCopies(differentBook, 3),
                     BookCopies(anotherBook),

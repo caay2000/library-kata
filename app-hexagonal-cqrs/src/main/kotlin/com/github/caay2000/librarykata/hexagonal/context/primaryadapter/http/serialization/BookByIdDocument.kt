@@ -8,7 +8,7 @@ import com.github.caay2000.librarykata.hexagonal.context.domain.Book
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class BookDocument(
+data class BookByIdDocument(
     override val data: Resource,
     override val included: List<RelationshipResource> = emptyList(),
 ) : JsonApiDocument {
@@ -40,10 +40,10 @@ data class BookDocument(
     ) : JsonApiRelationshipResource
 }
 
-fun Book.toBookDocument() = BookDocument(
-    data = BookDocument.Resource(
+fun Book.toBookByIdDocument() = BookByIdDocument(
+    data = BookByIdDocument.Resource(
         id = id.value,
-        attributes = BookDocument.Resource.Attributes(
+        attributes = BookByIdDocument.Resource.Attributes(
             isbn = isbn.value,
             title = title.value,
             author = author.value,

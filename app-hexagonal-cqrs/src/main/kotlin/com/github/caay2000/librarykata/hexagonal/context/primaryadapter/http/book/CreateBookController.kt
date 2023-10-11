@@ -9,7 +9,7 @@ import com.github.caay2000.librarykata.hexagonal.context.application.book.find.F
 import com.github.caay2000.librarykata.hexagonal.context.application.book.find.FindBookByIdQueryHandler
 import com.github.caay2000.librarykata.hexagonal.context.domain.BookId
 import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.serialization.BookRequestDocument
-import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.serialization.toBookDocument
+import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.serialization.toBookByIdDocument
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.ApplicationCall
 import io.ktor.server.request.receive
@@ -34,7 +34,7 @@ class CreateBookController(
         commandHandler.invoke(request.toCreateBookCommand(bookId))
 
         val queryResponse = queryHandler.invoke(FindBookByIdQuery(BookId(bookId)))
-        call.respond(HttpStatusCode.Created, queryResponse.value.toBookDocument())
+        call.respond(HttpStatusCode.Created, queryResponse.value.toBookByIdDocument())
     }
 
     private fun BookRequestDocument.toCreateBookCommand(bookId: String) =

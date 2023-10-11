@@ -52,8 +52,8 @@ class CreateLoanController(
     private fun LoanRequestDocument.toCreateLoanCommand(loanId: String, datetime: LocalDateTime) =
         CreateLoanCommand(
             loanId = UUID.fromString(loanId),
-            accountId = accountId,
-            bookIsbn = bookIsbn,
+            accountId = UUID.fromString(data.attributes.accountId),
+            bookIsbn = data.attributes.bookIsbn,
             createdAt = datetime,
         )
 }

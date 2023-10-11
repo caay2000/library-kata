@@ -5,7 +5,7 @@ import com.github.caay2000.librarykata.hexagonal.context.application.book.BookRe
 import com.github.caay2000.librarykata.hexagonal.context.application.book.search.SearchBookByIsbnQuery
 import com.github.caay2000.librarykata.hexagonal.context.application.book.search.SearchBookByIsbnQueryHandler
 import com.github.caay2000.librarykata.hexagonal.context.domain.BookIsbn
-import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.serialization.toBookViewDocument
+import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.serialization.toBookByIsbnListDocument
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.ApplicationCall
 import io.ktor.server.response.respond
@@ -22,6 +22,6 @@ class SearchBookByIsbnController(bookRepository: BookRepository) : Controller {
         val isbn = BookIsbn(call.parameters["isbn"]!!)
 
         val queryResponse = queryHandler.invoke(SearchBookByIsbnQuery(isbn))
-        call.respond(HttpStatusCode.OK, queryResponse.value.toBookViewDocument())
+        call.respond(HttpStatusCode.OK, queryResponse.value.toBookByIsbnListDocument())
     }
 }

@@ -18,10 +18,9 @@ import com.github.caay2000.librarykata.hexagonal.context.domain.PhonePrefix
 import com.github.caay2000.librarykata.hexagonal.context.domain.Surname
 import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.serialization.AccountDocument
 import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.serialization.AccountRequestDocument
-import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.serialization.BookDocument
+import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.serialization.BookByIdDocument
+import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.serialization.BookByIsbnListDocument
 import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.serialization.BookRequestDocument
-import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.serialization.BookViewDocument
-import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.serialization.BookViewListDocument
 import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.serialization.LoanByAccountIdDocument
 import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.serialization.LoanDocument
 import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.serialization.LoanRequestDocument
@@ -37,7 +36,6 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.decodeFromJsonElement
-import java.util.UUID
 
 class LibraryClient {
 
@@ -89,7 +87,7 @@ class LibraryClient {
         author: BookAuthor,
         pages: BookPages,
         publisher: BookPublisher,
-    ): HttpDataResponse<BookDocument> =
+    ): HttpDataResponse<BookByIdDocument> =
         runBlocking {
             client.post("/book") {
                 val request = BookRequestDocument(
@@ -109,15 +107,15 @@ class LibraryClient {
         }
 
     context(ApplicationTestBuilder)
-    fun findBookById(id: BookId): HttpDataResponse<BookDocument> =
+    fun findBookById(id: BookId): HttpDataResponse<BookByIdDocument> =
         runBlocking { client.get("/book/${id.value}").toHttpDataResponse() }
 
     context(ApplicationTestBuilder)
-    fun findBookByIsbn(isbn: BookIsbn): HttpDataResponse<BookViewDocument> =
+    fun findBookByIsbn(isbn: BookIsbn): HttpDataResponse<BookByIsbnListDocument> =
         runBlocking { client.get("/book?isbn=${isbn.value}").toHttpDataResponse() }
 
     context(ApplicationTestBuilder)
-    fun searchBooks(): HttpDataResponse<BookViewListDocument> =
+    fun searchBooks(): HttpDataResponse<BookByIsbnListDocument> =
         runBlocking { client.get("/book").toHttpDataResponse() }
 
     context(ApplicationTestBuilder)
@@ -127,7 +125,14 @@ class LibraryClient {
     ): HttpDataResponse<LoanDocument> =
         runBlocking {
             client.post("/loan") {
-                val request = LoanRequestDocument(bookIsbn = bookIsbn.value, accountId = UUID.fromString(accountId.value))
+                val request = LoanRequestDocument(
+                    LoanRequestDocument.Resource(
+                        attributes = LoanRequestDocument.Resource.Attributes(
+                            bookIsbn = bookIsbn.value,
+                            accountId = accountId.value,
+                        ),
+                    ),
+                )
                 setBody(Json.encodeToString(request))
                 contentType(ContentType.Application.Json)
             }.toHttpDataResponse()

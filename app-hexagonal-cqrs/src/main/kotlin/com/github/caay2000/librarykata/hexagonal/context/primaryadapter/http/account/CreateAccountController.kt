@@ -18,6 +18,7 @@ import io.ktor.server.response.respond
 import mu.KLogger
 import mu.KotlinLogging
 import java.time.LocalDateTime
+import java.util.UUID
 
 class CreateAccountController(
     private val idGenerator: IdGenerator,
@@ -42,7 +43,7 @@ class CreateAccountController(
 
     private fun AccountRequestDocument.toCommand(accountId: String, registerDate: LocalDateTime): CreateAccountCommand =
         CreateAccountCommand(
-            accountId = accountId,
+            accountId = UUID.fromString(accountId),
             identityNumber = data.attributes.identityNumber,
             email = data.attributes.email,
             phoneNumber = data.attributes.phoneNumber,

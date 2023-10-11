@@ -1,5 +1,6 @@
 package com.github.caay2000.librarykata.hexagonal.context.book
 
+import com.github.caay2000.common.jsonapi.JsonApiMetaValue
 import com.github.caay2000.common.test.http.assertResponse
 import com.github.caay2000.common.test.http.assertStatus
 import com.github.caay2000.common.test.mock.MockDateProvider
@@ -11,9 +12,7 @@ import com.github.caay2000.librarykata.hexagonal.context.book.mother.BookIdMothe
 import com.github.caay2000.librarykata.hexagonal.context.book.mother.BookMother
 import com.github.caay2000.librarykata.hexagonal.context.domain.AccountId
 import com.github.caay2000.librarykata.hexagonal.context.domain.Book
-import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.serialization.BookViewDocument
-import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.serialization.BookViewResource
-import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.serialization.BookViewResourceAttributes
+import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.serialization.BookByIsbnListDocument
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.testing.testApplication
 import org.junit.jupiter.api.BeforeEach
@@ -39,7 +38,7 @@ class SearchBookByIsbnControllerTest {
 
         testUseCases.`find book by isbn`(book.isbn)
             .assertStatus(HttpStatusCode.OK)
-            .assertResponse(book.toBookViewDocument())
+            .assertResponse(book.toBookByIsbnListDocument())
     }
 
     @Test
@@ -51,7 +50,7 @@ class SearchBookByIsbnControllerTest {
 
         testUseCases.`find book by isbn`(book.isbn)
             .assertStatus(HttpStatusCode.OK)
-            .assertResponse(book.toBookViewDocument(copies = 2, availableCopies = 2))
+            .assertResponse(book.toBookByIsbnListDocument(copies = 2, availableCopies = 2))
     }
 
     @Test
@@ -70,7 +69,7 @@ class SearchBookByIsbnControllerTest {
 
             testUseCases.`find book by isbn`(book.isbn)
                 .assertStatus(HttpStatusCode.OK)
-                .assertResponse(book.toBookViewDocument(copies = 2, availableCopies = 1))
+                .assertResponse(book.toBookByIsbnListDocument(copies = 2, availableCopies = 1))
         }
 
     private val book = BookMother.random()
@@ -78,20 +77,23 @@ class SearchBookByIsbnControllerTest {
 
     private val account = AccountMother.random()
 
-    private fun Book.toBookViewDocument(
+    private fun Book.toBookByIsbnListDocument(
         copies: Int = 1,
         availableCopies: Int = if (isAvailable) 1 else 0,
-    ) = BookViewDocument(
-        data = BookViewResource(
-            attributes = BookViewResourceAttributes(
-                isbn = isbn.value,
-                title = title.value,
-                author = author.value,
-                pages = pages.value,
-                publisher = publisher.value,
-                copies = copies,
-                availableCopies = availableCopies,
+    ) = BookByIsbnListDocument(
+        data = listOf(
+            BookByIsbnListDocument.Resource(
+                attributes = BookByIsbnListDocument.Resource.Attributes(
+                    isbn = isbn.value,
+                    title = title.value,
+                    author = author.value,
+                    pages = pages.value,
+                    publisher = publisher.value,
+                    copies = copies,
+                    availableCopies = availableCopies,
+                ),
             ),
         ),
+        meta = JsonApiMetaValue(1),
     )
 }

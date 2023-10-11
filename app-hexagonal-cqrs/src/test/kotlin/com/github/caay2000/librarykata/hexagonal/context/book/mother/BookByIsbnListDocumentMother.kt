@@ -2,12 +2,12 @@ package com.github.caay2000.librarykata.hexagonal.context.book.mother
 
 import com.github.caay2000.librarykata.hexagonal.context.domain.Book
 import com.github.caay2000.librarykata.hexagonal.context.domain.BookAvailable
-import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.serialization.BookViewListDocument
-import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.serialization.toBookViewListDocument
+import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.serialization.BookByIsbnListDocument
+import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.serialization.toBookByIsbnListDocument
 
-object BookViewListDocumentMother {
+object BookByIsbnListDocumentMother {
 
-    fun from(vararg books: BookCopies): BookViewListDocument =
+    fun from(vararg books: BookCopies): BookByIsbnListDocument =
         books.toList()
             .flatMap { (book, copies, available) ->
                 val list: MutableList<Book> = mutableListOf()
@@ -19,7 +19,8 @@ object BookViewListDocumentMother {
                     }
                 }
                 list
-            }.toBookViewListDocument()
+            }
+            .toBookByIsbnListDocument()
 }
 
 data class BookCopies(

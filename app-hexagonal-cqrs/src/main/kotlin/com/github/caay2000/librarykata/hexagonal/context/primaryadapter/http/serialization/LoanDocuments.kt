@@ -44,10 +44,3 @@ fun Loan.toLoanDocument(book: Book) =
         startLoan = createdAt.value,
         finishLoan = finishedAt?.value,
     )
-
-@Serializable
-data class LoanRequestDocument(
-    val bookIsbn: String,
-    @Serializable(with = UUIDSerializer::class)
-    val accountId: UUID,
-)

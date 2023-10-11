@@ -10,7 +10,7 @@ import com.github.caay2000.librarykata.hexagonal.context.account.mother.AccountM
 import com.github.caay2000.librarykata.hexagonal.context.book.mother.BookMother
 import com.github.caay2000.librarykata.hexagonal.context.domain.AccountId
 import com.github.caay2000.librarykata.hexagonal.context.domain.BookAvailable
-import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.serialization.toBookDocument
+import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.serialization.toBookByIdDocument
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.testing.testApplication
 import org.junit.jupiter.api.BeforeEach
@@ -36,7 +36,7 @@ class SearchBookByIdControllerTest {
 
         testUseCases.`find book by id`(book.id)
             .assertStatus(HttpStatusCode.OK)
-            .assertResponse(book.toBookDocument())
+            .assertResponse(book.toBookByIdDocument())
     }
 
     @Test
@@ -49,7 +49,7 @@ class SearchBookByIdControllerTest {
 
         testUseCases.`find book by id`(book.id)
             .assertStatus(HttpStatusCode.OK)
-            .assertResponse(notAvailableBook.toBookDocument())
+            .assertResponse(notAvailableBook.toBookByIdDocument())
     }
 
     private val account = AccountMother.random()
