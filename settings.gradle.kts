@@ -9,6 +9,7 @@ plugins {
 rootProject.name = "library-kata"
 include(
     "app-hexagonal-cqrs",
+    "app-hexagonal-cqrs-arrow",
     "app-event-driven",
     "libs:common-arrow",
     "libs:common-cqrs",
