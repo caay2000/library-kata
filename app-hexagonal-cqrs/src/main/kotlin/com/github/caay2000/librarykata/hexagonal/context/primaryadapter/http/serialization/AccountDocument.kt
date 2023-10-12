@@ -5,22 +5,16 @@ import com.github.caay2000.common.jsonapi.JsonApiRelationshipIdentifier
 import com.github.caay2000.common.jsonapi.JsonApiRelationshipResource
 import com.github.caay2000.common.jsonapi.JsonApiResource
 import com.github.caay2000.common.jsonapi.JsonApiResourceAttributes
-import com.github.caay2000.common.serialization.LocalDateSerializer
-import com.github.caay2000.common.serialization.LocalDateTimeSerializer
 import com.github.caay2000.librarykata.hexagonal.context.domain.Account
 import com.github.caay2000.librarykata.hexagonal.context.domain.Loan
-import kotlinx.serialization.SerialName
-import kotlinx.serialization.Serializable
 import java.time.LocalDate
 import java.time.LocalDateTime
 
-@Serializable
 data class AccountDocument(
     override val data: Resource,
     override val included: List<JsonApiRelationshipResource> = emptyList(),
 ) : JsonApiDocument {
 
-    @Serializable
     data class Resource(
         override val id: String,
         override val type: String = "account",
@@ -28,34 +22,17 @@ data class AccountDocument(
         override val relationships: List<JsonApiRelationshipIdentifier> = emptyList(),
     ) : JsonApiResource {
 
-        @Serializable
-        @SerialName("account")
         data class Attributes(
             val identityNumber: String,
             val name: String,
             val surname: String,
-            @Serializable(with = LocalDateSerializer::class)
             val birthdate: LocalDate,
             val email: String,
             val phonePrefix: String,
             val phoneNumber: String,
-            @Serializable(with = LocalDateTimeSerializer::class)
             val registerDate: LocalDateTime,
         ) : JsonApiResourceAttributes
     }
-
-//    @Serializable
-//    data class AccountRelationshipIdentifier(
-//        override val id: String,
-//        override val type: String = "account",
-//    ) : JsonApiRelationshipIdentifier
-//
-//    @Serializable
-//    data class AccountRelationshipResource(
-//        override val id: String,
-//        override val type: String = "account",
-//        override val attributes: Resource.Attributes,
-//    ) : JsonApiRelationshipResource
 }
 
 fun Account.toAccountDocument(loans: List<Loan> = emptyList()) =

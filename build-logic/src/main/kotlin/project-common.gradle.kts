@@ -28,12 +28,12 @@ dependencies {
     constraints {
         implementation("org.jetbrains.kotlin:kotlin-reflect:${project.ext["kotlin_version"]}")
         implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:${project.ext["kotlinx_coroutines_version"]}")
-        implementation("org.jetbrains.kotlinx:kotlinx-serialization-core-jvm:${project.ext["kotlinx_serialization_version"]}")
+//        implementation("org.jetbrains.kotlinx:kotlinx-serialization-core-jvm:${project.ext["kotlinx_serialization_version"]}")
 
         implementation("io.ktor:ktor-server-core:${project.ext["ktor_version"]}")
         implementation("io.ktor:ktor-server-netty:${project.ext["ktor_version"]}")
         implementation("io.ktor:ktor-server-content-negotiation:${project.ext["ktor_version"]}")
-        implementation("io.ktor:ktor-serialization-kotlinx-json:${project.ext["ktor_version"]}")
+//        implementation("io.ktor:ktor-serialization-kotlinx-json:${project.ext["ktor_version"]}")
         implementation("io.ktor:ktor-serialization-jackson:${project.ext["ktor_version"]}")
 
         implementation("io.ktor:ktor-server-call-logging:${project.ext["ktor_version"]}")

@@ -6,16 +6,12 @@ import com.github.caay2000.common.jsonapi.JsonApiRelationshipIdentifier
 import com.github.caay2000.common.jsonapi.JsonApiResource
 import com.github.caay2000.common.jsonapi.JsonApiResourceAttributes
 import com.github.caay2000.librarykata.hexagonal.context.domain.Book
-import kotlinx.serialization.SerialName
-import kotlinx.serialization.Serializable
 
-@Serializable
 data class BookByIsbnListDocument(
     override val data: List<Resource>,
     override val meta: JsonApiMeta,
 ) : JsonApiListDocument {
 
-    @Serializable
     data class Resource(
         override val id: String? = null,
         override val type: String = "book",
@@ -23,8 +19,6 @@ data class BookByIsbnListDocument(
         override val relationships: List<JsonApiRelationshipIdentifier> = emptyList(),
     ) : JsonApiResource {
 
-        @Serializable
-        @SerialName("bookByIsbn")
         data class Attributes(
             val isbn: String,
             val title: String,

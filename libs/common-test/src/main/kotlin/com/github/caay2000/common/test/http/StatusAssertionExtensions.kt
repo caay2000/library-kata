@@ -1,8 +1,7 @@
 package com.github.caay2000.common.test.http
 
+import com.github.caay2000.common.serialization.defaultObjectMapper
 import io.ktor.http.HttpStatusCode
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
 import mu.KLogger
 import mu.KotlinLogging
 import org.assertj.core.api.Assertions.assertThat
@@ -20,16 +19,18 @@ fun <T> HttpDataResponse<T>.assertResponse(response: T): HttpDataResponse<T> =
 
 inline fun <reified T> HttpDataResponse<T>.assertJsonResponse(response: T): HttpDataResponse<T> =
     try {
-        JSONAssert.assertEquals(Json.encodeToString(value), Json.encodeToString(response), true).let { this }
+        val actual = defaultObjectMapper().writeValueAsString(value)
+        val expected = defaultObjectMapper().writeValueAsString(response)
+        JSONAssert.assertEquals(expected, actual, true).let { this }
     } catch (e: Throwable) {
-        logger.warn { "expected: ${Json.encodeToString(value)}" }
-        logger.warn { "actual  : ${Json.encodeToString(response)}" }
+        logger.warn { "expected: ${defaultObjectMapper().writeValueAsString(value)}" }
+        logger.warn { "actual  : ${defaultObjectMapper().writeValueAsString(value)}" }
         throw e
     }
 
 inline fun <reified T> HttpDataResponse<T>.printJsonResponse(): HttpDataResponse<T> =
     try {
-        logger.info { Json.encodeToString(this.value!!) }
+        logger.info { defaultObjectMapper().writeValueAsString(this.value!!) }
         this
     } catch (e: Throwable) {
         logger.warn { "Impossible to log JsonResponse due to ${e.message}" }

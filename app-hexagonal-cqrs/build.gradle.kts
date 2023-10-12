@@ -1,7 +1,6 @@
 plugins {
     id("project-application")
     id("project-hexagonal-cqrs")
-    id("plugin-kotlin-serialization")
 }
 dependencies {
     implementation("io.ktor:ktor-server-call-logging-jvm:${project.ext["ktor_version"]}")
@@ -11,6 +10,11 @@ dependencies {
     implementation("io.ktor:ktor-client-apache5:2.3.5")
     implementation("io.ktor:ktor-client-logging:2.3.5")
     implementation("io.ktor:ktor-client-content-negotiation:2.3.5")
+
+    implementation(project(":libs:common-serialization"))
+
+    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.15.2")
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.15.2")
 }
 
 tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile::class).all {

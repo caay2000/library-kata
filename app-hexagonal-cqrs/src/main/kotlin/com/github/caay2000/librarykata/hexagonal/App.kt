@@ -1,12 +1,14 @@
 package com.github.caay2000.librarykata.hexagonal
 
-import com.fasterxml.jackson.core.util.DefaultPrettyPrinter
-import com.fasterxml.jackson.databind.SerializationFeature
+import com.github.caay2000.common.http.ContentType
 import com.github.caay2000.common.http.Controller
+import com.github.caay2000.common.serialization.defaultJacksonConfiguration
+import com.github.caay2000.common.serialization.defaultObjectMapper
 import com.github.caay2000.librarykata.hexagonal.configuration.DependencyInjectionConfiguration
 import com.github.caay2000.librarykata.hexagonal.configuration.RoutingConfiguration
 import com.github.caay2000.librarykata.hexagonal.configuration.ShutdownHookConfiguration
 import com.github.caay2000.librarykata.hexagonal.configuration.StartupHookConfiguration
+import io.ktor.serialization.jackson.JacksonConverter
 import io.ktor.serialization.jackson.jackson
 import io.ktor.server.application.Application
 import io.ktor.server.application.install
@@ -37,29 +39,8 @@ fun Application.module() {
 fun Application.configureSerialization() {
     install(ContentNegotiation) {
         jackson {
-            configure(SerializationFeature.INDENT_OUTPUT, true)
-            setDefaultPrettyPrinter(DefaultPrettyPrinter())
-//            registerModule(JavaTimeModule())  // support java.time.* types
+            defaultJacksonConfiguration()
         }
-//        json(
-//            Json {
-//                prettyPrint = true
-//                isLenient = true
-//
-//                SerializersModule {
-//                    fun PolymorphicModuleBuilder<JsonApiResourceAttributes>.registerProjectSubclasses() {
-//                        subclass(LoanDocument.Resource.Attributes::class)
-//                    }
-//                    polymorphic(Any::class) { registerProjectSubclasses() }
-//                    polymorphic(JsonApiResourceAttributes::class) { registerProjectSubclasses() }
-//
-//                    serializersModuleOf(UUID::class, UUIDSerializer)
-//                    serializersModuleOf(LocalDate::class, LocalDateSerializer)
-//                    serializersModuleOf(LocalDateTime::class, LocalDateTimeSerializer)
-//                }
-//            },
-//        )
-
-//        register(ContentType.JsonApi, KotlinxSerializationConverter(Json))
+        register(ContentType.JsonApi, JacksonConverter(defaultObjectMapper()))
     }
 }

@@ -6,8 +6,10 @@
         </layout>
     </appender>
 
-    <logger name="com.github.caay2000" level="INFO">
+    <logger name="com.github.caay2000" level="INFO"/>
+
+    <root level="WARN">
         <appender-ref ref="CONSOLE"/>
-    </logger>
+    </root>
 
 </configuration>

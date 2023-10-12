@@ -6,6 +6,7 @@ dependencies {
     implementation(project(":libs:common-date"))
     implementation(project(":libs:common-event"))
     implementation(project(":libs:common-http"))
+    api(project(":libs:common-serialization"))
     implementation(project(":libs:common-id-generator"))
 
     api(kotlin("test"))

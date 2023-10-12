@@ -1,7 +1,8 @@
 package com.github.caay2000.librarykata.hexagonal.common
 
 import com.github.caay2000.common.http.ContentType
-import com.github.caay2000.common.http.ErrorResponseDocument
+import com.github.caay2000.common.serialization.defaultJacksonConfiguration
+import com.github.caay2000.common.serialization.defaultObjectMapper
 import com.github.caay2000.common.test.http.HttpDataResponse
 import com.github.caay2000.librarykata.hexagonal.context.domain.AccountId
 import com.github.caay2000.librarykata.hexagonal.context.domain.Birthdate
@@ -25,19 +26,22 @@ import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.ser
 import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.serialization.LoanByAccountIdDocument
 import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.serialization.LoanDocument
 import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.serialization.LoanRequestDocument
+import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.request.get
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import io.ktor.client.statement.HttpResponse
 import io.ktor.client.statement.bodyAsText
 import io.ktor.http.contentType
+import io.ktor.serialization.jackson.jackson
 import io.ktor.server.testing.ApplicationTestBuilder
 import kotlinx.coroutines.runBlocking
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.decodeFromJsonElement
+import mu.KLogger
+import mu.KotlinLogging
 
 class LibraryClient {
+
+    val logger: KLogger = KotlinLogging.logger {}
 
     context(ApplicationTestBuilder)
     fun createAccount(
@@ -50,20 +54,26 @@ class LibraryClient {
         phoneNumber: PhoneNumber,
     ): HttpDataResponse<AccountDocument> =
         runBlocking {
+            val client = createClient {
+                install(ContentNegotiation) {
+                    jackson {
+                        defaultJacksonConfiguration()
+                    }
+                }
+            }
+
             client.post("/account") {
                 setBody(
-                    Json.encodeToString(
-                        AccountRequestDocument(
-                            data = AccountRequestDocument.Resource(
-                                attributes = AccountRequestDocument.Resource.Attributes(
-                                    identityNumber = identityNumber.value,
-                                    name = name.value,
-                                    surname = surname.value,
-                                    birthdate = birthdate.value,
-                                    email = email.value,
-                                    phonePrefix = phonePrefix.value,
-                                    phoneNumber = phoneNumber.value,
-                                ),
+                    AccountRequestDocument(
+                        data = AccountRequestDocument.Resource(
+                            attributes = AccountRequestDocument.Resource.Attributes(
+                                identityNumber = identityNumber.value,
+                                name = name.value,
+                                surname = surname.value,
+                                birthdate = birthdate.value,
+                                email = email.value,
+                                phonePrefix = phonePrefix.value,
+                                phoneNumber = phoneNumber.value,
                             ),
                         ),
                     ),
@@ -94,6 +104,14 @@ class LibraryClient {
         publisher: BookPublisher,
     ): HttpDataResponse<BookByIdDocument> =
         runBlocking {
+            val client = createClient {
+                install(ContentNegotiation) {
+                    jackson {
+                        defaultJacksonConfiguration()
+                    }
+                }
+            }
+
             client.post("/book") {
                 val request = BookRequestDocument(
                     data = BookRequestDocument.Resource(
@@ -106,7 +124,7 @@ class LibraryClient {
                         ),
                     ),
                 )
-                setBody(Json.encodeToString(request))
+                setBody(request)
                 contentType(ContentType.JsonApi)
             }.toHttpDataResponse()
         }
@@ -129,6 +147,14 @@ class LibraryClient {
         accountId: AccountId,
     ): HttpDataResponse<LoanDocument> =
         runBlocking {
+            val client = createClient {
+                install(ContentNegotiation) {
+                    jackson {
+                        defaultJacksonConfiguration()
+                    }
+                }
+            }
+
             client.post("/loan") {
                 val request = LoanRequestDocument(
                     LoanRequestDocument.Resource(
@@ -138,7 +164,7 @@ class LibraryClient {
                         ),
                     ),
                 )
-                setBody(Json.encodeToString(request))
+                setBody(request)
                 contentType(ContentType.JsonApi)
             }.toHttpDataResponse()
         }
@@ -155,14 +181,16 @@ class LibraryClient {
         return HttpDataResponse(
             value = decodeJsonBody<T>(body),
             httpResponse = this,
-            error = decodeJsonBody<ErrorResponseDocument>(body),
+//            error = decodeJsonBody<ErrorResponseDocument>(body),
+            error = null,
         )
     }
 
     private inline fun <reified T> decodeJsonBody(body: String): T? =
         try {
-            Json.decodeFromJsonElement<T>(Json.parseToJsonElement(body))
+            defaultObjectMapper().readValue(body, T::class.java)
         } catch (e: Exception) {
+            logger.error { "Error parsing response: ${e.message}" }
             null
         }
 }
