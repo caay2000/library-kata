@@ -64,7 +64,7 @@ class RealExecutionTest {
             availableBooks[book.isbn] = availableBooks[book.isbn]!!.dec()
             existingAccounts[account] = existingAccounts[account]!!.inc()
             existingLoans[book.id] = Loan(
-                id = LoanId(loanDocument.id.toString()),
+                id = LoanId(loanDocument.data.id),
                 bookId = book.id,
                 accountId = account.id,
                 createdAt = CreatedAt(LocalDateTime.now()),

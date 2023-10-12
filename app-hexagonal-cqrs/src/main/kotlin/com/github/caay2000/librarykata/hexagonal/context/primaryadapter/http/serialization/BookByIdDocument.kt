@@ -1,16 +1,18 @@
 package com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.serialization
 
 import com.github.caay2000.common.jsonapi.JsonApiDocument
+import com.github.caay2000.common.jsonapi.JsonApiRelationshipIdentifier
 import com.github.caay2000.common.jsonapi.JsonApiRelationshipResource
 import com.github.caay2000.common.jsonapi.JsonApiResource
 import com.github.caay2000.common.jsonapi.JsonApiResourceAttributes
 import com.github.caay2000.librarykata.hexagonal.context.domain.Book
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
 data class BookByIdDocument(
     override val data: Resource,
-    override val included: List<RelationshipResource> = emptyList(),
+    override val included: List<JsonApiRelationshipResource> = emptyList(),
 ) : JsonApiDocument {
 
     @Serializable
@@ -18,10 +20,11 @@ data class BookByIdDocument(
         override val id: String,
         override val type: String = "book",
         override val attributes: Attributes,
-        override val relationships: List<JsonApiRelationshipResource> = emptyList(),
+        override val relationships: List<JsonApiRelationshipIdentifier> = emptyList(),
     ) : JsonApiResource {
 
         @Serializable
+        @SerialName("bookById")
         data class Attributes(
             val isbn: String,
             val title: String,
@@ -31,13 +34,6 @@ data class BookByIdDocument(
             val available: Boolean,
         ) : JsonApiResourceAttributes
     }
-
-    @Serializable
-    data class RelationshipResource(
-        override val id: String,
-        override val type: String,
-        override val attributes: List<JsonApiResourceAttributes>,
-    ) : JsonApiRelationshipResource
 }
 
 fun Book.toBookByIdDocument() = BookByIdDocument(

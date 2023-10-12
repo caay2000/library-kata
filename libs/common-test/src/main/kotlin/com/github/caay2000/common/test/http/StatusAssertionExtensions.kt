@@ -27,6 +27,15 @@ inline fun <reified T> HttpDataResponse<T>.assertJsonResponse(response: T): Http
         throw e
     }
 
+inline fun <reified T> HttpDataResponse<T>.printJsonResponse(): HttpDataResponse<T> =
+    try {
+        logger.info { Json.encodeToString(this.value!!) }
+        this
+    } catch (e: Throwable) {
+        logger.warn { "Impossible to log JsonResponse due to ${e.message}" }
+        this
+    }
+
 fun <T> HttpDataResponse<T>.assertErrorMessage(message: String): HttpDataResponse<T> =
     assertThat(error?.message).isEqualTo(message)
         .let { this }

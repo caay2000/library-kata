@@ -42,7 +42,7 @@ class FinishLoanControllerTest {
 
         testUseCases.`loan is created`(loan, book.isbn)
             .assertStatus(HttpStatusCode.Created)
-            .assertResponse(loan.toLoanDocument(book))
+            .assertResponse(loan.toLoanDocument())
 
         testUseCases.`loan is finished`(bookId = BookId(book.id.value))
             .assertStatus(HttpStatusCode.Accepted)
@@ -58,14 +58,14 @@ class FinishLoanControllerTest {
 
         testUseCases.`loan is created`(loan, book.isbn)
             .assertStatus(HttpStatusCode.Created)
-            .assertResponse(loan.toLoanDocument(book))
+            .assertResponse(loan.toLoanDocument())
 
         testUseCases.`loan is finished`(bookId = BookId(book.id.value))
             .assertStatus(HttpStatusCode.Accepted)
 
         testUseCases.`loan is created`(loan, book.isbn)
             .assertStatus(HttpStatusCode.Created)
-            .assertResponse(loan.toLoanDocument(book))
+            .assertResponse(loan.toLoanDocument())
     }
 
     private val account = AccountMother.random()

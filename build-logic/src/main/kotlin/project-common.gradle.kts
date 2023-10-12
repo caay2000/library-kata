@@ -8,7 +8,7 @@ project.ext["kotlin_version"] = "1.9.10"
 project.ext["kotlinx_coroutines_version"] = "1.7.3"
 project.ext["kotlinx_serialization_version"] = "1.6.0"
 project.ext["arrow_version"] = "1.2.1"
-project.ext["ktor_version"] = "2.3.4"
+project.ext["ktor_version"] = "2.3.5"
 project.ext["apache_commons_version"] = "1.10.0"
 project.ext["junit_jupiter_version"] = "5.10.0"
 project.ext["assertj_version"] = "3.24.2"
@@ -34,6 +34,8 @@ dependencies {
         implementation("io.ktor:ktor-server-netty:${project.ext["ktor_version"]}")
         implementation("io.ktor:ktor-server-content-negotiation:${project.ext["ktor_version"]}")
         implementation("io.ktor:ktor-serialization-kotlinx-json:${project.ext["ktor_version"]}")
+        implementation("io.ktor:ktor-serialization-jackson:${project.ext["ktor_version"]}")
+
         implementation("io.ktor:ktor-server-call-logging:${project.ext["ktor_version"]}")
         implementation("io.ktor:ktor-server-call-id:${project.ext["ktor_version"]}")
 

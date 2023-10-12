@@ -5,8 +5,6 @@ import com.github.caay2000.common.http.Controller
 import com.github.caay2000.common.idgenerator.IdGenerator
 import com.github.caay2000.librarykata.hexagonal.context.application.account.AccountRepository
 import com.github.caay2000.librarykata.hexagonal.context.application.book.BookRepository
-import com.github.caay2000.librarykata.hexagonal.context.application.book.find.FindBookByIdQuery
-import com.github.caay2000.librarykata.hexagonal.context.application.book.find.FindBookByIdQueryHandler
 import com.github.caay2000.librarykata.hexagonal.context.application.loan.LoanRepository
 import com.github.caay2000.librarykata.hexagonal.context.application.loan.create.CreateLoanCommand
 import com.github.caay2000.librarykata.hexagonal.context.application.loan.create.CreateLoanCommandHandler
@@ -35,7 +33,6 @@ class CreateLoanController(
 
     private val commandHandler = CreateLoanCommandHandler(bookRepository, accountRepository, loanRepository)
     private val loanQueryHandler = FindLoanByIdQueryHandler(loanRepository)
-    private val bookQueryHandler = FindBookByIdQueryHandler(bookRepository)
 
     override suspend fun handle(call: ApplicationCall) {
         val request = call.receive<LoanRequestDocument>()
@@ -45,8 +42,7 @@ class CreateLoanController(
         commandHandler.invoke(request.toCreateLoanCommand(loanId, datetime))
 
         val loanQueryResponse = loanQueryHandler.invoke(FindLoanByIdQuery(UUID.fromString(loanId)))
-        val bookQueryResponse = bookQueryHandler.invoke(FindBookByIdQuery(loanQueryResponse.loan.bookId))
-        call.respond(HttpStatusCode.Created, loanQueryResponse.loan.toLoanDocument(bookQueryResponse.value))
+        call.respond(HttpStatusCode.Created, loanQueryResponse.loan.toLoanDocument())
     }
 
     private fun LoanRequestDocument.toCreateLoanCommand(loanId: String, datetime: LocalDateTime) =

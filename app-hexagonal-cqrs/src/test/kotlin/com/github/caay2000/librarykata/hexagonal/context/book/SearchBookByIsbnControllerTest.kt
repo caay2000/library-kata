@@ -1,6 +1,6 @@
 package com.github.caay2000.librarykata.hexagonal.context.book
 
-import com.github.caay2000.common.jsonapi.JsonApiMetaValue
+import com.github.caay2000.common.jsonapi.JsonApiMeta
 import com.github.caay2000.common.test.http.assertResponse
 import com.github.caay2000.common.test.http.assertStatus
 import com.github.caay2000.common.test.mock.MockDateProvider
@@ -94,6 +94,6 @@ class SearchBookByIsbnControllerTest {
                 ),
             ),
         ),
-        meta = JsonApiMetaValue(1),
+        meta = JsonApiMeta(1),
     )
 }

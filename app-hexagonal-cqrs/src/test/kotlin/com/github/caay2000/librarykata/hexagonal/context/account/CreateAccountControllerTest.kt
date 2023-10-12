@@ -35,15 +35,6 @@ class CreateAccountControllerTest {
     }
 
     @Test
-    fun `an account can be retrieved`() = testApplication {
-        testUseCases.`account is created`(account)
-
-        testUseCases.`find account`(account.id)
-            .assertStatus(HttpStatusCode.OK)
-            .assertResponse(account.toAccountDocument())
-    }
-
-    @Test
     fun `an account with identityNumber repeated cannot be created`() = testApplication {
         testUseCases.`account is created`(account)
             .assertStatus(HttpStatusCode.Created)

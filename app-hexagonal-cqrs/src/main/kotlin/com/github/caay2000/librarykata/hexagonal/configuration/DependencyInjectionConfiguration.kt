@@ -10,8 +10,8 @@ import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.boo
 import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.book.SearchBookByIsbnController
 import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.book.SearchBookController
 import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.loan.CreateLoanController
+import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.loan.FindLoanController
 import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.loan.FinishLoanController
-import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.loan.SearchLoanByAccountIdController
 import com.github.caay2000.librarykata.hexagonal.context.secondaryadapter.database.InMemoryAccountRepository
 import com.github.caay2000.librarykata.hexagonal.context.secondaryadapter.database.InMemoryBookRepository
 import com.github.caay2000.librarykata.hexagonal.context.secondaryadapter.database.InMemoryLoanRepository
@@ -30,14 +30,14 @@ val DependencyInjectionConfiguration = createApplicationPlugin(name = "Dependenc
     DiKt.register { LocalDateProvider() }
 
     DiKt.register { CreateAccountController(DiKt.bind(), DiKt.bind(), DiKt.bind()) }
-    DiKt.register { FindAccountController(DiKt.bind()) }
+    DiKt.register { FindAccountController(DiKt.bind(), DiKt.bind()) }
 
     DiKt.register { CreateBookController(DiKt.bind(), DiKt.bind()) }
     DiKt.register { FindBookByIdController(DiKt.bind()) }
     DiKt.register { SearchBookController(DiKt.bind()) }
     DiKt.register { SearchBookByIsbnController(DiKt.bind()) }
-    DiKt.register { SearchLoanByAccountIdController(DiKt.bind(), DiKt.bind()) }
 
+    DiKt.register { FindLoanController(DiKt.bind()) }
     DiKt.register { CreateLoanController(DiKt.bind(), DiKt.bind(), DiKt.bind(), DiKt.bind(), DiKt.bind()) }
     DiKt.register { FinishLoanController(DiKt.bind(), DiKt.bind(), DiKt.bind(), DiKt.bind()) }
 }

@@ -1,5 +1,6 @@
 package com.github.caay2000.common.jsonapi
 
+import kotlinx.serialization.Polymorphic
 import kotlinx.serialization.Serializable
 
 interface JsonApiDocument {
@@ -16,21 +17,25 @@ interface JsonApiResource {
     val id: String?
     val type: String
     val attributes: JsonApiResourceAttributes
-    val relationships: List<JsonApiRelationshipResource>
+    val relationships: List<JsonApiRelationshipIdentifier>
 }
 
 interface JsonApiResourceAttributes
 
-interface JsonApiRelationshipResource {
-    val id: String?
+@Serializable
+data class JsonApiRelationshipIdentifier(
+    val id: String,
     val type: String
-    val attributes: List<JsonApiResourceAttributes>
-}
+)
 
 @Serializable
-sealed interface JsonApiMeta {
-    val total: Int
-}
+data class JsonApiRelationshipResource(
+    val id: String,
+    val type: String,
+    @Polymorphic
+    val attributes: JsonApiResourceAttributes
+)
 
 @Serializable
-data class JsonApiMetaValue(override val total: Int) : JsonApiMeta
+data class JsonApiMeta(val total: Int)
+

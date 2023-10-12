@@ -27,10 +27,8 @@ import com.github.caay2000.librarykata.hexagonal.context.loan.mother.LoanMother
 import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.serialization.AccountDocument
 import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.serialization.BookByIdDocument
 import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.serialization.BookByIsbnListDocument
-import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.serialization.LoanByAccountIdDocument
 import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.serialization.LoanDocument
 import io.ktor.server.testing.ApplicationTestBuilder
-import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.UUID
 
@@ -64,7 +62,7 @@ class TestUseCases(
     }
 
     context(ApplicationTestBuilder)
-    fun `find account`(id: AccountId): HttpDataResponse<AccountDocument> = libraryClient.findAccount(id)
+    fun `find account`(id: AccountId, include: List<AccountInclude> = emptyList()): HttpDataResponse<AccountDocument> = libraryClient.findAccount(id, include)
 
     context(ApplicationTestBuilder)
     fun `book is created`(
@@ -107,10 +105,6 @@ class TestUseCases(
     fun `search all books`(): HttpDataResponse<BookByIsbnListDocument> = libraryClient.searchBooks()
 
     context(ApplicationTestBuilder)
-    fun `search all loans by AccountId`(accountId: AccountId): HttpDataResponse<LoanByAccountIdDocument> =
-        libraryClient.searchLoanByAccountId(accountId)
-
-    context(ApplicationTestBuilder)
     fun `loan is created`(
         loan: Loan = LoanMother.random(),
         bookIsbn: BookIsbn? = null,
@@ -137,7 +131,8 @@ class TestUseCases(
         return libraryClient.finishLoan(bookId = bookId ?: loan.bookId)
     }
 
+    enum class AccountInclude { LOANS }
+
     private fun `id will be mocked`(id: UUID): UUID = mockIdGenerator?.mock(id).let { id }
-    private fun `date will be mocked`(date: LocalDate): LocalDate = mockDateProvider?.mock(date).let { date }
     private fun `datetime will be mocked`(datetime: LocalDateTime): LocalDateTime = mockDateProvider?.mock(datetime).let { datetime }
 }

@@ -2,11 +2,11 @@ package com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.se
 
 import com.github.caay2000.common.jsonapi.JsonApiListDocument
 import com.github.caay2000.common.jsonapi.JsonApiMeta
-import com.github.caay2000.common.jsonapi.JsonApiMetaValue
-import com.github.caay2000.common.jsonapi.JsonApiRelationshipResource
+import com.github.caay2000.common.jsonapi.JsonApiRelationshipIdentifier
 import com.github.caay2000.common.jsonapi.JsonApiResource
 import com.github.caay2000.common.jsonapi.JsonApiResourceAttributes
 import com.github.caay2000.librarykata.hexagonal.context.domain.Book
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -20,10 +20,11 @@ data class BookByIsbnListDocument(
         override val id: String? = null,
         override val type: String = "book",
         override val attributes: Attributes,
-        override val relationships: List<JsonApiRelationshipResource> = emptyList(),
+        override val relationships: List<JsonApiRelationshipIdentifier> = emptyList(),
     ) : JsonApiResource {
 
         @Serializable
+        @SerialName("bookByIsbn")
         data class Attributes(
             val isbn: String,
             val title: String,
@@ -40,7 +41,7 @@ fun List<Book>.toBookByIsbnListDocument(): BookByIsbnListDocument {
     val groupedBooks = this.toGroupedBookByIsbnAttributes()
     return BookByIsbnListDocument(
         data = groupedBooks.map { BookByIsbnListDocument.Resource(attributes = it) },
-        meta = JsonApiMetaValue(groupedBooks.size),
+        meta = JsonApiMeta(groupedBooks.size),
     )
 }
 

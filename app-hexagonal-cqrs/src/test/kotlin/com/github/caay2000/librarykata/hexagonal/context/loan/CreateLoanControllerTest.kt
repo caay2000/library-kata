@@ -44,7 +44,7 @@ class CreateLoanControllerTest {
 
         testUseCases.`loan is created`(loan, book.isbn)
             .assertStatus(HttpStatusCode.Created)
-            .assertResponse(loan.toLoanDocument(book))
+            .assertResponse(loan.toLoanDocument())
     }
 
     @Test

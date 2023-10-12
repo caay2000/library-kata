@@ -1,5 +1,6 @@
 package com.github.caay2000.librarykata.hexagonal.common
 
+import com.github.caay2000.common.http.ContentType
 import com.github.caay2000.common.http.ErrorResponseDocument
 import com.github.caay2000.common.test.http.HttpDataResponse
 import com.github.caay2000.librarykata.hexagonal.context.domain.AccountId
@@ -29,7 +30,6 @@ import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import io.ktor.client.statement.HttpResponse
 import io.ktor.client.statement.bodyAsText
-import io.ktor.http.ContentType
 import io.ktor.http.contentType
 import io.ktor.server.testing.ApplicationTestBuilder
 import kotlinx.coroutines.runBlocking
@@ -68,13 +68,18 @@ class LibraryClient {
                         ),
                     ),
                 )
-                contentType(ContentType.Application.Json)
+                contentType(ContentType.JsonApi)
             }.toHttpDataResponse()
         }
 
     context(ApplicationTestBuilder)
-    fun findAccount(id: AccountId): HttpDataResponse<AccountDocument> =
-        runBlocking { client.get("/account/${id.value}").toHttpDataResponse() }
+    fun findAccount(id: AccountId, include: List<TestUseCases.AccountInclude>): HttpDataResponse<AccountDocument> =
+        runBlocking {
+            val includeQuery = include.joinToString { it.name.lowercase() }.let {
+                if (it.isNotBlank()) "?include=$it" else ""
+            }
+            client.get("/account/${id.value}$includeQuery").toHttpDataResponse()
+        }
 
     context(ApplicationTestBuilder)
     fun searchLoanByAccountId(accountId: AccountId): HttpDataResponse<LoanByAccountIdDocument> =
@@ -102,7 +107,7 @@ class LibraryClient {
                     ),
                 )
                 setBody(Json.encodeToString(request))
-                contentType(ContentType.Application.Json)
+                contentType(ContentType.JsonApi)
             }.toHttpDataResponse()
         }
 
@@ -134,7 +139,7 @@ class LibraryClient {
                     ),
                 )
                 setBody(Json.encodeToString(request))
-                contentType(ContentType.Application.Json)
+                contentType(ContentType.JsonApi)
             }.toHttpDataResponse()
         }
 
