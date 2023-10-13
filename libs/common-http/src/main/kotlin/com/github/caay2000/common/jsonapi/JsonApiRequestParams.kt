@@ -37,7 +37,7 @@ fun Map<String, String>.toJsonApiRequestParams(): JsonApiRequestParams {
         run {
             val filterMatches: List<String> = filterRegex.find(entry.key)?.groupValues ?: listOf()
             when (entry.key) {
-                "include" -> entry.value.split(",").map { includes.add(it) }
+                "include" -> entry.value.split(",").map { includes.add(it.uppercase()) }
                 "page[number]" -> pageNumber = entry.value.toInt()
                 "page[size]" -> pageSize = entry.value.toInt()
                 "sort" -> entry.value.split(",")

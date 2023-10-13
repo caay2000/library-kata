@@ -1,8 +1,8 @@
 package com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.serialization
 
 import com.github.caay2000.common.jsonapi.JsonApiDocument
+import com.github.caay2000.common.jsonapi.JsonApiIncludedResource
 import com.github.caay2000.common.jsonapi.JsonApiRelationshipIdentifier
-import com.github.caay2000.common.jsonapi.JsonApiRelationshipResource
 import com.github.caay2000.common.jsonapi.JsonApiResource
 import com.github.caay2000.common.jsonapi.JsonApiResourceAttributes
 import com.github.caay2000.common.serialization.LocalDateSerializer
@@ -17,7 +17,7 @@ import java.time.LocalDateTime
 @Serializable
 data class AccountDocument(
     override val data: Resource,
-    override val included: List<JsonApiRelationshipResource> = emptyList(),
+    override val included: List<JsonApiIncludedResource> = emptyList(),
 ) : JsonApiDocument {
 
     @Serializable
@@ -64,7 +64,7 @@ fun Account.toAccountDocument(loans: List<Loan> = emptyList()) =
             },
         ),
         included = loans.map {
-            JsonApiRelationshipResource(
+            JsonApiIncludedResource(
                 id = it.id.value,
                 type = "loan",
                 attributes = it.toLoanDocumentAttributes(),

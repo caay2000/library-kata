@@ -18,6 +18,15 @@ fun <T> HttpDataResponse<T>.assertResponse(response: T): HttpDataResponse<T> =
     assertThat(value).isEqualTo(response)
         .let { this }
 
+inline fun <reified T> HttpDataResponse<T>.assertJsonResponse(response: String, mapper: Json = Json): HttpDataResponse<T> =
+    try {
+        JSONAssert.assertEquals(mapper.encodeToString(value), response, true).let { this }
+    } catch (e: Throwable) {
+        logger.warn { "expected: ${mapper.encodeToString(value)}" }
+        logger.warn { "actual  : ${mapper.encodeToString(response)}" }
+        throw e
+    }
+
 inline fun <reified T> HttpDataResponse<T>.assertJsonResponse(response: T, mapper: Json = Json): HttpDataResponse<T> =
     try {
         JSONAssert.assertEquals(mapper.encodeToString(value), mapper.encodeToString(response), true).let { this }

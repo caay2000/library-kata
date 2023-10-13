@@ -1,8 +1,8 @@
 package com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.serialization
 
 import com.github.caay2000.common.jsonapi.JsonApiDocument
+import com.github.caay2000.common.jsonapi.JsonApiIncludedResource
 import com.github.caay2000.common.jsonapi.JsonApiRelationshipIdentifier
-import com.github.caay2000.common.jsonapi.JsonApiRelationshipResource
 import com.github.caay2000.common.jsonapi.JsonApiResource
 import com.github.caay2000.common.jsonapi.JsonApiResourceAttributes
 import com.github.caay2000.common.serialization.LocalDateTimeSerializer
@@ -15,7 +15,7 @@ import java.time.LocalDateTime
 data class LoanDocument(
     override val data: Resource,
     @Serializable
-    override val included: List<JsonApiRelationshipResource> = emptyList(),
+    override val included: List<JsonApiIncludedResource> = emptyList(),
 ) : JsonApiDocument {
 
     @Serializable

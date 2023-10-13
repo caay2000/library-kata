@@ -2,6 +2,7 @@ package com.github.caay2000.librarykata.hexagonal
 
 import com.github.caay2000.common.http.ContentType
 import com.github.caay2000.common.http.Controller
+import com.github.caay2000.common.idgenerator.UUIDGenerator
 import com.github.caay2000.common.jsonapi.JsonApiResourceAttributes
 import com.github.caay2000.common.serialization.LocalDateSerializer
 import com.github.caay2000.common.serialization.LocalDateTimeSerializer
@@ -24,7 +25,6 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.polymorphic
 import kotlinx.serialization.modules.serializersModuleOf
-import kotlinx.serialization.modules.subclass
 import mu.KotlinLogging
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -35,9 +35,11 @@ fun Application.main() {
 }
 
 fun Application.module() {
-    install(CallId) { generate { UUID.randomUUID().toString() } }
+    install(CallId) { generate { UUIDGenerator().generate() } }
     install(CallLogging) {
         callIdMdc("correlationId")
+        // TODO print duration of request
+        // check ktor callLogging format and https://youtrack.jetbrains.com/issue/KTOR-1250/Log-HTTP-request-time
         logger = KotlinLogging.logger(Controller::class.java.canonicalName)
     }
     install(StartupHookConfiguration)

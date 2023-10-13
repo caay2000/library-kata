@@ -10,7 +10,7 @@ import com.github.caay2000.librarykata.hexagonal.context.domain.Loan
 import mu.KLogger
 import mu.KotlinLogging
 
-class SearchLoanByAccountIdQueryHandler(
+class SearchLoansByAccountIdQueryHandler(
     loanRepository: LoanRepository,
 ) : QueryHandler<SearchLoanByAccountIdQuery, SearchLoanByAccountIdQueryResponse> {
 

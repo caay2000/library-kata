@@ -4,7 +4,7 @@ import kotlinx.serialization.Serializable
 
 interface JsonApiDocument {
     val data: JsonApiResource
-    val included: List<JsonApiRelationshipResource>
+    val included: List<JsonApiIncludedResource>
 }
 
 interface JsonApiListDocument {
@@ -28,7 +28,7 @@ data class JsonApiRelationshipIdentifier(
 )
 
 @Serializable
-data class JsonApiRelationshipResource(
+data class JsonApiIncludedResource(
     val id: String,
     val type: String,
     val attributes: JsonApiResourceAttributes,
