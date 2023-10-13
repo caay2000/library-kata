@@ -3,6 +3,7 @@ package com.github.caay2000.librarykata.hexagonal.common
 import com.github.caay2000.common.http.ContentType
 import com.github.caay2000.common.http.ErrorResponseDocument
 import com.github.caay2000.common.test.http.HttpDataResponse
+import com.github.caay2000.common.test.http.logger
 import com.github.caay2000.librarykata.hexagonal.context.domain.AccountId
 import com.github.caay2000.librarykata.hexagonal.context.domain.Birthdate
 import com.github.caay2000.librarykata.hexagonal.context.domain.BookAuthor
@@ -25,6 +26,7 @@ import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.ser
 import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.serialization.LoanByAccountIdDocument
 import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.serialization.LoanDocument
 import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.serialization.LoanRequestDocument
+import com.github.caay2000.librarykata.hexagonal.jsonMapper
 import io.ktor.client.request.get
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
@@ -33,9 +35,8 @@ import io.ktor.client.statement.bodyAsText
 import io.ktor.http.contentType
 import io.ktor.server.testing.ApplicationTestBuilder
 import kotlinx.coroutines.runBlocking
+import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.decodeFromJsonElement
 
 class LibraryClient {
 
@@ -52,7 +53,7 @@ class LibraryClient {
         runBlocking {
             client.post("/account") {
                 setBody(
-                    Json.encodeToString(
+                    jsonMapper.encodeToString(
                         AccountRequestDocument(
                             data = AccountRequestDocument.Resource(
                                 attributes = AccountRequestDocument.Resource.Attributes(
@@ -78,7 +79,9 @@ class LibraryClient {
             val includeQuery = include.joinToString { it.name.lowercase() }.let {
                 if (it.isNotBlank()) "?include=$it" else ""
             }
-            client.get("/account/${id.value}$includeQuery").toHttpDataResponse()
+            val a = client.get("/account/${id.value}$includeQuery").toHttpDataResponse<AccountDocument>()
+            logger.info { a }
+            a
         }
 
     context(ApplicationTestBuilder)
@@ -106,7 +109,7 @@ class LibraryClient {
                         ),
                     ),
                 )
-                setBody(Json.encodeToString(request))
+                setBody(jsonMapper.encodeToString(request))
                 contentType(ContentType.JsonApi)
             }.toHttpDataResponse()
         }
@@ -138,7 +141,7 @@ class LibraryClient {
                         ),
                     ),
                 )
-                setBody(Json.encodeToString(request))
+                setBody(jsonMapper.encodeToString(request))
                 contentType(ContentType.JsonApi)
             }.toHttpDataResponse()
         }
@@ -153,15 +156,17 @@ class LibraryClient {
         val body = bodyAsText()
 
         return HttpDataResponse(
-            value = decodeJsonBody<T>(body),
+            value = decodeJsonBody<T?>(body),
             httpResponse = this,
-            error = decodeJsonBody<ErrorResponseDocument>(body),
+            error = decodeJsonBody<ErrorResponseDocument?>(body),
         )
     }
 
     private inline fun <reified T> decodeJsonBody(body: String): T? =
         try {
-            Json.decodeFromJsonElement<T>(Json.parseToJsonElement(body))
+            val a = jsonMapper.decodeFromString<T>(body)
+            logger.info { "jsonmapper client decoder -> $a" }
+            a
         } catch (e: Exception) {
             null
         }

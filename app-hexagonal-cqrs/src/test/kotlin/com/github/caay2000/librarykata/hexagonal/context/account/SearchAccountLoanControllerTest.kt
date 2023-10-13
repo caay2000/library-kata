@@ -15,6 +15,7 @@ import com.github.caay2000.librarykata.hexagonal.context.domain.BookId
 import com.github.caay2000.librarykata.hexagonal.context.domain.Loan
 import com.github.caay2000.librarykata.hexagonal.context.loan.mother.LoanMother
 import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.serialization.toAccountDocument
+import com.github.caay2000.librarykata.hexagonal.jsonMapper
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.testing.testApplication
 import org.junit.jupiter.api.BeforeEach
@@ -67,7 +68,7 @@ class SearchAccountLoanControllerTest {
         )
 
         testUseCases.`find account`(account.id, listOf(TestUseCases.AccountInclude.LOANS))
-            .printJsonResponse()
+            .printJsonResponse(jsonMapper)
             .assertStatus(HttpStatusCode.OK)
             .assertJsonResponse(
                 account.toAccountDocument(
@@ -80,6 +81,7 @@ class SearchAccountLoanControllerTest {
                         ),
                     ),
                 ),
+                jsonMapper,
             )
 
 //        testUseCases.`search all loans by AccountId`(account.id)

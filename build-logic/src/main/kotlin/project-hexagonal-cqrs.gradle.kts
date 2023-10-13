@@ -17,7 +17,6 @@ dependencies {
     implementation("io.ktor:ktor-server-netty")
     implementation("io.ktor:ktor-server-content-negotiation")
     implementation("io.ktor:ktor-serialization-kotlinx-json")
-    implementation("io.ktor:ktor-serialization-jackson")
     implementation("io.ktor:ktor-server-call-logging")
 
     implementation("io.arrow-kt:arrow-core")

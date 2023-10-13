@@ -18,18 +18,18 @@ fun <T> HttpDataResponse<T>.assertResponse(response: T): HttpDataResponse<T> =
     assertThat(value).isEqualTo(response)
         .let { this }
 
-inline fun <reified T> HttpDataResponse<T>.assertJsonResponse(response: T): HttpDataResponse<T> =
+inline fun <reified T> HttpDataResponse<T>.assertJsonResponse(response: T, mapper: Json = Json): HttpDataResponse<T> =
     try {
-        JSONAssert.assertEquals(Json.encodeToString(value), Json.encodeToString(response), true).let { this }
+        JSONAssert.assertEquals(mapper.encodeToString(value), mapper.encodeToString(response), true).let { this }
     } catch (e: Throwable) {
-        logger.warn { "expected: ${Json.encodeToString(value)}" }
-        logger.warn { "actual  : ${Json.encodeToString(response)}" }
+        logger.warn { "expected: ${mapper.encodeToString(value)}" }
+        logger.warn { "actual  : ${mapper.encodeToString(response)}" }
         throw e
     }
 
-inline fun <reified T> HttpDataResponse<T>.printJsonResponse(): HttpDataResponse<T> =
+inline fun <reified T> HttpDataResponse<T>.printJsonResponse(mapper: Json = Json): HttpDataResponse<T> =
     try {
-        logger.info { Json.encodeToString(this.value!!) }
+        logger.info { mapper.encodeToString(this.value!!) }
         this
     } catch (e: Throwable) {
         logger.warn { "Impossible to log JsonResponse due to ${e.message}" }

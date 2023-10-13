@@ -56,10 +56,11 @@ class SearchAccountLoanControllerTest {
         testUseCases.`search all loans by AccountId`(account.id)
             .assertStatus(HttpStatusCode.OK)
             .assertJsonResponse(
-                LoanByUserIdDocument(
+                response = LoanByUserIdDocument(
                     accountId = account.id.value,
                     loans = listOf(book.toLoanDocument(loanId = LoanId(loan.id.value), startedAt = loan.createdAt.value)),
                 ),
+                mapper = jsonMapp,
             )
     }
 

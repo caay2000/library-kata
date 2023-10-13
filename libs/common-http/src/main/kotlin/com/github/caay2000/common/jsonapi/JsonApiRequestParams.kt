@@ -1,12 +1,11 @@
 package com.github.caay2000.common.jsonapi
 
-
 data class JsonApiRequestParams(
     val filter: Map<String, List<String>> = mutableMapOf(),
     val sort: Map<String, String> = mutableMapOf(),
     val pageNumber: Int = 1,
     val pageSize: Int = 10,
-    val include: List<String> = listOf()
+    val include: List<String> = listOf(),
 ) {
     companion object {
         private const val FILTER_TYPE = "type"
@@ -19,8 +18,11 @@ data class JsonApiRequestParams(
 @JvmName("flattenToJsonApiRequestParams")
 fun Map<String, List<String>>.toJsonApiRequestParams(): JsonApiRequestParams =
     this.mapValues {
-        if (it.value.size != 1) throw IllegalJsonApiRequestParamException("invalid values for ${it.key}")
-        else it.value.first()
+        if (it.value.size != 1) {
+            throw IllegalJsonApiRequestParamException("invalid values for ${it.key}")
+        } else {
+            it.value.first()
+        }
     }.toJsonApiRequestParams()
 
 fun Map<String, String>.toJsonApiRequestParams(): JsonApiRequestParams {

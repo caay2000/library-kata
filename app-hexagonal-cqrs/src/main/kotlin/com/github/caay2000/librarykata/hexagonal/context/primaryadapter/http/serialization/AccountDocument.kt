@@ -43,19 +43,6 @@ data class AccountDocument(
             val registerDate: LocalDateTime,
         ) : JsonApiResourceAttributes
     }
-
-//    @Serializable
-//    data class AccountRelationshipIdentifier(
-//        override val id: String,
-//        override val type: String = "account",
-//    ) : JsonApiRelationshipIdentifier
-//
-//    @Serializable
-//    data class AccountRelationshipResource(
-//        override val id: String,
-//        override val type: String = "account",
-//        override val attributes: Resource.Attributes,
-//    ) : JsonApiRelationshipResource
 }
 
 fun Account.toAccountDocument(loans: List<Loan> = emptyList()) =
@@ -80,7 +67,7 @@ fun Account.toAccountDocument(loans: List<Loan> = emptyList()) =
             JsonApiRelationshipResource(
                 id = it.id.value,
                 type = "loan",
-                attributes = it.toLoanDocumentAttributes() as JsonApiResourceAttributes,
+                attributes = it.toLoanDocumentAttributes(),
             )
         },
     )

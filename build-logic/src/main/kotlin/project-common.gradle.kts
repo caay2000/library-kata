@@ -34,7 +34,6 @@ dependencies {
         implementation("io.ktor:ktor-server-netty:${project.ext["ktor_version"]}")
         implementation("io.ktor:ktor-server-content-negotiation:${project.ext["ktor_version"]}")
         implementation("io.ktor:ktor-serialization-kotlinx-json:${project.ext["ktor_version"]}")
-        implementation("io.ktor:ktor-serialization-jackson:${project.ext["ktor_version"]}")
 
         implementation("io.ktor:ktor-server-call-logging:${project.ext["ktor_version"]}")
         implementation("io.ktor:ktor-server-call-id:${project.ext["ktor_version"]}")
