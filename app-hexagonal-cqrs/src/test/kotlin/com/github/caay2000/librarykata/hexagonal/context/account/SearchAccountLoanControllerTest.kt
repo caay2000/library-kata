@@ -116,7 +116,7 @@ class SearchAccountLoanControllerTest {
 
         testUseCases.`find account`(account.id, listOf(TestUseCases.AccountInclude.LOANS))
             .assertStatus(HttpStatusCode.OK)
-            .assertJsonResponse(account.toAccountDocument())
+            .assertJsonResponse(account.toAccountDocument(), jsonMapper)
 //        testUseCases.`search all loans by AccountId`(account.id)
 //            .assertStatus(HttpStatusCode.OK)
 //            .assertJsonResponse(

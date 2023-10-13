@@ -6,11 +6,6 @@ plugins {
 dependencies {
     implementation("io.ktor:ktor-server-call-logging-jvm:${project.ext["ktor_version"]}")
     implementation("io.ktor:ktor-server-call-id-jvm:${project.ext["ktor_version"]}")
-
-    implementation("io.ktor:ktor-client-core:2.3.5")
-    implementation("io.ktor:ktor-client-apache5:2.3.5")
-    implementation("io.ktor:ktor-client-logging:2.3.5")
-    implementation("io.ktor:ktor-client-content-negotiation:2.3.5")
 }
 
 tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile::class).all {

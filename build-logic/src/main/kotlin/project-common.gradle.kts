@@ -35,6 +35,11 @@ dependencies {
         implementation("io.ktor:ktor-server-content-negotiation:${project.ext["ktor_version"]}")
         implementation("io.ktor:ktor-serialization-kotlinx-json:${project.ext["ktor_version"]}")
 
+        implementation("io.ktor:ktor-client-core:${project.ext["ktor_version"]}")
+        implementation("io.ktor:ktor-client-apache5:${project.ext["ktor_version"]}")
+        implementation("io.ktor:ktor-client-logging:${project.ext["ktor_version"]}")
+        implementation("io.ktor:ktor-client-content-negotiation:${project.ext["ktor_version"]}")
+
         implementation("io.ktor:ktor-server-call-logging:${project.ext["ktor_version"]}")
         implementation("io.ktor:ktor-server-call-id:${project.ext["ktor_version"]}")
 
