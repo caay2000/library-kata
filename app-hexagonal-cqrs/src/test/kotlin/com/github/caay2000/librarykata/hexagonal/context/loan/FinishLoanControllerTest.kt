@@ -70,5 +70,5 @@ class FinishLoanControllerTest {
 
     private val account = AccountMother.random()
     private val book = BookMother.random()
-    private val loan = LoanMother.random(bookId = book.id, userId = account.id)
+    private val loan = LoanMother.random(bookId = book.id, accountId = account.id)
 }

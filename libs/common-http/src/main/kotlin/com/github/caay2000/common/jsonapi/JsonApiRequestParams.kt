@@ -25,7 +25,7 @@ fun Map<String, List<String>>.toJsonApiRequestParams(): JsonApiRequestParams =
         }
     }.toJsonApiRequestParams()
 
-fun Map<String, String>.toJsonApiRequestParams(): JsonApiRequestParams {
+private fun Map<String, String>.toJsonApiRequestParams(): JsonApiRequestParams {
     val includes = mutableListOf<String>()
     val filterRegex = Regex("filter\\[(.*)]")
     val sort: MutableMap<String, String> = mutableMapOf()

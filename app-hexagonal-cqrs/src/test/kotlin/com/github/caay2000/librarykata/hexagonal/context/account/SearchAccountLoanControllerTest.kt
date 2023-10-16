@@ -1,19 +1,17 @@
 package com.github.caay2000.librarykata.hexagonal.context.account
 
 import com.github.caay2000.common.test.http.assertJsonResponse
-import com.github.caay2000.common.test.http.assertResponse
 import com.github.caay2000.common.test.http.assertStatus
-import com.github.caay2000.common.test.http.printJsonResponse
 import com.github.caay2000.common.test.mock.MockDateProvider
 import com.github.caay2000.common.test.mock.MockIdGenerator
 import com.github.caay2000.dikt.DiKt
 import com.github.caay2000.librarykata.hexagonal.common.TestUseCases
+import com.github.caay2000.librarykata.hexagonal.context.account.mother.AccountDocumentMother
 import com.github.caay2000.librarykata.hexagonal.context.account.mother.AccountMother
 import com.github.caay2000.librarykata.hexagonal.context.book.mother.BookMother
 import com.github.caay2000.librarykata.hexagonal.context.domain.AccountId
 import com.github.caay2000.librarykata.hexagonal.context.domain.BookId
 import com.github.caay2000.librarykata.hexagonal.context.loan.mother.LoanMother
-import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.serialization.toAccountDocument
 import com.github.caay2000.librarykata.hexagonal.jsonMapper
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.testing.testApplication
@@ -40,9 +38,10 @@ class SearchAccountLoanControllerTest {
     fun `an account can be retrieved`() = testApplication {
         testUseCases.`account is created`(account)
 
+        val expected = AccountDocumentMother.json(account)
         testUseCases.`find account`(account.id)
             .assertStatus(HttpStatusCode.OK)
-            .assertResponse(account.toAccountDocument())
+            .assertJsonResponse(expected)
     }
 
     @Test
@@ -50,9 +49,10 @@ class SearchAccountLoanControllerTest {
         testUseCases.`account is created`(account)
         testUseCases.`book is created`(anotherBook)
 
+        val expected = AccountDocumentMother.json(account)
         testUseCases.`find account`(account.id, listOf(TestUseCases.AccountInclude.LOANS))
             .assertStatus(HttpStatusCode.OK)
-            .assertJsonResponse(account.toAccountDocument())
+            .assertJsonResponse(expected)
     }
 
     @Test
@@ -65,33 +65,10 @@ class SearchAccountLoanControllerTest {
             accountId = AccountId(account.id.value),
             createdAt = loan.createdAt,
         )
+        val loan = loan.copy(accountId = account.id, bookId = book.id)
 
-        val expected = """
-            {
-                "data": {
-                    "id": "${account.id.value}",
-                    "attributes": {
-                        "identityNumber": "${account.identityNumber.value}",
-                        "name": "${account.name.value}",
-                        "surname": "${account.surname.value}",
-                        "birthdate": "${account.birthdate.value}",
-                        "email": "${account.email.value}",
-                        "phonePrefix": "${account.phonePrefix.value}",
-                        "phoneNumber": "${account.phoneNumber.value}",
-                        "registerDate": "${account.registerDate.value}"
-                    },
-                    "relationships": [
-                        {
-                            "id": "${loan.id.value}",
-                            "type": "loan"
-                        }
-                    ]
-                }
-            }
-        """.trimIndent()
-
+        val expected = AccountDocumentMother.json(account, loan)
         testUseCases.`find account`(account.id)
-            .printJsonResponse(jsonMapper)
             .assertStatus(HttpStatusCode.OK)
             .assertJsonResponse(expected, jsonMapper)
     }
@@ -99,53 +76,17 @@ class SearchAccountLoanControllerTest {
     @Test
     fun `a user with one loan retrieves it with included information`() = testApplication {
         testUseCases.`account is created`(account)
-        val bookId = testUseCases.`book is created`(book).value!!.data.id
+        testUseCases.`book is created`(book)
         testUseCases.`loan is created`(
             id = loan.id,
             bookIsbn = book.isbn,
-            accountId = AccountId(account.id.value),
+            accountId = account.id,
             createdAt = loan.createdAt,
         )
+        val loan = loan.copy(accountId = account.id, bookId = book.id)
 
-        val expected = """
-            {
-                "data": {
-                    "id": "${account.id.value}",
-                    "attributes": {
-                        "identityNumber": "${account.identityNumber.value}",
-                        "name": "${account.name.value}",
-                        "surname": "${account.surname.value}",
-                        "birthdate": "${account.birthdate.value}",
-                        "email": "${account.email.value}",
-                        "phonePrefix": "${account.phonePrefix.value}",
-                        "phoneNumber": "${account.phoneNumber.value}",
-                        "registerDate": "${account.registerDate.value}"
-                    },
-                    "relationships": [
-                        {
-                            "id": "${loan.id.value}",
-                            "type": "loan"
-                        }
-                    ]
-                },
-                "included": [
-                    {
-                        "id": "${loan.id.value}",
-                        "type": "loan",
-                        "attributes": {
-                            "type": "loan",
-                            "bookId": "$bookId",
-                            "accountId": "${account.id.value}",
-                            "startLoan": "${loan.createdAt.value}",
-                            "finishLoan": null
-                        }
-                    }
-                ]
-            }
-        """.trimIndent()
-
+        val expected = AccountDocumentMother.json(account, listOf(loan), listOf("loans"))
         testUseCases.`find account`(account.id, listOf(TestUseCases.AccountInclude.LOANS))
-            .printJsonResponse(jsonMapper)
             .assertStatus(HttpStatusCode.OK)
             .assertJsonResponse(expected, jsonMapper)
     }
@@ -160,6 +101,7 @@ class SearchAccountLoanControllerTest {
             accountId = AccountId(account.id.value),
             createdAt = loan.createdAt,
         )
+        val loan = loan.copy(accountId = account.id, bookId = book.id)
 
         testUseCases.`book is created`(anotherBook)
         testUseCases.`loan is created`(
@@ -169,25 +111,12 @@ class SearchAccountLoanControllerTest {
             createdAt = anotherLoan.createdAt,
         )
         testUseCases.`loan is finished`(bookId = BookId(anotherBook.id.value), finishedAt = anotherLoan.finishedAt)
+        val anotherLoan = anotherLoan.copy(accountId = account.id, bookId = anotherBook.id)
 
+        val expected = AccountDocumentMother.json(account, listOf(loan, anotherLoan), listOf("loans"))
         testUseCases.`find account`(account.id, listOf(TestUseCases.AccountInclude.LOANS))
             .assertStatus(HttpStatusCode.OK)
-            .assertJsonResponse(account.toAccountDocument(), jsonMapper)
-//        testUseCases.`search all loans by AccountId`(account.id)
-//            .assertStatus(HttpStatusCode.OK)
-//            .assertJsonResponse(
-//                LoanByAccountIdDocument(
-//                    accountId = UUID.fromString(account.id.value),
-//                    loans = listOf(
-//                        book.toLoanDocument(loanId = LoanId(loan.id.value), startedAt = loan.createdAt.value),
-//                        anotherBook.toLoanDocument(
-//                            loanId = LoanId(anotherLoan.id.value),
-//                            startedAt = anotherLoan.createdAt.value,
-//                            finishedAt = anotherLoan.finishedAt!!.value,
-//                        ),
-//                    ),
-//                ),
-//            )
+            .assertJsonResponse(expected, jsonMapper)
     }
 
     private val book = BookMother.random()

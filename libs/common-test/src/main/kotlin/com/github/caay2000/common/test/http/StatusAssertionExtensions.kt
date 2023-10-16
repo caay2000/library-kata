@@ -22,8 +22,8 @@ inline fun <reified T> HttpDataResponse<T>.assertJsonResponse(response: String, 
     try {
         JSONAssert.assertEquals(mapper.encodeToString(value), response, true).let { this }
     } catch (e: Throwable) {
-        logger.warn { "expected: ${mapper.encodeToString(value)}" }
-        logger.warn { "actual  : ${mapper.encodeToString(response)}" }
+        logger.warn { "expected: ${mapper.encodeToString(response)}" }
+        logger.warn { "actual  : ${mapper.encodeToString(value)}" }
         throw e
     }
 
@@ -31,8 +31,8 @@ inline fun <reified T> HttpDataResponse<T>.assertJsonResponse(response: T, mappe
     try {
         JSONAssert.assertEquals(mapper.encodeToString(value), mapper.encodeToString(response), true).let { this }
     } catch (e: Throwable) {
-        logger.warn { "expected: ${mapper.encodeToString(value)}" }
-        logger.warn { "actual  : ${mapper.encodeToString(response)}" }
+        logger.warn { "expected: ${mapper.encodeToString(response)}" }
+        logger.warn { "actual  : ${mapper.encodeToString(value)}" }
         throw e
     }
 

@@ -2,15 +2,18 @@ package com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.ac
 
 import com.github.caay2000.common.dateprovider.DateProvider
 import com.github.caay2000.common.http.Controller
+import com.github.caay2000.common.http.Transfomer
 import com.github.caay2000.common.idgenerator.IdGenerator
 import com.github.caay2000.librarykata.hexagonal.context.application.account.AccountRepository
 import com.github.caay2000.librarykata.hexagonal.context.application.account.create.CreateAccountCommand
 import com.github.caay2000.librarykata.hexagonal.context.application.account.create.CreateAccountCommandHandler
 import com.github.caay2000.librarykata.hexagonal.context.application.account.find.FindAccountByIdQuery
 import com.github.caay2000.librarykata.hexagonal.context.application.account.find.FindAccountByIdQueryHandler
+import com.github.caay2000.librarykata.hexagonal.context.domain.Account
 import com.github.caay2000.librarykata.hexagonal.context.domain.AccountId
+import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.account.transformer.CreateAccountToAccountDocumentTransformer
+import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.serialization.AccountDocument
 import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.serialization.AccountRequestDocument
-import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.serialization.toAccountDocument
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.ApplicationCall
 import io.ktor.server.request.receive
@@ -31,6 +34,8 @@ class CreateAccountController(
     private val commandHandler = CreateAccountCommandHandler(accountRepository)
     private val queryHandler = FindAccountByIdQueryHandler(accountRepository)
 
+    private val transformer: Transfomer<Account, AccountDocument> = CreateAccountToAccountDocumentTransformer()
+
     override suspend fun handle(call: ApplicationCall) {
         val request = call.receive<AccountRequestDocument>()
         val accountId = idGenerator.generate()
@@ -38,7 +43,7 @@ class CreateAccountController(
         commandHandler.invoke(request.toCommand(accountId, registerDate))
 
         val queryResult = queryHandler.invoke(FindAccountByIdQuery(AccountId(accountId)))
-        call.respond(HttpStatusCode.Created, queryResult.account.toAccountDocument())
+        call.respond(HttpStatusCode.Created, transformer.invoke(queryResult.account))
     }
 
     private fun AccountRequestDocument.toCommand(accountId: String, registerDate: LocalDateTime): CreateAccountCommand =

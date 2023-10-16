@@ -37,19 +37,6 @@ data class LoanDocument(
             val finishLoan: LocalDateTime?,
         ) : JsonApiResourceAttributes
     }
-
-//    @Serializable
-//    data class LoanRelationshipIdentifier(
-//        override val id: String,
-//        override val type: String = "loan",
-//    ) : JsonApiRelationshipIdentifier
-//
-//    @Serializable
-//    data class LoanRelationshipResource(
-//        override val id: String,
-//        override val type: String = "loan",
-//        override val attributes: Resource.Attributes,
-//    ) : JsonApiRelationshipResource
 }
 
 fun Loan.toLoanDocument() =
@@ -67,3 +54,12 @@ fun Loan.toLoanDocumentAttributes() =
         startLoan = createdAt.value,
         finishLoan = finishedAt?.value,
     )
+
+fun List<Loan>.toLoanDocumentIncludedResource() =
+    this.map {
+        JsonApiIncludedResource(
+            id = it.id.value,
+            type = "loan",
+            attributes = it.toLoanDocumentAttributes(),
+        )
+    }

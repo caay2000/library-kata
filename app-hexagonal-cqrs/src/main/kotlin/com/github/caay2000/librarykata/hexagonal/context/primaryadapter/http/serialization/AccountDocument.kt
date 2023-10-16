@@ -47,27 +47,36 @@ data class AccountDocument(
 
 fun Account.toAccountDocument(loans: List<Loan> = emptyList()) =
     AccountDocument(
-        data = AccountDocument.Resource(
-            id = id.value,
-            attributes = AccountDocument.Resource.Attributes(
-                identityNumber = identityNumber.value,
-                name = name.value,
-                surname = surname.value,
-                birthdate = birthdate.value,
-                email = email.value,
-                phonePrefix = phonePrefix.value,
-                phoneNumber = phoneNumber.value,
-                registerDate = registerDate.value,
-            ),
-            relationships = loans.map {
-                JsonApiRelationshipIdentifier(id = it.id.value, type = "loan")
-            },
-        ),
-        included = loans.map {
-            JsonApiIncludedResource(
-                id = it.id.value,
-                type = "loan",
-                attributes = it.toLoanDocumentAttributes(),
-            )
+        data = toAccountDocumentResource(loans),
+        included = loans.toLoanDocumentIncludedResource(),
+    )
+
+fun Account.toAccountDocumentResource(loans: List<Loan> = emptyList()) =
+    AccountDocument.Resource(
+        id = id.value,
+        attributes = toAccountDocumentAttributes(),
+        relationships = loans.map {
+            JsonApiRelationshipIdentifier(id = it.id.value, type = "loan")
         },
     )
+
+fun Account.toAccountDocumentAttributes() =
+    AccountDocument.Resource.Attributes(
+        identityNumber = identityNumber.value,
+        name = name.value,
+        surname = surname.value,
+        birthdate = birthdate.value,
+        email = email.value,
+        phonePrefix = phonePrefix.value,
+        phoneNumber = phoneNumber.value,
+        registerDate = registerDate.value,
+    )
+
+fun List<Account>.toAccountDocumentIncludedResource() =
+    map {
+        JsonApiIncludedResource(
+            id = it.id.value,
+            type = "account",
+            attributes = it.toAccountDocumentAttributes(),
+        )
+    }

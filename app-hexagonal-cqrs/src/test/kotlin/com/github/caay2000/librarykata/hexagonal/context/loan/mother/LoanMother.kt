@@ -14,13 +14,13 @@ object LoanMother {
     fun random(
         id: LoanId = LoanIdMother.random(),
         bookId: BookId = BookId(UUID.randomUUID().toString()),
-        userId: AccountId = AccountId(UUID.randomUUID().toString()),
+        accountId: AccountId = AccountId(UUID.randomUUID().toString()),
         createdAt: CreatedAt = CreatedAt(LocalDateTime.now()),
         finishedAt: FinishedAt? = null,
     ) = Loan(
         id,
         bookId,
-        userId,
+        accountId,
         createdAt,
         finishedAt,
     )
