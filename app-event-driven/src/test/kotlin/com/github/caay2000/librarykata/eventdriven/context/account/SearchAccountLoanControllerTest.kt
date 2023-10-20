@@ -42,7 +42,6 @@ class SearchAccountLoanControllerTest {
             .assertJsonResponse(
                 LoanByUserIdDocument(
                     accountId = account.id.value,
-                    loans = emptyList(),
                 ),
             )
     }

@@ -4,7 +4,7 @@ import com.github.caay2000.common.http.Controller
 import com.github.caay2000.librarykata.hexagonal.context.application.loan.LoanRepository
 import com.github.caay2000.librarykata.hexagonal.context.application.loan.find.FindLoanByIdQuery
 import com.github.caay2000.librarykata.hexagonal.context.application.loan.find.FindLoanByIdQueryHandler
-import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.serialization.toLoanDocument
+import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.serialization.toJsonApiDocument
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.ApplicationCall
 import io.ktor.server.response.respond
@@ -25,6 +25,6 @@ class FindLoanController(
 
         val queryResult = queryHandler.invoke(FindLoanByIdQuery(loanId))
 
-        call.respond(HttpStatusCode.OK, queryResult.loan.toLoanDocument())
+        call.respond(HttpStatusCode.OK, queryResult.loan.toJsonApiDocument())
     }
 }

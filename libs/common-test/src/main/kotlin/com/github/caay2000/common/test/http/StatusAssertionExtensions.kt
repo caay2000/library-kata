@@ -1,8 +1,7 @@
 package com.github.caay2000.common.test.http
 
+import com.github.caay2000.common.test.json.JsonApiSchemaValidator
 import io.ktor.http.HttpStatusCode
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
 import mu.KLogger
 import mu.KotlinLogging
 import org.assertj.core.api.Assertions.assertThat
@@ -18,30 +17,34 @@ fun <T> HttpDataResponse<T>.assertResponse(response: T): HttpDataResponse<T> =
     assertThat(value).isEqualTo(response)
         .let { this }
 
-inline fun <reified T> HttpDataResponse<T>.assertJsonResponse(response: String, mapper: Json = Json): HttpDataResponse<T> =
+suspend inline fun <reified T> HttpDataResponse<T>.assertJsonResponse(expected: String): HttpDataResponse<T> =
     try {
-        JSONAssert.assertEquals(mapper.encodeToString(value), response, true).let { this }
+        JSONAssert.assertEquals(expected, body(), true).let { this }
+        this.assureJsonApiSchema()
     } catch (e: Throwable) {
-        logger.warn { "expected: ${mapper.encodeToString(response)}" }
-        logger.warn { "actual  : ${mapper.encodeToString(value)}" }
+        logger.warn { "expected: $expected" }
+        logger.warn { "actual  : $value" }
         throw e
     }
 
-inline fun <reified T> HttpDataResponse<T>.assertJsonResponse(response: T, mapper: Json = Json): HttpDataResponse<T> =
+suspend inline fun <reified T> HttpDataResponse<T>.printJsonResponse(): HttpDataResponse<T> =
     try {
-        JSONAssert.assertEquals(mapper.encodeToString(value), mapper.encodeToString(response), true).let { this }
-    } catch (e: Throwable) {
-        logger.warn { "expected: ${mapper.encodeToString(response)}" }
-        logger.warn { "actual  : ${mapper.encodeToString(value)}" }
-        throw e
-    }
-
-inline fun <reified T> HttpDataResponse<T>.printJsonResponse(mapper: Json = Json): HttpDataResponse<T> =
-    try {
-        logger.info { mapper.encodeToString(this.value!!) }
+        val body = body()
+        logger.info { body }
         this
     } catch (e: Throwable) {
         logger.warn { "Impossible to log JsonResponse due to ${e.message}" }
+        this
+    }
+
+@JvmName("assureJsonApiSchemaForResponse")
+suspend inline fun <reified T> HttpDataResponse<T>.assureJsonApiSchema(): HttpDataResponse<T> =
+    run {
+        val list = JsonApiSchemaValidator().validate("jsonApiSchema_v1_1.json", body())
+        if (list.isNotEmpty()) {
+            logger.error { list }
+            throw RuntimeException(list.toString())
+        }
         this
     }
 

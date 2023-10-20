@@ -22,3 +22,27 @@ A Project Skeleton to build Kotlin apps with Gradle and Ktor
 
 - Devolver un libro
     - Un usuario ha de poder devolver un libro prestado.
+
+
+## API
+
+```http request
+GET /account/{id}
+
+POST /account
+
+GET /book
+
+GET /book?isbn
+
+GET /book/{id}
+
+POST /book
+
+GET /loan/{loanId}
+
+POST /loan
+
+POST /loan/{bookId}
+
+```

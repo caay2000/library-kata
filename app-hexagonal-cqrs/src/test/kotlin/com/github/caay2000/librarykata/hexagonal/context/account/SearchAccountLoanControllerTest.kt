@@ -12,7 +12,6 @@ import com.github.caay2000.librarykata.hexagonal.context.book.mother.BookMother
 import com.github.caay2000.librarykata.hexagonal.context.domain.AccountId
 import com.github.caay2000.librarykata.hexagonal.context.domain.BookId
 import com.github.caay2000.librarykata.hexagonal.context.loan.mother.LoanMother
-import com.github.caay2000.librarykata.hexagonal.jsonMapper
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.testing.testApplication
 import org.junit.jupiter.api.BeforeEach
@@ -70,7 +69,7 @@ class SearchAccountLoanControllerTest {
         val expected = AccountDocumentMother.json(account, loan)
         testUseCases.`find account`(account.id)
             .assertStatus(HttpStatusCode.OK)
-            .assertJsonResponse(expected, jsonMapper)
+            .assertJsonResponse(expected)
     }
 
     @Test
@@ -88,7 +87,7 @@ class SearchAccountLoanControllerTest {
         val expected = AccountDocumentMother.json(account, listOf(loan), listOf("loans"))
         testUseCases.`find account`(account.id, listOf(TestUseCases.AccountInclude.LOANS))
             .assertStatus(HttpStatusCode.OK)
-            .assertJsonResponse(expected, jsonMapper)
+            .assertJsonResponse(expected)
     }
 
     @Test
@@ -116,7 +115,7 @@ class SearchAccountLoanControllerTest {
         val expected = AccountDocumentMother.json(account, listOf(loan, anotherLoan), listOf("loans"))
         testUseCases.`find account`(account.id, listOf(TestUseCases.AccountInclude.LOANS))
             .assertStatus(HttpStatusCode.OK)
-            .assertJsonResponse(expected, jsonMapper)
+            .assertJsonResponse(expected)
     }
 
     private val book = BookMother.random()

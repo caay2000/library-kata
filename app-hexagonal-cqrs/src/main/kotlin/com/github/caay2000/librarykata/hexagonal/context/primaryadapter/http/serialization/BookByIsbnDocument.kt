@@ -2,45 +2,13 @@ package com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.se
 
 import com.github.caay2000.common.jsonapi.JsonApiListDocument
 import com.github.caay2000.common.jsonapi.JsonApiMeta
-import com.github.caay2000.common.jsonapi.JsonApiRelationshipIdentifier
-import com.github.caay2000.common.jsonapi.JsonApiResource
-import com.github.caay2000.common.jsonapi.JsonApiResourceAttributes
+import com.github.caay2000.common.jsonapi.context.book.BookByIsbnResource
 import com.github.caay2000.librarykata.hexagonal.context.domain.Book
-import kotlinx.serialization.SerialName
-import kotlinx.serialization.Serializable
 
-@Serializable
-data class BookByIsbnListDocument(
-    override val data: List<Resource>,
-    override val meta: JsonApiMeta,
-) : JsonApiListDocument {
-
-    @Serializable
-    data class Resource(
-        override val id: String? = null,
-        override val type: String = "book",
-        override val attributes: Attributes,
-        override val relationships: List<JsonApiRelationshipIdentifier> = emptyList(),
-    ) : JsonApiResource {
-
-        @Serializable
-        @SerialName("bookByIsbn")
-        data class Attributes(
-            val isbn: String,
-            val title: String,
-            val author: String,
-            val pages: Int,
-            val publisher: String,
-            val copies: Int,
-            val availableCopies: Int,
-        ) : JsonApiResourceAttributes
-    }
-}
-
-fun List<Book>.toBookByIsbnListDocument(): BookByIsbnListDocument {
+fun List<Book>.toJsonApiListDocument(): JsonApiListDocument<BookByIsbnResource> {
     val groupedBooks = this.toGroupedBookByIsbnAttributes()
-    return BookByIsbnListDocument(
-        data = groupedBooks.map { BookByIsbnListDocument.Resource(attributes = it) },
+    return JsonApiListDocument(
+        data = groupedBooks.map { BookByIsbnResource(id = it.isbn, attributes = it) },
         meta = JsonApiMeta(groupedBooks.size),
     )
 }
@@ -50,7 +18,7 @@ private fun List<Book>.toGroupedBookByIsbnAttributes() =
         .toSortedMap(compareBy { it.value })
         .map { (key, books) ->
             val sample = books.first()
-            BookByIsbnListDocument.Resource.Attributes(
+            BookByIsbnResource.Attributes(
                 isbn = key.value,
                 title = sample.title.value,
                 author = sample.author.value,

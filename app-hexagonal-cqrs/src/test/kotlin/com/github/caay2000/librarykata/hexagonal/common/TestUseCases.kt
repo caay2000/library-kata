@@ -1,5 +1,11 @@
 package com.github.caay2000.librarykata.hexagonal.common
 
+import com.github.caay2000.common.jsonapi.JsonApiDocument
+import com.github.caay2000.common.jsonapi.JsonApiListDocument
+import com.github.caay2000.common.jsonapi.context.account.AccountResource
+import com.github.caay2000.common.jsonapi.context.book.BookByIdResource
+import com.github.caay2000.common.jsonapi.context.book.BookByIsbnResource
+import com.github.caay2000.common.jsonapi.context.loan.LoanResource
 import com.github.caay2000.common.test.http.HttpDataResponse
 import com.github.caay2000.common.test.mock.MockDateProvider
 import com.github.caay2000.common.test.mock.MockIdGenerator
@@ -24,10 +30,6 @@ import com.github.caay2000.librarykata.hexagonal.context.domain.LoanId
 import com.github.caay2000.librarykata.hexagonal.context.domain.PhoneNumber
 import com.github.caay2000.librarykata.hexagonal.context.domain.PhonePrefix
 import com.github.caay2000.librarykata.hexagonal.context.loan.mother.LoanMother
-import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.serialization.AccountDocument
-import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.serialization.BookByIdDocument
-import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.serialization.BookByIsbnListDocument
-import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.serialization.LoanDocument
 import io.ktor.server.testing.ApplicationTestBuilder
 import java.time.LocalDateTime
 import java.util.UUID
@@ -46,7 +48,7 @@ class TestUseCases(
         email: Email? = null,
         phonePrefix: PhonePrefix? = null,
         phoneNumber: PhoneNumber? = null,
-    ): HttpDataResponse<AccountDocument> {
+    ): HttpDataResponse<JsonApiDocument<AccountResource>> {
         val id = accountId?.value ?: account.id.value
         `id will be mocked`(UUID.fromString(id))
         `datetime will be mocked`(account.registerDate.value)
@@ -62,7 +64,11 @@ class TestUseCases(
     }
 
     context(ApplicationTestBuilder)
-    fun `find account`(id: AccountId, include: List<AccountInclude> = emptyList()): HttpDataResponse<AccountDocument> = libraryClient.findAccount(id, include)
+    fun `find account`(
+        id: AccountId,
+        include: List<AccountInclude> = emptyList(),
+    ): HttpDataResponse<JsonApiDocument<AccountResource>> =
+        libraryClient.findAccount(id, include)
 
     context(ApplicationTestBuilder)
     fun `book is created`(
@@ -73,7 +79,7 @@ class TestUseCases(
         author: BookAuthor? = null,
         pages: BookPages? = null,
         publisher: BookPublisher? = null,
-    ): HttpDataResponse<BookByIdDocument> {
+    ): HttpDataResponse<JsonApiDocument<BookByIdResource>> {
         `id will be mocked`(UUID.fromString(id?.value ?: book.id.value))
         return libraryClient.createBook(
             isbn = isbn ?: book.isbn,
@@ -96,13 +102,13 @@ class TestUseCases(
     }
 
     context(ApplicationTestBuilder)
-    fun `find book by id`(id: BookId): HttpDataResponse<BookByIdDocument> = libraryClient.findBookById(id)
+    fun `find book by id`(id: BookId): HttpDataResponse<JsonApiDocument<BookByIdResource>> = libraryClient.findBookById(id)
 
     context(ApplicationTestBuilder)
-    fun `find book by isbn`(isbn: BookIsbn): HttpDataResponse<BookByIsbnListDocument> = libraryClient.findBookByIsbn(isbn)
+    fun `find book by isbn`(isbn: BookIsbn): HttpDataResponse<JsonApiListDocument<BookByIsbnResource>> = libraryClient.findBookByIsbn(isbn)
 
     context(ApplicationTestBuilder)
-    fun `search all books`(): HttpDataResponse<BookByIsbnListDocument> = libraryClient.searchBooks()
+    fun `search all books`(): HttpDataResponse<JsonApiListDocument<BookByIsbnResource>> = libraryClient.searchBooks()
 
     context(ApplicationTestBuilder)
     fun `loan is created`(
@@ -111,7 +117,7 @@ class TestUseCases(
         id: LoanId? = null,
         accountId: AccountId? = null,
         createdAt: CreatedAt? = null,
-    ): HttpDataResponse<LoanDocument> {
+    ): HttpDataResponse<JsonApiDocument<LoanResource>> {
         `id will be mocked`(UUID.fromString(id?.value ?: loan.id.value))
         `datetime will be mocked`(createdAt?.value ?: loan.createdAt.value)
         return libraryClient.createLoan(

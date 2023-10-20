@@ -2,8 +2,12 @@ package com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.ac
 
 import com.github.caay2000.common.dateprovider.DateProvider
 import com.github.caay2000.common.http.Controller
-import com.github.caay2000.common.http.Transfomer
+import com.github.caay2000.common.http.Transformer
 import com.github.caay2000.common.idgenerator.IdGenerator
+import com.github.caay2000.common.jsonapi.JsonApiDocument
+import com.github.caay2000.common.jsonapi.JsonApiRequestDocument
+import com.github.caay2000.common.jsonapi.context.account.AccountRequestResource
+import com.github.caay2000.common.jsonapi.context.account.AccountResource
 import com.github.caay2000.librarykata.hexagonal.context.application.account.AccountRepository
 import com.github.caay2000.librarykata.hexagonal.context.application.account.create.CreateAccountCommand
 import com.github.caay2000.librarykata.hexagonal.context.application.account.create.CreateAccountCommandHandler
@@ -12,8 +16,6 @@ import com.github.caay2000.librarykata.hexagonal.context.application.account.fin
 import com.github.caay2000.librarykata.hexagonal.context.domain.Account
 import com.github.caay2000.librarykata.hexagonal.context.domain.AccountId
 import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.account.transformer.CreateAccountToAccountDocumentTransformer
-import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.serialization.AccountDocument
-import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.serialization.AccountRequestDocument
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.ApplicationCall
 import io.ktor.server.request.receive
@@ -34,10 +36,10 @@ class CreateAccountController(
     private val commandHandler = CreateAccountCommandHandler(accountRepository)
     private val queryHandler = FindAccountByIdQueryHandler(accountRepository)
 
-    private val transformer: Transfomer<Account, AccountDocument> = CreateAccountToAccountDocumentTransformer()
+    private val transformer: Transformer<Account, JsonApiDocument<AccountResource>> = CreateAccountToAccountDocumentTransformer()
 
     override suspend fun handle(call: ApplicationCall) {
-        val request = call.receive<AccountRequestDocument>()
+        val request = call.receive<JsonApiRequestDocument<AccountRequestResource>>()
         val accountId = idGenerator.generate()
         val registerDate = dateProvider.dateTime()
         commandHandler.invoke(request.toCommand(accountId, registerDate))
@@ -46,7 +48,7 @@ class CreateAccountController(
         call.respond(HttpStatusCode.Created, transformer.invoke(queryResult.account))
     }
 
-    private fun AccountRequestDocument.toCommand(accountId: String, registerDate: LocalDateTime): CreateAccountCommand =
+    private fun JsonApiRequestDocument<AccountRequestResource>.toCommand(accountId: String, registerDate: LocalDateTime): CreateAccountCommand =
         CreateAccountCommand(
             accountId = UUID.fromString(accountId),
             identityNumber = data.attributes.identityNumber,

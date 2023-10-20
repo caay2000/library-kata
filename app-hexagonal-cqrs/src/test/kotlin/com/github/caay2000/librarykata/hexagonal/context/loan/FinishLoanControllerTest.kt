@@ -10,7 +10,7 @@ import com.github.caay2000.librarykata.hexagonal.context.account.mother.AccountM
 import com.github.caay2000.librarykata.hexagonal.context.book.mother.BookMother
 import com.github.caay2000.librarykata.hexagonal.context.domain.BookId
 import com.github.caay2000.librarykata.hexagonal.context.loan.mother.LoanMother
-import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.serialization.toLoanDocument
+import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.serialization.toJsonApiDocument
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.testing.testApplication
 import org.junit.jupiter.api.BeforeEach
@@ -42,7 +42,7 @@ class FinishLoanControllerTest {
 
         testUseCases.`loan is created`(loan, book.isbn)
             .assertStatus(HttpStatusCode.Created)
-            .assertResponse(loan.toLoanDocument())
+            .assertResponse(loan.toJsonApiDocument())
 
         testUseCases.`loan is finished`(bookId = BookId(book.id.value))
             .assertStatus(HttpStatusCode.Accepted)
@@ -58,14 +58,14 @@ class FinishLoanControllerTest {
 
         testUseCases.`loan is created`(loan, book.isbn)
             .assertStatus(HttpStatusCode.Created)
-            .assertResponse(loan.toLoanDocument())
+            .assertResponse(loan.toJsonApiDocument())
 
         testUseCases.`loan is finished`(bookId = BookId(book.id.value))
             .assertStatus(HttpStatusCode.Accepted)
 
         testUseCases.`loan is created`(loan, book.isbn)
             .assertStatus(HttpStatusCode.Created)
-            .assertResponse(loan.toLoanDocument())
+            .assertResponse(loan.toJsonApiDocument())
     }
 
     private val account = AccountMother.random()

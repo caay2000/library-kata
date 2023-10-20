@@ -12,7 +12,7 @@ import com.github.caay2000.librarykata.hexagonal.context.book.mother.BookMother
 import com.github.caay2000.librarykata.hexagonal.context.domain.AccountId
 import com.github.caay2000.librarykata.hexagonal.context.domain.BookId
 import com.github.caay2000.librarykata.hexagonal.context.loan.mother.LoanMother
-import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.serialization.toLoanDocument
+import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.serialization.toJsonApiDocument
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.testing.testApplication
 import org.junit.jupiter.api.BeforeEach
@@ -44,7 +44,7 @@ class CreateLoanControllerTest {
 
         testUseCases.`loan is created`(loan, book.isbn)
             .assertStatus(HttpStatusCode.Created)
-            .assertResponse(loan.toLoanDocument())
+            .assertResponse(loan.toJsonApiDocument())
     }
 
     @Test

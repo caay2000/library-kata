@@ -1,45 +1,47 @@
 package com.github.caay2000.librarykata.hexagonal.context.account.mother
 
+import com.github.caay2000.common.jsonapi.JsonApiDocument
 import com.github.caay2000.common.jsonapi.JsonApiIncludedResource
+import com.github.caay2000.common.jsonapi.JsonApiRelationshipData
 import com.github.caay2000.common.jsonapi.JsonApiRelationshipIdentifier
+import com.github.caay2000.common.jsonapi.context.account.AccountResource
 import com.github.caay2000.librarykata.hexagonal.context.domain.Account
 import com.github.caay2000.librarykata.hexagonal.context.domain.Loan
 import com.github.caay2000.librarykata.hexagonal.context.loan.mother.LoanMother
-import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.serialization.AccountDocument
-import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.serialization.toLoanDocumentAttributes
+import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.serialization.toJsonApiDocumentAttributes
 import com.github.caay2000.librarykata.hexagonal.jsonMapper
 import kotlinx.serialization.encodeToString
 
 object AccountDocumentMother {
 
-    fun random(account: Account = AccountMother.random()) = account.toAccountDocument()
+    fun random(account: Account = AccountMother.random()) = account.toJsonApiDocument()
 
     fun random(
         account: Account = AccountMother.random(),
         loans: List<Loan> = List(3) { LoanMother.random(accountId = account.id) },
-    ) = account.toAccountDocument(loans)
+    ) = account.toJsonApiDocument(loans)
 
-    fun json(account: Account = AccountMother.random()) = jsonMapper.encodeToString(account.toAccountDocument())
+    fun json(account: Account = AccountMother.random()) = jsonMapper.encodeToString(account.toJsonApiDocument())
 
     fun json(
         account: Account = AccountMother.random(),
         loan: Loan,
-    ) = jsonMapper.encodeToString(account.toAccountDocument(listOf(loan)))
+    ) = jsonMapper.encodeToString(account.toJsonApiDocument(listOf(loan)))
 
     fun json(
         account: Account = AccountMother.random(),
         loans: List<Loan> = List(3) { LoanMother.random(accountId = account.id) },
         included: List<String> = emptyList(),
-    ) = jsonMapper.encodeToString(account.toAccountDocument(loans, included.map { it.uppercase() }))
+    ) = jsonMapper.encodeToString(account.toJsonApiDocument(loans, included.map { it.uppercase() }))
 
-    private fun Account.toAccountDocument(
+    private fun Account.toJsonApiDocument(
         loans: List<Loan> = emptyList(),
         included: List<String> = emptyList(),
-    ) = AccountDocument(
-        data = AccountDocument.Resource(
+    ) = JsonApiDocument(
+        data = AccountResource(
             id = id.value,
             type = "account",
-            attributes = AccountDocument.Resource.Attributes(
+            attributes = AccountResource.Attributes(
                 identityNumber = identityNumber.value,
                 name = name.value,
                 surname = surname.value,
@@ -49,20 +51,38 @@ object AccountDocumentMother {
                 phoneNumber = phoneNumber.value,
                 registerDate = registerDate.value,
             ),
-            relationships = loans.map {
-                JsonApiRelationshipIdentifier(id = it.id.value, type = "loan")
-            },
+            relationships = mapRelationships(loans),
         ),
-        included = if (included.contains("LOANS")) {
+        included = mapIncluded(included, loans),
+    )
+
+    private fun mapIncluded(
+        included: List<String>,
+        loans: List<Loan>,
+    ): List<JsonApiIncludedResource>? = if (included.contains("LOANS")) {
+        if (loans.isEmpty()) {
+            null
+        } else {
             loans.map {
                 JsonApiIncludedResource(
                     id = it.id.value,
                     type = "loan",
-                    attributes = it.toLoanDocumentAttributes(),
+                    attributes = it.toJsonApiDocumentAttributes(),
                 )
             }
+        }
+    } else {
+        null
+    }
+
+    private fun mapRelationships(loans: List<Loan>): Map<String, JsonApiRelationshipData>? =
+        if (loans.isEmpty()) {
+            null
         } else {
-            emptyList()
-        },
-    )
+            mapOf(
+                "loan" to JsonApiRelationshipData(
+                    loans.map { JsonApiRelationshipIdentifier(id = it.id.value, type = "loan") },
+                ),
+            )
+        }
 }

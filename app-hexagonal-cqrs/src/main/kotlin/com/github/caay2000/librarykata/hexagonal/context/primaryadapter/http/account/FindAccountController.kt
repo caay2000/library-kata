@@ -2,7 +2,9 @@ package com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.ac
 
 import com.github.caay2000.common.http.Controller
 import com.github.caay2000.common.http.RequestInclude
-import com.github.caay2000.common.http.Transfomer
+import com.github.caay2000.common.http.Transformer
+import com.github.caay2000.common.jsonapi.JsonApiDocument
+import com.github.caay2000.common.jsonapi.context.account.AccountResource
 import com.github.caay2000.common.jsonapi.toJsonApiRequestParams
 import com.github.caay2000.librarykata.hexagonal.context.application.account.AccountRepository
 import com.github.caay2000.librarykata.hexagonal.context.application.account.find.FindAccountByIdQuery
@@ -10,8 +12,7 @@ import com.github.caay2000.librarykata.hexagonal.context.application.account.fin
 import com.github.caay2000.librarykata.hexagonal.context.application.loan.LoanRepository
 import com.github.caay2000.librarykata.hexagonal.context.domain.Account
 import com.github.caay2000.librarykata.hexagonal.context.domain.AccountId
-import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.account.transformer.AccountToAccountDocumentTransformer
-import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.serialization.AccountDocument
+import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.account.transformer.AccountToJsonApiDocumentTransformer
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.ApplicationCall
 import io.ktor.server.response.respond
@@ -25,7 +26,7 @@ class FindAccountController(accountRepository: AccountRepository, loanRepository
     override val logger: KLogger = KotlinLogging.logger {}
 
     private val accountQueryHandler = FindAccountByIdQueryHandler(accountRepository)
-    private val transformer: Transfomer<Account, AccountDocument> = AccountToAccountDocumentTransformer(loanRepository)
+    private val transformer: Transformer<Account, JsonApiDocument<AccountResource>> = AccountToJsonApiDocumentTransformer(loanRepository)
 
     internal enum class Included : RequestInclude { LOANS }
 

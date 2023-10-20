@@ -2,14 +2,15 @@ package com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.bo
 
 import com.github.caay2000.common.http.Controller
 import com.github.caay2000.common.idgenerator.IdGenerator
+import com.github.caay2000.common.jsonapi.JsonApiRequestDocument
+import com.github.caay2000.common.jsonapi.context.book.BookRequestResource
 import com.github.caay2000.librarykata.hexagonal.context.application.book.BookRepository
 import com.github.caay2000.librarykata.hexagonal.context.application.book.create.CreateBookCommand
 import com.github.caay2000.librarykata.hexagonal.context.application.book.create.CreateBookCommandHandler
 import com.github.caay2000.librarykata.hexagonal.context.application.book.find.FindBookByIdQuery
 import com.github.caay2000.librarykata.hexagonal.context.application.book.find.FindBookByIdQueryHandler
 import com.github.caay2000.librarykata.hexagonal.context.domain.BookId
-import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.serialization.BookRequestDocument
-import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.serialization.toBookByIdDocument
+import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.serialization.toJsonApiDocument
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.ApplicationCall
 import io.ktor.server.request.receive
@@ -29,15 +30,15 @@ class CreateBookController(
     private val queryHandler = FindBookByIdQueryHandler(bookRepository)
 
     override suspend fun handle(call: ApplicationCall) {
-        val request = call.receive<BookRequestDocument>()
+        val request = call.receive<JsonApiRequestDocument<BookRequestResource>>()
         val bookId = idGenerator.generate()
         commandHandler.invoke(request.toCreateBookCommand(bookId))
 
         val queryResponse = queryHandler.invoke(FindBookByIdQuery(BookId(bookId)))
-        call.respond(HttpStatusCode.Created, queryResponse.value.toBookByIdDocument())
+        call.respond(HttpStatusCode.Created, queryResponse.value.toJsonApiDocument())
     }
 
-    private fun BookRequestDocument.toCreateBookCommand(bookId: String) =
+    private fun JsonApiRequestDocument<BookRequestResource>.toCreateBookCommand(bookId: String) =
         CreateBookCommand(
             id = UUID.fromString(bookId),
             isbn = data.attributes.isbn,

@@ -1,11 +1,16 @@
 package com.github.caay2000.common.jsonapi
 
-interface JsonApiRequestDocument {
-    val data: JsonApiRequestResource
-}
+import kotlinx.serialization.Serializable
+
+@Serializable
+data class JsonApiRequestDocument<R : JsonApiRequestResource>(
+    val data: R,
+)
 
 interface JsonApiRequestResource {
     val type: String
+
+    @Serializable
     val attributes: JsonApiRequestAttributes
 }
 

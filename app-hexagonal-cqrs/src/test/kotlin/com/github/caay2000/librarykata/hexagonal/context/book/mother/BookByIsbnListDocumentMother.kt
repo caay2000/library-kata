@@ -1,13 +1,16 @@
 package com.github.caay2000.librarykata.hexagonal.context.book.mother
 
+import com.github.caay2000.common.jsonapi.JsonApiListDocument
+import com.github.caay2000.common.jsonapi.context.book.BookByIsbnResource
 import com.github.caay2000.librarykata.hexagonal.context.domain.Book
 import com.github.caay2000.librarykata.hexagonal.context.domain.BookAvailable
-import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.serialization.BookByIsbnListDocument
-import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.serialization.toBookByIsbnListDocument
+import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.serialization.toJsonApiListDocument
+import com.github.caay2000.librarykata.hexagonal.jsonMapper
+import kotlinx.serialization.encodeToString
 
-object BookByIsbnListDocumentMother {
+object JsonApiListDocumentMother {
 
-    fun from(vararg books: BookCopies): BookByIsbnListDocument =
+    fun from(vararg books: BookCopies): JsonApiListDocument<BookByIsbnResource> =
         books.toList()
             .flatMap { (book, copies, available) ->
                 val list: MutableList<Book> = mutableListOf()
@@ -20,7 +23,9 @@ object BookByIsbnListDocumentMother {
                 }
                 list
             }
-            .toBookByIsbnListDocument()
+            .toJsonApiListDocument()
+
+    fun json(vararg books: BookCopies): String = jsonMapper.encodeToString(from(*books))
 }
 
 data class BookCopies(

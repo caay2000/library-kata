@@ -4,7 +4,7 @@ import com.github.caay2000.common.http.Controller
 import com.github.caay2000.librarykata.hexagonal.context.application.book.BookRepository
 import com.github.caay2000.librarykata.hexagonal.context.application.book.search.SearchAllBooksQuery
 import com.github.caay2000.librarykata.hexagonal.context.application.book.search.SearchAllBooksQueryHandler
-import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.serialization.toBookByIsbnListDocument
+import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.serialization.toJsonApiListDocument
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.ApplicationCall
 import io.ktor.server.response.respond
@@ -19,7 +19,7 @@ class SearchBookController(bookRepository: BookRepository) : Controller {
 
     override suspend fun handle(call: ApplicationCall) {
         val books = queryHandler.invoke(SearchAllBooksQuery())
-        val document = books.values.toBookByIsbnListDocument()
+        val document = books.values.toJsonApiListDocument()
         call.respond(HttpStatusCode.OK, document)
     }
 }

@@ -2,8 +2,17 @@ package com.github.caay2000.librarykata.hexagonal.common
 
 import com.github.caay2000.common.http.ContentType
 import com.github.caay2000.common.http.ErrorResponseDocument
+import com.github.caay2000.common.jsonapi.JsonApiDocument
+import com.github.caay2000.common.jsonapi.JsonApiListDocument
+import com.github.caay2000.common.jsonapi.JsonApiRequestDocument
+import com.github.caay2000.common.jsonapi.context.account.AccountRequestResource
+import com.github.caay2000.common.jsonapi.context.account.AccountResource
+import com.github.caay2000.common.jsonapi.context.book.BookByIdResource
+import com.github.caay2000.common.jsonapi.context.book.BookByIsbnResource
+import com.github.caay2000.common.jsonapi.context.book.BookRequestResource
+import com.github.caay2000.common.jsonapi.context.loan.LoanRequestResource
+import com.github.caay2000.common.jsonapi.context.loan.LoanResource
 import com.github.caay2000.common.test.http.HttpDataResponse
-import com.github.caay2000.common.test.http.logger
 import com.github.caay2000.librarykata.hexagonal.context.domain.AccountId
 import com.github.caay2000.librarykata.hexagonal.context.domain.Birthdate
 import com.github.caay2000.librarykata.hexagonal.context.domain.BookAuthor
@@ -18,14 +27,7 @@ import com.github.caay2000.librarykata.hexagonal.context.domain.Name
 import com.github.caay2000.librarykata.hexagonal.context.domain.PhoneNumber
 import com.github.caay2000.librarykata.hexagonal.context.domain.PhonePrefix
 import com.github.caay2000.librarykata.hexagonal.context.domain.Surname
-import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.serialization.AccountDocument
-import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.serialization.AccountRequestDocument
-import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.serialization.BookByIdDocument
-import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.serialization.BookByIsbnListDocument
-import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.serialization.BookRequestDocument
 import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.serialization.LoanByAccountIdDocument
-import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.serialization.LoanDocument
-import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.serialization.LoanRequestDocument
 import com.github.caay2000.librarykata.hexagonal.jsonMapper
 import io.ktor.client.request.get
 import io.ktor.client.request.post
@@ -35,7 +37,6 @@ import io.ktor.client.statement.bodyAsText
 import io.ktor.http.contentType
 import io.ktor.server.testing.ApplicationTestBuilder
 import kotlinx.coroutines.runBlocking
-import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 
 class LibraryClient {
@@ -49,39 +50,34 @@ class LibraryClient {
         email: Email,
         phonePrefix: PhonePrefix,
         phoneNumber: PhoneNumber,
-    ): HttpDataResponse<AccountDocument> =
+    ): HttpDataResponse<JsonApiDocument<AccountResource>> =
         runBlocking {
-            client.post("/account") {
-                setBody(
-                    jsonMapper.encodeToString(
-                        AccountRequestDocument(
-                            data = AccountRequestDocument.Resource(
-                                attributes = AccountRequestDocument.Resource.Attributes(
-                                    identityNumber = identityNumber.value,
-                                    name = name.value,
-                                    surname = surname.value,
-                                    birthdate = birthdate.value,
-                                    email = email.value,
-                                    phonePrefix = phonePrefix.value,
-                                    phoneNumber = phoneNumber.value,
-                                ),
-                            ),
-                        ),
+            val request = JsonApiRequestDocument(
+                data = AccountRequestResource(
+                    attributes = AccountRequestResource.Attributes(
+                        identityNumber = identityNumber.value,
+                        name = name.value,
+                        surname = surname.value,
+                        birthdate = birthdate.value,
+                        email = email.value,
+                        phonePrefix = phonePrefix.value,
+                        phoneNumber = phoneNumber.value,
                     ),
-                )
+                ),
+            )
+            client.post("/account") {
+                setBody(jsonMapper.encodeToString<JsonApiRequestDocument<AccountRequestResource>>(request))
                 contentType(ContentType.JsonApi)
             }.toHttpDataResponse()
         }
 
     context(ApplicationTestBuilder)
-    fun findAccount(id: AccountId, include: List<TestUseCases.AccountInclude>): HttpDataResponse<AccountDocument> =
+    fun findAccount(id: AccountId, include: List<TestUseCases.AccountInclude>): HttpDataResponse<JsonApiDocument<AccountResource>> =
         runBlocking {
             val includeQuery = include.joinToString { it.name.lowercase() }.let {
                 if (it.isNotBlank()) "?include=$it" else ""
             }
-            val a = client.get("/account/${id.value}$includeQuery").toHttpDataResponse<AccountDocument>()
-            logger.info { a }
-            a
+            client.get("/account/${id.value}$includeQuery").toHttpDataResponse<JsonApiDocument<AccountResource>>()
         }
 
     context(ApplicationTestBuilder)
@@ -95,12 +91,12 @@ class LibraryClient {
         author: BookAuthor,
         pages: BookPages,
         publisher: BookPublisher,
-    ): HttpDataResponse<BookByIdDocument> =
+    ): HttpDataResponse<JsonApiDocument<BookByIdResource>> =
         runBlocking {
             client.post("/book") {
-                val request = BookRequestDocument(
-                    data = BookRequestDocument.Resource(
-                        attributes = BookRequestDocument.Resource.Attributes(
+                val request = JsonApiRequestDocument(
+                    data = BookRequestResource(
+                        attributes = BookRequestResource.Attributes(
                             isbn.value,
                             title.value,
                             author.value,
@@ -115,27 +111,27 @@ class LibraryClient {
         }
 
     context(ApplicationTestBuilder)
-    fun findBookById(id: BookId): HttpDataResponse<BookByIdDocument> =
+    fun findBookById(id: BookId): HttpDataResponse<JsonApiDocument<BookByIdResource>> =
         runBlocking { client.get("/book/${id.value}").toHttpDataResponse() }
 
     context(ApplicationTestBuilder)
-    fun findBookByIsbn(isbn: BookIsbn): HttpDataResponse<BookByIsbnListDocument> =
+    fun findBookByIsbn(isbn: BookIsbn): HttpDataResponse<JsonApiListDocument<BookByIsbnResource>> =
         runBlocking { client.get("/book?isbn=${isbn.value}").toHttpDataResponse() }
 
     context(ApplicationTestBuilder)
-    fun searchBooks(): HttpDataResponse<BookByIsbnListDocument> =
+    fun searchBooks(): HttpDataResponse<JsonApiListDocument<BookByIsbnResource>> =
         runBlocking { client.get("/book").toHttpDataResponse() }
 
     context(ApplicationTestBuilder)
     fun createLoan(
         bookIsbn: BookIsbn,
         accountId: AccountId,
-    ): HttpDataResponse<LoanDocument> =
+    ): HttpDataResponse<JsonApiDocument<LoanResource>> =
         runBlocking {
             client.post("/loan") {
-                val request = LoanRequestDocument(
-                    LoanRequestDocument.Resource(
-                        attributes = LoanRequestDocument.Resource.Attributes(
+                val request = JsonApiRequestDocument(
+                    LoanRequestResource(
+                        attributes = LoanRequestResource.Attributes(
                             bookIsbn = bookIsbn.value,
                             accountId = accountId.value,
                         ),
@@ -154,7 +150,6 @@ class LibraryClient {
 
     private suspend inline fun <reified T> HttpResponse.toHttpDataResponse(): HttpDataResponse<T> {
         val body = bodyAsText()
-
         return HttpDataResponse(
             value = decodeJsonBody<T?>(body),
             httpResponse = this,
@@ -164,9 +159,7 @@ class LibraryClient {
 
     private inline fun <reified T> decodeJsonBody(body: String): T? =
         try {
-            val a = jsonMapper.decodeFromString<T>(body)
-            logger.info { "jsonmapper client decoder -> $a" }
-            a
+            jsonMapper.decodeFromString<T>(body)
         } catch (e: Exception) {
             null
         }

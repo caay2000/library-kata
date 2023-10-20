@@ -1,6 +1,8 @@
 package com.github.caay2000.librarykata.hexagonal.context.book
 
+import com.github.caay2000.common.jsonapi.JsonApiListDocument
 import com.github.caay2000.common.jsonapi.JsonApiMeta
+import com.github.caay2000.common.jsonapi.context.book.BookByIsbnResource
 import com.github.caay2000.common.test.http.assertResponse
 import com.github.caay2000.common.test.http.assertStatus
 import com.github.caay2000.common.test.mock.MockDateProvider
@@ -12,7 +14,6 @@ import com.github.caay2000.librarykata.hexagonal.context.book.mother.BookIdMothe
 import com.github.caay2000.librarykata.hexagonal.context.book.mother.BookMother
 import com.github.caay2000.librarykata.hexagonal.context.domain.AccountId
 import com.github.caay2000.librarykata.hexagonal.context.domain.Book
-import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.serialization.BookByIsbnListDocument
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.testing.testApplication
 import org.junit.jupiter.api.BeforeEach
@@ -38,7 +39,7 @@ class SearchBookByIsbnControllerTest {
 
         testUseCases.`find book by isbn`(book.isbn)
             .assertStatus(HttpStatusCode.OK)
-            .assertResponse(book.toBookByIsbnListDocument())
+            .assertResponse(book.toJsonApiListDocument())
     }
 
     @Test
@@ -50,7 +51,7 @@ class SearchBookByIsbnControllerTest {
 
         testUseCases.`find book by isbn`(book.isbn)
             .assertStatus(HttpStatusCode.OK)
-            .assertResponse(book.toBookByIsbnListDocument(copies = 2, availableCopies = 2))
+            .assertResponse(book.toJsonApiListDocument(copies = 2, availableCopies = 2))
     }
 
     @Test
@@ -69,7 +70,7 @@ class SearchBookByIsbnControllerTest {
 
             testUseCases.`find book by isbn`(book.isbn)
                 .assertStatus(HttpStatusCode.OK)
-                .assertResponse(book.toBookByIsbnListDocument(copies = 2, availableCopies = 1))
+                .assertResponse(book.toJsonApiListDocument(copies = 2, availableCopies = 1))
         }
 
     private val book = BookMother.random()
@@ -77,13 +78,14 @@ class SearchBookByIsbnControllerTest {
 
     private val account = AccountMother.random()
 
-    private fun Book.toBookByIsbnListDocument(
+    private fun Book.toJsonApiListDocument(
         copies: Int = 1,
         availableCopies: Int = if (isAvailable) 1 else 0,
-    ) = BookByIsbnListDocument(
+    ) = JsonApiListDocument(
         data = listOf(
-            BookByIsbnListDocument.Resource(
-                attributes = BookByIsbnListDocument.Resource.Attributes(
+            BookByIsbnResource(
+                id = isbn.value,
+                attributes = BookByIsbnResource.Attributes(
                     isbn = isbn.value,
                     title = title.value,
                     author = author.value,

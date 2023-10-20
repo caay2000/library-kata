@@ -9,7 +9,7 @@ plugins {
 rootProject.name = "library-kata"
 include(
     "app-hexagonal-cqrs",
-    "app-event-driven",
+//    "app-event-driven",
     "app-http-client",
     "libs:common-arrow",
     "libs:common-cqrs",
@@ -19,6 +19,7 @@ include(
     "libs:common-event",
     "libs:common-http",
     "libs:common-id-generator",
+    "libs:common-jsonapi",
     "libs:common-serialization",
     "libs:common-test",
     "libs:lib-memory-database",

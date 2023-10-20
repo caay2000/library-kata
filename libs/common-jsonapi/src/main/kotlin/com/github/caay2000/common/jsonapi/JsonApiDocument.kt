@@ -2,24 +2,29 @@ package com.github.caay2000.common.jsonapi
 
 import kotlinx.serialization.Serializable
 
-interface JsonApiDocument {
-    val data: JsonApiResource
-    val included: List<JsonApiIncludedResource>
-}
+@Serializable
+data class JsonApiDocument<R : JsonApiResource>(
+    val data: R,
+    val included: List<JsonApiIncludedResource>? = null,
+)
 
-interface JsonApiListDocument {
-    val data: List<JsonApiResource>
-    val meta: JsonApiMeta
-}
+@Serializable
+data class JsonApiListDocument<R : JsonApiResource>(
+    val data: List<R>,
+    val meta: JsonApiMeta,
+)
 
 interface JsonApiResource {
-    val id: String?
+    val id: String
     val type: String
     val attributes: JsonApiResourceAttributes
-    val relationships: List<JsonApiRelationshipIdentifier>
+    val relationships: Map<String, JsonApiRelationshipData>?
 }
 
 interface JsonApiResourceAttributes
+
+@Serializable
+data class JsonApiRelationshipData(val data: List<JsonApiRelationshipIdentifier>)
 
 @Serializable
 data class JsonApiRelationshipIdentifier(
