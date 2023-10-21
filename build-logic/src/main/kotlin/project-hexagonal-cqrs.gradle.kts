@@ -1,3 +1,6 @@
+import gradle.kotlin.dsl.accessors._d35a649ed5a5db03cdbfc0be61d44559.ext
+import gradle.kotlin.dsl.accessors._d35a649ed5a5db03cdbfc0be61d44559.implementation
+
 plugins {
     id("project-common")
     `java-library`
@@ -19,6 +22,9 @@ dependencies {
     implementation("io.ktor:ktor-server-content-negotiation")
     implementation("io.ktor:ktor-serialization-kotlinx-json")
     implementation("io.ktor:ktor-server-call-logging")
+
+    implementation("io.ktor:ktor-server-swagger")
+    implementation("io.ktor:ktor-server-cors")
 
     implementation("io.arrow-kt:arrow-core")
 

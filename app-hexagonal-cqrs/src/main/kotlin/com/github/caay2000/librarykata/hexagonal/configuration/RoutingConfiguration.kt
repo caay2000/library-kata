@@ -2,6 +2,7 @@ package com.github.caay2000.librarykata.hexagonal.configuration
 
 import com.github.caay2000.common.http.get
 import com.github.caay2000.dikt.DiKt
+import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.TestOpenApiController
 import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.account.CreateAccountController
 import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.account.FindAccountController
 import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.book.CreateBookController
@@ -11,15 +12,29 @@ import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.boo
 import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.loan.CreateLoanController
 import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.loan.FindLoanController
 import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.loan.FinishLoanController
+import io.bkbn.kompendium.core.attribute.KompendiumAttributes
+import io.bkbn.kompendium.core.plugin.NotarizedApplication
+import io.bkbn.kompendium.oas.OpenApiSpec
+import io.bkbn.kompendium.oas.info.Info
+import io.ktor.http.HttpStatusCode
+import io.ktor.server.application.Application
 import io.ktor.server.application.call
 import io.ktor.server.application.createApplicationPlugin
+import io.ktor.server.application.install
+import io.ktor.server.plugins.swagger.swaggerUI
+import io.ktor.server.response.respond
+import io.ktor.server.routing.application
 import io.ktor.server.routing.get
 import io.ktor.server.routing.post
+import io.ktor.server.routing.route
 import io.ktor.server.routing.routing
 
 val RoutingConfiguration = createApplicationPlugin(name = "RoutingConfiguration") {
+
     application.routing {
+        DiKt.get<TestOpenApiController>().init(this)
         post("/account") { DiKt.get<CreateAccountController>().invoke(this.call) }
+
         get("/account/{id}") { DiKt.get<FindAccountController>().invoke(this.call) }
 
         get("/book", queryParam = "isbn") { DiKt.get<SearchBookByIsbnController>().invoke(this.call) }
@@ -30,5 +45,29 @@ val RoutingConfiguration = createApplicationPlugin(name = "RoutingConfiguration"
         post("/loan") { DiKt.get<CreateLoanController>().invoke(this.call) }
         get("/loan/{loanId}") { DiKt.get<FindLoanController>().invoke(this.call) }
         post("/loan/{bookId}") { DiKt.get<FinishLoanController>().invoke(this.call) }
+
+        route("/swagger/openapi.json") {
+            get {
+                call.respond(
+                    HttpStatusCode.OK,
+                    this@route.application.attributes[KompendiumAttributes.openApiSpec],
+                )
+            }
+        }
+        swaggerUI(path = "swagger", swaggerFile = "openapi.json")
+    }
+}
+
+internal fun Application.configureOpenApiDocumentation() {
+    install(NotarizedApplication()) {
+        spec = {
+            OpenApiSpec(
+                openapi = "3.0.0",
+                info = Info(
+                    "Kryptokrona API",
+                    "0.1.0",
+                ),
+            )
+        }
     }
 }

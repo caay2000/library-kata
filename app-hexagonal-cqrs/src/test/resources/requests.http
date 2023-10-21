@@ -1,21 +1,25 @@
 ### Create Account
 POST http://localhost:8080/account HTTP/1.1
-Content-Type: application/json
+Content-Type: application/vnd.json
 
 {
-  "identityNumber": "{{$random.alphanumeric(12)}}",
-  "name": "{{$random.alphabetic(6)}}",
-  "surname": "{{$random.alphabetic(10)}}",
-  "birthDate": "{{$random.integer(1970, 2002)}}-0{{$random.integer(1, 9)}}-{{$random.integer(10, 28)}}",
-  "email": "{{$random.email}}",
-  "phonePrefix": "+{{$random.integer(1,999)}}",
-  "phoneNumber": "{{$random.integer(600,699)}}{{$random.integer(100,999)}}{{$random.integer(100,999)}}"
+  "data": {
+    "type": "account",
+    "attributes": {
+      "identityNumber": "Y86351836",
+      "name": "pool.frog",
+      "surname": "cute dodger.blue",
+      "birthdate": "2023-10-21",
+      "email": "ashamed.cornflower.blue@earwig.io",
+      "phonePrefix": "+679",
+      "phoneNumber": "651384567"
+    }
+  }
 }
-
 
 ### Create Book
 POST http://localhost:8080/book HTTP/1.1
-Content-Type: application/json
+Content-Type: application/vnd.api+json
 
 {
   "isbn": "{{$random.alphanumeric(12)}}",

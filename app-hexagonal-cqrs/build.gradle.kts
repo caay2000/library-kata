@@ -6,6 +6,8 @@ plugins {
 dependencies {
     implementation("io.ktor:ktor-server-call-logging-jvm:${project.ext["ktor_version"]}")
     implementation("io.ktor:ktor-server-call-id-jvm:${project.ext["ktor_version"]}")
+
+    implementation("io.bkbn:kompendium-core:latest.release")
 }
 
 tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile::class).all {

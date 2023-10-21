@@ -40,6 +40,10 @@ dependencies {
         implementation("io.ktor:ktor-client-logging:${project.ext["ktor_version"]}")
         implementation("io.ktor:ktor-client-content-negotiation:${project.ext["ktor_version"]}")
 
+        implementation("io.ktor:ktor-server-swagger:${project.ext["ktor_version"]}")
+        implementation("io.ktor:ktor-server-cors:${project.ext["ktor_version"]}")
+
+
         implementation("io.ktor:ktor-server-call-logging:${project.ext["ktor_version"]}")
         implementation("io.ktor:ktor-server-call-id:${project.ext["ktor_version"]}")
 

@@ -3,6 +3,7 @@ package com.github.caay2000.librarykata.hexagonal.configuration
 import com.github.caay2000.common.dateprovider.LocalDateProvider
 import com.github.caay2000.common.idgenerator.UUIDGenerator
 import com.github.caay2000.dikt.DiKt
+import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.TestOpenApiController
 import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.account.CreateAccountController
 import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.account.FindAccountController
 import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.book.CreateBookController
@@ -31,6 +32,8 @@ val DependencyInjectionConfiguration = createApplicationPlugin(name = "Dependenc
 
     DiKt.register { CreateAccountController(DiKt.bind(), DiKt.bind(), DiKt.bind()) }
     DiKt.register { FindAccountController(DiKt.bind(), DiKt.bind()) }
+
+    DiKt.register { TestOpenApiController(DiKt.bind()) }
 
     DiKt.register { CreateBookController(DiKt.bind(), DiKt.bind()) }
     DiKt.register { FindBookByIdController(DiKt.bind()) }

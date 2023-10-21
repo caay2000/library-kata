@@ -13,6 +13,8 @@ import com.github.caay2000.librarykata.hexagonal.configuration.DependencyInjecti
 import com.github.caay2000.librarykata.hexagonal.configuration.RoutingConfiguration
 import com.github.caay2000.librarykata.hexagonal.configuration.ShutdownHookConfiguration
 import com.github.caay2000.librarykata.hexagonal.configuration.StartupHookConfiguration
+import com.github.caay2000.librarykata.hexagonal.configuration.configureOpenApiDocumentation
+import io.ktor.http.HttpHeaders
 import io.ktor.serialization.kotlinx.KotlinxSerializationConverter
 import io.ktor.serialization.kotlinx.json.json
 import io.ktor.server.application.Application
@@ -21,6 +23,7 @@ import io.ktor.server.plugins.callid.CallId
 import io.ktor.server.plugins.callid.callIdMdc
 import io.ktor.server.plugins.callloging.CallLogging
 import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.server.plugins.cors.routing.CORS
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.polymorphic
@@ -45,11 +48,17 @@ fun Application.module() {
     install(StartupHookConfiguration)
     install(ShutdownHookConfiguration)
     install(DependencyInjectionConfiguration)
+    install(CORS) {
+        anyHost()
+        allowHeader(HttpHeaders.ContentType)
+    }
+    configureOpenApiDocumentation()
     install(RoutingConfiguration)
     configureSerialization()
 }
 
 val jsonMapper = Json {
+    @OptIn(kotlinx.serialization.ExperimentalSerializationApi::class)
     explicitNulls = false
     encodeDefaults = true
     classDiscriminator = "serializationType"

@@ -38,8 +38,12 @@ import io.ktor.http.contentType
 import io.ktor.server.testing.ApplicationTestBuilder
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.encodeToString
+import mu.KLogger
+import mu.KotlinLogging
 
 class LibraryClient {
+
+    private val logger: KLogger = KotlinLogging.logger {}
 
     context(ApplicationTestBuilder)
     fun createAccount(
@@ -65,8 +69,10 @@ class LibraryClient {
                     ),
                 ),
             )
+            val jsonRequest = jsonMapper.encodeToString<JsonApiRequestDocument<AccountRequestResource>>(request)
+            logger.trace { "CreateAccount Request: $jsonRequest" }
             client.post("/account") {
-                setBody(jsonMapper.encodeToString<JsonApiRequestDocument<AccountRequestResource>>(request))
+                setBody(jsonRequest)
                 contentType(ContentType.JsonApi)
             }.toHttpDataResponse()
         }

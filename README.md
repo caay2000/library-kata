@@ -28,8 +28,27 @@ A Project Skeleton to build Kotlin apps with Gradle and Ktor
 
 ```http request
 GET /account/{id}
+```
 
-POST /account
+```http request
+- POST /account
+- Content-Type: `application/vnd.api+json`
+- Request Body:
+{
+    "data": {
+        "type": "account",
+        "attributes": {
+            "identityNumber": "Y86351836",
+            "name": "pool.frog",
+            "surname": "cute dodger.blue",
+            "birthdate": "2023-10-21",
+            "email": "ashamed.cornflower.blue@earwig.io",
+            "phonePrefix": "+679",
+            "phoneNumber": "651384567"
+        }
+    }
+}
+```
 
 GET /book
 
