@@ -48,6 +48,8 @@ class SearchBookByIsbnControllerTest {
             .assertStatus(HttpStatusCode.Created)
         testUseCases.`book is created`(differentIdBook)
             .assertStatus(HttpStatusCode.Created)
+        testUseCases.`book is created`(anotherBook)
+            .assertStatus(HttpStatusCode.Created)
 
         testUseCases.`find book by isbn`(book.isbn)
             .assertStatus(HttpStatusCode.OK)
@@ -64,6 +66,8 @@ class SearchBookByIsbnControllerTest {
                 .assertStatus(HttpStatusCode.Created)
             testUseCases.`book is created`(differentIdBook)
                 .assertStatus(HttpStatusCode.Created)
+            testUseCases.`book is created`(anotherBook)
+                .assertStatus(HttpStatusCode.Created)
 
             testUseCases.`loan is created`(bookIsbn = book.isbn, accountId = AccountId(account.id.value))
                 .assertStatus(HttpStatusCode.Created)
@@ -75,6 +79,7 @@ class SearchBookByIsbnControllerTest {
 
     private val book = BookMother.random()
     private val differentIdBook = book.copy(id = BookIdMother.random())
+    private val anotherBook = BookMother.random()
 
     private val account = AccountMother.random()
 

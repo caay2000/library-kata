@@ -7,23 +7,33 @@ import com.github.caay2000.common.cqrs.QueryResponse
 import com.github.caay2000.librarykata.hexagonal.context.application.book.BookRepository
 import com.github.caay2000.librarykata.hexagonal.context.application.book.SearchBookCriteria
 import com.github.caay2000.librarykata.hexagonal.context.domain.Book
+import com.github.caay2000.librarykata.hexagonal.context.domain.BookIsbn
 import mu.KLogger
 import mu.KotlinLogging
 
-class SearchAllBooksQueryHandler(bookRepository: BookRepository) : QueryHandler<SearchAllBooksQuery, SearchAllBooksQueryResponse> {
+class SearchBooksQueryHandler(bookRepository: BookRepository) : QueryHandler<SearchBooksQuery, SearchAllBooksQueryResponse> {
 
     override val logger: KLogger = KotlinLogging.logger {}
 
     private val searcher = BookSearcher(bookRepository)
 
-    override fun handle(
-        @Suppress("UNUSED_PARAMETER") query: SearchAllBooksQuery,
-    ): SearchAllBooksQueryResponse =
-        searcher.invoke(SearchBookCriteria.All)
-            .map { books -> SearchAllBooksQueryResponse(books) }
-            .getOrThrow()
+    override fun handle(query: SearchBooksQuery): SearchAllBooksQueryResponse =
+        query.toCriteria().let { criteria ->
+            searcher.invoke(criteria)
+                .map { books -> SearchAllBooksQueryResponse(books) }
+                .getOrThrow()
+        }
+
+    private fun SearchBooksQuery.toCriteria() =
+        when (this) {
+            is SearchBooksQuery.SearchAllBooksByIsbnQuery -> SearchBookCriteria.ByIsbn(BookIsbn(this.isbn))
+            SearchBooksQuery.SearchAllBooksQuery -> SearchBookCriteria.All
+        }
 }
 
-class SearchAllBooksQuery : Query
+sealed class SearchBooksQuery : Query {
+    data object SearchAllBooksQuery : SearchBooksQuery()
+    data class SearchAllBooksByIsbnQuery(val isbn: String) : SearchBooksQuery()
+}
 
 data class SearchAllBooksQueryResponse(val values: List<Book>) : QueryResponse

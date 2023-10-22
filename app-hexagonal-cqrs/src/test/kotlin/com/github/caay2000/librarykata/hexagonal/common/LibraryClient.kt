@@ -13,6 +13,7 @@ import com.github.caay2000.common.jsonapi.context.book.BookRequestResource
 import com.github.caay2000.common.jsonapi.context.loan.LoanRequestResource
 import com.github.caay2000.common.jsonapi.context.loan.LoanResource
 import com.github.caay2000.common.test.http.HttpDataResponse
+import com.github.caay2000.librarykata.hexagonal.configuration.jsonMapper
 import com.github.caay2000.librarykata.hexagonal.context.domain.AccountId
 import com.github.caay2000.librarykata.hexagonal.context.domain.Birthdate
 import com.github.caay2000.librarykata.hexagonal.context.domain.BookAuthor
@@ -28,7 +29,6 @@ import com.github.caay2000.librarykata.hexagonal.context.domain.PhoneNumber
 import com.github.caay2000.librarykata.hexagonal.context.domain.PhonePrefix
 import com.github.caay2000.librarykata.hexagonal.context.domain.Surname
 import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.serialization.LoanByAccountIdDocument
-import com.github.caay2000.librarykata.hexagonal.jsonMapper
 import io.ktor.client.request.get
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
@@ -38,8 +38,12 @@ import io.ktor.http.contentType
 import io.ktor.server.testing.ApplicationTestBuilder
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.encodeToString
+import mu.KLogger
+import mu.KotlinLogging
 
 class LibraryClient {
+
+    private val logger: KLogger = KotlinLogging.logger {}
 
     context(ApplicationTestBuilder)
     fun createAccount(
@@ -65,8 +69,10 @@ class LibraryClient {
                     ),
                 ),
             )
+            val jsonRequest = jsonMapper.encodeToString<JsonApiRequestDocument<AccountRequestResource>>(request)
+            logger.trace { "CreateAccount Request: $jsonRequest" }
             client.post("/account") {
-                setBody(jsonMapper.encodeToString<JsonApiRequestDocument<AccountRequestResource>>(request))
+                setBody(jsonRequest)
                 contentType(ContentType.JsonApi)
             }.toHttpDataResponse()
         }
@@ -116,7 +122,7 @@ class LibraryClient {
 
     context(ApplicationTestBuilder)
     fun findBookByIsbn(isbn: BookIsbn): HttpDataResponse<JsonApiListDocument<BookByIsbnResource>> =
-        runBlocking { client.get("/book?isbn=${isbn.value}").toHttpDataResponse() }
+        runBlocking { client.get("/book?filter[isbn]=${isbn.value}").toHttpDataResponse() }
 
     context(ApplicationTestBuilder)
     fun searchBooks(): HttpDataResponse<JsonApiListDocument<BookByIsbnResource>> =
@@ -159,6 +165,7 @@ class LibraryClient {
 
     private inline fun <reified T> decodeJsonBody(body: String): T? =
         try {
+            logger.trace { "Client Response: $body" }
             jsonMapper.decodeFromString<T>(body)
         } catch (e: Exception) {
             null

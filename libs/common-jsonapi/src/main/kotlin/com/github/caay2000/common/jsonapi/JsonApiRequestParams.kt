@@ -46,7 +46,6 @@ private fun Map<String, String>.toJsonApiRequestParams(): JsonApiRequestParams {
                     }
 
                 in filterMatches -> filter[filterMatches[1]] = entry.value.split(",")
-                else -> throw IllegalJsonApiRequestParamException(entry.key)
             }
         }
     }

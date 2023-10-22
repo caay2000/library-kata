@@ -1,6 +1,7 @@
 package com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.account
 
 import com.github.caay2000.common.dateprovider.DateProvider
+import com.github.caay2000.common.http.ContentType
 import com.github.caay2000.common.http.Controller
 import com.github.caay2000.common.http.Transformer
 import com.github.caay2000.common.idgenerator.IdGenerator
@@ -16,6 +17,7 @@ import com.github.caay2000.librarykata.hexagonal.context.application.account.fin
 import com.github.caay2000.librarykata.hexagonal.context.domain.Account
 import com.github.caay2000.librarykata.hexagonal.context.domain.AccountId
 import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.account.transformer.CreateAccountToAccountDocumentTransformer
+import io.github.smiley4.ktorswaggerui.dsl.OpenApiRoute
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.ApplicationCall
 import io.ktor.server.request.receive
@@ -30,6 +32,39 @@ class CreateAccountController(
     private val dateProvider: DateProvider,
     accountRepository: AccountRepository,
 ) : Controller {
+
+    companion object {
+        val documentation: OpenApiRoute.() -> Unit = {
+            description = "Create Account"
+            request {
+                body<JsonApiRequestDocument<AccountRequestResource>> {
+                    mediaType(ContentType.JsonApi)
+                }
+            }
+            response {
+                HttpStatusCode.OK to {
+                    description = "Successful Request"
+                    body<JsonApiDocument<AccountResource>> {
+                        mediaType(ContentType.JsonApi)
+                    }
+                }
+                HttpStatusCode.InternalServerError to {
+                    description = "Something unexpected happened"
+                }
+
+                /*
+                    class Unknown(error: Throwable) : AccountCreatorError(error)
+                    class AccountNotFound : AccountCreatorError("account not foung")
+                    class IdentityNumberAlreadyExists(identityNumber: IdentityNumber) :
+                        AccountCreatorError("an account with identity number ${identityNumber.value} already exists")
+
+                    class EmailAlreadyExists(email: Email) : AccountCreatorError("an account with email ${email.value} already exists")
+                    class PhoneAlreadyExists(phonePrefix: PhonePrefix, phoneNumber: PhoneNumber) :
+                        AccountCreatorError("an account with phone ${phonePrefix.value} ${phoneNumber.value} already exists")
+                 */
+            }
+        }
+    }
 
     override val logger: KLogger = KotlinLogging.logger {}
 
