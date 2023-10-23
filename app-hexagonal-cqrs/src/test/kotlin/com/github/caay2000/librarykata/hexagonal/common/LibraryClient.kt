@@ -155,7 +155,9 @@ class LibraryClient {
         }
 
     private suspend inline fun <reified T> HttpResponse.toHttpDataResponse(): HttpDataResponse<T> {
-        val body = bodyAsText()
+        val body = bodyAsText().also {
+            logger.trace { "Client Response: $it" }
+        }
         return HttpDataResponse(
             value = decodeJsonBody<T?>(body),
             httpResponse = this,
@@ -165,7 +167,6 @@ class LibraryClient {
 
     private inline fun <reified T> decodeJsonBody(body: String): T? =
         try {
-            logger.trace { "Client Response: $body" }
             jsonMapper.decodeFromString<T>(body)
         } catch (e: Exception) {
             null
