@@ -18,13 +18,15 @@ fun <T> HttpDataResponse<T>.assertResponse(response: T): HttpDataResponse<T> =
         .let { this }
 
 suspend inline fun <reified T> HttpDataResponse<T>.assertJsonResponse(expected: String): HttpDataResponse<T> =
-    try {
-        JSONAssert.assertEquals(expected, body(), true).let { this }
-        this.assureJsonApiSchema()
-    } catch (e: Throwable) {
-        logger.warn { "expected: $expected" }
-        logger.warn { "actual  : $value" }
-        throw e
+    with(body()) {
+        try {
+            JSONAssert.assertEquals(expected, this, true).let { this }
+            this@assertJsonResponse.assureJsonApiSchema()
+        } catch (e: Throwable) {
+            logger.warn { "expected: $expected" }
+            logger.warn { "actual  : $this" }
+            throw e
+        }
     }
 
 suspend inline fun <reified T> HttpDataResponse<T>.printJsonResponse(): HttpDataResponse<T> =

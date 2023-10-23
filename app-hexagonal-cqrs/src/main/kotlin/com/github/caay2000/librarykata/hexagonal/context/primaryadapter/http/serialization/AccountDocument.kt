@@ -1,7 +1,6 @@
 package com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.serialization
 
 import com.github.caay2000.common.jsonapi.JsonApiDocument
-import com.github.caay2000.common.jsonapi.JsonApiIncludedResource
 import com.github.caay2000.common.jsonapi.JsonApiRelationshipData
 import com.github.caay2000.common.jsonapi.JsonApiRelationshipIdentifier
 import com.github.caay2000.common.jsonapi.context.account.AccountResource
@@ -47,7 +46,7 @@ fun Account.toJsonApiDocumentAttributes() =
 
 fun List<Account>.toJsonApiDocumentIncludedResource() =
     map {
-        JsonApiIncludedResource(
+        AccountResource(
             id = it.id.value,
             type = "account",
             attributes = it.toJsonApiDocumentAttributes(),

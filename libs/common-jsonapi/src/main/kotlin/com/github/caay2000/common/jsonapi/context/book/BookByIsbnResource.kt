@@ -7,11 +7,12 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
+@SerialName("bookByIsbnResource")
 data class BookByIsbnResource(
     override val id: String,
     override val type: String = "book",
     override val attributes: Attributes,
-    override val relationships: Map<String, JsonApiRelationshipData> = emptyMap(),
+    override val relationships: Map<String, JsonApiRelationshipData>? = null,
 ) : JsonApiResource {
 
     @Serializable

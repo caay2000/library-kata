@@ -3,16 +3,16 @@ package com.github.caay2000.common.jsonapi
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class JsonApiDocument<R : JsonApiResource>(
+data class JsonApiDocument<R>(
     val data: R,
     val included: List<JsonApiIncludedResource>? = null,
-)
+) where R : JsonApiResource
 
 @Serializable
-data class JsonApiListDocument<R : JsonApiResource>(
+data class JsonApiListDocument<R>(
     val data: List<R>,
     val meta: JsonApiMeta,
-)
+) where R : JsonApiResource
 
 interface JsonApiResource {
     val id: String

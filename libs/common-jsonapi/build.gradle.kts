@@ -5,5 +5,5 @@ plugins {
 
 dependencies {
     implementation(project(":libs:common-serialization"))
-    implementation("io.swagger.core.v3:swagger-annotations:2.2.16")
+    implementation("io.swagger.core.v3:swagger-annotations:2.2.17")
 }

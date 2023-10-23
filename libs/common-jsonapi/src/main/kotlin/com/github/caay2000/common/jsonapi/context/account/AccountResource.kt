@@ -12,6 +12,7 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 
 @Serializable
+@SerialName("account")
 data class AccountResource(
     @field:Schema(description = "resource id", example = "00000000-0000-0000-0000-000000000000")
     override val id: String,

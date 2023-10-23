@@ -13,7 +13,7 @@ data class LoanResource(
     override val id: String,
     override val type: String = "loan",
     override val attributes: Attributes,
-    override val relationships: Map<String, JsonApiRelationshipData> = emptyMap(),
+    override val relationships: Map<String, JsonApiRelationshipData>? = null,
 ) : JsonApiResource {
 
     @Serializable
