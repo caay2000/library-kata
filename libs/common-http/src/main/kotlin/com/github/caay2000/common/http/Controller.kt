@@ -1,5 +1,6 @@
 package com.github.caay2000.common.http
 
+import com.github.caay2000.common.jsonapi.ServerResponse
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.ApplicationCall
 import io.ktor.server.response.respond
@@ -14,21 +15,19 @@ interface Controller {
             handle(call)
         } catch (e: Exception) {
             logger.error { e.message }
-            val response = handleExceptions(call, e)
-            call.respond(
-                response.status,
-                ErrorResponseDocument(response.message),
-            )
+            handleExceptions(call, e)
         }
     }
 
     suspend fun handle(call: ApplicationCall)
 
-    suspend fun handleExceptions(call: ApplicationCall, e: Exception) =
-        HttpErrorResponse(HttpStatusCode.InternalServerError, e.message ?: "Unknown error")
-}
+    suspend fun handleExceptions(call: ApplicationCall, e: Exception) {
+        val error = ServerResponse(HttpStatusCode.InternalServerError)
+        call.respond(error.status, error.jsonApiErrorDocument)
+    }
 
-data class HttpErrorResponse(
-    val status: HttpStatusCode,
-    val message: String,
-)
+    suspend fun ApplicationCall.serverError(block: () -> ServerResponse) {
+        val response = block()
+        this.respond(response.status, response.jsonApiErrorDocument)
+    }
+}

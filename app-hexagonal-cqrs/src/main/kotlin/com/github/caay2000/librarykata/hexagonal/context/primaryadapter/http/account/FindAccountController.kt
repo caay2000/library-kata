@@ -1,18 +1,23 @@
 package com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.account
 
+import com.github.caay2000.common.http.ContentType
 import com.github.caay2000.common.http.Controller
+import com.github.caay2000.common.http.ErrorResponseDocument
 import com.github.caay2000.common.http.RequestInclude
 import com.github.caay2000.common.http.Transformer
 import com.github.caay2000.common.jsonapi.JsonApiDocument
+import com.github.caay2000.common.jsonapi.ServerResponse
 import com.github.caay2000.common.jsonapi.context.account.AccountResource
 import com.github.caay2000.common.jsonapi.toJsonApiRequestParams
 import com.github.caay2000.librarykata.hexagonal.context.application.account.AccountRepository
+import com.github.caay2000.librarykata.hexagonal.context.application.account.find.AccountFinderError
 import com.github.caay2000.librarykata.hexagonal.context.application.account.find.FindAccountByIdQuery
 import com.github.caay2000.librarykata.hexagonal.context.application.account.find.FindAccountByIdQueryHandler
 import com.github.caay2000.librarykata.hexagonal.context.application.loan.LoanRepository
 import com.github.caay2000.librarykata.hexagonal.context.domain.Account
 import com.github.caay2000.librarykata.hexagonal.context.domain.AccountId
 import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.account.transformer.AccountToJsonApiDocumentTransformer
+import io.github.smiley4.ktorswaggerui.dsl.OpenApiRoute
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.ApplicationCall
 import io.ktor.server.response.respond
@@ -36,7 +41,45 @@ class FindAccountController(accountRepository: AccountRepository, loanRepository
 
         val queryResult = accountQueryHandler.invoke(FindAccountByIdQuery(accountId))
         val responseDocument = transformer.invoke(queryResult.account, jsonApiParams.include)
-        logger.trace { responseDocument }
         call.respond(HttpStatusCode.OK, responseDocument)
+    }
+
+    override suspend fun handleExceptions(call: ApplicationCall, e: Exception) {
+        call.serverError {
+            when (e) {
+                is AccountFinderError.AccountNotFoundError -> ServerResponse(HttpStatusCode.NotFound, "AccountNotFoundError", e.message)
+                else -> ServerResponse(HttpStatusCode.InternalServerError, "Unknown Error", e.message)
+            }
+        }
+    }
+
+    companion object {
+        val documentation: OpenApiRoute.() -> Unit = {
+            tags = listOf("Account")
+            description = "Find Account"
+            request {
+                pathParameter<String>("id") {
+                    description = "Account Id"
+                    example = "00000000-0000-0000-0000-000000000000"
+                }
+            }
+
+            response {
+                HttpStatusCode.OK to {
+                    description = "Account Information"
+                    body<JsonApiDocument<AccountResource>> {
+                        mediaType(ContentType.JsonApi)
+                    }
+                }
+                HttpStatusCode.NotFound to {
+                    description = "Error creating Account"
+                    body<ErrorResponseDocument> {
+                        mediaType(ContentType.JsonApi)
+                        example("AccountNotFoundError", "account {accountId} not found")
+                    }
+                }
+                HttpStatusCode.InternalServerError to { description = "Something unexpected happened" }
+            }
+        }
     }
 }

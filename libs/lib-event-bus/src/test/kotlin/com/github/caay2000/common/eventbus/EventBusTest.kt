@@ -1,9 +1,6 @@
-package com.github.caay2000.librarykata.common.eventbus
+package com.github.caay2000.common.eventbus
 
 import com.github.caay2000.common.test.awaitAssertion
-import com.github.caay2000.eventbus.Event
-import com.github.caay2000.eventbus.EventBus
-import com.github.caay2000.eventbus.EventSubscriber
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch

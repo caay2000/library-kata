@@ -3,6 +3,7 @@ package com.github.caay2000.common.jsonapi.context.account
 import com.github.caay2000.common.jsonapi.JsonApiRelationshipData
 import com.github.caay2000.common.jsonapi.JsonApiResource
 import com.github.caay2000.common.jsonapi.JsonApiResourceAttributes
+import com.github.caay2000.common.jsonapi.context.InvalidJsonApiException
 import com.github.caay2000.common.serialization.LocalDateSerializer
 import com.github.caay2000.common.serialization.LocalDateTimeSerializer
 import io.swagger.v3.oas.annotations.media.Schema
@@ -41,8 +42,12 @@ data class AccountResource(
         val phonePrefix: String,
         @field:Schema(description = "user phone prefix", example = "+44")
         val phoneNumber: String,
-        @field:Schema(description = "user registration date", example = "2020-01-01T00:00:00.0000")
+        @field:Schema(description = "user registration date", example = "2020-01-01T00:00:00.000Z")
         @Serializable(with = LocalDateTimeSerializer::class)
         val registerDate: LocalDateTime,
     ) : JsonApiResourceAttributes
+
+    init {
+        if (type != "account") throw InvalidJsonApiException("Invalid type for AccountResource: $type")
+    }
 }

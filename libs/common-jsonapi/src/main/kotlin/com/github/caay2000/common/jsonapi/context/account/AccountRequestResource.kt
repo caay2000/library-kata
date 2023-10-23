@@ -2,6 +2,7 @@ package com.github.caay2000.common.jsonapi.context.account
 
 import com.github.caay2000.common.jsonapi.JsonApiRequestAttributes
 import com.github.caay2000.common.jsonapi.JsonApiRequestResource
+import com.github.caay2000.common.jsonapi.context.InvalidJsonApiException
 import com.github.caay2000.common.serialization.LocalDateSerializer
 import io.swagger.v3.oas.annotations.media.Schema
 import kotlinx.serialization.Serializable
@@ -33,4 +34,8 @@ data class AccountRequestResource(
         @field:Schema(description = "user phone number", example = "+600123456")
         val phoneNumber: String,
     ) : JsonApiRequestAttributes
+
+    init {
+        if (type != "account") throw InvalidJsonApiException("Invalid type for AccountRequestResource: $type")
+    }
 }

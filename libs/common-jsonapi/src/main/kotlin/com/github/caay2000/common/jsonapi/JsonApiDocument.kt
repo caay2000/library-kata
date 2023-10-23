@@ -32,11 +32,14 @@ data class JsonApiRelationshipIdentifier(
     val type: String,
 )
 
+// TODO this should be deleted and JsonApiDocument should use the JsonApiResource interface
+// Until kotlin serializer does not allow to hide classDiscriminator, this won't pass jsonapi schema validator
 @Serializable
 data class JsonApiIncludedResource(
     val id: String,
     val type: String,
     val attributes: JsonApiResourceAttributes,
+    val relationships: Map<String, JsonApiRelationshipData>?,
 )
 
 @Serializable

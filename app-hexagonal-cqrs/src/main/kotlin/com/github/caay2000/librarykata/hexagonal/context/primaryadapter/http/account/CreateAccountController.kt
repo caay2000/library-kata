@@ -3,13 +3,16 @@ package com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.ac
 import com.github.caay2000.common.dateprovider.DateProvider
 import com.github.caay2000.common.http.ContentType
 import com.github.caay2000.common.http.Controller
+import com.github.caay2000.common.http.ErrorResponseDocument
 import com.github.caay2000.common.http.Transformer
 import com.github.caay2000.common.idgenerator.IdGenerator
 import com.github.caay2000.common.jsonapi.JsonApiDocument
 import com.github.caay2000.common.jsonapi.JsonApiRequestDocument
+import com.github.caay2000.common.jsonapi.ServerResponse
 import com.github.caay2000.common.jsonapi.context.account.AccountRequestResource
 import com.github.caay2000.common.jsonapi.context.account.AccountResource
 import com.github.caay2000.librarykata.hexagonal.context.application.account.AccountRepository
+import com.github.caay2000.librarykata.hexagonal.context.application.account.create.AccountCreatorError
 import com.github.caay2000.librarykata.hexagonal.context.application.account.create.CreateAccountCommand
 import com.github.caay2000.librarykata.hexagonal.context.application.account.create.CreateAccountCommandHandler
 import com.github.caay2000.librarykata.hexagonal.context.application.account.find.FindAccountByIdQuery
@@ -33,39 +36,6 @@ class CreateAccountController(
     accountRepository: AccountRepository,
 ) : Controller {
 
-    companion object {
-        val documentation: OpenApiRoute.() -> Unit = {
-            description = "Create Account"
-            request {
-                body<JsonApiRequestDocument<AccountRequestResource>> {
-                    mediaType(ContentType.JsonApi)
-                }
-            }
-            response {
-                HttpStatusCode.OK to {
-                    description = "Successful Request"
-                    body<JsonApiDocument<AccountResource>> {
-                        mediaType(ContentType.JsonApi)
-                    }
-                }
-                HttpStatusCode.InternalServerError to {
-                    description = "Something unexpected happened"
-                }
-
-                /*
-                    class Unknown(error: Throwable) : AccountCreatorError(error)
-                    class AccountNotFound : AccountCreatorError("account not foung")
-                    class IdentityNumberAlreadyExists(identityNumber: IdentityNumber) :
-                        AccountCreatorError("an account with identity number ${identityNumber.value} already exists")
-
-                    class EmailAlreadyExists(email: Email) : AccountCreatorError("an account with email ${email.value} already exists")
-                    class PhoneAlreadyExists(phonePrefix: PhonePrefix, phoneNumber: PhoneNumber) :
-                        AccountCreatorError("an account with phone ${phonePrefix.value} ${phoneNumber.value} already exists")
-                 */
-            }
-        }
-    }
-
     override val logger: KLogger = KotlinLogging.logger {}
 
     private val commandHandler = CreateAccountCommandHandler(accountRepository)
@@ -83,6 +53,17 @@ class CreateAccountController(
         call.respond(HttpStatusCode.Created, transformer.invoke(queryResult.account))
     }
 
+    override suspend fun handleExceptions(call: ApplicationCall, e: Exception) {
+        call.serverError {
+            when (e) {
+                is AccountCreatorError.IdentityNumberAlreadyExists -> ServerResponse(HttpStatusCode.BadRequest, "IdentityNumberAlreadyExists", e.message)
+                is AccountCreatorError.EmailAlreadyExists -> ServerResponse(HttpStatusCode.BadRequest, "EmailAlreadyExists", e.message)
+                is AccountCreatorError.PhoneAlreadyExists -> ServerResponse(HttpStatusCode.BadRequest, "PhoneAlreadyExists", e.message)
+                else -> ServerResponse(HttpStatusCode.InternalServerError, "Unknown Error", e.message)
+            }
+        }
+    }
+
     private fun JsonApiRequestDocument<AccountRequestResource>.toCommand(accountId: String, registerDate: LocalDateTime): CreateAccountCommand =
         CreateAccountCommand(
             accountId = UUID.fromString(accountId),
@@ -95,4 +76,34 @@ class CreateAccountController(
             birthdate = data.attributes.birthdate,
             registerDate = registerDate,
         )
+
+    companion object {
+        val documentation: OpenApiRoute.() -> Unit = {
+            tags = listOf("Account")
+            description = "Create Account"
+            request {
+                body<JsonApiRequestDocument<AccountRequestResource>> {
+                    mediaType(ContentType.JsonApi)
+                }
+            }
+            response {
+                HttpStatusCode.Created to {
+                    description = "Successful Request"
+                    body<JsonApiDocument<AccountResource>> {
+                        mediaType(ContentType.JsonApi)
+                    }
+                }
+                HttpStatusCode.BadRequest to {
+                    description = "Error creating Account"
+                    body<ErrorResponseDocument> {
+                        mediaType(ContentType.JsonApi)
+                        example("IdentityNumberAlreadyExists", "an account with identity number {identityNumber} already exists")
+                        example("EmailAlreadyExists", "an account with email {email} already exists")
+                        example("PhoneAlreadyExists", "an account with phone {phonePrefix} {phoneNumber} already exists")
+                    }
+                }
+                HttpStatusCode.InternalServerError to { description = "Something unexpected happened" }
+            }
+        }
+    }
 }

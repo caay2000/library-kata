@@ -124,11 +124,10 @@ internal class DiKtTest {
 
     data class SimpleBean(val aux: LocalDateTime = LocalDateTime.now())
 
-    fun SimpleBean.update(): SimpleBean = this.copy(aux = this.aux.plusDays(1))
+    private fun SimpleBean.update(): SimpleBean = this.copy(aux = this.aux.plusDays(1))
 
     interface SimpleInterface
     data class InterfaceBean(val aux: LocalDateTime = LocalDateTime.now()) : SimpleInterface
 
-    @Suppress("UNUSED_PARAMETER")
     data class InterfaceDependencyBean(val dep: SimpleInterface)
 }

@@ -1,5 +1,6 @@
 package com.github.caay2000.common.test.http
 
+import com.github.caay2000.common.jsonapi.JsonApiErrorDocument
 import com.github.caay2000.common.test.json.JsonApiSchemaValidator
 import io.ktor.http.HttpStatusCode
 import mu.KLogger
@@ -10,7 +11,7 @@ import org.skyscreamer.jsonassert.JSONAssert
 val logger: KLogger = KotlinLogging.logger {}
 
 fun <T> HttpDataResponse<T>.assertStatus(status: HttpStatusCode): HttpDataResponse<T> =
-    assertThat(httpResponse.status).withFailMessage { error?.message }.isEqualTo(status)
+    assertThat(httpResponse.status).isEqualTo(status)
         .let { this }
 
 fun <T> HttpDataResponse<T>.assertResponse(response: T): HttpDataResponse<T> =
@@ -50,6 +51,7 @@ suspend inline fun <reified T> HttpDataResponse<T>.assureJsonApiSchema(): HttpDa
         this
     }
 
-fun <T> HttpDataResponse<T>.assertErrorMessage(message: String): HttpDataResponse<T> =
-    assertThat(error?.message).isEqualTo(message)
+suspend inline fun <reified T> HttpDataResponse<T>.assertJsonApiErrorDocument(expected: JsonApiErrorDocument): HttpDataResponse<T> =
+    assertThat(error).isEqualTo(expected)
         .let { this }
+        .assureJsonApiSchema()

@@ -1,7 +1,6 @@
 package com.github.caay2000.librarykata.hexagonal.configuration
 
 import com.github.caay2000.common.http.ContentType
-import com.github.caay2000.common.jsonapi.JsonApiResource
 import com.github.caay2000.common.jsonapi.JsonApiResourceAttributes
 import com.github.caay2000.common.jsonapi.context.account.AccountResource
 import com.github.caay2000.common.jsonapi.context.loan.LoanResource
@@ -40,10 +39,6 @@ val jsonMapper = Json {
     prettyPrint = true
     isLenient = true
     val module = SerializersModule {
-        polymorphic(JsonApiResource::class) {
-            subclass(LoanResource::class, LoanResource.serializer())
-            subclass(AccountResource::class, AccountResource.serializer())
-        }
         polymorphic(JsonApiResourceAttributes::class) {
             subclass(LoanResource.Attributes::class, LoanResource.Attributes.serializer())
             subclass(AccountResource.Attributes::class, AccountResource.Attributes.serializer())

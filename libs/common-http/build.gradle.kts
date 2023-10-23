@@ -5,6 +5,7 @@ plugins {
 
 dependencies {
     api(project(":libs:common-serialization"))
+    api(project(":libs:common-jsonapi"))
 
     implementation("io.ktor:ktor-server-core:${project.ext["ktor_version"]}")
     implementation("io.ktor:ktor-server-netty:${project.ext["ktor_version"]}")

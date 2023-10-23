@@ -1,4 +1,4 @@
-package com.github.caay2000.eventbus
+package com.github.caay2000.common.eventbus
 
 import java.time.LocalDateTime
 import java.util.UUID

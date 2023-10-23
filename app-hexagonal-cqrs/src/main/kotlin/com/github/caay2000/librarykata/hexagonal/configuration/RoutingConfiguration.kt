@@ -19,8 +19,7 @@ val RoutingConfiguration = createApplicationPlugin(name = "RoutingConfiguration"
     application.routing {
 
         post("/account", CreateAccountController.documentation) { DiKt.get<CreateAccountController>().invoke(this.call) }
-//        post("/account") { DiKt.get<CreateAccountController>().invoke(this.call) }
-        get("/account/{id}") { DiKt.get<FindAccountController>().invoke(this.call) }
+        get("/account/{id}", FindAccountController.documentation) { DiKt.get<FindAccountController>().invoke(this.call) }
 
 //        get("/book", queryParam = "isbn") { DiKt.get<SearchBookByIsbnController>().invoke(this.call) }
         get("/book") { DiKt.get<SearchBookController>().invoke(this.call) }

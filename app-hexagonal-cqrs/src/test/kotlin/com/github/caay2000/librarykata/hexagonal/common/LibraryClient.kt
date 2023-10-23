@@ -1,8 +1,8 @@
 package com.github.caay2000.librarykata.hexagonal.common
 
 import com.github.caay2000.common.http.ContentType
-import com.github.caay2000.common.http.ErrorResponseDocument
 import com.github.caay2000.common.jsonapi.JsonApiDocument
+import com.github.caay2000.common.jsonapi.JsonApiErrorDocument
 import com.github.caay2000.common.jsonapi.JsonApiListDocument
 import com.github.caay2000.common.jsonapi.JsonApiRequestDocument
 import com.github.caay2000.common.jsonapi.context.account.AccountRequestResource
@@ -161,7 +161,7 @@ class LibraryClient {
         return HttpDataResponse(
             value = decodeJsonBody<T?>(body),
             httpResponse = this,
-            error = decodeJsonBody<ErrorResponseDocument?>(body),
+            error = decodeJsonBody<JsonApiErrorDocument?>(body),
         )
     }
 

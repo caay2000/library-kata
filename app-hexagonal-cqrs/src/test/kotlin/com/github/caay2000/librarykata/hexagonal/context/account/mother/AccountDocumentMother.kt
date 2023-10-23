@@ -68,6 +68,7 @@ object AccountDocumentMother {
                     id = it.id.value,
                     type = "loan",
                     attributes = it.toJsonApiDocumentAttributes(),
+                    relationships = null,
                 )
             }
         }

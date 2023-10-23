@@ -60,11 +60,11 @@ class RealExecutionTest {
         val available = libraryClient.findBookById(book.id).value!!.data.attributes.available
         if (available && existingAccounts[account]!! < 5 && availableBooks[book.isbn]!! > 0) {
             logger.info { "Start new LOAN, book[$book], account[$account]" }
-            val JsonApiDocument = libraryClient.createLoan(book.isbn, account.id).value!!
+            val jsonApiDocument = libraryClient.createLoan(book.isbn, account.id).value!!
             availableBooks[book.isbn] = availableBooks[book.isbn]!!.dec()
             existingAccounts[account] = existingAccounts[account]!!.inc()
             existingLoans[book.id] = Loan(
-                id = LoanId(JsonApiDocument.data.id),
+                id = LoanId(jsonApiDocument.data.id),
                 bookId = book.id,
                 accountId = account.id,
                 createdAt = CreatedAt(LocalDateTime.now()),

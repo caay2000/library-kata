@@ -9,7 +9,6 @@ import com.github.caay2000.librarykata.hexagonal.context.domain.Loan
 import com.github.caay2000.librarykata.hexagonal.context.domain.LoanId
 import mu.KLogger
 import mu.KotlinLogging
-import java.util.UUID
 
 class FindLoanByIdQueryHandler(loanRepository: LoanRepository) : QueryHandler<FindLoanByIdQuery, FindLoanByIdQueryResponse> {
 
@@ -18,10 +17,10 @@ class FindLoanByIdQueryHandler(loanRepository: LoanRepository) : QueryHandler<Fi
     private val finder = LoanFinder(loanRepository)
 
     override fun handle(query: FindLoanByIdQuery): FindLoanByIdQueryResponse =
-        finder.invoke(LoanId(query.id.toString()))
+        finder.invoke(query.id)
             .map { loan -> FindLoanByIdQueryResponse(loan) }
             .getOrThrow()
 }
 
-data class FindLoanByIdQuery(val id: UUID) : Query
+data class FindLoanByIdQuery(val id: LoanId) : Query
 data class FindLoanByIdQueryResponse(val loan: Loan) : QueryResponse

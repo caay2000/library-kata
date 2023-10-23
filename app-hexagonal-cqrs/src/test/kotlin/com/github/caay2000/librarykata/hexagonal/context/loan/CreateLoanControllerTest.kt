@@ -1,6 +1,7 @@
 package com.github.caay2000.librarykata.hexagonal.context.loan
 
-import com.github.caay2000.common.test.http.assertErrorMessage
+import com.github.caay2000.common.jsonapi.jsonApiErrorDocument
+import com.github.caay2000.common.test.http.assertJsonApiErrorDocument
 import com.github.caay2000.common.test.http.assertResponse
 import com.github.caay2000.common.test.http.assertStatus
 import com.github.caay2000.common.test.mock.MockDateProvider
@@ -57,8 +58,14 @@ class CreateLoanControllerTest {
             .assertStatus(HttpStatusCode.Created)
 
         testUseCases.`loan is created`(loan, book.isbn)
-            .assertStatus(HttpStatusCode.InternalServerError)
-            .assertErrorMessage("book with isbn ${book.isbn.value} is not available")
+            .assertStatus(HttpStatusCode.BadRequest)
+            .assertJsonApiErrorDocument(
+                jsonApiErrorDocument(
+                    status = HttpStatusCode.BadRequest,
+                    title = "BookNotAvailable",
+                    detail = "book with isbn ${book.isbn.value} is not available",
+                ),
+            )
     }
 
     @Test
@@ -72,8 +79,14 @@ class CreateLoanControllerTest {
         }
 
         testUseCases.`loan is created`(loan, book.isbn)
-            .assertStatus(HttpStatusCode.InternalServerError)
-            .assertErrorMessage("user ${account.id.value} has too many loans")
+            .assertStatus(HttpStatusCode.BadRequest)
+            .assertJsonApiErrorDocument(
+                jsonApiErrorDocument(
+                    status = HttpStatusCode.BadRequest,
+                    title = "UserHasTooManyLoans",
+                    detail = "user ${account.id.value} has too many loans",
+                ),
+            )
     }
 
     @Test

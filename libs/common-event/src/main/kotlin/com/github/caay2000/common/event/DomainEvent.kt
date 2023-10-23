@@ -1,6 +1,6 @@
 package com.github.caay2000.common.event
 
-import com.github.caay2000.eventbus.Event
+import com.github.caay2000.common.eventbus.Event
 import java.time.LocalDateTime
 import java.util.UUID
 

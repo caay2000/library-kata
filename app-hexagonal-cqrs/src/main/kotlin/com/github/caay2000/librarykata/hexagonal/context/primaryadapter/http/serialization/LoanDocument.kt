@@ -30,6 +30,7 @@ fun List<Loan>.toJsonApiDocumentIncludedResource(): List<JsonApiIncludedResource
                 id = it.id.value,
                 type = "loan",
                 attributes = it.toJsonApiDocumentAttributes(),
+                relationships = null,
             )
         }
     }
