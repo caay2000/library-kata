@@ -24,77 +24,211 @@ A Project Skeleton to build Kotlin apps with Gradle and Ktor
     - Un usuario ha de poder devolver un libro prestado.
 
 
-## API
+## API Details
 
+#### Account API
 
-### POST /account
-  Request:
+<details>
+ <summary><code>GET <b>/account</b></code> <code>Retrieves all accounts</code></summary>
 
-    {
-      "data": {
-        "type": "account",
-        "attributes": {
-          "identityNumber": "L30186716",
-          "name": "curly.coated.retriever",
-          "surname": "joyous lavender.blush",
-          "birthdate": "2023-10-23",
-          "email": "defiant.dark.salmon@mongrel.com",
-          "phonePrefix": "+961",
-          "phoneNumber": "661457963"
-        }
+  ```http request
+Http Status: 200 - OK
+Content-Type: application/vnd.api+json
+Response body:
+XXX
+  ```
+</details>
+<details>
+ <summary><code>GET <b>/account/{accountId}</b></code> <code>Retrieves account with  id {accountId}</code></summary>
+
+  ```http request
+Http Status: 200 - OK
+Content-Type: application/vnd.api+json
+Response Body:
+  {
+    "data": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "type": "account"
+      "attributes": {
+        "birthdate": "1970-01-01",
+        "email": "john.doe@email.example",
+        "identityNumber": "B01234567",
+        "name": "John",
+        "phoneNumber": "+44",
+        "phonePrefix": "+44",
+        "registerDate": "2020-01-01T00:00:00Z",
+        "surname": "Doe"
       }
     }
+  }
+  ```
+</details>
+<details>
+ <summary><code>POST <b>/account</b></code><code>Creates a new account</code></summary>
 
-  Response:
-
-    {
-      "data": {
-        "id": "11561c28-106b-411c-b02b-d338f5b8f8ae",
-        "type": "account",
-        "attributes": {
-          "identityNumber": "M39709834",
-          "name": "green.bee.eater",
-          "surname": "elegant dark.cyan",
-          "birthdate": "2023-10-23",
-          "email": "elated.dark.magenta@cheetah.io",
-          "phonePrefix": "+983",
-          "phoneNumber": "620710568",
-          "registerDate": "2023-10-23T22:33:47.964967781"
-        }
+```http request
+Content-Type: application/vnd.api+json
+Request Body:
+  {
+    "data": {
+      "type": "account"
+      "attributes": {
+        "birthdate": "1970-01-01",
+        "email": "john.doe@email.example",
+        "identityNumber": "B01234567",
+        "name": "John",
+        "phoneNumber": "+600123456",
+        "phonePrefix": "+44",
+        "surname": "Doe"
       }
     }
+  }
+```
+```http request
+Http Status: 201 - Created
+Content-Type: application/vnd.api+json
+Response Body:
+  {
+    "data": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "type": "account"
+      "attributes": {
+        "birthdate": "1970-01-01",
+        "email": "john.doe@email.example",
+        "identityNumber": "B01234567",
+        "name": "John",
+        "phoneNumber": "+44",
+        "phonePrefix": "+44",
+        "registerDate": "2020-01-01T00:00:00Z",
+        "surname": "Doe"
+      }
+    }
+  }
+  ```
+</details>
 
+
+#### Book API
+
+<details>
+ <summary><code>GET <b>/book</b></code> <code>Retrieves all books</code></summary>
+
+  ```http request
+Http Status: 200 - OK
+Content-Type: application/vnd.api+json
+Response body:
+xxx
+  ```
+</details>
+<details>
+ <summary><code>GET <b>/book/{bookId}</b></code> <code>Retrieves book with id {bookId}</code></summary>
+
+  ```http request
+Http Status: 200 - OK
+Content-Type: application/vnd.api+json
+Response Body:
+  {
+    "id": "00000000-0000-0000-0000-000000000000",
+    "type": "book"
+    "data": {
+      "attributes": {
+        "author": "John Doe",
+        "isbn": "00000000-0000-0000-0000-000000000000",
+        "pages": 90,
+        "publisher": "John Doe Publishing Inc.",
+        "title": "Life of John Doe"
+      }
+    }
+  }
+  ```
+</details>
+<details>
+ <summary><code>POST <b>/account</b></code><code>Creates a new book</code></summary>
 
 ```http request
-GET /account/{id}
+Content-Type: application/vnd.api+json
+Request Body:
+  {
+    "data": {
+      "type": "book"
+      "attributes": {
+        "author": "John Doe",
+        "isbn": "00000000-0000-0000-0000-000000000000",
+        "pages": 90,
+        "publisher": "John Doe Publishing Inc.",
+        "title": "Life of John Doe"
+      }
+    }
+  }
+  ```
+  ```http request
+Http Status: 201 - Created
+Content-Type: application/vnd.api+json
+Response Body:
+  {
+    "id": "00000000-0000-0000-0000-000000000000",
+    "type": "book"
+    "data": {
+      "attributes": {
+        "author": "John Doe",
+        "isbn": "00000000-0000-0000-0000-000000000000",
+        "pages": 90,
+        "publisher": "John Doe Publishing Inc.",
+        "title": "Life of John Doe"
+      }
+    }
+  }
+  ```
+</details>
+
+
+#### Loan API
+
+<details>
+ <summary><code>GET <b>/loan</b></code> <code>Retrieves all loans</code></summary>
+
+  ```http request
+Http Status: 200 - OK
+Content-Type: application/vnd.api+json
+Response body:
+XXX
+  ```
+</details>
+<details>
+ <summary><code>GET <b>/loan/{loanId}</b></code> <code>Retrieves loan with id {loanId}</code></summary>
+
+  ```http request
+Http Status: 200 - OK
+Content-Type: application/vnd.api+json
+Response Body:
+xxx
+  ```
+</details>
+<details>
+ <summary><code>POST <b>/loan</b></code><code>Creates a new loan</code></summary>
+
+```http request
+Content-Type: application/vnd.api+json
+Request Body:
+xxxx
 ```
 
 ```http request
-POST /account
-```
-Request:
-```http request
+Http Status: 201 - Created
+Content-Type: application/vnd.api+json
+Response Body:
+xxxx
+  ```
+</details>
+<details>
+ <summary><code>DELETE <b>/loan/{bookId}</b></code><code>Finishes the loan for the book with id {bookId}</code></summary>
+
+  ```http request
+Http Status: 201 - Created
+Content-Type: application/vnd.api+json
+Response Body:
+xxxx
+  ```
+</details>
 
 
-```
-POST /account
-
-GET /book
-
-GET /book?isbn
-
-GET /book/{id}
-
-POST /book
-
-GET /loan/{loanId}
-
-POST /loan
-
-POST /loan/{bookId}
-
-```
-
-```http request
-
-```
