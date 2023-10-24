@@ -3,6 +3,7 @@ package com.github.caay2000.common.jsonapi.context.loan
 import com.github.caay2000.common.jsonapi.JsonApiRelationshipData
 import com.github.caay2000.common.jsonapi.JsonApiResource
 import com.github.caay2000.common.jsonapi.JsonApiResourceAttributes
+import com.github.caay2000.common.jsonapi.context.InvalidJsonApiException
 import com.github.caay2000.common.serialization.LocalDateTimeSerializer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -26,4 +27,8 @@ data class LoanResource(
         @Serializable(with = LocalDateTimeSerializer::class)
         val finishLoan: LocalDateTime?,
     ) : JsonApiResourceAttributes
+
+    init {
+        if (type != "loan") throw InvalidJsonApiException("Invalid type for AccountResource: $type")
+    }
 }

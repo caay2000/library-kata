@@ -2,6 +2,7 @@ package com.github.caay2000.common.jsonapi.context.book
 
 import com.github.caay2000.common.jsonapi.JsonApiRequestAttributes
 import com.github.caay2000.common.jsonapi.JsonApiRequestResource
+import com.github.caay2000.common.jsonapi.context.InvalidJsonApiException
 import io.swagger.v3.oas.annotations.media.Schema
 import kotlinx.serialization.Serializable
 
@@ -25,4 +26,8 @@ data class BookRequestResource(
         @field:Schema(description = "book publisher", example = "John Doe Publishing Inc.")
         val publisher: String,
     ) : JsonApiRequestAttributes
+
+    init {
+        if (type != "book") throw InvalidJsonApiException("Invalid type for AccountResource: $type")
+    }
 }

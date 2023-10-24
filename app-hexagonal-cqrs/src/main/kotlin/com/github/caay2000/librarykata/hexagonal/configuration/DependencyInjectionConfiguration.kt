@@ -7,7 +7,7 @@ import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.acc
 import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.account.FindAccountController
 import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.account.SearchAccountController
 import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.book.CreateBookController
-import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.book.FindBookByIdController
+import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.book.FindBookController
 import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.book.SearchBookController
 import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.loan.CreateLoanController
 import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.loan.FindLoanController
@@ -34,7 +34,7 @@ val DependencyInjectionConfiguration = createApplicationPlugin(name = "Dependenc
     DiKt.register { SearchAccountController(DiKt.bind()) }
 
     DiKt.register { CreateBookController(DiKt.bind(), DiKt.bind()) }
-    DiKt.register { FindBookByIdController(DiKt.bind()) }
+    DiKt.register { FindBookController(DiKt.bind()) }
     DiKt.register { SearchBookController(DiKt.bind()) }
 
     DiKt.register { FindLoanController(DiKt.bind()) }

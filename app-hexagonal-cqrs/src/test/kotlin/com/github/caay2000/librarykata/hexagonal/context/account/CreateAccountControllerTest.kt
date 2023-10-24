@@ -2,14 +2,14 @@ package com.github.caay2000.librarykata.hexagonal.context.account
 
 import com.github.caay2000.common.jsonapi.jsonApiErrorDocument
 import com.github.caay2000.common.test.http.assertJsonApiErrorDocument
-import com.github.caay2000.common.test.http.assertResponse
+import com.github.caay2000.common.test.http.assertJsonResponse
 import com.github.caay2000.common.test.http.assertStatus
 import com.github.caay2000.common.test.mock.MockDateProvider
 import com.github.caay2000.common.test.mock.MockIdGenerator
 import com.github.caay2000.dikt.DiKt
 import com.github.caay2000.librarykata.hexagonal.common.TestUseCases
+import com.github.caay2000.librarykata.hexagonal.context.account.mother.AccountDocumentMother
 import com.github.caay2000.librarykata.hexagonal.context.account.mother.AccountMother
-import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.serialization.toJsonApiDocument
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.testing.testApplication
 import org.junit.jupiter.api.BeforeEach
@@ -30,9 +30,10 @@ class CreateAccountControllerTest {
 
     @Test
     fun `an account can be created`() = testApplication {
+        val expected = AccountDocumentMother.json(account)
         testUseCases.`account is created`(account)
             .assertStatus(HttpStatusCode.Created)
-            .assertResponse(account.toJsonApiDocument())
+            .assertJsonResponse(expected)
     }
 
     @Test

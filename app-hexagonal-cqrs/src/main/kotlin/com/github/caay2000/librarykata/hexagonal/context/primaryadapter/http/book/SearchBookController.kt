@@ -32,10 +32,9 @@ class SearchBookController(bookRepository: BookRepository) : Controller {
     }
 
     private fun JsonApiRequestParams.toQuery() =
-        if (filter.containsKey("isbn")) {
-            SearchBooksQuery.SearchAllBooksByIsbnQuery(filter["isbn"]!!.first())
-        } else {
-            SearchBooksQuery.SearchAllBooksQuery
+        when {
+            filter.containsKey("isbn") -> SearchBooksQuery.SearchAllBooksByIsbnQuery(filter["isbn"]!!.first())
+            else -> SearchBooksQuery.SearchAllBooksQuery
         }
 
     companion object {
@@ -52,7 +51,7 @@ class SearchBookController(bookRepository: BookRepository) : Controller {
 
             response {
                 HttpStatusCode.OK to {
-                    description = "Book Created"
+                    description = "Books retrieved"
                     body<JsonApiListDocument<BookByIsbnResource>> {
                         mediaType(ContentType.JsonApi)
                     }

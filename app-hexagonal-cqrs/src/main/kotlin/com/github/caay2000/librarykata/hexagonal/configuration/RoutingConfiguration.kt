@@ -5,7 +5,7 @@ import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.acc
 import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.account.FindAccountController
 import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.account.SearchAccountController
 import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.book.CreateBookController
-import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.book.FindBookByIdController
+import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.book.FindBookController
 import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.book.SearchBookController
 import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.loan.CreateLoanController
 import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.loan.FindLoanController
@@ -24,7 +24,7 @@ val RoutingConfiguration = createApplicationPlugin(name = "RoutingConfiguration"
         post("/account", CreateAccountController.documentation) { DiKt.get<CreateAccountController>().invoke(this.call) }
 
         get("/book", SearchBookController.documentation) { DiKt.get<SearchBookController>().invoke(this.call) }
-        get("/book/{id}", FindBookByIdController.documentation) { DiKt.get<FindBookByIdController>().invoke(this.call) }
+        get("/book/{id}", FindBookController.documentation) { DiKt.get<FindBookController>().invoke(this.call) }
         post("/book", CreateBookController.documentation) { DiKt.get<CreateBookController>().invoke(this.call) }
 
         post("/loan") { DiKt.get<CreateLoanController>().invoke(this.call) }

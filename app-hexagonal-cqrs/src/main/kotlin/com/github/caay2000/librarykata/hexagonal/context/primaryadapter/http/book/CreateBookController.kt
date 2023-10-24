@@ -6,9 +6,11 @@ import com.github.caay2000.common.http.ErrorResponseDocument
 import com.github.caay2000.common.idgenerator.IdGenerator
 import com.github.caay2000.common.jsonapi.JsonApiDocument
 import com.github.caay2000.common.jsonapi.JsonApiRequestDocument
+import com.github.caay2000.common.jsonapi.ServerResponse
 import com.github.caay2000.common.jsonapi.context.book.BookByIdResource
 import com.github.caay2000.common.jsonapi.context.book.BookRequestResource
 import com.github.caay2000.librarykata.hexagonal.context.application.book.BookRepository
+import com.github.caay2000.librarykata.hexagonal.context.application.book.create.BookCreatorError
 import com.github.caay2000.librarykata.hexagonal.context.application.book.create.CreateBookCommand
 import com.github.caay2000.librarykata.hexagonal.context.application.book.create.CreateBookCommandHandler
 import com.github.caay2000.librarykata.hexagonal.context.application.book.find.FindBookByIdQuery
@@ -43,6 +45,15 @@ class CreateBookController(
         call.respond(HttpStatusCode.Created, queryResponse.value.toJsonApiDocument())
     }
 
+    override suspend fun handleExceptions(call: ApplicationCall, e: Exception) {
+        call.serverError {
+            when (e) {
+                is BookCreatorError.BookAlreadyExists -> ServerResponse(HttpStatusCode.BadRequest, "BookAlreadyExists", e.message)
+                else -> ServerResponse(HttpStatusCode.InternalServerError, "Unknown Error", e.message)
+            }
+        }
+    }
+
     private fun JsonApiRequestDocument<BookRequestResource>.toCreateBookCommand(bookId: String) =
         CreateBookCommand(
             id = UUID.fromString(bookId),
@@ -71,10 +82,11 @@ class CreateBookController(
                     }
                 }
                 HttpStatusCode.BadRequest to {
-                    description = "Error creating Book"
+                    description = "Invalid request creating Book"
                     body<ErrorResponseDocument> {
                         mediaType(ContentType.JsonApi)
                         example("BookAlreadyExists", "Book {bookId} already exists")
+                        example("InvalidJsonApiException", "Invalid type for AccountResource: {type}")
                     }
                 }
                 HttpStatusCode.InternalServerError to { description = "Something unexpected happened" }

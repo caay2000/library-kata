@@ -28,7 +28,6 @@ import com.github.caay2000.librarykata.hexagonal.context.domain.account.Name
 import com.github.caay2000.librarykata.hexagonal.context.domain.account.PhoneNumber
 import com.github.caay2000.librarykata.hexagonal.context.domain.account.PhonePrefix
 import com.github.caay2000.librarykata.hexagonal.context.domain.account.Surname
-import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.serialization.LoanByAccountIdDocument
 import io.ktor.client.request.get
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
@@ -99,10 +98,6 @@ class LibraryClient {
         runBlocking { client.get("/account?filter[email]=$email").toHttpDataResponse<JsonApiListDocument<AccountResource>>() }
 
     context(ApplicationTestBuilder)
-    fun searchLoanByAccountId(accountId: AccountId): HttpDataResponse<LoanByAccountIdDocument> =
-        runBlocking { client.get("/account/${accountId.value}/loan").toHttpDataResponse() }
-
-    context(ApplicationTestBuilder)
     fun createBook(
         isbn: BookIsbn,
         title: BookTitle,
@@ -111,19 +106,21 @@ class LibraryClient {
         publisher: BookPublisher,
     ): HttpDataResponse<JsonApiDocument<BookByIdResource>> =
         runBlocking {
-            client.post("/book") {
-                val request = JsonApiRequestDocument(
-                    data = BookRequestResource(
-                        attributes = BookRequestResource.Attributes(
-                            isbn.value,
-                            title.value,
-                            author.value,
-                            pages.value,
-                            publisher.value,
-                        ),
+            val request = JsonApiRequestDocument(
+                data = BookRequestResource(
+                    attributes = BookRequestResource.Attributes(
+                        isbn.value,
+                        title.value,
+                        author.value,
+                        pages.value,
+                        publisher.value,
                     ),
-                )
-                setBody(jsonMapper.encodeToString(request))
+                ),
+            )
+            val jsonRequest = jsonMapper.encodeToString(request)
+            logger.trace { "CreateBook Request: $jsonRequest" }
+            client.post("/book") {
+                setBody(jsonRequest)
                 contentType(ContentType.JsonApi)
             }.toHttpDataResponse()
         }

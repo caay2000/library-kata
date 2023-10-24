@@ -3,6 +3,7 @@ package com.github.caay2000.common.jsonapi.context.book
 import com.github.caay2000.common.jsonapi.JsonApiRelationshipData
 import com.github.caay2000.common.jsonapi.JsonApiResource
 import com.github.caay2000.common.jsonapi.JsonApiResourceAttributes
+import com.github.caay2000.common.jsonapi.context.InvalidJsonApiException
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -26,4 +27,8 @@ data class BookByIsbnResource(
         val copies: Int,
         val availableCopies: Int,
     ) : JsonApiResourceAttributes
+
+    init {
+        if (type != "book") throw InvalidJsonApiException("Invalid type for AccountResource: $type")
+    }
 }

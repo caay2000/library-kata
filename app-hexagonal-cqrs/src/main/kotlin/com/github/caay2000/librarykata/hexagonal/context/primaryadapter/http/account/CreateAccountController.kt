@@ -95,12 +95,13 @@ class CreateAccountController(
                     }
                 }
                 HttpStatusCode.BadRequest to {
-                    description = "Error creating Account"
+                    description = "Invalid request creating Account"
                     body<ErrorResponseDocument> {
                         mediaType(ContentType.JsonApi)
                         example("IdentityNumberAlreadyExists", "An account with identity number {identityNumber} already exists")
                         example("EmailAlreadyExists", "An account with email {email} already exists")
                         example("PhoneAlreadyExists", "An account with phone {phonePrefix} {phoneNumber} already exists")
+                        example("InvalidJsonApiException", "Invalid type for AccountResource: {type}")
                     }
                 }
                 HttpStatusCode.InternalServerError to { description = "Something unexpected happened" }

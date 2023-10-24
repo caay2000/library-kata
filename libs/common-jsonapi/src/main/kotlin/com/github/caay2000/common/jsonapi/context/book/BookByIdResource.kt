@@ -3,6 +3,7 @@ package com.github.caay2000.common.jsonapi.context.book
 import com.github.caay2000.common.jsonapi.JsonApiRelationshipData
 import com.github.caay2000.common.jsonapi.JsonApiResource
 import com.github.caay2000.common.jsonapi.JsonApiResourceAttributes
+import com.github.caay2000.common.jsonapi.context.InvalidJsonApiException
 import io.swagger.v3.oas.annotations.media.Schema
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -34,4 +35,8 @@ data class BookByIdResource(
         @field:Schema(description = "book availability", example = "true", allowableValues = ["true", "false"])
         val available: Boolean,
     ) : JsonApiResourceAttributes
+
+    init {
+        if (type != "book") throw InvalidJsonApiException("Invalid type for AccountResource: $type")
+    }
 }

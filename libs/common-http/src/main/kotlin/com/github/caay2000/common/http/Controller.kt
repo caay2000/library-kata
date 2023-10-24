@@ -1,6 +1,7 @@
 package com.github.caay2000.common.http
 
 import com.github.caay2000.common.jsonapi.ServerResponse
+import com.github.caay2000.common.jsonapi.context.InvalidJsonApiException
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.ApplicationCall
 import io.ktor.server.response.respond
@@ -22,7 +23,10 @@ interface Controller {
     suspend fun handle(call: ApplicationCall)
 
     suspend fun handleExceptions(call: ApplicationCall, e: Exception) {
-        val error = ServerResponse(HttpStatusCode.InternalServerError)
+        val error = when (e) {
+            is InvalidJsonApiException -> ServerResponse(HttpStatusCode.BadRequest, "InvalidJsonApiException", e.message)
+            else -> ServerResponse(HttpStatusCode.InternalServerError)
+        }
         call.respond(error.status, error.jsonApiErrorDocument)
     }
 

@@ -15,7 +15,7 @@ class BookFinder(private val bookRepository: BookRepository) {
                 when (it) {
                     is RepositoryError.NotFoundError -> {
                         when (criteria) {
-                            is FindBookCriteria.ById -> BookFinderError.BookNotFoundById(criteria.id)
+                            is FindBookCriteria.ById -> BookFinderError.BookNotFoundError(criteria.id)
                         }
                     }
                     is RepositoryError.Unknown -> BookFinderError.UnknownError(it)
@@ -28,5 +28,5 @@ sealed class BookFinderError : RuntimeException {
     constructor(throwable: Throwable) : super(throwable)
 
     class UnknownError(error: Throwable) : BookFinderError(error)
-    class BookNotFoundById(bookId: BookId) : BookFinderError("Book ${bookId.value} not found")
+    class BookNotFoundError(bookId: BookId) : BookFinderError("Book ${bookId.value} not found")
 }

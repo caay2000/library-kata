@@ -5,7 +5,6 @@ import com.github.caay2000.common.jsonapi.JsonApiMeta
 import com.github.caay2000.common.jsonapi.context.account.AccountResource
 import com.github.caay2000.librarykata.hexagonal.configuration.jsonMapper
 import com.github.caay2000.librarykata.hexagonal.context.domain.account.Account
-import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.serialization.toJsonApiDocumentResource
 import kotlinx.serialization.encodeToString
 import kotlin.random.Random
 
@@ -13,13 +12,13 @@ object AccountListDocumentMother {
 
     fun random(account: Account = AccountMother.random()): JsonApiListDocument<AccountResource> =
         JsonApiListDocument(
-            data = listOf(account.toJsonApiDocumentResource()),
+            data = listOf(account.toAccountResource()),
             meta = JsonApiMeta(total = 1),
         )
 
     fun random(accounts: List<Account> = List(Random.nextInt(3)) { AccountMother.random() }): JsonApiListDocument<AccountResource> =
         JsonApiListDocument(
-            data = accounts.map { it.toJsonApiDocumentResource() },
+            data = accounts.map { it.toAccountResource() },
             meta = JsonApiMeta(total = accounts.size),
         )
 

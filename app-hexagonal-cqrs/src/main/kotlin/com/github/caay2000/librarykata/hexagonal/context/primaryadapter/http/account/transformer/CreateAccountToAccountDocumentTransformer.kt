@@ -4,7 +4,6 @@ import com.github.caay2000.common.http.Transformer
 import com.github.caay2000.common.jsonapi.JsonApiDocument
 import com.github.caay2000.common.jsonapi.context.account.AccountResource
 import com.github.caay2000.librarykata.hexagonal.context.domain.account.Account
-import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.serialization.toJsonApiDocumentResource
 
 class CreateAccountToAccountDocumentTransformer : Transformer<Account, JsonApiDocument<AccountResource>> {
 

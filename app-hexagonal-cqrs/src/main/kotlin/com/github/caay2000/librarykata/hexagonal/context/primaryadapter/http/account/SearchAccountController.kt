@@ -36,12 +36,10 @@ class SearchAccountController(accountRepository: AccountRepository) : Controller
     }
 
     private fun JsonApiRequestParams.toQuery() =
-        if (filter.containsKey("phoneNumber")) {
-            SearchAccountQuery.SearchAccountByPhoneNumberQuery(filter["phoneNumber"]!!.first())
-        } else if (filter.containsKey("email")) {
-            SearchAccountQuery.SearchAccountByEmailQuery(filter["email"]!!.first())
-        } else {
-            SearchAccountQuery.SearchAllAccountQuery
+        when {
+            filter.containsKey("phoneNumber") -> SearchAccountQuery.SearchAccountByPhoneNumberQuery(filter["phoneNumber"]!!.first())
+            filter.containsKey("email") -> SearchAccountQuery.SearchAccountByEmailQuery(filter["email"]!!.first())
+            else -> SearchAccountQuery.SearchAllAccountQuery
         }
 
     companion object {
@@ -63,7 +61,7 @@ class SearchAccountController(accountRepository: AccountRepository) : Controller
 
             response {
                 HttpStatusCode.OK to {
-                    description = "All Accounts retrieved"
+                    description = "Accounts retrieved"
                     body<JsonApiListDocument<AccountResource>> {
                         mediaType(ContentType.JsonApi)
                     }
