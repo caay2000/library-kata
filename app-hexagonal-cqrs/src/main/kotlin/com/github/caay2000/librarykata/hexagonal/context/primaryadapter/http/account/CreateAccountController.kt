@@ -84,11 +84,12 @@ class CreateAccountController(
             request {
                 body<JsonApiRequestDocument<AccountRequestResource>> {
                     mediaType(ContentType.JsonApi)
+                    required = true
                 }
             }
             response {
                 HttpStatusCode.Created to {
-                    description = "Successful Request"
+                    description = "Account Created"
                     body<JsonApiDocument<AccountResource>> {
                         mediaType(ContentType.JsonApi)
                     }
@@ -97,9 +98,9 @@ class CreateAccountController(
                     description = "Error creating Account"
                     body<ErrorResponseDocument> {
                         mediaType(ContentType.JsonApi)
-                        example("IdentityNumberAlreadyExists", "an account with identity number {identityNumber} already exists")
-                        example("EmailAlreadyExists", "an account with email {email} already exists")
-                        example("PhoneAlreadyExists", "an account with phone {phonePrefix} {phoneNumber} already exists")
+                        example("IdentityNumberAlreadyExists", "An account with identity number {identityNumber} already exists")
+                        example("EmailAlreadyExists", "An account with email {email} already exists")
+                        example("PhoneAlreadyExists", "An account with phone {phonePrefix} {phoneNumber} already exists")
                     }
                 }
                 HttpStatusCode.InternalServerError to { description = "Something unexpected happened" }

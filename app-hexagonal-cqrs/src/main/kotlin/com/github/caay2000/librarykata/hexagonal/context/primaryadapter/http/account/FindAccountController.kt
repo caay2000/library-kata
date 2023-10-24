@@ -60,6 +60,7 @@ class FindAccountController(accountRepository: AccountRepository, loanRepository
             request {
                 pathParameter<String>("id") {
                     description = "Account Id"
+                    required = true
                     example = "00000000-0000-0000-0000-000000000000"
                 }
             }
@@ -72,10 +73,10 @@ class FindAccountController(accountRepository: AccountRepository, loanRepository
                     }
                 }
                 HttpStatusCode.NotFound to {
-                    description = "Error creating Account"
+                    description = "Error finding Account"
                     body<ErrorResponseDocument> {
                         mediaType(ContentType.JsonApi)
-                        example("AccountNotFoundError", "account {accountId} not found")
+                        example("AccountNotFoundError", "Account {accountId} not found")
                     }
                 }
                 HttpStatusCode.InternalServerError to { description = "Something unexpected happened" }
