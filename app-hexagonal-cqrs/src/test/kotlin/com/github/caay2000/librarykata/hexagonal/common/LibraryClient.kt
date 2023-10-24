@@ -14,20 +14,20 @@ import com.github.caay2000.common.jsonapi.context.loan.LoanRequestResource
 import com.github.caay2000.common.jsonapi.context.loan.LoanResource
 import com.github.caay2000.common.test.http.HttpDataResponse
 import com.github.caay2000.librarykata.hexagonal.configuration.jsonMapper
-import com.github.caay2000.librarykata.hexagonal.context.domain.AccountId
-import com.github.caay2000.librarykata.hexagonal.context.domain.Birthdate
 import com.github.caay2000.librarykata.hexagonal.context.domain.BookAuthor
 import com.github.caay2000.librarykata.hexagonal.context.domain.BookId
 import com.github.caay2000.librarykata.hexagonal.context.domain.BookIsbn
 import com.github.caay2000.librarykata.hexagonal.context.domain.BookPages
 import com.github.caay2000.librarykata.hexagonal.context.domain.BookPublisher
 import com.github.caay2000.librarykata.hexagonal.context.domain.BookTitle
-import com.github.caay2000.librarykata.hexagonal.context.domain.Email
-import com.github.caay2000.librarykata.hexagonal.context.domain.IdentityNumber
-import com.github.caay2000.librarykata.hexagonal.context.domain.Name
-import com.github.caay2000.librarykata.hexagonal.context.domain.PhoneNumber
-import com.github.caay2000.librarykata.hexagonal.context.domain.PhonePrefix
-import com.github.caay2000.librarykata.hexagonal.context.domain.Surname
+import com.github.caay2000.librarykata.hexagonal.context.domain.account.AccountId
+import com.github.caay2000.librarykata.hexagonal.context.domain.account.Birthdate
+import com.github.caay2000.librarykata.hexagonal.context.domain.account.Email
+import com.github.caay2000.librarykata.hexagonal.context.domain.account.IdentityNumber
+import com.github.caay2000.librarykata.hexagonal.context.domain.account.Name
+import com.github.caay2000.librarykata.hexagonal.context.domain.account.PhoneNumber
+import com.github.caay2000.librarykata.hexagonal.context.domain.account.PhonePrefix
+import com.github.caay2000.librarykata.hexagonal.context.domain.account.Surname
 import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.serialization.LoanByAccountIdDocument
 import io.ktor.client.request.get
 import io.ktor.client.request.post
@@ -87,6 +87,18 @@ class LibraryClient {
         }
 
     context(ApplicationTestBuilder)
+    fun searchAccount(): HttpDataResponse<JsonApiListDocument<AccountResource>> =
+        runBlocking { client.get("/account").toHttpDataResponse<JsonApiListDocument<AccountResource>>() }
+
+    context(ApplicationTestBuilder)
+    fun searchAccountByPhoneNumber(phoneNumber: String): HttpDataResponse<JsonApiListDocument<AccountResource>> =
+        runBlocking { client.get("/account?filter[phoneNumber]=$phoneNumber").toHttpDataResponse<JsonApiListDocument<AccountResource>>() }
+
+    context(ApplicationTestBuilder)
+    fun searchAccountByEmail(email: String): HttpDataResponse<JsonApiListDocument<AccountResource>> =
+        runBlocking { client.get("/account?filter[email]=$email").toHttpDataResponse<JsonApiListDocument<AccountResource>>() }
+
+    context(ApplicationTestBuilder)
     fun searchLoanByAccountId(accountId: AccountId): HttpDataResponse<LoanByAccountIdDocument> =
         runBlocking { client.get("/account/${accountId.value}/loan").toHttpDataResponse() }
 
@@ -125,7 +137,7 @@ class LibraryClient {
         runBlocking { client.get("/book?filter[isbn]=${isbn.value}").toHttpDataResponse() }
 
     context(ApplicationTestBuilder)
-    fun searchBooks(): HttpDataResponse<JsonApiListDocument<BookByIsbnResource>> =
+    fun searchBook(): HttpDataResponse<JsonApiListDocument<BookByIsbnResource>> =
         runBlocking { client.get("/book").toHttpDataResponse() }
 
     context(ApplicationTestBuilder)

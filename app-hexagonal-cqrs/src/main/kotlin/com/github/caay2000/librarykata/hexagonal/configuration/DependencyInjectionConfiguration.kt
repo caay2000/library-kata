@@ -5,6 +5,7 @@ import com.github.caay2000.common.idgenerator.UUIDGenerator
 import com.github.caay2000.dikt.DiKt
 import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.account.CreateAccountController
 import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.account.FindAccountController
+import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.account.SearchAccountController
 import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.book.CreateBookController
 import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.book.FindBookByIdController
 import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.book.SearchBookController
@@ -30,6 +31,7 @@ val DependencyInjectionConfiguration = createApplicationPlugin(name = "Dependenc
 
     DiKt.register { CreateAccountController(DiKt.bind(), DiKt.bind(), DiKt.bind()) }
     DiKt.register { FindAccountController(DiKt.bind(), DiKt.bind()) }
+    DiKt.register { SearchAccountController(DiKt.bind()) }
 
     DiKt.register { CreateBookController(DiKt.bind(), DiKt.bind()) }
     DiKt.register { FindBookByIdController(DiKt.bind()) }

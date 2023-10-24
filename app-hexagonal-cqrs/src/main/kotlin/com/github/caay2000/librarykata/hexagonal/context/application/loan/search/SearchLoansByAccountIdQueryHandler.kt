@@ -5,8 +5,8 @@ import com.github.caay2000.common.cqrs.Query
 import com.github.caay2000.common.cqrs.QueryHandler
 import com.github.caay2000.common.cqrs.QueryResponse
 import com.github.caay2000.librarykata.hexagonal.context.application.loan.LoanRepository
-import com.github.caay2000.librarykata.hexagonal.context.domain.AccountId
 import com.github.caay2000.librarykata.hexagonal.context.domain.Loan
+import com.github.caay2000.librarykata.hexagonal.context.domain.account.AccountId
 import mu.KLogger
 import mu.KotlinLogging
 

@@ -3,8 +3,8 @@ package com.github.caay2000.librarykata.hexagonal.context.application.loan.searc
 import arrow.core.Either
 import com.github.caay2000.librarykata.hexagonal.context.application.loan.LoanRepository
 import com.github.caay2000.librarykata.hexagonal.context.application.loan.SearchLoanCriteria
-import com.github.caay2000.librarykata.hexagonal.context.domain.AccountId
 import com.github.caay2000.librarykata.hexagonal.context.domain.Loan
+import com.github.caay2000.librarykata.hexagonal.context.domain.account.AccountId
 
 class LoanSearcher(private val loanRepository: LoanRepository) {
 

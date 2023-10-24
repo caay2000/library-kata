@@ -9,14 +9,14 @@ import com.github.caay2000.common.jsonapi.JsonApiDocument
 import com.github.caay2000.common.jsonapi.ServerResponse
 import com.github.caay2000.common.jsonapi.context.account.AccountResource
 import com.github.caay2000.common.jsonapi.toJsonApiRequestParams
-import com.github.caay2000.librarykata.hexagonal.context.application.account.AccountRepository
 import com.github.caay2000.librarykata.hexagonal.context.application.account.find.AccountFinderError
 import com.github.caay2000.librarykata.hexagonal.context.application.account.find.FindAccountByIdQuery
 import com.github.caay2000.librarykata.hexagonal.context.application.account.find.FindAccountByIdQueryHandler
 import com.github.caay2000.librarykata.hexagonal.context.application.loan.LoanRepository
-import com.github.caay2000.librarykata.hexagonal.context.domain.Account
-import com.github.caay2000.librarykata.hexagonal.context.domain.AccountId
-import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.account.transformer.AccountToJsonApiDocumentTransformer
+import com.github.caay2000.librarykata.hexagonal.context.domain.account.Account
+import com.github.caay2000.librarykata.hexagonal.context.domain.account.AccountId
+import com.github.caay2000.librarykata.hexagonal.context.domain.account.AccountRepository
+import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.account.transformer.AccountToAccountDocumentTransformer
 import io.github.smiley4.ktorswaggerui.dsl.OpenApiRoute
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.ApplicationCall
@@ -31,7 +31,7 @@ class FindAccountController(accountRepository: AccountRepository, loanRepository
     override val logger: KLogger = KotlinLogging.logger {}
 
     private val accountQueryHandler = FindAccountByIdQueryHandler(accountRepository)
-    private val transformer: Transformer<Account, JsonApiDocument<AccountResource>> = AccountToJsonApiDocumentTransformer(loanRepository)
+    private val transformer: Transformer<Account, JsonApiDocument<AccountResource>> = AccountToAccountDocumentTransformer(loanRepository)
 
     internal enum class Included : RequestInclude { LOANS }
 

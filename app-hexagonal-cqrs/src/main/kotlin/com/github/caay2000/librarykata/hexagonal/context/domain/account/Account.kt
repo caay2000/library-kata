@@ -1,4 +1,4 @@
-package com.github.caay2000.librarykata.hexagonal.context.domain
+package com.github.caay2000.librarykata.hexagonal.context.domain.account
 
 import java.time.LocalDate
 import java.time.LocalDateTime

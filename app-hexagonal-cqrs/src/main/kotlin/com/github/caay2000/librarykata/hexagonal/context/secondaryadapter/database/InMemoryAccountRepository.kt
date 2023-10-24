@@ -2,9 +2,10 @@ package com.github.caay2000.librarykata.hexagonal.context.secondaryadapter.datab
 
 import arrow.core.Either
 import com.github.caay2000.common.database.RepositoryError
-import com.github.caay2000.librarykata.hexagonal.context.application.account.AccountRepository
-import com.github.caay2000.librarykata.hexagonal.context.application.account.FindAccountCriteria
-import com.github.caay2000.librarykata.hexagonal.context.domain.Account
+import com.github.caay2000.librarykata.hexagonal.context.domain.account.Account
+import com.github.caay2000.librarykata.hexagonal.context.domain.account.AccountRepository
+import com.github.caay2000.librarykata.hexagonal.context.domain.account.FindAccountCriteria
+import com.github.caay2000.librarykata.hexagonal.context.domain.account.SearchAccountCriteria
 import com.github.caay2000.memorydb.InMemoryDatasource
 
 class InMemoryAccountRepository(private val datasource: InMemoryDatasource) : AccountRepository {
@@ -29,6 +30,15 @@ class InMemoryAccountRepository(private val datasource: InMemoryDatasource) : Ac
                 else -> RepositoryError.Unknown(error)
             }
         }
+
+    override fun search(criteria: SearchAccountCriteria): Either<RepositoryError, List<Account>> =
+        Either.catch {
+            when (criteria) {
+                SearchAccountCriteria.All -> datasource.getAll(TABLE_NAME)
+                is SearchAccountCriteria.ByPhoneNumber -> datasource.getAll<Account>(TABLE_NAME).filter { it.phoneNumber.value.contains(criteria.phoneNumber) }
+                is SearchAccountCriteria.ByEmail -> datasource.getAll<Account>(TABLE_NAME).filter { it.email.value.contains(criteria.email) }
+            }
+        }.mapLeft { error -> RepositoryError.Unknown(error) }
 
     companion object {
         private const val TABLE_NAME = "account"

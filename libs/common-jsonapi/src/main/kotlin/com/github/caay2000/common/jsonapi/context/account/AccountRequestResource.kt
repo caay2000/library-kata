@@ -31,7 +31,7 @@ data class AccountRequestResource(
         val email: String,
         @field:Schema(description = "user phone prefix", example = "+44")
         val phonePrefix: String,
-        @field:Schema(description = "user phone number", example = "+600123456")
+        @field:Schema(description = "user phone number", example = "600123456")
         val phoneNumber: String,
     ) : JsonApiRequestAttributes
 

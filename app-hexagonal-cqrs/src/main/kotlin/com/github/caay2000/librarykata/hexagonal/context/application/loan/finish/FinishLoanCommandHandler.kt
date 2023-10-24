@@ -3,11 +3,11 @@ package com.github.caay2000.librarykata.hexagonal.context.application.loan.finis
 import com.github.caay2000.common.arrow.getOrThrow
 import com.github.caay2000.common.cqrs.Command
 import com.github.caay2000.common.cqrs.CommandHandler
-import com.github.caay2000.librarykata.hexagonal.context.application.account.AccountRepository
 import com.github.caay2000.librarykata.hexagonal.context.application.book.BookRepository
 import com.github.caay2000.librarykata.hexagonal.context.application.loan.LoanRepository
 import com.github.caay2000.librarykata.hexagonal.context.domain.BookId
 import com.github.caay2000.librarykata.hexagonal.context.domain.FinishedAt
+import com.github.caay2000.librarykata.hexagonal.context.domain.account.AccountRepository
 import mu.KLogger
 import mu.KotlinLogging
 import java.time.LocalDateTime

@@ -1,17 +1,17 @@
 package com.github.caay2000.librarykata.hexagonal.context.account.mother
 
 import com.github.caay2000.common.test.RandomStringGenerator
-import com.github.caay2000.librarykata.hexagonal.context.domain.Account
-import com.github.caay2000.librarykata.hexagonal.context.domain.AccountId
-import com.github.caay2000.librarykata.hexagonal.context.domain.Birthdate
-import com.github.caay2000.librarykata.hexagonal.context.domain.CurrentLoans
-import com.github.caay2000.librarykata.hexagonal.context.domain.Email
-import com.github.caay2000.librarykata.hexagonal.context.domain.IdentityNumber
-import com.github.caay2000.librarykata.hexagonal.context.domain.Name
-import com.github.caay2000.librarykata.hexagonal.context.domain.PhoneNumber
-import com.github.caay2000.librarykata.hexagonal.context.domain.PhonePrefix
-import com.github.caay2000.librarykata.hexagonal.context.domain.RegisterDate
-import com.github.caay2000.librarykata.hexagonal.context.domain.Surname
+import com.github.caay2000.librarykata.hexagonal.context.domain.account.Account
+import com.github.caay2000.librarykata.hexagonal.context.domain.account.AccountId
+import com.github.caay2000.librarykata.hexagonal.context.domain.account.Birthdate
+import com.github.caay2000.librarykata.hexagonal.context.domain.account.CurrentLoans
+import com.github.caay2000.librarykata.hexagonal.context.domain.account.Email
+import com.github.caay2000.librarykata.hexagonal.context.domain.account.IdentityNumber
+import com.github.caay2000.librarykata.hexagonal.context.domain.account.Name
+import com.github.caay2000.librarykata.hexagonal.context.domain.account.PhoneNumber
+import com.github.caay2000.librarykata.hexagonal.context.domain.account.PhonePrefix
+import com.github.caay2000.librarykata.hexagonal.context.domain.account.RegisterDate
+import com.github.caay2000.librarykata.hexagonal.context.domain.account.Surname
 import java.time.LocalDate
 import java.time.LocalDateTime
 

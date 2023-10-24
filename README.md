@@ -31,11 +31,37 @@ A Project Skeleton to build Kotlin apps with Gradle and Ktor
 <details>
  <summary><code>GET <b>/account</b></code> <code>Retrieves all accounts</code></summary>
 
+- <code>?filter[phoneNumber]</code> <code>Filter accounts where phone number contains {phoneNumber}</code>
+- <code>?filter[email]</code> <code>Filter accounts where email contains {email}</code>
+
+
   ```http request
 HTTP/1.1 200 OK
 Content-Type: application/vnd.api+json
 
-XXX
+  {
+    "data": [
+      {
+        "id": "00000000-0000-0000-0000-000000000000",
+        "type": "account"
+        "attributes": {
+          "name": "John",
+          "surname": "Doe",
+          "email": "john.doe@email.example",
+          "identityNumber": "B01234567",
+          "phonePrefix": "+44",
+          "phoneNumber": "600123456",
+          "birthdate": "1970-01-01",
+          "registerDate": "2020-01-01T00:00:00Z",
+          "currentLoans": 2,
+          "totalLoans": 4
+        }
+      }
+    ],
+    "meta": {
+      "total": 1
+    }
+  }
   ```
 </details>
 <details>
@@ -45,22 +71,24 @@ XXX
 HTTP/1.1 200 OK
 Content-Type: application/vnd.api+json
 
-{
-  "data": {
-    "id": "00000000-0000-0000-0000-000000000000",
-    "type": "account"
-    "attributes": {
-      "birthdate": "1970-01-01",
-      "email": "john.doe@email.example",
-      "identityNumber": "B01234567",
-      "name": "John",
-      "phoneNumber": "+44",
-      "phonePrefix": "+44",
-      "registerDate": "2020-01-01T00:00:00Z",
-      "surname": "Doe"
+  {
+    "data": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "type": "account"
+      "attributes": {
+        "name": "John",
+        "surname": "Doe",
+        "email": "john.doe@email.example",
+        "identityNumber": "B01234567",
+        "phonePrefix": "+44",
+        "phoneNumber": "600123456",
+        "birthdate": "1970-01-01",
+        "registerDate": "2020-01-01T00:00:00Z",
+        "currentLoans": 2,
+        "totalLoans": 4
+      }
     }
   }
-}
   ```
 </details>
 <details>
@@ -69,41 +97,43 @@ Content-Type: application/vnd.api+json
 ```http request
 Content-Type: application/vnd.api+json
 
-{
-  "data": {
-    "type": "account"
-    "attributes": {
-      "birthdate": "1970-01-01",
-      "email": "john.doe@email.example",
-      "identityNumber": "B01234567",
-      "name": "John",
-      "phoneNumber": "+600123456",
-      "phonePrefix": "+44",
-      "surname": "Doe"
+  {
+    "data": {
+      "type": "account"
+      "attributes": {
+        "name": "John",
+        "surname": "Doe",
+        "email": "john.doe@email.example",
+        "identityNumber": "B01234567",
+        "phonePrefix": "+44",
+        "phoneNumber": "600123456",
+        "birthdate": "1970-01-01"
+      }
     }
   }
-}
 ```
 ```http request
 HTTP/1.1 201 Created
 Content-Type: application/vnd.api+json
 
-{
-  "data": {
-    "id": "00000000-0000-0000-0000-000000000000",
-    "type": "account"
-    "attributes": {
-      "birthdate": "1970-01-01",
-      "email": "john.doe@email.example",
-      "identityNumber": "B01234567",
-      "name": "John",
-      "phoneNumber": "+44",
-      "phonePrefix": "+44",
-      "registerDate": "2020-01-01T00:00:00Z",
-      "surname": "Doe"
+  {
+    "data": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "type": "account"
+      "attributes": {
+        "name": "John",
+        "surname": "Doe",
+        "email": "john.doe@email.example",
+        "identityNumber": "B01234567",
+        "phonePrefix": "+44",
+        "phoneNumber": "600123456",
+        "birthdate": "1970-01-01",
+        "registerDate": "2020-01-01T00:00:00Z",
+        "currentLoans": 0,
+        "totalLoans": 0
+      }
     }
   }
-}
   ```
 </details>
 
@@ -117,7 +147,39 @@ Content-Type: application/vnd.api+json
 HTTP/1.1 200 OK
 Content-Type: application/vnd.api+json
 
-xxx
+  {
+    "data": [
+      {
+        "id": "00000000-0000-0000-0000-000000000000",
+        "type": "book",
+        "attributes": {
+          "isbn": "10000000-0000-0000-0000-000000000000",
+          "title": "Life of John Doe",
+          "author": "John Doe",
+          "pages": 90,
+          "publisher": "John Doe Publishing Inc.",
+          "copies": 2,
+          "availableCopies": 0
+        }
+      },
+      {
+        "id": "00000000-0000-0000-0000-000000000001",
+        "type": "book",
+        "attributes": {
+          "isbn": "10000000-0000-0000-0000-000000000001",
+          "title": "Life of John Doe (Volume II)",
+          "author": "John Doe",
+          "pages": 166,
+          "publisher": "John Doe Publishing Inc.",
+          "copies": 3,
+          "availableCopies": 2
+        }
+      }
+    ],
+    "meta": {
+      "total": 2
+    }
+  }
   ```
 </details>
 <details>
@@ -127,19 +189,19 @@ xxx
 HTTP/1.1 200 OK
 Content-Type: application/vnd.api+json
 
-{
-  "id": "00000000-0000-0000-0000-000000000000",
-  "type": "book"
-  "data": {
-    "attributes": {
-      "author": "John Doe",
-      "isbn": "00000000-0000-0000-0000-000000000000",
-      "pages": 90,
-      "publisher": "John Doe Publishing Inc.",
-      "title": "Life of John Doe"
+  {
+    "id": "00000000-0000-0000-0000-000000000000",
+    "type": "book"
+    "data": {
+      "attributes": {
+        "author": "John Doe",
+        "isbn": "00000000-0000-0000-0000-000000000000",
+        "pages": 90,
+        "publisher": "John Doe Publishing Inc.",
+        "title": "Life of John Doe"
+      }
     }
   }
-}
   ```
 </details>
 <details>
@@ -148,36 +210,36 @@ Content-Type: application/vnd.api+json
 ```http request
 Content-Type: application/vnd.api+json
 
-{
-  "data": {
-    "type": "book"
-    "attributes": {
-      "author": "John Doe",
-      "isbn": "00000000-0000-0000-0000-000000000000",
-      "pages": 90,
-      "publisher": "John Doe Publishing Inc.",
-      "title": "Life of John Doe"
+  {
+    "data": {
+      "type": "book"
+      "attributes": {
+        "author": "John Doe",
+        "isbn": "00000000-0000-0000-0000-000000000000",
+        "pages": 90,
+        "publisher": "John Doe Publishing Inc.",
+        "title": "Life of John Doe"
+      }
     }
   }
-}
   ```
   ```http request
 HTTP/1.1 201 Created
 Content-Type: application/vnd.api+json
 
-{
-  "id": "00000000-0000-0000-0000-000000000000",
-  "type": "book"
-  "data": {
-    "attributes": {
-      "author": "John Doe",
-      "isbn": "00000000-0000-0000-0000-000000000000",
-      "pages": 90,
-      "publisher": "John Doe Publishing Inc.",
-      "title": "Life of John Doe"
+  {
+    "id": "00000000-0000-0000-0000-000000000000",
+    "type": "book"
+    "data": {
+      "attributes": {
+        "author": "John Doe",
+        "isbn": "00000000-0000-0000-0000-000000000000",
+        "pages": 90,
+        "publisher": "John Doe Publishing Inc.",
+        "title": "Life of John Doe"
+      }
     }
   }
-}
   ```
 </details>
 

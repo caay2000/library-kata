@@ -10,7 +10,7 @@ import com.github.caay2000.librarykata.hexagonal.context.account.mother.AccountM
 import com.github.caay2000.librarykata.hexagonal.context.book.mother.BookCopies
 import com.github.caay2000.librarykata.hexagonal.context.book.mother.BookMother
 import com.github.caay2000.librarykata.hexagonal.context.book.mother.JsonApiListDocumentMother
-import com.github.caay2000.librarykata.hexagonal.context.domain.AccountId
+import com.github.caay2000.librarykata.hexagonal.context.domain.account.AccountId
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.testing.testApplication
 import org.junit.jupiter.api.BeforeEach
@@ -42,7 +42,7 @@ class SearchBookControllerTest {
             BookCopies(differentBook, 3),
             BookCopies(anotherBook),
         )
-        testUseCases.`search all books`()
+        testUseCases.`search book`()
             .assertStatus(HttpStatusCode.OK)
             .assertJsonResponse(expected)
     }

@@ -8,12 +8,12 @@ import com.github.caay2000.librarykata.hexagonal.context.application.loan.LoanRe
 import com.github.caay2000.librarykata.hexagonal.context.application.loan.search.SearchLoanByAccountIdQuery
 import com.github.caay2000.librarykata.hexagonal.context.application.loan.search.SearchLoanByAccountIdQueryResponse
 import com.github.caay2000.librarykata.hexagonal.context.application.loan.search.SearchLoansByAccountIdQueryHandler
-import com.github.caay2000.librarykata.hexagonal.context.domain.Account
+import com.github.caay2000.librarykata.hexagonal.context.domain.account.Account
 import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.account.FindAccountController
 import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.serialization.toJsonApiDocumentIncludedResource
 import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.serialization.toJsonApiDocumentResource
 
-class AccountToJsonApiDocumentTransformer(loanRepository: LoanRepository) : Transformer<Account, JsonApiDocument<AccountResource>> {
+class AccountToAccountDocumentTransformer(loanRepository: LoanRepository) : Transformer<Account, JsonApiDocument<AccountResource>> {
 
     private val loanQueryHandler: QueryHandler<SearchLoanByAccountIdQuery, SearchLoanByAccountIdQueryResponse> = SearchLoansByAccountIdQueryHandler(loanRepository)
 

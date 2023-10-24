@@ -4,8 +4,8 @@ import com.github.caay2000.common.jsonapi.JsonApiDocument
 import com.github.caay2000.common.jsonapi.JsonApiRelationshipData
 import com.github.caay2000.common.jsonapi.JsonApiRelationshipIdentifier
 import com.github.caay2000.common.jsonapi.context.account.AccountResource
-import com.github.caay2000.librarykata.hexagonal.context.domain.Account
 import com.github.caay2000.librarykata.hexagonal.context.domain.Loan
+import com.github.caay2000.librarykata.hexagonal.context.domain.account.Account
 
 fun Account.toJsonApiDocument(loans: List<Loan> = emptyList()): JsonApiDocument<AccountResource> =
     JsonApiDocument(

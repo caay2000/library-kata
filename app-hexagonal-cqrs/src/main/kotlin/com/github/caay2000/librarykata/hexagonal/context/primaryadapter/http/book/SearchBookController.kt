@@ -26,8 +26,7 @@ class SearchBookController(bookRepository: BookRepository) : Controller {
 
     override suspend fun handle(call: ApplicationCall) {
         val params = call.parameters.toMap().toJsonApiRequestParams()
-        val query = params.toQuery()
-        val books = queryHandler.invoke(query)
+        val books = queryHandler.invoke(params.toQuery())
         val document = books.values.toJsonApiListDocument()
         call.respond(HttpStatusCode.OK, document)
     }

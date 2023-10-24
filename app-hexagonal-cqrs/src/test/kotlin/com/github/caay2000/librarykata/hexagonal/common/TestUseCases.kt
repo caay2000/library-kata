@@ -12,8 +12,6 @@ import com.github.caay2000.common.test.mock.MockIdGenerator
 import com.github.caay2000.librarykata.hexagonal.context.account.mother.AccountMother
 import com.github.caay2000.librarykata.hexagonal.context.book.mother.BookIdMother
 import com.github.caay2000.librarykata.hexagonal.context.book.mother.BookIsbnMother
-import com.github.caay2000.librarykata.hexagonal.context.domain.Account
-import com.github.caay2000.librarykata.hexagonal.context.domain.AccountId
 import com.github.caay2000.librarykata.hexagonal.context.domain.Book
 import com.github.caay2000.librarykata.hexagonal.context.domain.BookAuthor
 import com.github.caay2000.librarykata.hexagonal.context.domain.BookId
@@ -22,13 +20,15 @@ import com.github.caay2000.librarykata.hexagonal.context.domain.BookPages
 import com.github.caay2000.librarykata.hexagonal.context.domain.BookPublisher
 import com.github.caay2000.librarykata.hexagonal.context.domain.BookTitle
 import com.github.caay2000.librarykata.hexagonal.context.domain.CreatedAt
-import com.github.caay2000.librarykata.hexagonal.context.domain.Email
 import com.github.caay2000.librarykata.hexagonal.context.domain.FinishedAt
-import com.github.caay2000.librarykata.hexagonal.context.domain.IdentityNumber
 import com.github.caay2000.librarykata.hexagonal.context.domain.Loan
 import com.github.caay2000.librarykata.hexagonal.context.domain.LoanId
-import com.github.caay2000.librarykata.hexagonal.context.domain.PhoneNumber
-import com.github.caay2000.librarykata.hexagonal.context.domain.PhonePrefix
+import com.github.caay2000.librarykata.hexagonal.context.domain.account.Account
+import com.github.caay2000.librarykata.hexagonal.context.domain.account.AccountId
+import com.github.caay2000.librarykata.hexagonal.context.domain.account.Email
+import com.github.caay2000.librarykata.hexagonal.context.domain.account.IdentityNumber
+import com.github.caay2000.librarykata.hexagonal.context.domain.account.PhoneNumber
+import com.github.caay2000.librarykata.hexagonal.context.domain.account.PhonePrefix
 import com.github.caay2000.librarykata.hexagonal.context.loan.mother.LoanMother
 import io.ktor.server.testing.ApplicationTestBuilder
 import java.time.LocalDateTime
@@ -71,6 +71,18 @@ class TestUseCases(
         libraryClient.findAccount(id, include)
 
     context(ApplicationTestBuilder)
+    fun `search account`(): HttpDataResponse<JsonApiListDocument<AccountResource>> =
+        libraryClient.searchAccount()
+
+    context(ApplicationTestBuilder)
+    fun `search account by phoneNumber`(phoneNumber: String): HttpDataResponse<JsonApiListDocument<AccountResource>> =
+        libraryClient.searchAccountByPhoneNumber(phoneNumber)
+
+    context(ApplicationTestBuilder)
+    fun `search account by email`(email: String): HttpDataResponse<JsonApiListDocument<AccountResource>> =
+        libraryClient.searchAccountByEmail(email)
+
+    context(ApplicationTestBuilder)
     fun `book is created`(
         book: Book,
         id: BookId? = null,
@@ -108,7 +120,7 @@ class TestUseCases(
     fun `find book by isbn`(isbn: BookIsbn): HttpDataResponse<JsonApiListDocument<BookByIsbnResource>> = libraryClient.findBookByIsbn(isbn)
 
     context(ApplicationTestBuilder)
-    fun `search all books`(): HttpDataResponse<JsonApiListDocument<BookByIsbnResource>> = libraryClient.searchBooks()
+    fun `search book`(): HttpDataResponse<JsonApiListDocument<BookByIsbnResource>> = libraryClient.searchBook()
 
     context(ApplicationTestBuilder)
     fun `loan is created`(

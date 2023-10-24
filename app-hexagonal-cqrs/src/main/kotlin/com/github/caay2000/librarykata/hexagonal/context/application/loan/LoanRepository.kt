@@ -2,10 +2,10 @@ package com.github.caay2000.librarykata.hexagonal.context.application.loan
 
 import arrow.core.Either
 import com.github.caay2000.common.database.RepositoryError
-import com.github.caay2000.librarykata.hexagonal.context.domain.AccountId
 import com.github.caay2000.librarykata.hexagonal.context.domain.BookId
 import com.github.caay2000.librarykata.hexagonal.context.domain.Loan
 import com.github.caay2000.librarykata.hexagonal.context.domain.LoanId
+import com.github.caay2000.librarykata.hexagonal.context.domain.account.AccountId
 
 interface LoanRepository {
 

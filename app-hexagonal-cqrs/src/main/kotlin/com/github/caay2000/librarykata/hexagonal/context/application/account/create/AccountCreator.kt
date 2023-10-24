@@ -5,16 +5,16 @@ import arrow.core.flatMap
 import arrow.core.left
 import arrow.core.recover
 import arrow.core.right
-import com.github.caay2000.librarykata.hexagonal.context.application.account.AccountRepository
-import com.github.caay2000.librarykata.hexagonal.context.application.account.FindAccountCriteria
-import com.github.caay2000.librarykata.hexagonal.context.application.account.findOrElse
-import com.github.caay2000.librarykata.hexagonal.context.application.account.saveOrElse
-import com.github.caay2000.librarykata.hexagonal.context.domain.Account
-import com.github.caay2000.librarykata.hexagonal.context.domain.CreateAccountRequest
-import com.github.caay2000.librarykata.hexagonal.context.domain.Email
-import com.github.caay2000.librarykata.hexagonal.context.domain.IdentityNumber
-import com.github.caay2000.librarykata.hexagonal.context.domain.PhoneNumber
-import com.github.caay2000.librarykata.hexagonal.context.domain.PhonePrefix
+import com.github.caay2000.librarykata.hexagonal.context.domain.account.Account
+import com.github.caay2000.librarykata.hexagonal.context.domain.account.AccountRepository
+import com.github.caay2000.librarykata.hexagonal.context.domain.account.CreateAccountRequest
+import com.github.caay2000.librarykata.hexagonal.context.domain.account.Email
+import com.github.caay2000.librarykata.hexagonal.context.domain.account.FindAccountCriteria
+import com.github.caay2000.librarykata.hexagonal.context.domain.account.IdentityNumber
+import com.github.caay2000.librarykata.hexagonal.context.domain.account.PhoneNumber
+import com.github.caay2000.librarykata.hexagonal.context.domain.account.PhonePrefix
+import com.github.caay2000.librarykata.hexagonal.context.domain.account.findOrElse
+import com.github.caay2000.librarykata.hexagonal.context.domain.account.saveOrElse
 
 class AccountCreator(private val accountRepository: AccountRepository) {
 

@@ -3,14 +3,14 @@ package com.github.caay2000.librarykata.hexagonal.context
 import com.github.caay2000.librarykata.hexagonal.common.LibraryClient
 import com.github.caay2000.librarykata.hexagonal.context.account.mother.AccountMother
 import com.github.caay2000.librarykata.hexagonal.context.book.mother.BookMother
-import com.github.caay2000.librarykata.hexagonal.context.domain.Account
-import com.github.caay2000.librarykata.hexagonal.context.domain.AccountId
 import com.github.caay2000.librarykata.hexagonal.context.domain.Book
 import com.github.caay2000.librarykata.hexagonal.context.domain.BookId
 import com.github.caay2000.librarykata.hexagonal.context.domain.BookIsbn
 import com.github.caay2000.librarykata.hexagonal.context.domain.CreatedAt
 import com.github.caay2000.librarykata.hexagonal.context.domain.Loan
 import com.github.caay2000.librarykata.hexagonal.context.domain.LoanId
+import com.github.caay2000.librarykata.hexagonal.context.domain.account.Account
+import com.github.caay2000.librarykata.hexagonal.context.domain.account.AccountId
 import io.ktor.server.testing.ApplicationTestBuilder
 import io.ktor.server.testing.testApplication
 import mu.KLogger
@@ -122,7 +122,7 @@ class RealExecutionTest {
             availableBooks[this.isbn] = availableBooks.getOrDefault(this.isbn, 0) + 1
 
             map["createBook"] = map.getOrDefault("createBook", 0) + 1
-            val size = libraryClient.searchBooks().value!!.data.size
+            val size = libraryClient.searchBook().value!!.data.size
             logger.info { "Current Total books: $size" }
         }
 
@@ -141,7 +141,7 @@ class RealExecutionTest {
             availableBooks[book.isbn] = availableBooks[book.isbn]!!.inc()
 
             map["createBookCopy"] = map.getOrDefault("createBookCopy", 0) + 1
-            val size = libraryClient.searchBooks().value!!.data.size
+            val size = libraryClient.searchBook().value!!.data.size
             logger.info { "Current Total books: $size" }
         }
 
