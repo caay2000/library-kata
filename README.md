@@ -34,8 +34,7 @@ A Project Skeleton to build Kotlin apps with Gradle and Ktor
 - <code>?filter[phoneNumber]</code> <code>Filter accounts where phone number contains {phoneNumber}</code>
 - <code>?filter[email]</code> <code>Filter accounts where email contains {email}</code>
 
-
-  ```http request
+```http request
 HTTP/1.1 200 OK
 Content-Type: application/vnd.api+json
 
@@ -62,12 +61,12 @@ Content-Type: application/vnd.api+json
       "total": 1
     }
   }
-  ```
+```
 </details>
 <details>
  <summary><code>GET <b>/account/{accountId}</b></code> <code>Retrieves account with  id {accountId}</code></summary>
 
-  ```http request
+```http request
 HTTP/1.1 200 OK
 Content-Type: application/vnd.api+json
 
@@ -89,7 +88,7 @@ Content-Type: application/vnd.api+json
       }
     }
   }
-  ```
+```
 </details>
 <details>
  <summary><code>POST <b>/account</b></code><code>Creates a new account</code></summary>
