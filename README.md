@@ -32,9 +32,9 @@ A Project Skeleton to build Kotlin apps with Gradle and Ktor
  <summary><code>GET <b>/account</b></code> <code>Retrieves all accounts</code></summary>
 
   ```http request
-Http Status: 200 - OK
+HTTP/1.1 200 OK
 Content-Type: application/vnd.api+json
-Response body:
+
 XXX
   ```
 </details>
@@ -42,25 +42,25 @@ XXX
  <summary><code>GET <b>/account/{accountId}</b></code> <code>Retrieves account with  id {accountId}</code></summary>
 
   ```http request
-Http Status: 200 - OK
+HTTP/1.1 200 OK
 Content-Type: application/vnd.api+json
-Response Body:
-  {
-    "data": {
-      "id": "00000000-0000-0000-0000-000000000000",
-      "type": "account"
-      "attributes": {
-        "birthdate": "1970-01-01",
-        "email": "john.doe@email.example",
-        "identityNumber": "B01234567",
-        "name": "John",
-        "phoneNumber": "+44",
-        "phonePrefix": "+44",
-        "registerDate": "2020-01-01T00:00:00Z",
-        "surname": "Doe"
-      }
+
+{
+  "data": {
+    "id": "00000000-0000-0000-0000-000000000000",
+    "type": "account"
+    "attributes": {
+      "birthdate": "1970-01-01",
+      "email": "john.doe@email.example",
+      "identityNumber": "B01234567",
+      "name": "John",
+      "phoneNumber": "+44",
+      "phonePrefix": "+44",
+      "registerDate": "2020-01-01T00:00:00Z",
+      "surname": "Doe"
     }
   }
+}
   ```
 </details>
 <details>
@@ -68,42 +68,42 @@ Response Body:
 
 ```http request
 Content-Type: application/vnd.api+json
-Request Body:
-  {
-    "data": {
-      "type": "account"
-      "attributes": {
-        "birthdate": "1970-01-01",
-        "email": "john.doe@email.example",
-        "identityNumber": "B01234567",
-        "name": "John",
-        "phoneNumber": "+600123456",
-        "phonePrefix": "+44",
-        "surname": "Doe"
-      }
+
+{
+  "data": {
+    "type": "account"
+    "attributes": {
+      "birthdate": "1970-01-01",
+      "email": "john.doe@email.example",
+      "identityNumber": "B01234567",
+      "name": "John",
+      "phoneNumber": "+600123456",
+      "phonePrefix": "+44",
+      "surname": "Doe"
     }
   }
+}
 ```
 ```http request
-Http Status: 201 - Created
+HTTP/1.1 201 Created
 Content-Type: application/vnd.api+json
-Response Body:
-  {
-    "data": {
-      "id": "00000000-0000-0000-0000-000000000000",
-      "type": "account"
-      "attributes": {
-        "birthdate": "1970-01-01",
-        "email": "john.doe@email.example",
-        "identityNumber": "B01234567",
-        "name": "John",
-        "phoneNumber": "+44",
-        "phonePrefix": "+44",
-        "registerDate": "2020-01-01T00:00:00Z",
-        "surname": "Doe"
-      }
+
+{
+  "data": {
+    "id": "00000000-0000-0000-0000-000000000000",
+    "type": "account"
+    "attributes": {
+      "birthdate": "1970-01-01",
+      "email": "john.doe@email.example",
+      "identityNumber": "B01234567",
+      "name": "John",
+      "phoneNumber": "+44",
+      "phonePrefix": "+44",
+      "registerDate": "2020-01-01T00:00:00Z",
+      "surname": "Doe"
     }
   }
+}
   ```
 </details>
 
@@ -114,9 +114,9 @@ Response Body:
  <summary><code>GET <b>/book</b></code> <code>Retrieves all books</code></summary>
 
   ```http request
-Http Status: 200 - OK
+HTTP/1.1 200 OK
 Content-Type: application/vnd.api+json
-Response body:
+
 xxx
   ```
 </details>
@@ -124,22 +124,22 @@ xxx
  <summary><code>GET <b>/book/{bookId}</b></code> <code>Retrieves book with id {bookId}</code></summary>
 
   ```http request
-Http Status: 200 - OK
+HTTP/1.1 200 OK
 Content-Type: application/vnd.api+json
-Response Body:
-  {
-    "id": "00000000-0000-0000-0000-000000000000",
-    "type": "book"
-    "data": {
-      "attributes": {
-        "author": "John Doe",
-        "isbn": "00000000-0000-0000-0000-000000000000",
-        "pages": 90,
-        "publisher": "John Doe Publishing Inc.",
-        "title": "Life of John Doe"
-      }
+
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "type": "book"
+  "data": {
+    "attributes": {
+      "author": "John Doe",
+      "isbn": "00000000-0000-0000-0000-000000000000",
+      "pages": 90,
+      "publisher": "John Doe Publishing Inc.",
+      "title": "Life of John Doe"
     }
   }
+}
   ```
 </details>
 <details>
@@ -147,37 +147,37 @@ Response Body:
 
 ```http request
 Content-Type: application/vnd.api+json
-Request Body:
-  {
-    "data": {
-      "type": "book"
-      "attributes": {
-        "author": "John Doe",
-        "isbn": "00000000-0000-0000-0000-000000000000",
-        "pages": 90,
-        "publisher": "John Doe Publishing Inc.",
-        "title": "Life of John Doe"
-      }
+
+{
+  "data": {
+    "type": "book"
+    "attributes": {
+      "author": "John Doe",
+      "isbn": "00000000-0000-0000-0000-000000000000",
+      "pages": 90,
+      "publisher": "John Doe Publishing Inc.",
+      "title": "Life of John Doe"
     }
   }
+}
   ```
   ```http request
-Http Status: 201 - Created
+HTTP/1.1 201 Created
 Content-Type: application/vnd.api+json
-Response Body:
-  {
-    "id": "00000000-0000-0000-0000-000000000000",
-    "type": "book"
-    "data": {
-      "attributes": {
-        "author": "John Doe",
-        "isbn": "00000000-0000-0000-0000-000000000000",
-        "pages": 90,
-        "publisher": "John Doe Publishing Inc.",
-        "title": "Life of John Doe"
-      }
+
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "type": "book"
+  "data": {
+    "attributes": {
+      "author": "John Doe",
+      "isbn": "00000000-0000-0000-0000-000000000000",
+      "pages": 90,
+      "publisher": "John Doe Publishing Inc.",
+      "title": "Life of John Doe"
     }
   }
+}
   ```
 </details>
 
@@ -188,9 +188,9 @@ Response Body:
  <summary><code>GET <b>/loan</b></code> <code>Retrieves all loans</code></summary>
 
   ```http request
-Http Status: 200 - OK
+HTTP/1.1 200 OK
 Content-Type: application/vnd.api+json
-Response body:
+
 XXX
   ```
 </details>
@@ -198,9 +198,9 @@ XXX
  <summary><code>GET <b>/loan/{loanId}</b></code> <code>Retrieves loan with id {loanId}</code></summary>
 
   ```http request
-Http Status: 200 - OK
+HTTP/1.1 200 OK
 Content-Type: application/vnd.api+json
-Response Body:
+
 xxx
   ```
 </details>
@@ -209,14 +209,14 @@ xxx
 
 ```http request
 Content-Type: application/vnd.api+json
-Request Body:
+
 xxxx
 ```
 
 ```http request
-Http Status: 201 - Created
+HTTP/1.1 201 Created
 Content-Type: application/vnd.api+json
-Response Body:
+
 xxxx
   ```
 </details>
@@ -224,9 +224,9 @@ xxxx
  <summary><code>DELETE <b>/loan/{bookId}</b></code><code>Finishes the loan for the book with id {bookId}</code></summary>
 
   ```http request
-Http Status: 201 - Created
+HTTP/1.1 202 Accepted
 Content-Type: application/vnd.api+json
-Response Body:
+
 xxxx
   ```
 </details>
