@@ -4,9 +4,9 @@ import com.github.caay2000.common.arrow.getOrThrow
 import com.github.caay2000.common.cqrs.Query
 import com.github.caay2000.common.cqrs.QueryHandler
 import com.github.caay2000.common.cqrs.QueryResponse
-import com.github.caay2000.librarykata.hexagonal.context.application.loan.LoanRepository
-import com.github.caay2000.librarykata.hexagonal.context.domain.Loan
-import com.github.caay2000.librarykata.hexagonal.context.domain.LoanId
+import com.github.caay2000.librarykata.hexagonal.context.domain.loan.Loan
+import com.github.caay2000.librarykata.hexagonal.context.domain.loan.LoanId
+import com.github.caay2000.librarykata.hexagonal.context.domain.loan.LoanRepository
 import mu.KLogger
 import mu.KotlinLogging
 

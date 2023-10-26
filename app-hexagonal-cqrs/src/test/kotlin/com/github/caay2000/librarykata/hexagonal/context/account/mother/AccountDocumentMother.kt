@@ -1,8 +1,8 @@
 package com.github.caay2000.librarykata.hexagonal.context.account.mother
 
 import com.github.caay2000.librarykata.hexagonal.configuration.jsonMapper
-import com.github.caay2000.librarykata.hexagonal.context.domain.Loan
 import com.github.caay2000.librarykata.hexagonal.context.domain.account.Account
+import com.github.caay2000.librarykata.hexagonal.context.domain.loan.Loan
 import com.github.caay2000.librarykata.hexagonal.context.loan.mother.LoanMother
 import kotlinx.serialization.encodeToString
 

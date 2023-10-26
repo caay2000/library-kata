@@ -5,8 +5,8 @@ import com.github.caay2000.common.jsonapi.JsonApiIncludedResource
 import com.github.caay2000.common.jsonapi.JsonApiRelationshipData
 import com.github.caay2000.common.jsonapi.JsonApiRelationshipIdentifier
 import com.github.caay2000.common.jsonapi.context.account.AccountResource
-import com.github.caay2000.librarykata.hexagonal.context.domain.Loan
 import com.github.caay2000.librarykata.hexagonal.context.domain.account.Account
+import com.github.caay2000.librarykata.hexagonal.context.domain.loan.Loan
 import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.serialization.toJsonApiDocumentAttributes
 
 internal fun Account.toJsonApiDocument(

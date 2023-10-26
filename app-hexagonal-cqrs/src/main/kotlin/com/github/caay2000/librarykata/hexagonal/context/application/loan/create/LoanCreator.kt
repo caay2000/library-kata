@@ -5,22 +5,22 @@ import arrow.core.flatMap
 import arrow.core.left
 import arrow.core.right
 import com.github.caay2000.common.arrow.firstOrElse
-import com.github.caay2000.librarykata.hexagonal.context.application.book.BookRepository
-import com.github.caay2000.librarykata.hexagonal.context.application.book.SearchBookCriteria
-import com.github.caay2000.librarykata.hexagonal.context.application.book.saveOrElse
-import com.github.caay2000.librarykata.hexagonal.context.application.loan.LoanRepository
-import com.github.caay2000.librarykata.hexagonal.context.application.loan.saveOrElse
-import com.github.caay2000.librarykata.hexagonal.context.domain.Book
-import com.github.caay2000.librarykata.hexagonal.context.domain.BookIsbn
-import com.github.caay2000.librarykata.hexagonal.context.domain.CreatedAt
-import com.github.caay2000.librarykata.hexagonal.context.domain.Loan
-import com.github.caay2000.librarykata.hexagonal.context.domain.LoanId
 import com.github.caay2000.librarykata.hexagonal.context.domain.account.Account
 import com.github.caay2000.librarykata.hexagonal.context.domain.account.AccountId
 import com.github.caay2000.librarykata.hexagonal.context.domain.account.AccountRepository
 import com.github.caay2000.librarykata.hexagonal.context.domain.account.FindAccountCriteria
 import com.github.caay2000.librarykata.hexagonal.context.domain.account.findOrElse
 import com.github.caay2000.librarykata.hexagonal.context.domain.account.saveOrElse
+import com.github.caay2000.librarykata.hexagonal.context.domain.book.Book
+import com.github.caay2000.librarykata.hexagonal.context.domain.book.BookIsbn
+import com.github.caay2000.librarykata.hexagonal.context.domain.book.BookRepository
+import com.github.caay2000.librarykata.hexagonal.context.domain.book.SearchBookCriteria
+import com.github.caay2000.librarykata.hexagonal.context.domain.book.saveOrElse
+import com.github.caay2000.librarykata.hexagonal.context.domain.loan.CreatedAt
+import com.github.caay2000.librarykata.hexagonal.context.domain.loan.Loan
+import com.github.caay2000.librarykata.hexagonal.context.domain.loan.LoanId
+import com.github.caay2000.librarykata.hexagonal.context.domain.loan.LoanRepository
+import com.github.caay2000.librarykata.hexagonal.context.domain.loan.saveOrElse
 
 class LoanCreator(
     private val bookRepository: BookRepository,

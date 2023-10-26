@@ -2,20 +2,21 @@ package com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.bo
 
 import com.github.caay2000.common.http.ContentType
 import com.github.caay2000.common.http.Controller
-import com.github.caay2000.common.http.ErrorResponseDocument
 import com.github.caay2000.common.idgenerator.IdGenerator
 import com.github.caay2000.common.jsonapi.JsonApiDocument
 import com.github.caay2000.common.jsonapi.JsonApiRequestDocument
 import com.github.caay2000.common.jsonapi.ServerResponse
 import com.github.caay2000.common.jsonapi.context.book.BookByIdResource
 import com.github.caay2000.common.jsonapi.context.book.BookRequestResource
-import com.github.caay2000.librarykata.hexagonal.context.application.book.BookRepository
+import com.github.caay2000.common.jsonapi.documentation.errorResponses
+import com.github.caay2000.common.jsonapi.documentation.responseExample
 import com.github.caay2000.librarykata.hexagonal.context.application.book.create.BookCreatorError
 import com.github.caay2000.librarykata.hexagonal.context.application.book.create.CreateBookCommand
 import com.github.caay2000.librarykata.hexagonal.context.application.book.create.CreateBookCommandHandler
 import com.github.caay2000.librarykata.hexagonal.context.application.book.find.FindBookByIdQuery
 import com.github.caay2000.librarykata.hexagonal.context.application.book.find.FindBookByIdQueryHandler
-import com.github.caay2000.librarykata.hexagonal.context.domain.BookId
+import com.github.caay2000.librarykata.hexagonal.context.domain.book.BookId
+import com.github.caay2000.librarykata.hexagonal.context.domain.book.BookRepository
 import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.serialization.toJsonApiDocument
 import io.github.smiley4.ktorswaggerui.dsl.OpenApiRoute
 import io.ktor.http.HttpStatusCode
@@ -81,15 +82,17 @@ class CreateBookController(
                         mediaType(ContentType.JsonApi)
                     }
                 }
-                HttpStatusCode.BadRequest to {
-                    description = "Invalid request creating Book"
-                    body<ErrorResponseDocument> {
-                        mediaType(ContentType.JsonApi)
-                        example("BookAlreadyExists", "Book {bookId} already exists")
-                        example("InvalidJsonApiException", "Invalid type for AccountResource: {type}")
-                    }
-                }
-                HttpStatusCode.InternalServerError to { description = "Something unexpected happened" }
+                errorResponses(
+                    httpStatusCode = HttpStatusCode.BadRequest,
+                    summary = "Invalid request creating Book",
+                    responseExample("BookAlreadyExists", "Book {bookId} already exists"),
+                    responseExample("InvalidJsonApiException", "Invalid type for AccountResource: {type}"),
+                )
+                errorResponses(
+                    httpStatusCode = HttpStatusCode.InternalServerError,
+                    summary = "Something unexpected happened",
+                    responseExample("UnknownError", "message with information about the error"),
+                )
             }
         }
     }

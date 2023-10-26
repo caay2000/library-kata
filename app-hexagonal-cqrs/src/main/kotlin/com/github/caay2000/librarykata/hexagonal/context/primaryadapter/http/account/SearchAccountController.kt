@@ -6,6 +6,8 @@ import com.github.caay2000.common.http.Transformer
 import com.github.caay2000.common.jsonapi.JsonApiListDocument
 import com.github.caay2000.common.jsonapi.JsonApiRequestParams
 import com.github.caay2000.common.jsonapi.context.account.AccountResource
+import com.github.caay2000.common.jsonapi.documentation.errorResponses
+import com.github.caay2000.common.jsonapi.documentation.responseExample
 import com.github.caay2000.common.jsonapi.toJsonApiRequestParams
 import com.github.caay2000.librarykata.hexagonal.context.application.account.search.SearchAccountQuery
 import com.github.caay2000.librarykata.hexagonal.context.application.account.search.SearchAccountQueryHandler
@@ -66,7 +68,11 @@ class SearchAccountController(accountRepository: AccountRepository) : Controller
                         mediaType(ContentType.JsonApi)
                     }
                 }
-                HttpStatusCode.InternalServerError to { description = "Something unexpected happened" }
+                errorResponses(
+                    httpStatusCode = HttpStatusCode.InternalServerError,
+                    summary = "Something unexpected happened",
+                    responseExample("UnknownError", "message with information about the error"),
+                )
             }
         }
     }

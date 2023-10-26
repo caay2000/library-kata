@@ -12,8 +12,8 @@ import com.github.caay2000.librarykata.hexagonal.common.TestUseCases
 import com.github.caay2000.librarykata.hexagonal.context.account.mother.AccountMother
 import com.github.caay2000.librarykata.hexagonal.context.book.mother.BookIdMother
 import com.github.caay2000.librarykata.hexagonal.context.book.mother.BookMother
-import com.github.caay2000.librarykata.hexagonal.context.domain.Book
 import com.github.caay2000.librarykata.hexagonal.context.domain.account.AccountId
+import com.github.caay2000.librarykata.hexagonal.context.domain.book.Book
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.testing.testApplication
 import org.junit.jupiter.api.BeforeEach

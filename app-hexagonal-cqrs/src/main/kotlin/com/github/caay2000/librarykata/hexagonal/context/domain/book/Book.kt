@@ -1,4 +1,4 @@
-package com.github.caay2000.librarykata.hexagonal.context.domain
+package com.github.caay2000.librarykata.hexagonal.context.domain.book
 
 data class Book(
     val id: BookId,

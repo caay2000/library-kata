@@ -19,7 +19,6 @@ include(
     "libs:common-event",
     "libs:common-http",
     "libs:common-id-generator",
-    "libs:common-jsonapi",
     "libs:common-serialization",
     "libs:common-test",
     "libs:lib-memory-database",

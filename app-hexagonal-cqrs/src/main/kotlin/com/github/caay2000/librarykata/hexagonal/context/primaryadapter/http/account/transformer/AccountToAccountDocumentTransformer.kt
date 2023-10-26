@@ -4,11 +4,11 @@ import com.github.caay2000.common.cqrs.QueryHandler
 import com.github.caay2000.common.http.Transformer
 import com.github.caay2000.common.jsonapi.JsonApiDocument
 import com.github.caay2000.common.jsonapi.context.account.AccountResource
-import com.github.caay2000.librarykata.hexagonal.context.application.loan.LoanRepository
 import com.github.caay2000.librarykata.hexagonal.context.application.loan.search.SearchLoanByAccountIdQuery
 import com.github.caay2000.librarykata.hexagonal.context.application.loan.search.SearchLoanByAccountIdQueryResponse
 import com.github.caay2000.librarykata.hexagonal.context.application.loan.search.SearchLoansByAccountIdQueryHandler
 import com.github.caay2000.librarykata.hexagonal.context.domain.account.Account
+import com.github.caay2000.librarykata.hexagonal.context.domain.loan.LoanRepository
 import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.account.FindAccountController
 import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.serialization.toJsonApiDocumentIncludedResource
 

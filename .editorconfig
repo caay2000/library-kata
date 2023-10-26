@@ -9,6 +9,8 @@ trim_trailing_whitespace = true
 insert_final_newline = true
 max_line_length = 180
 
+ktlint_standard_multiline-if-else=disabled
+
 [gradlew.bat]
 end_of_line = lf
 

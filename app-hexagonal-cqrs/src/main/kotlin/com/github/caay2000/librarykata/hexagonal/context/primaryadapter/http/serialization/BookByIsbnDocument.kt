@@ -3,7 +3,7 @@ package com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.se
 import com.github.caay2000.common.jsonapi.JsonApiListDocument
 import com.github.caay2000.common.jsonapi.JsonApiMeta
 import com.github.caay2000.common.jsonapi.context.book.BookByIsbnResource
-import com.github.caay2000.librarykata.hexagonal.context.domain.Book
+import com.github.caay2000.librarykata.hexagonal.context.domain.book.Book
 
 fun List<Book>.toJsonApiListDocument(): JsonApiListDocument<BookByIsbnResource> {
     val groupedBooks = this.toGroupedBookByIsbnAttributes()

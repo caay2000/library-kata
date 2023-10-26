@@ -2,10 +2,10 @@ package com.github.caay2000.librarykata.hexagonal.context.application.book.find
 
 import arrow.core.Either
 import com.github.caay2000.common.database.RepositoryError
-import com.github.caay2000.librarykata.hexagonal.context.application.book.BookRepository
-import com.github.caay2000.librarykata.hexagonal.context.application.book.FindBookCriteria
-import com.github.caay2000.librarykata.hexagonal.context.domain.Book
-import com.github.caay2000.librarykata.hexagonal.context.domain.BookId
+import com.github.caay2000.librarykata.hexagonal.context.domain.book.Book
+import com.github.caay2000.librarykata.hexagonal.context.domain.book.BookId
+import com.github.caay2000.librarykata.hexagonal.context.domain.book.BookRepository
+import com.github.caay2000.librarykata.hexagonal.context.domain.book.FindBookCriteria
 
 class BookFinder(private val bookRepository: BookRepository) {
 

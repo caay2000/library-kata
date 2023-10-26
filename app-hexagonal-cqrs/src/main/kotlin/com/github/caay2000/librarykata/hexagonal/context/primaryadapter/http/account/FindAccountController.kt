@@ -2,20 +2,21 @@ package com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.ac
 
 import com.github.caay2000.common.http.ContentType
 import com.github.caay2000.common.http.Controller
-import com.github.caay2000.common.http.ErrorResponseDocument
 import com.github.caay2000.common.http.RequestInclude
 import com.github.caay2000.common.http.Transformer
 import com.github.caay2000.common.jsonapi.JsonApiDocument
 import com.github.caay2000.common.jsonapi.ServerResponse
 import com.github.caay2000.common.jsonapi.context.account.AccountResource
+import com.github.caay2000.common.jsonapi.documentation.errorResponses
+import com.github.caay2000.common.jsonapi.documentation.responseExample
 import com.github.caay2000.common.jsonapi.toJsonApiRequestParams
 import com.github.caay2000.librarykata.hexagonal.context.application.account.find.AccountFinderError
 import com.github.caay2000.librarykata.hexagonal.context.application.account.find.FindAccountByIdQuery
 import com.github.caay2000.librarykata.hexagonal.context.application.account.find.FindAccountByIdQueryHandler
-import com.github.caay2000.librarykata.hexagonal.context.application.loan.LoanRepository
 import com.github.caay2000.librarykata.hexagonal.context.domain.account.Account
 import com.github.caay2000.librarykata.hexagonal.context.domain.account.AccountId
 import com.github.caay2000.librarykata.hexagonal.context.domain.account.AccountRepository
+import com.github.caay2000.librarykata.hexagonal.context.domain.loan.LoanRepository
 import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.account.transformer.AccountToAccountDocumentTransformer
 import io.github.smiley4.ktorswaggerui.dsl.OpenApiRoute
 import io.ktor.http.HttpStatusCode
@@ -72,14 +73,16 @@ class FindAccountController(accountRepository: AccountRepository, loanRepository
                         mediaType(ContentType.JsonApi)
                     }
                 }
-                HttpStatusCode.NotFound to {
-                    description = "Error finding Account"
-                    body<ErrorResponseDocument> {
-                        mediaType(ContentType.JsonApi)
-                        example("AccountNotFoundError", "Account {accountId} not found")
-                    }
-                }
-                HttpStatusCode.InternalServerError to { description = "Something unexpected happened" }
+                errorResponses(
+                    httpStatusCode = HttpStatusCode.NotFound,
+                    summary = "Error finding Account",
+                    responseExample("AccountNotFoundError", "Account {accountId} not found"),
+                )
+                errorResponses(
+                    httpStatusCode = HttpStatusCode.InternalServerError,
+                    summary = "Something unexpected happened",
+                    responseExample("UnknownError", "message with information about the error"),
+                )
             }
         }
     }

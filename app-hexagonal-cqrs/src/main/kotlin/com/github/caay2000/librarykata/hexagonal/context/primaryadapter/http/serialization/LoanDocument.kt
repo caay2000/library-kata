@@ -3,7 +3,7 @@ package com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.se
 import com.github.caay2000.common.jsonapi.JsonApiDocument
 import com.github.caay2000.common.jsonapi.JsonApiIncludedResource
 import com.github.caay2000.common.jsonapi.context.loan.LoanResource
-import com.github.caay2000.librarykata.hexagonal.context.domain.Loan
+import com.github.caay2000.librarykata.hexagonal.context.domain.loan.Loan
 
 fun Loan.toJsonApiDocument(): JsonApiDocument<LoanResource> =
     JsonApiDocument(

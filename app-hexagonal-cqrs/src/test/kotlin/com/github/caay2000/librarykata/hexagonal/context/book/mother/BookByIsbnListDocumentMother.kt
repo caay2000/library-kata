@@ -3,8 +3,8 @@ package com.github.caay2000.librarykata.hexagonal.context.book.mother
 import com.github.caay2000.common.jsonapi.JsonApiListDocument
 import com.github.caay2000.common.jsonapi.context.book.BookByIsbnResource
 import com.github.caay2000.librarykata.hexagonal.configuration.jsonMapper
-import com.github.caay2000.librarykata.hexagonal.context.domain.Book
-import com.github.caay2000.librarykata.hexagonal.context.domain.BookAvailable
+import com.github.caay2000.librarykata.hexagonal.context.domain.book.Book
+import com.github.caay2000.librarykata.hexagonal.context.domain.book.BookAvailable
 import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.serialization.toJsonApiListDocument
 import kotlinx.serialization.encodeToString
 

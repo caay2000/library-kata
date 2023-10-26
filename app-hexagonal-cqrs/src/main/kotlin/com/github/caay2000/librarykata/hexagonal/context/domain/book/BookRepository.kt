@@ -1,10 +1,7 @@
-package com.github.caay2000.librarykata.hexagonal.context.application.book
+package com.github.caay2000.librarykata.hexagonal.context.domain.book
 
 import arrow.core.Either
 import com.github.caay2000.common.database.RepositoryError
-import com.github.caay2000.librarykata.hexagonal.context.domain.Book
-import com.github.caay2000.librarykata.hexagonal.context.domain.BookId
-import com.github.caay2000.librarykata.hexagonal.context.domain.BookIsbn
 
 interface BookRepository {
 

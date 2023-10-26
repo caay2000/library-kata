@@ -2,11 +2,11 @@ package com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.lo
 
 import com.github.caay2000.common.dateprovider.DateProvider
 import com.github.caay2000.common.http.Controller
-import com.github.caay2000.librarykata.hexagonal.context.application.book.BookRepository
-import com.github.caay2000.librarykata.hexagonal.context.application.loan.LoanRepository
 import com.github.caay2000.librarykata.hexagonal.context.application.loan.finish.FinishLoanCommand
 import com.github.caay2000.librarykata.hexagonal.context.application.loan.finish.FinishLoanCommandHandler
 import com.github.caay2000.librarykata.hexagonal.context.domain.account.AccountRepository
+import com.github.caay2000.librarykata.hexagonal.context.domain.book.BookRepository
+import com.github.caay2000.librarykata.hexagonal.context.domain.loan.LoanRepository
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.ApplicationCall
 import io.ktor.server.response.respond

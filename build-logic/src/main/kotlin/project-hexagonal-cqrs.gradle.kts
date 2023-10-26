@@ -10,7 +10,7 @@ dependencies {
     implementation(project(":libs:common-date"))
     implementation(project(":libs:common-http"))
     implementation(project(":libs:common-id-generator"))
-    implementation(project(":libs:common-jsonapi"))
+//    implementation(project(":libs:common-jsonapi"))
     implementation(project(":libs:lib-dependency-injection"))
     implementation(project(":libs:lib-memory-database"))
 

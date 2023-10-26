@@ -1,6 +1,7 @@
-package com.github.caay2000.librarykata.hexagonal.context.domain
+package com.github.caay2000.librarykata.hexagonal.context.domain.loan
 
 import com.github.caay2000.librarykata.hexagonal.context.domain.account.AccountId
+import com.github.caay2000.librarykata.hexagonal.context.domain.book.BookId
 import java.time.LocalDateTime
 
 data class Loan(

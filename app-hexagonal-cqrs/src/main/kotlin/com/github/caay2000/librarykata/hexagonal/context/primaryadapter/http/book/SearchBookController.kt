@@ -5,10 +5,12 @@ import com.github.caay2000.common.http.Controller
 import com.github.caay2000.common.jsonapi.JsonApiListDocument
 import com.github.caay2000.common.jsonapi.JsonApiRequestParams
 import com.github.caay2000.common.jsonapi.context.book.BookByIsbnResource
+import com.github.caay2000.common.jsonapi.documentation.errorResponses
+import com.github.caay2000.common.jsonapi.documentation.responseExample
 import com.github.caay2000.common.jsonapi.toJsonApiRequestParams
-import com.github.caay2000.librarykata.hexagonal.context.application.book.BookRepository
 import com.github.caay2000.librarykata.hexagonal.context.application.book.search.SearchBooksQuery
 import com.github.caay2000.librarykata.hexagonal.context.application.book.search.SearchBooksQueryHandler
+import com.github.caay2000.librarykata.hexagonal.context.domain.book.BookRepository
 import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.serialization.toJsonApiListDocument
 import io.github.smiley4.ktorswaggerui.dsl.OpenApiRoute
 import io.ktor.http.HttpStatusCode
@@ -56,7 +58,11 @@ class SearchBookController(bookRepository: BookRepository) : Controller {
                         mediaType(ContentType.JsonApi)
                     }
                 }
-                HttpStatusCode.InternalServerError to { description = "Something unexpected happened" }
+                errorResponses(
+                    httpStatusCode = HttpStatusCode.InternalServerError,
+                    summary = "Something unexpected happened",
+                    responseExample("UnknownError", "message with information about the error"),
+                )
             }
         }
     }

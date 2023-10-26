@@ -2,23 +2,23 @@ package com.github.caay2000.librarykata.hexagonal.context.application.loan.finis
 
 import arrow.core.Either
 import arrow.core.flatMap
-import com.github.caay2000.librarykata.hexagonal.context.application.book.BookRepository
-import com.github.caay2000.librarykata.hexagonal.context.application.book.FindBookCriteria
-import com.github.caay2000.librarykata.hexagonal.context.application.book.saveOrElse
-import com.github.caay2000.librarykata.hexagonal.context.application.loan.FindLoanCriteria
-import com.github.caay2000.librarykata.hexagonal.context.application.loan.LoanRepository
-import com.github.caay2000.librarykata.hexagonal.context.application.loan.findOrElse
-import com.github.caay2000.librarykata.hexagonal.context.application.loan.saveOrElse
-import com.github.caay2000.librarykata.hexagonal.context.domain.Book
-import com.github.caay2000.librarykata.hexagonal.context.domain.BookId
-import com.github.caay2000.librarykata.hexagonal.context.domain.FinishedAt
-import com.github.caay2000.librarykata.hexagonal.context.domain.Loan
 import com.github.caay2000.librarykata.hexagonal.context.domain.account.Account
 import com.github.caay2000.librarykata.hexagonal.context.domain.account.AccountId
 import com.github.caay2000.librarykata.hexagonal.context.domain.account.AccountRepository
 import com.github.caay2000.librarykata.hexagonal.context.domain.account.FindAccountCriteria
 import com.github.caay2000.librarykata.hexagonal.context.domain.account.findOrElse
 import com.github.caay2000.librarykata.hexagonal.context.domain.account.saveOrElse
+import com.github.caay2000.librarykata.hexagonal.context.domain.book.Book
+import com.github.caay2000.librarykata.hexagonal.context.domain.book.BookId
+import com.github.caay2000.librarykata.hexagonal.context.domain.book.BookRepository
+import com.github.caay2000.librarykata.hexagonal.context.domain.book.FindBookCriteria
+import com.github.caay2000.librarykata.hexagonal.context.domain.book.saveOrElse
+import com.github.caay2000.librarykata.hexagonal.context.domain.loan.FindLoanCriteria
+import com.github.caay2000.librarykata.hexagonal.context.domain.loan.FinishedAt
+import com.github.caay2000.librarykata.hexagonal.context.domain.loan.Loan
+import com.github.caay2000.librarykata.hexagonal.context.domain.loan.LoanRepository
+import com.github.caay2000.librarykata.hexagonal.context.domain.loan.findOrElse
+import com.github.caay2000.librarykata.hexagonal.context.domain.loan.saveOrElse
 
 class LoanFinisher(
     private val loanRepository: LoanRepository,

@@ -14,12 +14,6 @@ import com.github.caay2000.common.jsonapi.context.loan.LoanRequestResource
 import com.github.caay2000.common.jsonapi.context.loan.LoanResource
 import com.github.caay2000.common.test.http.HttpDataResponse
 import com.github.caay2000.librarykata.hexagonal.configuration.jsonMapper
-import com.github.caay2000.librarykata.hexagonal.context.domain.BookAuthor
-import com.github.caay2000.librarykata.hexagonal.context.domain.BookId
-import com.github.caay2000.librarykata.hexagonal.context.domain.BookIsbn
-import com.github.caay2000.librarykata.hexagonal.context.domain.BookPages
-import com.github.caay2000.librarykata.hexagonal.context.domain.BookPublisher
-import com.github.caay2000.librarykata.hexagonal.context.domain.BookTitle
 import com.github.caay2000.librarykata.hexagonal.context.domain.account.AccountId
 import com.github.caay2000.librarykata.hexagonal.context.domain.account.Birthdate
 import com.github.caay2000.librarykata.hexagonal.context.domain.account.Email
@@ -28,6 +22,12 @@ import com.github.caay2000.librarykata.hexagonal.context.domain.account.Name
 import com.github.caay2000.librarykata.hexagonal.context.domain.account.PhoneNumber
 import com.github.caay2000.librarykata.hexagonal.context.domain.account.PhonePrefix
 import com.github.caay2000.librarykata.hexagonal.context.domain.account.Surname
+import com.github.caay2000.librarykata.hexagonal.context.domain.book.BookAuthor
+import com.github.caay2000.librarykata.hexagonal.context.domain.book.BookId
+import com.github.caay2000.librarykata.hexagonal.context.domain.book.BookIsbn
+import com.github.caay2000.librarykata.hexagonal.context.domain.book.BookPages
+import com.github.caay2000.librarykata.hexagonal.context.domain.book.BookPublisher
+import com.github.caay2000.librarykata.hexagonal.context.domain.book.BookTitle
 import io.ktor.client.request.get
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody

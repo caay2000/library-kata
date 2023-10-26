@@ -2,7 +2,7 @@ package com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.se
 
 import com.github.caay2000.common.jsonapi.JsonApiDocument
 import com.github.caay2000.common.jsonapi.context.book.BookByIdResource
-import com.github.caay2000.librarykata.hexagonal.context.domain.Book
+import com.github.caay2000.librarykata.hexagonal.context.domain.book.Book
 
 fun Book.toJsonApiDocument(): JsonApiDocument<BookByIdResource> = JsonApiDocument(
     data = BookByIdResource(

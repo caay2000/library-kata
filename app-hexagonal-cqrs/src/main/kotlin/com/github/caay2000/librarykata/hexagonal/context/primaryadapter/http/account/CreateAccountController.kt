@@ -3,7 +3,6 @@ package com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.ac
 import com.github.caay2000.common.dateprovider.DateProvider
 import com.github.caay2000.common.http.ContentType
 import com.github.caay2000.common.http.Controller
-import com.github.caay2000.common.http.ErrorResponseDocument
 import com.github.caay2000.common.http.Transformer
 import com.github.caay2000.common.idgenerator.IdGenerator
 import com.github.caay2000.common.jsonapi.JsonApiDocument
@@ -11,6 +10,8 @@ import com.github.caay2000.common.jsonapi.JsonApiRequestDocument
 import com.github.caay2000.common.jsonapi.ServerResponse
 import com.github.caay2000.common.jsonapi.context.account.AccountRequestResource
 import com.github.caay2000.common.jsonapi.context.account.AccountResource
+import com.github.caay2000.common.jsonapi.documentation.errorResponses
+import com.github.caay2000.common.jsonapi.documentation.responseExample
 import com.github.caay2000.librarykata.hexagonal.context.application.account.create.AccountCreatorError
 import com.github.caay2000.librarykata.hexagonal.context.application.account.create.CreateAccountCommand
 import com.github.caay2000.librarykata.hexagonal.context.application.account.create.CreateAccountCommandHandler
@@ -94,17 +95,19 @@ class CreateAccountController(
                         mediaType(ContentType.JsonApi)
                     }
                 }
-                HttpStatusCode.BadRequest to {
-                    description = "Invalid request creating Account"
-                    body<ErrorResponseDocument> {
-                        mediaType(ContentType.JsonApi)
-                        example("IdentityNumberAlreadyExists", "An account with identity number {identityNumber} already exists")
-                        example("EmailAlreadyExists", "An account with email {email} already exists")
-                        example("PhoneAlreadyExists", "An account with phone {phonePrefix} {phoneNumber} already exists")
-                        example("InvalidJsonApiException", "Invalid type for AccountResource: {type}")
-                    }
-                }
-                HttpStatusCode.InternalServerError to { description = "Something unexpected happened" }
+                errorResponses(
+                    httpStatusCode = HttpStatusCode.BadRequest,
+                    summary = "Invalid request creating Account",
+                    responseExample("IdentityNumberAlreadyExists", "An account with identity number {identityNumber} already exists"),
+                    responseExample("EmailAlreadyExists", "An account with email {email} already exists"),
+                    responseExample("PhoneAlreadyExists", "An account with phone {phonePrefix} {phoneNumber} already exists"),
+                    responseExample("InvalidJsonApiException", "Invalid type for AccountResource: {type}"),
+                )
+                errorResponses(
+                    httpStatusCode = HttpStatusCode.InternalServerError,
+                    summary = "Something unexpected happened",
+                    responseExample("UnknownError", "message with information about the error"),
+                )
             }
         }
     }
