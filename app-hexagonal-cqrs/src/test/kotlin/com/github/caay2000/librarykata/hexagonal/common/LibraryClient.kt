@@ -5,13 +5,6 @@ import com.github.caay2000.common.jsonapi.JsonApiDocument
 import com.github.caay2000.common.jsonapi.JsonApiErrorDocument
 import com.github.caay2000.common.jsonapi.JsonApiListDocument
 import com.github.caay2000.common.jsonapi.JsonApiRequestDocument
-import com.github.caay2000.common.jsonapi.context.account.AccountRequestResource
-import com.github.caay2000.common.jsonapi.context.account.AccountResource
-import com.github.caay2000.common.jsonapi.context.book.BookByIdResource
-import com.github.caay2000.common.jsonapi.context.book.BookByIsbnResource
-import com.github.caay2000.common.jsonapi.context.book.BookRequestResource
-import com.github.caay2000.common.jsonapi.context.loan.LoanRequestResource
-import com.github.caay2000.common.jsonapi.context.loan.LoanResource
 import com.github.caay2000.common.test.http.HttpDataResponse
 import com.github.caay2000.librarykata.hexagonal.configuration.jsonMapper
 import com.github.caay2000.librarykata.hexagonal.context.domain.account.AccountId
@@ -28,6 +21,13 @@ import com.github.caay2000.librarykata.hexagonal.context.domain.book.BookIsbn
 import com.github.caay2000.librarykata.hexagonal.context.domain.book.BookPages
 import com.github.caay2000.librarykata.hexagonal.context.domain.book.BookPublisher
 import com.github.caay2000.librarykata.hexagonal.context.domain.book.BookTitle
+import com.github.caay2000.librarykata.jsonapi.context.account.AccountRequestResource
+import com.github.caay2000.librarykata.jsonapi.context.account.AccountResource
+import com.github.caay2000.librarykata.jsonapi.context.book.BookGroupResource
+import com.github.caay2000.librarykata.jsonapi.context.book.BookRequestResource
+import com.github.caay2000.librarykata.jsonapi.context.book.BookResource
+import com.github.caay2000.librarykata.jsonapi.context.loan.LoanRequestResource
+import com.github.caay2000.librarykata.jsonapi.context.loan.LoanResource
 import io.ktor.client.request.get
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
@@ -104,7 +104,7 @@ class LibraryClient {
         author: BookAuthor,
         pages: BookPages,
         publisher: BookPublisher,
-    ): HttpDataResponse<JsonApiDocument<BookByIdResource>> =
+    ): HttpDataResponse<JsonApiDocument<BookResource>> =
         runBlocking {
             val request = JsonApiRequestDocument(
                 data = BookRequestResource(
@@ -126,15 +126,15 @@ class LibraryClient {
         }
 
     context(ApplicationTestBuilder)
-    fun findBookById(id: BookId): HttpDataResponse<JsonApiDocument<BookByIdResource>> =
+    fun findBookById(id: BookId): HttpDataResponse<JsonApiDocument<BookResource>> =
         runBlocking { client.get("/book/${id.value}").toHttpDataResponse() }
 
     context(ApplicationTestBuilder)
-    fun findBookByIsbn(isbn: BookIsbn): HttpDataResponse<JsonApiListDocument<BookByIsbnResource>> =
+    fun findBookByIsbn(isbn: BookIsbn): HttpDataResponse<JsonApiListDocument<BookGroupResource>> =
         runBlocking { client.get("/book?filter[isbn]=${isbn.value}").toHttpDataResponse() }
 
     context(ApplicationTestBuilder)
-    fun searchBook(): HttpDataResponse<JsonApiListDocument<BookByIsbnResource>> =
+    fun searchBook(): HttpDataResponse<JsonApiListDocument<BookGroupResource>> =
         runBlocking { client.get("/book").toHttpDataResponse() }
 
     context(ApplicationTestBuilder)

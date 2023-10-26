@@ -2,11 +2,11 @@ package com.github.caay2000.librarykata.hexagonal.configuration
 
 import com.github.caay2000.common.http.ContentType
 import com.github.caay2000.common.jsonapi.JsonApiResourceAttributes
-import com.github.caay2000.common.jsonapi.context.account.AccountResource
-import com.github.caay2000.common.jsonapi.context.loan.LoanResource
 import com.github.caay2000.common.serialization.LocalDateSerializer
 import com.github.caay2000.common.serialization.LocalDateTimeSerializer
 import com.github.caay2000.common.serialization.UUIDSerializer
+import com.github.caay2000.librarykata.jsonapi.context.account.AccountResource
+import com.github.caay2000.librarykata.jsonapi.context.loan.LoanResource
 import io.ktor.serialization.kotlinx.KotlinxSerializationConverter
 import io.ktor.serialization.kotlinx.json.json
 import io.ktor.server.application.Application

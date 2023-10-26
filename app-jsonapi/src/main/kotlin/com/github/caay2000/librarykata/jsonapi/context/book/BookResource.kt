@@ -1,19 +1,24 @@
-package com.github.caay2000.common.jsonapi.context.book
+package com.github.caay2000.librarykata.jsonapi.context.book
 
-import com.github.caay2000.common.jsonapi.JsonApiRequestAttributes
-import com.github.caay2000.common.jsonapi.JsonApiRequestResource
-import com.github.caay2000.common.jsonapi.context.InvalidJsonApiException
+import com.github.caay2000.common.jsonapi.InvalidJsonApiException
+import com.github.caay2000.common.jsonapi.JsonApiRelationshipData
+import com.github.caay2000.common.jsonapi.JsonApiResource
+import com.github.caay2000.common.jsonapi.JsonApiResourceAttributes
 import io.swagger.v3.oas.annotations.media.Schema
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class BookRequestResource(
+data class BookResource(
+    @field:Schema(description = "book id", example = "00000000-0000-0000-0000-000000000000")
+    override val id: String,
     @field:Schema(description = "resource type - must be `book`", example = "book")
     override val type: String = "book",
     override val attributes: Attributes,
-) : JsonApiRequestResource {
+    override val relationships: Map<String, JsonApiRelationshipData>? = null,
+) : JsonApiResource {
 
     @Serializable
+    @Schema(name = "BookResource.Attributes")
     data class Attributes(
         @field:Schema(description = "book ISBN", example = "00000000-0000-0000-0000-000000000000")
         val isbn: String,
@@ -25,7 +30,9 @@ data class BookRequestResource(
         val pages: Int,
         @field:Schema(description = "book publisher", example = "John Doe Publishing Inc.")
         val publisher: String,
-    ) : JsonApiRequestAttributes
+        @field:Schema(description = "book availability", example = "true", allowableValues = ["true", "false"])
+        val available: Boolean,
+    ) : JsonApiResourceAttributes
 
     init {
         if (type != "book") throw InvalidJsonApiException("Invalid type for AccountResource: $type")

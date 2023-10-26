@@ -2,10 +2,6 @@ package com.github.caay2000.librarykata.hexagonal.common
 
 import com.github.caay2000.common.jsonapi.JsonApiDocument
 import com.github.caay2000.common.jsonapi.JsonApiListDocument
-import com.github.caay2000.common.jsonapi.context.account.AccountResource
-import com.github.caay2000.common.jsonapi.context.book.BookByIdResource
-import com.github.caay2000.common.jsonapi.context.book.BookByIsbnResource
-import com.github.caay2000.common.jsonapi.context.loan.LoanResource
 import com.github.caay2000.common.test.http.HttpDataResponse
 import com.github.caay2000.common.test.mock.MockDateProvider
 import com.github.caay2000.common.test.mock.MockIdGenerator
@@ -30,6 +26,10 @@ import com.github.caay2000.librarykata.hexagonal.context.domain.loan.FinishedAt
 import com.github.caay2000.librarykata.hexagonal.context.domain.loan.Loan
 import com.github.caay2000.librarykata.hexagonal.context.domain.loan.LoanId
 import com.github.caay2000.librarykata.hexagonal.context.loan.mother.LoanMother
+import com.github.caay2000.librarykata.jsonapi.context.account.AccountResource
+import com.github.caay2000.librarykata.jsonapi.context.book.BookGroupResource
+import com.github.caay2000.librarykata.jsonapi.context.book.BookResource
+import com.github.caay2000.librarykata.jsonapi.context.loan.LoanResource
 import io.ktor.server.testing.ApplicationTestBuilder
 import java.time.LocalDateTime
 import java.util.UUID
@@ -91,7 +91,7 @@ class TestUseCases(
         author: BookAuthor? = null,
         pages: BookPages? = null,
         publisher: BookPublisher? = null,
-    ): HttpDataResponse<JsonApiDocument<BookByIdResource>> {
+    ): HttpDataResponse<JsonApiDocument<BookResource>> {
         `id will be mocked`(UUID.fromString(id?.value ?: book.id.value))
         return libraryClient.createBook(
             isbn = isbn ?: book.isbn,
@@ -114,13 +114,13 @@ class TestUseCases(
     }
 
     context(ApplicationTestBuilder)
-    fun `find book by id`(id: BookId): HttpDataResponse<JsonApiDocument<BookByIdResource>> = libraryClient.findBookById(id)
+    fun `find book by id`(id: BookId): HttpDataResponse<JsonApiDocument<BookResource>> = libraryClient.findBookById(id)
 
     context(ApplicationTestBuilder)
-    fun `find book by isbn`(isbn: BookIsbn): HttpDataResponse<JsonApiListDocument<BookByIsbnResource>> = libraryClient.findBookByIsbn(isbn)
+    fun `find book by isbn`(isbn: BookIsbn): HttpDataResponse<JsonApiListDocument<BookGroupResource>> = libraryClient.findBookByIsbn(isbn)
 
     context(ApplicationTestBuilder)
-    fun `search book`(): HttpDataResponse<JsonApiListDocument<BookByIsbnResource>> = libraryClient.searchBook()
+    fun `search book`(): HttpDataResponse<JsonApiListDocument<BookGroupResource>> = libraryClient.searchBook()
 
     context(ApplicationTestBuilder)
     fun `loan is created`(

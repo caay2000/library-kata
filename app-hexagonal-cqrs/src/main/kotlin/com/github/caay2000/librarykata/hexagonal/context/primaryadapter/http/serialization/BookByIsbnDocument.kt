@@ -2,13 +2,13 @@ package com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.se
 
 import com.github.caay2000.common.jsonapi.JsonApiListDocument
 import com.github.caay2000.common.jsonapi.JsonApiMeta
-import com.github.caay2000.common.jsonapi.context.book.BookByIsbnResource
 import com.github.caay2000.librarykata.hexagonal.context.domain.book.Book
+import com.github.caay2000.librarykata.jsonapi.context.book.BookGroupResource
 
-fun List<Book>.toJsonApiListDocument(): JsonApiListDocument<BookByIsbnResource> {
+fun List<Book>.toJsonApiListDocument(): JsonApiListDocument<BookGroupResource> {
     val groupedBooks = this.toGroupedBookByIsbnAttributes()
     return JsonApiListDocument(
-        data = groupedBooks.map { BookByIsbnResource(id = it.isbn, attributes = it) },
+        data = groupedBooks.map { BookGroupResource(id = it.isbn, attributes = it) },
         meta = JsonApiMeta(groupedBooks.size),
     )
 }
@@ -18,7 +18,7 @@ private fun List<Book>.toGroupedBookByIsbnAttributes() =
         .toSortedMap(compareBy { it.value })
         .map { (key, books) ->
             val sample = books.first()
-            BookByIsbnResource.Attributes(
+            BookGroupResource.Attributes(
                 isbn = key.value,
                 title = sample.title.value,
                 author = sample.author.value,

@@ -1,8 +1,8 @@
-package com.github.caay2000.common.jsonapi.context.account
+package com.github.caay2000.librarykata.jsonapi.context.account
 
+import com.github.caay2000.common.jsonapi.InvalidJsonApiException
 import com.github.caay2000.common.jsonapi.JsonApiRequestAttributes
 import com.github.caay2000.common.jsonapi.JsonApiRequestResource
-import com.github.caay2000.common.jsonapi.context.InvalidJsonApiException
 import com.github.caay2000.common.serialization.LocalDateSerializer
 import io.swagger.v3.oas.annotations.media.Schema
 import kotlinx.serialization.Serializable

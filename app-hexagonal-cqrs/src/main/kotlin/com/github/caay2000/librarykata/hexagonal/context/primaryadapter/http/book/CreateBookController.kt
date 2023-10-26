@@ -6,8 +6,6 @@ import com.github.caay2000.common.idgenerator.IdGenerator
 import com.github.caay2000.common.jsonapi.JsonApiDocument
 import com.github.caay2000.common.jsonapi.JsonApiRequestDocument
 import com.github.caay2000.common.jsonapi.ServerResponse
-import com.github.caay2000.common.jsonapi.context.book.BookByIdResource
-import com.github.caay2000.common.jsonapi.context.book.BookRequestResource
 import com.github.caay2000.common.jsonapi.documentation.errorResponses
 import com.github.caay2000.common.jsonapi.documentation.responseExample
 import com.github.caay2000.librarykata.hexagonal.context.application.book.create.BookCreatorError
@@ -18,6 +16,8 @@ import com.github.caay2000.librarykata.hexagonal.context.application.book.find.F
 import com.github.caay2000.librarykata.hexagonal.context.domain.book.BookId
 import com.github.caay2000.librarykata.hexagonal.context.domain.book.BookRepository
 import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.serialization.toJsonApiDocument
+import com.github.caay2000.librarykata.jsonapi.context.book.BookRequestResource
+import com.github.caay2000.librarykata.jsonapi.context.book.BookResource
 import io.github.smiley4.ktorswaggerui.dsl.OpenApiRoute
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.ApplicationCall
@@ -78,7 +78,7 @@ class CreateBookController(
             response {
                 HttpStatusCode.Created to {
                     description = "Book Created"
-                    body<JsonApiDocument<BookByIdResource>> {
+                    body<JsonApiDocument<BookResource>> {
                         mediaType(ContentType.JsonApi)
                     }
                 }

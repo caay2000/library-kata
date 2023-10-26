@@ -1,11 +1,11 @@
-package com.github.caay2000.common.jsonapi.context.loan
+package com.github.caay2000.librarykata.jsonapi.context.loan
 
+import com.github.caay2000.common.jsonapi.InvalidJsonApiException
 import com.github.caay2000.common.jsonapi.JsonApiRelationshipData
 import com.github.caay2000.common.jsonapi.JsonApiResource
 import com.github.caay2000.common.jsonapi.JsonApiResourceAttributes
-import com.github.caay2000.common.jsonapi.context.InvalidJsonApiException
 import com.github.caay2000.common.serialization.LocalDateTimeSerializer
-import kotlinx.serialization.SerialName
+import io.swagger.v3.oas.annotations.media.Schema
 import kotlinx.serialization.Serializable
 import java.time.LocalDateTime
 
@@ -18,7 +18,7 @@ data class LoanResource(
 ) : JsonApiResource {
 
     @Serializable
-    @SerialName("loan")
+    @Schema(name = "LoanResource.Attributes")
     data class Attributes(
         val bookId: String,
         val accountId: String,

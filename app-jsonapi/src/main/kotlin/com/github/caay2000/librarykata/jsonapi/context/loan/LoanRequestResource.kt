@@ -1,8 +1,9 @@
-package com.github.caay2000.common.jsonapi.context.loan
+package com.github.caay2000.librarykata.jsonapi.context.loan
 
+import com.github.caay2000.common.jsonapi.InvalidJsonApiException
 import com.github.caay2000.common.jsonapi.JsonApiRequestAttributes
 import com.github.caay2000.common.jsonapi.JsonApiRequestResource
-import com.github.caay2000.common.jsonapi.context.InvalidJsonApiException
+import io.swagger.v3.oas.annotations.media.Schema
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -12,6 +13,7 @@ data class LoanRequestResource(
 ) : JsonApiRequestResource {
 
     @Serializable
+    @Schema(name = "LoanRequestResource.Attributes")
     data class Attributes(
         val bookIsbn: String,
         val accountId: String,

@@ -10,7 +10,8 @@ rootProject.name = "library-kata"
 include(
     "app-hexagonal-cqrs",
 //    "app-event-driven",
-    "app-http-client",
+//    "app-http-client",
+    "app-jsonapi",
     "libs:common-arrow",
     "libs:common-cqrs",
     "libs:common-database",

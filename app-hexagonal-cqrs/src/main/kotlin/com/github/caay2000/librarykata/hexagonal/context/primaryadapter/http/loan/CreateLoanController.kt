@@ -5,7 +5,6 @@ import com.github.caay2000.common.http.Controller
 import com.github.caay2000.common.idgenerator.IdGenerator
 import com.github.caay2000.common.jsonapi.JsonApiRequestDocument
 import com.github.caay2000.common.jsonapi.ServerResponse
-import com.github.caay2000.common.jsonapi.context.loan.LoanRequestResource
 import com.github.caay2000.librarykata.hexagonal.context.application.loan.create.CreateLoanCommand
 import com.github.caay2000.librarykata.hexagonal.context.application.loan.create.CreateLoanCommandHandler
 import com.github.caay2000.librarykata.hexagonal.context.application.loan.create.LoanCreatorError
@@ -16,6 +15,7 @@ import com.github.caay2000.librarykata.hexagonal.context.domain.book.BookReposit
 import com.github.caay2000.librarykata.hexagonal.context.domain.loan.LoanId
 import com.github.caay2000.librarykata.hexagonal.context.domain.loan.LoanRepository
 import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.serialization.toJsonApiDocument
+import com.github.caay2000.librarykata.jsonapi.context.loan.LoanRequestResource
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.ApplicationCall
 import io.ktor.server.request.receive

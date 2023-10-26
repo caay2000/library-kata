@@ -4,7 +4,6 @@ import com.github.caay2000.common.http.ContentType
 import com.github.caay2000.common.http.Controller
 import com.github.caay2000.common.jsonapi.JsonApiDocument
 import com.github.caay2000.common.jsonapi.ServerResponse
-import com.github.caay2000.common.jsonapi.context.book.BookByIdResource
 import com.github.caay2000.common.jsonapi.documentation.errorResponses
 import com.github.caay2000.common.jsonapi.documentation.responseExample
 import com.github.caay2000.librarykata.hexagonal.context.application.book.find.BookFinderError
@@ -13,6 +12,7 @@ import com.github.caay2000.librarykata.hexagonal.context.application.book.find.F
 import com.github.caay2000.librarykata.hexagonal.context.domain.book.BookId
 import com.github.caay2000.librarykata.hexagonal.context.domain.book.BookRepository
 import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.serialization.toJsonApiDocument
+import com.github.caay2000.librarykata.jsonapi.context.book.BookResource
 import io.github.smiley4.ktorswaggerui.dsl.OpenApiRoute
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.ApplicationCall
@@ -58,7 +58,7 @@ class FindBookController(bookRepository: BookRepository) : Controller {
             response {
                 HttpStatusCode.OK to {
                     description = "Book Information"
-                    body<JsonApiDocument<BookByIdResource>> {
+                    body<JsonApiDocument<BookResource>> {
                         mediaType(ContentType.JsonApi)
                     }
                 }

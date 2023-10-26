@@ -4,6 +4,8 @@ plugins {
 }
 
 dependencies {
+    implementation(project(":app-jsonapi"))
+
     implementation(project(":libs:common-arrow"))
     implementation(project(":libs:common-cqrs"))
     implementation(project(":libs:common-database"))

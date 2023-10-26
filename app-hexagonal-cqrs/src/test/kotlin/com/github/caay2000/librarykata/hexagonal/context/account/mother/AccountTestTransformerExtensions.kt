@@ -4,10 +4,10 @@ import com.github.caay2000.common.jsonapi.JsonApiDocument
 import com.github.caay2000.common.jsonapi.JsonApiIncludedResource
 import com.github.caay2000.common.jsonapi.JsonApiRelationshipData
 import com.github.caay2000.common.jsonapi.JsonApiRelationshipIdentifier
-import com.github.caay2000.common.jsonapi.context.account.AccountResource
 import com.github.caay2000.librarykata.hexagonal.context.domain.account.Account
 import com.github.caay2000.librarykata.hexagonal.context.domain.loan.Loan
 import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.serialization.toJsonApiDocumentAttributes
+import com.github.caay2000.librarykata.jsonapi.context.account.AccountResource
 
 internal fun Account.toJsonApiDocument(
     loans: List<Loan> = emptyList(),
@@ -46,7 +46,6 @@ private fun mapIncluded(
                 id = it.id.value,
                 type = "loan",
                 attributes = it.toJsonApiDocumentAttributes(),
-                relationships = null,
             )
         }
     }

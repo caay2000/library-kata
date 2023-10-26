@@ -4,7 +4,6 @@ import com.github.caay2000.common.http.ContentType
 import com.github.caay2000.common.http.Controller
 import com.github.caay2000.common.jsonapi.JsonApiListDocument
 import com.github.caay2000.common.jsonapi.JsonApiRequestParams
-import com.github.caay2000.common.jsonapi.context.book.BookByIsbnResource
 import com.github.caay2000.common.jsonapi.documentation.errorResponses
 import com.github.caay2000.common.jsonapi.documentation.responseExample
 import com.github.caay2000.common.jsonapi.toJsonApiRequestParams
@@ -12,6 +11,7 @@ import com.github.caay2000.librarykata.hexagonal.context.application.book.search
 import com.github.caay2000.librarykata.hexagonal.context.application.book.search.SearchBooksQueryHandler
 import com.github.caay2000.librarykata.hexagonal.context.domain.book.BookRepository
 import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.serialization.toJsonApiListDocument
+import com.github.caay2000.librarykata.jsonapi.context.book.BookGroupResource
 import io.github.smiley4.ktorswaggerui.dsl.OpenApiRoute
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.ApplicationCall
@@ -54,7 +54,7 @@ class SearchBookController(bookRepository: BookRepository) : Controller {
             response {
                 HttpStatusCode.OK to {
                     description = "Books retrieved"
-                    body<JsonApiListDocument<BookByIsbnResource>> {
+                    body<JsonApiListDocument<BookGroupResource>> {
                         mediaType(ContentType.JsonApi)
                     }
                 }

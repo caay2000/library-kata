@@ -1,23 +1,22 @@
-package com.github.caay2000.common.jsonapi.context.book
+package com.github.caay2000.librarykata.jsonapi.context.book
 
+import com.github.caay2000.common.jsonapi.InvalidJsonApiException
 import com.github.caay2000.common.jsonapi.JsonApiRelationshipData
 import com.github.caay2000.common.jsonapi.JsonApiResource
 import com.github.caay2000.common.jsonapi.JsonApiResourceAttributes
-import com.github.caay2000.common.jsonapi.context.InvalidJsonApiException
-import kotlinx.serialization.SerialName
+import io.swagger.v3.oas.annotations.media.Schema
 import kotlinx.serialization.Serializable
 
 @Serializable
-@SerialName("bookByIsbnResource")
-data class BookByIsbnResource(
+data class BookGroupResource(
     override val id: String,
-    override val type: String = "book",
+    override val type: String = "book-group",
     override val attributes: Attributes,
     override val relationships: Map<String, JsonApiRelationshipData>? = null,
 ) : JsonApiResource {
 
     @Serializable
-    @SerialName("bookByIsbn")
+    @Schema(name = "BookGroupResource.Attributes")
     data class Attributes(
         val isbn: String,
         val title: String,
@@ -29,6 +28,6 @@ data class BookByIsbnResource(
     ) : JsonApiResourceAttributes
 
     init {
-        if (type != "book") throw InvalidJsonApiException("Invalid type for AccountResource: $type")
+        if (type != "book-group") throw InvalidJsonApiException("Invalid type for AccountResource: $type")
     }
 }

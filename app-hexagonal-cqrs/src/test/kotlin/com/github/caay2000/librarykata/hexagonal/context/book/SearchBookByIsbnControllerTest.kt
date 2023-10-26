@@ -2,7 +2,6 @@ package com.github.caay2000.librarykata.hexagonal.context.book
 
 import com.github.caay2000.common.jsonapi.JsonApiListDocument
 import com.github.caay2000.common.jsonapi.JsonApiMeta
-import com.github.caay2000.common.jsonapi.context.book.BookByIsbnResource
 import com.github.caay2000.common.test.http.assertResponse
 import com.github.caay2000.common.test.http.assertStatus
 import com.github.caay2000.common.test.mock.MockDateProvider
@@ -14,6 +13,7 @@ import com.github.caay2000.librarykata.hexagonal.context.book.mother.BookIdMothe
 import com.github.caay2000.librarykata.hexagonal.context.book.mother.BookMother
 import com.github.caay2000.librarykata.hexagonal.context.domain.account.AccountId
 import com.github.caay2000.librarykata.hexagonal.context.domain.book.Book
+import com.github.caay2000.librarykata.jsonapi.context.book.BookGroupResource
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.testing.testApplication
 import org.junit.jupiter.api.BeforeEach
@@ -88,9 +88,9 @@ class SearchBookByIsbnControllerTest {
         availableCopies: Int = if (isAvailable) 1 else 0,
     ) = JsonApiListDocument(
         data = listOf(
-            BookByIsbnResource(
+            BookGroupResource(
                 id = isbn.value,
-                attributes = BookByIsbnResource.Attributes(
+                attributes = BookGroupResource.Attributes(
                     isbn = isbn.value,
                     title = title.value,
                     author = author.value,

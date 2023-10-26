@@ -3,8 +3,8 @@ package com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.ac
 import com.github.caay2000.common.http.Transformer
 import com.github.caay2000.common.jsonapi.JsonApiListDocument
 import com.github.caay2000.common.jsonapi.JsonApiMeta
-import com.github.caay2000.common.jsonapi.context.account.AccountResource
 import com.github.caay2000.librarykata.hexagonal.context.domain.account.Account
+import com.github.caay2000.librarykata.jsonapi.context.account.AccountResource
 
 class AccountListToAccountDocumentListTransformer : Transformer<List<Account>, JsonApiListDocument<AccountResource>> {
 

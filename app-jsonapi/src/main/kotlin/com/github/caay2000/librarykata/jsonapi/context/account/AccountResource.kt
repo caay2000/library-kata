@@ -1,19 +1,17 @@
-package com.github.caay2000.common.jsonapi.context.account
+package com.github.caay2000.librarykata.jsonapi.context.account
 
+import com.github.caay2000.common.jsonapi.InvalidJsonApiException
 import com.github.caay2000.common.jsonapi.JsonApiRelationshipData
 import com.github.caay2000.common.jsonapi.JsonApiResource
 import com.github.caay2000.common.jsonapi.JsonApiResourceAttributes
-import com.github.caay2000.common.jsonapi.context.InvalidJsonApiException
 import com.github.caay2000.common.serialization.LocalDateSerializer
 import com.github.caay2000.common.serialization.LocalDateTimeSerializer
 import io.swagger.v3.oas.annotations.media.Schema
-import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import java.time.LocalDate
 import java.time.LocalDateTime
 
 @Serializable
-@SerialName("account")
 data class AccountResource(
     @field:Schema(description = "account id", example = "00000000-0000-0000-0000-000000000000")
     override val id: String,
@@ -24,7 +22,6 @@ data class AccountResource(
 ) : JsonApiResource {
 
     @Serializable
-    @SerialName("account")
     @Schema(name = "AccountResource.Attributes")
     data class Attributes(
         @field:Schema(description = "user identity number", example = "B01234567")

@@ -2,9 +2,9 @@ package com.github.caay2000.librarykata.hexagonal.context.account.mother
 
 import com.github.caay2000.common.jsonapi.JsonApiListDocument
 import com.github.caay2000.common.jsonapi.JsonApiMeta
-import com.github.caay2000.common.jsonapi.context.account.AccountResource
 import com.github.caay2000.librarykata.hexagonal.configuration.jsonMapper
 import com.github.caay2000.librarykata.hexagonal.context.domain.account.Account
+import com.github.caay2000.librarykata.jsonapi.context.account.AccountResource
 import kotlinx.serialization.encodeToString
 import kotlin.random.Random
 
