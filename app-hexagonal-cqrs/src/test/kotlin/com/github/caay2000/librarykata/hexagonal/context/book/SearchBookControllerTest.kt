@@ -7,10 +7,10 @@ import com.github.caay2000.common.test.mock.MockIdGenerator
 import com.github.caay2000.dikt.DiKt
 import com.github.caay2000.librarykata.hexagonal.common.TestUseCases
 import com.github.caay2000.librarykata.hexagonal.context.account.mother.AccountMother
-import com.github.caay2000.librarykata.hexagonal.context.book.mother.AllBooksDocumentMother
 import com.github.caay2000.librarykata.hexagonal.context.book.mother.BookCopies
 import com.github.caay2000.librarykata.hexagonal.context.book.mother.BookMother
-import com.github.caay2000.librarykata.hexagonal.context.domain.AccountId
+import com.github.caay2000.librarykata.hexagonal.context.book.mother.JsonApiListDocumentMother
+import com.github.caay2000.librarykata.hexagonal.context.domain.account.AccountId
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.testing.testApplication
 import org.junit.jupiter.api.BeforeEach
@@ -37,15 +37,14 @@ class SearchBookControllerTest {
         testUseCases.`account is created`(account)
         testUseCases.`loan is created`(bookIsbn = book.isbn, accountId = AccountId(account.id.value))
 
-        testUseCases.`search all books`()
+        val expected = JsonApiListDocumentMother.json(
+            BookCopies(book, 5, 4),
+            BookCopies(differentBook, 3),
+            BookCopies(anotherBook),
+        )
+        testUseCases.`search book`()
             .assertStatus(HttpStatusCode.OK)
-            .assertJsonResponse(
-                AllBooksDocumentMother.from(
-                    BookCopies(book, 5, 4),
-                    BookCopies(differentBook, 3),
-                    BookCopies(anotherBook),
-                ),
-            )
+            .assertJsonResponse(expected)
     }
 
     private val book = BookMother.random()

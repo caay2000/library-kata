@@ -1,6 +1,6 @@
 package com.github.caay2000.common.event
 
-import com.github.caay2000.eventbus.EventSubscriber
+import com.github.caay2000.common.eventbus.EventSubscriber
 import mu.KLogger
 import org.slf4j.MDC
 

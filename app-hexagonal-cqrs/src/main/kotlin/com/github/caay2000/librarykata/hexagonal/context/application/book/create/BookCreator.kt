@@ -6,12 +6,12 @@ import arrow.core.left
 import arrow.core.recover
 import arrow.core.right
 import com.github.caay2000.common.database.RepositoryError
-import com.github.caay2000.librarykata.hexagonal.context.application.book.BookRepository
-import com.github.caay2000.librarykata.hexagonal.context.application.book.FindBookCriteria
-import com.github.caay2000.librarykata.hexagonal.context.application.book.saveOrElse
-import com.github.caay2000.librarykata.hexagonal.context.domain.Book
-import com.github.caay2000.librarykata.hexagonal.context.domain.BookId
-import com.github.caay2000.librarykata.hexagonal.context.domain.CreateBookRequest
+import com.github.caay2000.librarykata.hexagonal.context.domain.book.Book
+import com.github.caay2000.librarykata.hexagonal.context.domain.book.BookId
+import com.github.caay2000.librarykata.hexagonal.context.domain.book.BookRepository
+import com.github.caay2000.librarykata.hexagonal.context.domain.book.CreateBookRequest
+import com.github.caay2000.librarykata.hexagonal.context.domain.book.FindBookCriteria
+import com.github.caay2000.librarykata.hexagonal.context.domain.book.saveOrElse
 
 class BookCreator(
     private val bookRepository: BookRepository,

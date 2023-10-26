@@ -1,37 +1,36 @@
 package com.github.caay2000.librarykata.hexagonal.common
 
+import com.github.caay2000.common.jsonapi.JsonApiDocument
+import com.github.caay2000.common.jsonapi.JsonApiListDocument
 import com.github.caay2000.common.test.http.HttpDataResponse
 import com.github.caay2000.common.test.mock.MockDateProvider
 import com.github.caay2000.common.test.mock.MockIdGenerator
 import com.github.caay2000.librarykata.hexagonal.context.account.mother.AccountMother
 import com.github.caay2000.librarykata.hexagonal.context.book.mother.BookIdMother
 import com.github.caay2000.librarykata.hexagonal.context.book.mother.BookIsbnMother
-import com.github.caay2000.librarykata.hexagonal.context.domain.Account
-import com.github.caay2000.librarykata.hexagonal.context.domain.AccountId
-import com.github.caay2000.librarykata.hexagonal.context.domain.Book
-import com.github.caay2000.librarykata.hexagonal.context.domain.BookAuthor
-import com.github.caay2000.librarykata.hexagonal.context.domain.BookId
-import com.github.caay2000.librarykata.hexagonal.context.domain.BookIsbn
-import com.github.caay2000.librarykata.hexagonal.context.domain.BookPages
-import com.github.caay2000.librarykata.hexagonal.context.domain.BookPublisher
-import com.github.caay2000.librarykata.hexagonal.context.domain.BookTitle
-import com.github.caay2000.librarykata.hexagonal.context.domain.CreatedAt
-import com.github.caay2000.librarykata.hexagonal.context.domain.Email
-import com.github.caay2000.librarykata.hexagonal.context.domain.FinishedAt
-import com.github.caay2000.librarykata.hexagonal.context.domain.IdentityNumber
-import com.github.caay2000.librarykata.hexagonal.context.domain.Loan
-import com.github.caay2000.librarykata.hexagonal.context.domain.LoanId
-import com.github.caay2000.librarykata.hexagonal.context.domain.PhoneNumber
-import com.github.caay2000.librarykata.hexagonal.context.domain.PhonePrefix
+import com.github.caay2000.librarykata.hexagonal.context.domain.account.Account
+import com.github.caay2000.librarykata.hexagonal.context.domain.account.AccountId
+import com.github.caay2000.librarykata.hexagonal.context.domain.account.Email
+import com.github.caay2000.librarykata.hexagonal.context.domain.account.IdentityNumber
+import com.github.caay2000.librarykata.hexagonal.context.domain.account.PhoneNumber
+import com.github.caay2000.librarykata.hexagonal.context.domain.account.PhonePrefix
+import com.github.caay2000.librarykata.hexagonal.context.domain.book.Book
+import com.github.caay2000.librarykata.hexagonal.context.domain.book.BookAuthor
+import com.github.caay2000.librarykata.hexagonal.context.domain.book.BookId
+import com.github.caay2000.librarykata.hexagonal.context.domain.book.BookIsbn
+import com.github.caay2000.librarykata.hexagonal.context.domain.book.BookPages
+import com.github.caay2000.librarykata.hexagonal.context.domain.book.BookPublisher
+import com.github.caay2000.librarykata.hexagonal.context.domain.book.BookTitle
+import com.github.caay2000.librarykata.hexagonal.context.domain.loan.CreatedAt
+import com.github.caay2000.librarykata.hexagonal.context.domain.loan.FinishedAt
+import com.github.caay2000.librarykata.hexagonal.context.domain.loan.Loan
+import com.github.caay2000.librarykata.hexagonal.context.domain.loan.LoanId
 import com.github.caay2000.librarykata.hexagonal.context.loan.mother.LoanMother
-import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.serialization.AccountDetailsDocument
-import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.serialization.AllBooksDocument
-import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.serialization.BookByIdDocument
-import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.serialization.BookDocument
-import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.serialization.LoanByAccountIdDocument
-import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.serialization.LoanDocument
+import com.github.caay2000.librarykata.jsonapi.context.account.AccountResource
+import com.github.caay2000.librarykata.jsonapi.context.book.BookGroupResource
+import com.github.caay2000.librarykata.jsonapi.context.book.BookResource
+import com.github.caay2000.librarykata.jsonapi.context.loan.LoanResource
 import io.ktor.server.testing.ApplicationTestBuilder
-import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.UUID
 
@@ -49,7 +48,7 @@ class TestUseCases(
         email: Email? = null,
         phonePrefix: PhonePrefix? = null,
         phoneNumber: PhoneNumber? = null,
-    ): HttpDataResponse<AccountDetailsDocument> {
+    ): HttpDataResponse<JsonApiDocument<AccountResource>> {
         val id = accountId?.value ?: account.id.value
         `id will be mocked`(UUID.fromString(id))
         `datetime will be mocked`(account.registerDate.value)
@@ -65,7 +64,23 @@ class TestUseCases(
     }
 
     context(ApplicationTestBuilder)
-    fun `find account`(id: AccountId): HttpDataResponse<AccountDetailsDocument> = libraryClient.findAccount(id)
+    fun `find account`(
+        id: AccountId,
+        include: List<AccountInclude> = emptyList(),
+    ): HttpDataResponse<JsonApiDocument<AccountResource>> =
+        libraryClient.findAccount(id, include)
+
+    context(ApplicationTestBuilder)
+    fun `search account`(): HttpDataResponse<JsonApiListDocument<AccountResource>> =
+        libraryClient.searchAccount()
+
+    context(ApplicationTestBuilder)
+    fun `search account by phoneNumber`(phoneNumber: String): HttpDataResponse<JsonApiListDocument<AccountResource>> =
+        libraryClient.searchAccountByPhoneNumber(phoneNumber)
+
+    context(ApplicationTestBuilder)
+    fun `search account by email`(email: String): HttpDataResponse<JsonApiListDocument<AccountResource>> =
+        libraryClient.searchAccountByEmail(email)
 
     context(ApplicationTestBuilder)
     fun `book is created`(
@@ -76,7 +91,7 @@ class TestUseCases(
         author: BookAuthor? = null,
         pages: BookPages? = null,
         publisher: BookPublisher? = null,
-    ): HttpDataResponse<BookByIdDocument> {
+    ): HttpDataResponse<JsonApiDocument<BookResource>> {
         `id will be mocked`(UUID.fromString(id?.value ?: book.id.value))
         return libraryClient.createBook(
             isbn = isbn ?: book.isbn,
@@ -99,17 +114,13 @@ class TestUseCases(
     }
 
     context(ApplicationTestBuilder)
-    fun `find book by id`(id: BookId): HttpDataResponse<BookByIdDocument> = libraryClient.findBookById(id)
+    fun `find book by id`(id: BookId): HttpDataResponse<JsonApiDocument<BookResource>> = libraryClient.findBookById(id)
 
     context(ApplicationTestBuilder)
-    fun `find book by isbn`(isbn: BookIsbn): HttpDataResponse<BookDocument> = libraryClient.findBookByIsbn(isbn)
+    fun `find book by isbn`(isbn: BookIsbn): HttpDataResponse<JsonApiListDocument<BookGroupResource>> = libraryClient.findBookByIsbn(isbn)
 
     context(ApplicationTestBuilder)
-    fun `search all books`(): HttpDataResponse<AllBooksDocument> = libraryClient.searchBooks()
-
-    context(ApplicationTestBuilder)
-    fun `search all loans by AccountId`(accountId: AccountId): HttpDataResponse<LoanByAccountIdDocument> =
-        libraryClient.searchLoanByAccountId(accountId)
+    fun `search book`(): HttpDataResponse<JsonApiListDocument<BookGroupResource>> = libraryClient.searchBook()
 
     context(ApplicationTestBuilder)
     fun `loan is created`(
@@ -118,7 +129,7 @@ class TestUseCases(
         id: LoanId? = null,
         accountId: AccountId? = null,
         createdAt: CreatedAt? = null,
-    ): HttpDataResponse<LoanDocument> {
+    ): HttpDataResponse<JsonApiDocument<LoanResource>> {
         `id will be mocked`(UUID.fromString(id?.value ?: loan.id.value))
         `datetime will be mocked`(createdAt?.value ?: loan.createdAt.value)
         return libraryClient.createLoan(
@@ -138,7 +149,8 @@ class TestUseCases(
         return libraryClient.finishLoan(bookId = bookId ?: loan.bookId)
     }
 
+    enum class AccountInclude { LOANS }
+
     private fun `id will be mocked`(id: UUID): UUID = mockIdGenerator?.mock(id).let { id }
-    private fun `date will be mocked`(date: LocalDate): LocalDate = mockDateProvider?.mock(date).let { date }
     private fun `datetime will be mocked`(datetime: LocalDateTime): LocalDateTime = mockDateProvider?.mock(datetime).let { datetime }
 }

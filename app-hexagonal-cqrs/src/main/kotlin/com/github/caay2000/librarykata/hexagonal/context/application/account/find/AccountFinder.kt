@@ -1,11 +1,11 @@
 package com.github.caay2000.librarykata.hexagonal.context.application.account.find
 
 import arrow.core.Either
-import com.github.caay2000.librarykata.hexagonal.context.application.account.AccountRepository
-import com.github.caay2000.librarykata.hexagonal.context.application.account.FindAccountCriteria
-import com.github.caay2000.librarykata.hexagonal.context.application.account.findOrElse
-import com.github.caay2000.librarykata.hexagonal.context.domain.Account
-import com.github.caay2000.librarykata.hexagonal.context.domain.AccountId
+import com.github.caay2000.librarykata.hexagonal.context.domain.account.Account
+import com.github.caay2000.librarykata.hexagonal.context.domain.account.AccountId
+import com.github.caay2000.librarykata.hexagonal.context.domain.account.AccountRepository
+import com.github.caay2000.librarykata.hexagonal.context.domain.account.FindAccountCriteria
+import com.github.caay2000.librarykata.hexagonal.context.domain.account.findOrElse
 
 class AccountFinder(private val accountRepository: AccountRepository) {
 

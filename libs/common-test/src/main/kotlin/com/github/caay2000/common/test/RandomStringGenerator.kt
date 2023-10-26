@@ -3,7 +3,7 @@ package com.github.caay2000.common.test
 object RandomStringGenerator {
 
     fun randomString(): String = "${adjectives.random()} ${colors.random()} ${animals.random()}"
-    fun randomName(): String = "${animals.random()}"
+    fun randomName(): String = animals.random()
     fun randomSurname(): String = "${adjectives.random()} ${colors.random()}"
     fun randomEmail(): String = "${adjectives.random()}.${colors.random()}@${animals.random()}.${domains.random()}"
     fun randomNumber(size: Int): String = List(size) { numbers.random() }.joinToString(separator = "")

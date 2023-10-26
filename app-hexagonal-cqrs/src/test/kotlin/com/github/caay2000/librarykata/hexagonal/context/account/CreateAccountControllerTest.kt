@@ -1,14 +1,15 @@
 package com.github.caay2000.librarykata.hexagonal.context.account
 
-import com.github.caay2000.common.test.http.assertErrorMessage
-import com.github.caay2000.common.test.http.assertResponse
+import com.github.caay2000.common.jsonapi.jsonApiErrorDocument
+import com.github.caay2000.common.test.http.assertJsonApiErrorDocument
+import com.github.caay2000.common.test.http.assertJsonResponse
 import com.github.caay2000.common.test.http.assertStatus
 import com.github.caay2000.common.test.mock.MockDateProvider
 import com.github.caay2000.common.test.mock.MockIdGenerator
 import com.github.caay2000.dikt.DiKt
 import com.github.caay2000.librarykata.hexagonal.common.TestUseCases
+import com.github.caay2000.librarykata.hexagonal.context.account.mother.AccountDocumentMother
 import com.github.caay2000.librarykata.hexagonal.context.account.mother.AccountMother
-import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.serialization.toAccountDetailsDocument
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.testing.testApplication
 import org.junit.jupiter.api.BeforeEach
@@ -29,18 +30,10 @@ class CreateAccountControllerTest {
 
     @Test
     fun `an account can be created`() = testApplication {
+        val expected = AccountDocumentMother.json(account)
         testUseCases.`account is created`(account)
             .assertStatus(HttpStatusCode.Created)
-            .assertResponse(account.toAccountDetailsDocument())
-    }
-
-    @Test
-    fun `an account can be retrieved`() = testApplication {
-        testUseCases.`account is created`(account)
-
-        testUseCases.`find account`(account.id)
-            .assertStatus(HttpStatusCode.OK)
-            .assertResponse(account.toAccountDetailsDocument())
+            .assertJsonResponse(expected)
     }
 
     @Test
@@ -49,8 +42,14 @@ class CreateAccountControllerTest {
             .assertStatus(HttpStatusCode.Created)
 
         testUseCases.`account is created`(sameIdentityNumberAccount)
-            .assertStatus(HttpStatusCode.InternalServerError)
-            .assertErrorMessage("an account with identity number ${account.identityNumber.value} already exists")
+            .assertStatus(HttpStatusCode.BadRequest)
+            .assertJsonApiErrorDocument(
+                jsonApiErrorDocument(
+                    status = HttpStatusCode.BadRequest,
+                    title = "IdentityNumberAlreadyExists",
+                    detail = "an account with identity number ${account.identityNumber.value} already exists",
+                ),
+            )
     }
 
     @Test
@@ -59,8 +58,14 @@ class CreateAccountControllerTest {
             .assertStatus(HttpStatusCode.Created)
 
         testUseCases.`account is created`(sameEmailAccount)
-            .assertStatus(HttpStatusCode.InternalServerError)
-            .assertErrorMessage("an account with email ${account.email.value} already exists")
+            .assertStatus(HttpStatusCode.BadRequest)
+            .assertJsonApiErrorDocument(
+                jsonApiErrorDocument(
+                    status = HttpStatusCode.BadRequest,
+                    title = "EmailAlreadyExists",
+                    detail = "an account with email ${account.email.value} already exists",
+                ),
+            )
     }
 
     @Test
@@ -69,8 +74,14 @@ class CreateAccountControllerTest {
             .assertStatus(HttpStatusCode.Created)
 
         testUseCases.`account is created`(samePhoneAccount)
-            .assertStatus(HttpStatusCode.InternalServerError)
-            .assertErrorMessage("an account with phone ${account.phonePrefix.value} ${account.phoneNumber.value} already exists")
+            .assertStatus(HttpStatusCode.BadRequest)
+            .assertJsonApiErrorDocument(
+                jsonApiErrorDocument(
+                    status = HttpStatusCode.BadRequest,
+                    title = "PhoneAlreadyExists",
+                    detail = "an account with phone ${account.phonePrefix.value} ${account.phoneNumber.value} already exists",
+                ),
+            )
     }
 
     private val account = AccountMother.random()

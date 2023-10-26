@@ -2,10 +2,10 @@ package com.github.caay2000.librarykata.hexagonal.context.secondaryadapter.datab
 
 import arrow.core.Either
 import com.github.caay2000.common.database.RepositoryError
-import com.github.caay2000.librarykata.hexagonal.context.application.book.BookRepository
-import com.github.caay2000.librarykata.hexagonal.context.application.book.FindBookCriteria
-import com.github.caay2000.librarykata.hexagonal.context.application.book.SearchBookCriteria
-import com.github.caay2000.librarykata.hexagonal.context.domain.Book
+import com.github.caay2000.librarykata.hexagonal.context.domain.book.Book
+import com.github.caay2000.librarykata.hexagonal.context.domain.book.BookRepository
+import com.github.caay2000.librarykata.hexagonal.context.domain.book.FindBookCriteria
+import com.github.caay2000.librarykata.hexagonal.context.domain.book.SearchBookCriteria
 import com.github.caay2000.memorydb.InMemoryDatasource
 
 class InMemoryBookRepository(private val datasource: InMemoryDatasource) : BookRepository {
@@ -28,7 +28,7 @@ class InMemoryBookRepository(private val datasource: InMemoryDatasource) : BookR
 
     override fun search(criteria: SearchBookCriteria): Either<RepositoryError, List<Book>> =
         when (criteria) {
-            SearchBookCriteria.All -> Either.catch { datasource.getAll<Book>(TABLE_NAME) }
+            SearchBookCriteria.All -> Either.catch { datasource.getAll(TABLE_NAME) }
             is SearchBookCriteria.ByIsbn -> Either.catch { datasource.getAll<Book>(TABLE_NAME).filter { it.isbn == criteria.isbn } }
         }.mapLeft { RepositoryError.Unknown(it) }
 

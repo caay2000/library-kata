@@ -8,9 +8,9 @@ import com.github.caay2000.dikt.DiKt
 import com.github.caay2000.librarykata.hexagonal.common.TestUseCases
 import com.github.caay2000.librarykata.hexagonal.context.account.mother.AccountMother
 import com.github.caay2000.librarykata.hexagonal.context.book.mother.BookMother
-import com.github.caay2000.librarykata.hexagonal.context.domain.AccountId
-import com.github.caay2000.librarykata.hexagonal.context.domain.BookAvailable
-import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.serialization.toBookByIdDocument
+import com.github.caay2000.librarykata.hexagonal.context.domain.account.AccountId
+import com.github.caay2000.librarykata.hexagonal.context.domain.book.BookAvailable
+import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.serialization.toJsonApiDocument
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.testing.testApplication
 import org.junit.jupiter.api.BeforeEach
@@ -36,7 +36,7 @@ class SearchBookByIdControllerTest {
 
         testUseCases.`find book by id`(book.id)
             .assertStatus(HttpStatusCode.OK)
-            .assertResponse(book.toBookByIdDocument())
+            .assertResponse(book.toJsonApiDocument())
     }
 
     @Test
@@ -49,7 +49,7 @@ class SearchBookByIdControllerTest {
 
         testUseCases.`find book by id`(book.id)
             .assertStatus(HttpStatusCode.OK)
-            .assertResponse(notAvailableBook.toBookByIdDocument())
+            .assertResponse(notAvailableBook.toJsonApiDocument())
     }
 
     private val account = AccountMother.random()
