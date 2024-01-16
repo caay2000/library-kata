@@ -6,6 +6,8 @@ interface Transformer<I, O> {
         includes: List<String> = emptyList(),
     ): O
 
+    fun List<String>.shouldProcess(include: RequestInclude): Boolean = contains(include.toString().uppercase())
+
     fun <T> List<String>.shouldProcess(
         include: RequestInclude,
         block: () -> List<T>?,

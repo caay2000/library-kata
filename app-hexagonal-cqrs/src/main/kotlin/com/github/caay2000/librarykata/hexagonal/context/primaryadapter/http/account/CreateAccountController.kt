@@ -42,7 +42,6 @@ class CreateAccountController(
 
     private val commandHandler = CreateAccountCommandHandler(accountRepository)
     private val queryHandler = FindAccountByIdQueryHandler(accountRepository)
-
     private val transformer: Transformer<Account, JsonApiDocument<AccountResource>> = AccountToAccountDocumentTransformer(loanRepository)
 
     override suspend fun handle(call: ApplicationCall) {

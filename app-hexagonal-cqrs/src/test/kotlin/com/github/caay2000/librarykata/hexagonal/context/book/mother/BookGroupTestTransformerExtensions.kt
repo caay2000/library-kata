@@ -13,26 +13,26 @@ import com.github.caay2000.librarykata.jsonapi.context.book.BookGroupResource
 internal fun List<Book>.toJsonApiBookGroupDocument(loans: List<Loan> = emptyList()) =
     JsonApiListDocument(
         data = toBookGroupResource(loans),
-        meta = JsonApiMeta(total = size),
+        meta = JsonApiMeta(total = groupBy { it.isbn }.size),
     )
 
 internal fun List<Book>.toBookGroupResource(loans: List<Loan> = emptyList()): List<BookGroupResource> =
     this.groupBy { it.isbn }.map { it.value }
-        .map {
+        .map { list ->
             BookGroupResource(
-                id = first().isbn.value,
-                type = "bookGroup",
+                id = list.first().isbn.value,
+                type = "book-group",
                 attributes =
                     BookGroupResource.Attributes(
-                        isbn = first().isbn.value,
-                        title = first().title.value,
-                        author = first().author.value,
-                        pages = first().pages.value,
-                        publisher = first().publisher.value,
-                        copies = size,
-                        availableCopies = count { it.isAvailable },
+                        isbn = list.first().isbn.value,
+                        title = list.first().title.value,
+                        author = list.first().author.value,
+                        pages = list.first().pages.value,
+                        publisher = list.first().publisher.value,
+                        copies = list.size,
+                        availableCopies = list.count { it.isAvailable },
                     ),
-                relationships = mapRelationships(loans),
+                relationships = mapRelationships(loans.filter { list.map { it.id }.contains(it.bookId) }),
             )
         }
 

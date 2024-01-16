@@ -1,7 +1,7 @@
 package com.github.caay2000.librarykata.hexagonal.context.account
 
 import com.github.caay2000.common.test.RandomStringGenerator
-import com.github.caay2000.common.test.http.assertJsonResponse
+import com.github.caay2000.common.test.http.assertJsonApiResponse
 import com.github.caay2000.common.test.http.assertStatus
 import com.github.caay2000.common.test.mock.MockDateProvider
 import com.github.caay2000.common.test.mock.MockIdGenerator
@@ -38,7 +38,7 @@ class SearchAccountControllerTest {
             val expected = AccountListDocumentMother.json(account)
             testUseCases.`search account`()
                 .assertStatus(HttpStatusCode.OK)
-                .assertJsonResponse(expected)
+                .assertJsonApiResponse(expected)
         }
 
     @Test
@@ -50,7 +50,7 @@ class SearchAccountControllerTest {
             val expected = AccountListDocumentMother.json(accounts = listOf(account, anotherAccount), loans = emptyList())
             testUseCases.`search account`()
                 .assertStatus(HttpStatusCode.OK)
-                .assertJsonResponse(expected)
+                .assertJsonApiResponse(expected)
         }
 
     @Test
@@ -63,7 +63,7 @@ class SearchAccountControllerTest {
             val expected = AccountListDocumentMother.json(accounts = listOf(account, accountWithSimilarPhoneNumber), loans = emptyList())
             testUseCases.`search account by phoneNumber`(account.phoneNumber.value.take(4))
                 .assertStatus(HttpStatusCode.OK)
-                .assertJsonResponse(expected)
+                .assertJsonApiResponse(expected)
         }
 
     @Test
@@ -76,7 +76,7 @@ class SearchAccountControllerTest {
             val expected = AccountListDocumentMother.json(accounts = listOf(account, accountWithSimilarEmail), loans = emptyList())
             testUseCases.`search account by email`(account.email.value.substringAfter("@"))
                 .assertStatus(HttpStatusCode.OK)
-                .assertJsonResponse(expected)
+                .assertJsonApiResponse(expected)
         }
 
     @Test
@@ -96,7 +96,7 @@ class SearchAccountControllerTest {
             val expected = AccountListDocumentMother.json(accounts = listOf(account, accountWithSimilarEmail), loans = listOf(loan))
             testUseCases.`search account by email`(account.email.value.substringAfter("@"))
                 .assertStatus(HttpStatusCode.OK)
-                .assertJsonResponse(expected)
+                .assertJsonApiResponse(expected)
         }
 
     private val account = AccountMother.random()

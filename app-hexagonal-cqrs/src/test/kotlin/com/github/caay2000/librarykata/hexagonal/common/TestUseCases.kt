@@ -7,7 +7,6 @@ import com.github.caay2000.common.test.mock.MockDateProvider
 import com.github.caay2000.common.test.mock.MockIdGenerator
 import com.github.caay2000.librarykata.hexagonal.context.account.mother.AccountMother
 import com.github.caay2000.librarykata.hexagonal.context.book.mother.BookIdMother
-import com.github.caay2000.librarykata.hexagonal.context.book.mother.BookIsbnMother
 import com.github.caay2000.librarykata.hexagonal.context.domain.account.Account
 import com.github.caay2000.librarykata.hexagonal.context.domain.account.AccountId
 import com.github.caay2000.librarykata.hexagonal.context.domain.account.Email
@@ -144,8 +143,9 @@ class TestUseCases(
     ): HttpDataResponse<JsonApiDocument<LoanResource>> {
         `id will be mocked`(UUID.fromString(id?.value ?: loan.id.value))
         `datetime will be mocked`(createdAt?.value ?: loan.createdAt.value)
+        val bookIsbn = bookIsbn ?: BookIsbn(libraryClient.findBook(loan.bookId, emptyList()).value!!.data.attributes.isbn)
         return libraryClient.createLoan(
-            bookIsbn = BookIsbn(bookIsbn?.value ?: BookIsbnMother.random().value),
+            bookIsbn = bookIsbn,
             accountId = accountId ?: loan.accountId,
         )
     }

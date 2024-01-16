@@ -1,6 +1,6 @@
 package com.github.caay2000.librarykata.hexagonal.context.account
 
-import com.github.caay2000.common.test.http.assertJsonResponse
+import com.github.caay2000.common.test.http.assertJsonApiResponse
 import com.github.caay2000.common.test.http.assertStatus
 import com.github.caay2000.common.test.mock.MockDateProvider
 import com.github.caay2000.common.test.mock.MockIdGenerator
@@ -43,7 +43,7 @@ class FindAccountControllerTest {
             val expected = AccountDocumentMother.json(account)
             testUseCases.`find account`(account.id)
                 .assertStatus(HttpStatusCode.OK)
-                .assertJsonResponse(expected)
+                .assertJsonApiResponse(expected)
         }
 
     @Test
@@ -52,10 +52,10 @@ class FindAccountControllerTest {
             testUseCases.`account is created`(account)
             testUseCases.`book is created`(anotherBook)
 
-            val expected = AccountDocumentMother.json(account)
+            val expected = AccountDocumentMother.json(account, emptyList(), true)
             testUseCases.`find account`(account.id, listOf(TestUseCases.AccountInclude.LOANS))
                 .assertStatus(HttpStatusCode.OK)
-                .assertJsonResponse(expected)
+                .assertJsonApiResponse(expected)
         }
 
     @Test
@@ -73,7 +73,7 @@ class FindAccountControllerTest {
             val expected = AccountDocumentMother.json(account, loan)
             testUseCases.`find account`(account.id)
                 .assertStatus(HttpStatusCode.OK)
-                .assertJsonResponse(expected)
+                .assertJsonApiResponse(expected)
         }
 
     @Test
@@ -88,10 +88,10 @@ class FindAccountControllerTest {
                 createdAt = loan.createdAt,
             )
 
-            val expected = AccountDocumentMother.json(account, listOf(loan), listOf("loans"))
+            val expected = AccountDocumentMother.json(account, listOf(loan), true)
             testUseCases.`find account`(account.id, listOf(TestUseCases.AccountInclude.LOANS))
                 .assertStatus(HttpStatusCode.OK)
-                .assertJsonResponse(expected)
+                .assertJsonApiResponse(expected)
         }
 
     @Test
@@ -115,10 +115,10 @@ class FindAccountControllerTest {
             )
             testUseCases.`loan is finished`(bookId = BookId(anotherBook.id.value), finishedAt = anotherLoan.finishedAt)
 
-            val expected = AccountDocumentMother.json(account, listOf(loan, anotherLoan), listOf("loans"))
+            val expected = AccountDocumentMother.json(account, listOf(loan, anotherLoan), true)
             testUseCases.`find account`(account.id, listOf(TestUseCases.AccountInclude.LOANS))
                 .assertStatus(HttpStatusCode.OK)
-                .assertJsonResponse(expected)
+                .assertJsonApiResponse(expected)
         }
 
     private val now = LocalDateTime.now()

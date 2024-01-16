@@ -9,6 +9,7 @@ import com.github.caay2000.librarykata.hexagonal.context.application.loan.search
 import com.github.caay2000.librarykata.hexagonal.context.application.loan.search.SearchLoanQueryResponse
 import com.github.caay2000.librarykata.hexagonal.context.domain.book.Book
 import com.github.caay2000.librarykata.hexagonal.context.domain.loan.LoanRepository
+import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.book.serializer.toJsonApiDocumentBookGroupResource
 import com.github.caay2000.librarykata.jsonapi.context.book.BookGroupResource
 
 class BookListToBookGroupDocumentListTransformer(loanRepository: LoanRepository) : Transformer<List<Book>, JsonApiListDocument<BookGroupResource>> {
@@ -17,14 +18,15 @@ class BookListToBookGroupDocumentListTransformer(loanRepository: LoanRepository)
     override fun invoke(
         value: List<Book>,
         includes: List<String>,
-    ): JsonApiListDocument<BookGroupResource> =
-        JsonApiListDocument(
+    ): JsonApiListDocument<BookGroupResource> {
+        val groupByIsbn = value.groupBy { it.isbn }
+        return JsonApiListDocument(
             data =
-                value.groupBy { it.isbn }
-                    .map {
-                        val loans = loanQueryHandler.invoke(SearchLoanQuery.SearchLoanByBookIsbnQuery(it.key.value)).value
-                        it.value.toJsonApiDocumentBookGroupResource(loans)
-                    },
-            meta = JsonApiMeta(total = value.size),
+                groupByIsbn.map {
+                    val loans = loanQueryHandler.invoke(SearchLoanQuery.SearchLoanByBookIsbnQuery(it.key.value)).value
+                    it.value.toJsonApiDocumentBookGroupResource(loans)
+                },
+            meta = JsonApiMeta(total = groupByIsbn.size),
         )
+    }
 }

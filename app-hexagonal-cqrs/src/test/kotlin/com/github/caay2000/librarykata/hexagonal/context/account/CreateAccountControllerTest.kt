@@ -2,7 +2,7 @@ package com.github.caay2000.librarykata.hexagonal.context.account
 
 import com.github.caay2000.common.jsonapi.jsonApiErrorDocument
 import com.github.caay2000.common.test.http.assertJsonApiErrorDocument
-import com.github.caay2000.common.test.http.assertJsonResponse
+import com.github.caay2000.common.test.http.assertJsonApiResponse
 import com.github.caay2000.common.test.http.assertStatus
 import com.github.caay2000.common.test.mock.MockDateProvider
 import com.github.caay2000.common.test.mock.MockIdGenerator
@@ -35,7 +35,7 @@ class CreateAccountControllerTest {
             val expected = AccountDocumentMother.random(account)
             testUseCases.`account is created`(account)
                 .assertStatus(HttpStatusCode.Created)
-                .assertJsonResponse(jsonMapper.encodeToString(expected))
+                .assertJsonApiResponse(jsonMapper.encodeToString(expected))
         }
 
     @Test

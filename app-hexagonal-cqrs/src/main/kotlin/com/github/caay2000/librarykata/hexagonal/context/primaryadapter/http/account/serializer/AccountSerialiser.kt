@@ -1,12 +1,22 @@
-package com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.account.transformer.serializer
+package com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.account.serializer
 
+import com.github.caay2000.common.jsonapi.JsonApiDocument
 import com.github.caay2000.common.jsonapi.JsonApiRelationshipData
 import com.github.caay2000.common.jsonapi.JsonApiRelationshipIdentifier
 import com.github.caay2000.librarykata.hexagonal.context.domain.account.Account
 import com.github.caay2000.librarykata.hexagonal.context.domain.loan.Loan
+import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.serialization.toJsonApiDocumentIncludedResource
 import com.github.caay2000.librarykata.jsonapi.context.account.AccountResource
 
-internal fun Account.toJsonApiDocumentAccountResource(loans: List<Loan> = emptyList()) =
+fun Account.toJsonApiDocument(
+    loans: List<Loan> = emptyList(),
+    included: Boolean = false,
+) = JsonApiDocument(
+    data = toJsonApiDocumentAccountResource(loans),
+    included = if (included) loans.toJsonApiDocumentIncludedResource() else emptyList(),
+)
+
+fun Account.toJsonApiDocumentAccountResource(loans: List<Loan> = emptyList()) =
     AccountResource(
         id = id.value,
         type = "account",
@@ -14,7 +24,7 @@ internal fun Account.toJsonApiDocumentAccountResource(loans: List<Loan> = emptyL
         relationships = mapRelationships(loans),
     )
 
-private fun Account.toJsonApiDocumentAccountAttributes() =
+fun Account.toJsonApiDocumentAccountAttributes() =
     AccountResource.Attributes(
         identityNumber = identityNumber.value,
         name = name.value,

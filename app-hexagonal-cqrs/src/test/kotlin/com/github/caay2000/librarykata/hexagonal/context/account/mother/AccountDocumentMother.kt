@@ -4,6 +4,7 @@ import com.github.caay2000.librarykata.hexagonal.configuration.jsonMapper
 import com.github.caay2000.librarykata.hexagonal.context.domain.account.Account
 import com.github.caay2000.librarykata.hexagonal.context.domain.loan.Loan
 import com.github.caay2000.librarykata.hexagonal.context.loan.mother.LoanMother
+import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.account.serializer.toJsonApiDocument
 import kotlinx.serialization.encodeToString
 
 object AccountDocumentMother {
@@ -14,7 +15,7 @@ object AccountDocumentMother {
         loans: List<Loan> = List(3) { LoanMother.random(accountId = account.id) },
     ) = account.toJsonApiDocument(loans)
 
-    internal fun json(account: Account = AccountMother.random()) = jsonMapper.encodeToString(account.toJsonApiDocument())
+//    internal fun json(account: Account = AccountMother.random(), included: Boolean) = jsonMapper.encodeToString(account.toJsonApiDocument(emptyList(),  included))
 
     internal fun json(
         account: Account = AccountMother.random(),
@@ -23,7 +24,7 @@ object AccountDocumentMother {
 
     internal fun json(
         account: Account = AccountMother.random(),
-        loans: List<Loan> = List(3) { LoanMother.random(accountId = account.id) },
-        included: List<String> = emptyList(),
-    ) = jsonMapper.encodeToString(account.toJsonApiDocument(loans, included.map { it.uppercase() }))
+        loans: List<Loan> = emptyList(),
+        included: Boolean = false,
+    ) = jsonMapper.encodeToString(account.toJsonApiDocument(loans, included))
 }

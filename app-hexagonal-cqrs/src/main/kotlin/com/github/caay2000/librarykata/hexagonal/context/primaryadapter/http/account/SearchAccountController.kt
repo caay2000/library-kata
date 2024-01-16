@@ -23,11 +23,13 @@ import io.ktor.util.toMap
 import mu.KLogger
 import mu.KotlinLogging
 
-class SearchAccountController(accountRepository: AccountRepository, loanRepository: LoanRepository) : Controller {
+class SearchAccountController(
+    accountRepository: AccountRepository,
+    loanRepository: LoanRepository,
+) : Controller {
     override val logger: KLogger = KotlinLogging.logger {}
 
     private val queryHandler = SearchAccountQueryHandler(accountRepository)
-
     private val transformer: Transformer<List<Account>, JsonApiListDocument<AccountResource>> = AccountListToAccountDocumentListTransformer(loanRepository)
 
     override suspend fun handle(call: ApplicationCall) {

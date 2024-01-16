@@ -1,6 +1,6 @@
 package com.github.caay2000.librarykata.hexagonal.context.book
 
-import com.github.caay2000.common.test.http.assertJsonResponse
+import com.github.caay2000.common.test.http.assertJsonApiResponse
 import com.github.caay2000.common.test.http.assertStatus
 import com.github.caay2000.common.test.mock.MockDateProvider
 import com.github.caay2000.common.test.mock.MockIdGenerator
@@ -37,7 +37,7 @@ class FindBookControllerTest {
             val expected = BookDocumentMother.json(book)
             testUseCases.`find book by id`(book.id)
                 .assertStatus(HttpStatusCode.OK)
-                .assertJsonResponse(expected)
+                .assertJsonApiResponse(expected)
         }
 
     @Test
@@ -54,7 +54,7 @@ class FindBookControllerTest {
             val expected = BookDocumentMother.json(notAvailableBook, listOf(loan))
             testUseCases.`find book by id`(book.id)
                 .assertStatus(HttpStatusCode.OK)
-                .assertJsonResponse(expected)
+                .assertJsonApiResponse(expected)
         }
 
     @Test
@@ -72,7 +72,7 @@ class FindBookControllerTest {
             val expected = BookDocumentMother.json(notAvailableBook, listOf(loan), listOf("loans"))
             testUseCases.`find book by id`(book.id, listOf(TestUseCases.BookInclude.LOANS))
                 .assertStatus(HttpStatusCode.OK)
-                .assertJsonResponse(expected)
+                .assertJsonApiResponse(expected)
         }
 
     private val account = AccountMother.random()

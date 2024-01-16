@@ -1,17 +1,15 @@
 package com.github.caay2000.librarykata.hexagonal.context.book
 
-import com.github.caay2000.common.test.http.assertJsonResponse
+import com.github.caay2000.common.test.http.assertJsonApiResponse
 import com.github.caay2000.common.test.http.assertStatus
 import com.github.caay2000.common.test.mock.MockDateProvider
 import com.github.caay2000.common.test.mock.MockIdGenerator
 import com.github.caay2000.dikt.DiKt
 import com.github.caay2000.librarykata.hexagonal.common.TestUseCases
 import com.github.caay2000.librarykata.hexagonal.context.account.mother.AccountMother
-import com.github.caay2000.librarykata.hexagonal.context.book.mother.BookCopies
 import com.github.caay2000.librarykata.hexagonal.context.book.mother.BookGroupDocumentMother
 import com.github.caay2000.librarykata.hexagonal.context.book.mother.BookMother
-import com.github.caay2000.librarykata.hexagonal.context.book.mother.JsonApiListDocumentMother
-import com.github.caay2000.librarykata.hexagonal.context.domain.account.AccountId
+import com.github.caay2000.librarykata.hexagonal.context.loan.mother.LoanMother
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.testing.testApplication
 import org.junit.jupiter.api.BeforeEach
@@ -37,20 +35,20 @@ class SearchBookControllerTest {
             val expected = BookGroupDocumentMother.json(book)
             testUseCases.`find book by isbn`(book.isbn)
                 .assertStatus(HttpStatusCode.OK)
-                .assertJsonResponse(expected)
+                .assertJsonApiResponse(expected)
         }
 
     @Test
     fun `a book with multiple copies can be retrieved by Isbn`() =
         testApplication {
             testUseCases.`book is created`(book)
+            testUseCases.`book is created`(sameBook)
             testUseCases.`book is created`(differentBook)
-            testUseCases.`book is created`(anotherBook)
 
             val expected = BookGroupDocumentMother.json(book, copies = 2, available = 2)
             testUseCases.`find book by isbn`(book.isbn)
                 .assertStatus(HttpStatusCode.OK)
-                .assertJsonResponse(expected)
+                .assertJsonApiResponse(expected)
         }
 
     @Test
@@ -58,40 +56,43 @@ class SearchBookControllerTest {
         testApplication {
             testUseCases.`account is created`(account)
             testUseCases.`book is created`(book)
+            testUseCases.`book is created`(sameBook)
             testUseCases.`book is created`(differentBook)
-            testUseCases.`book is created`(anotherBook)
-            testUseCases.`loan is created`(bookIsbn = book.isbn, accountId = AccountId(account.id.value))
+            testUseCases.`loan is created`(loan)
 
-            // TODO missing loans relationships
-            val expected = BookGroupDocumentMother.json(book, copies = 2, available = 1, listOf())
+            val expected = BookGroupDocumentMother.json(book, copies = 2, available = 1, listOf(loan))
             testUseCases.`find book by isbn`(book.isbn)
                 .assertStatus(HttpStatusCode.OK)
-                .assertJsonResponse(expected)
+                .assertJsonApiResponse(expected)
         }
 
     @Test
     fun `all books can be searched`() =
         testApplication {
+            testUseCases.`account is created`(account)
             testUseCases.`multiple copies of the same book are created`(book, 5)
             testUseCases.`multiple copies of the same book are created`(differentBook, 3)
-            testUseCases.`book is created`(anotherBook)
-            testUseCases.`account is created`(account)
-            testUseCases.`loan is created`(bookIsbn = book.isbn, accountId = AccountId(account.id.value))
+            testUseCases.`loan is created`(loan)
 
+            // TODO missing loans relationships
             val expected =
-                JsonApiListDocumentMother.json(
-                    BookCopies(book, 5, 4),
-                    BookCopies(differentBook, 3),
-                    BookCopies(anotherBook),
+                BookGroupDocumentMother.json(
+                    listOf(
+                        BookGroupDocumentMother.BookCopies(book, 5, 4),
+                        BookGroupDocumentMother.BookCopies(differentBook, 3),
+                    ),
+                    listOf(loan),
                 )
+
             testUseCases.`search book`()
                 .assertStatus(HttpStatusCode.OK)
-                .assertJsonResponse(expected)
+                .assertJsonApiResponse(expected)
         }
 
     private val book = BookMother.random()
+    private val sameBook = BookMother.random(isbn = book.isbn.value)
     private val differentBook = BookMother.random()
-    private val anotherBook = BookMother.random()
 
     private val account = AccountMother.random()
+    private val loan = LoanMother.random(bookId = book.id, accountId = account.id)
 }

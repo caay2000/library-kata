@@ -9,7 +9,7 @@ import com.github.caay2000.librarykata.hexagonal.context.application.loan.search
 import com.github.caay2000.librarykata.hexagonal.context.application.loan.search.SearchLoanQueryResponse
 import com.github.caay2000.librarykata.hexagonal.context.domain.account.Account
 import com.github.caay2000.librarykata.hexagonal.context.domain.loan.LoanRepository
-import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.account.transformer.serializer.toJsonApiDocumentAccountResource
+import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.account.serializer.toJsonApiDocumentAccountResource
 import com.github.caay2000.librarykata.jsonapi.context.account.AccountResource
 
 class AccountListToAccountDocumentListTransformer(loanRepository: LoanRepository) : Transformer<List<Account>, JsonApiListDocument<AccountResource>> {

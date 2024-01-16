@@ -27,7 +27,10 @@ import mu.KLogger
 import mu.KotlinLogging
 import java.util.UUID
 
-class FindAccountController(accountRepository: AccountRepository, loanRepository: LoanRepository) : Controller {
+class FindAccountController(
+    accountRepository: AccountRepository,
+    loanRepository: LoanRepository,
+) : Controller {
     override val logger: KLogger = KotlinLogging.logger {}
 
     private val accountQueryHandler = FindAccountByIdQueryHandler(accountRepository)

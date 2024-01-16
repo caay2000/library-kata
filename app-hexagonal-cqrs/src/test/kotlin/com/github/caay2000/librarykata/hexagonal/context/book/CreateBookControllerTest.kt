@@ -1,6 +1,6 @@
 package com.github.caay2000.librarykata.hexagonal.context.book
 
-import com.github.caay2000.common.test.http.assertJsonResponse
+import com.github.caay2000.common.test.http.assertJsonApiResponse
 import com.github.caay2000.common.test.http.assertStatus
 import com.github.caay2000.common.test.mock.MockDateProvider
 import com.github.caay2000.common.test.mock.MockIdGenerator
@@ -32,7 +32,7 @@ class CreateBookControllerTest {
             val expected = BookDocumentMother.json(book)
             testUseCases.`book is created`(book)
                 .assertStatus(HttpStatusCode.Created)
-                .assertJsonResponse(expected)
+                .assertJsonApiResponse(expected)
         }
 
     @Test
@@ -41,12 +41,12 @@ class CreateBookControllerTest {
             val expected = BookDocumentMother.json(book)
             testUseCases.`book is created`(book)
                 .assertStatus(HttpStatusCode.Created)
-                .assertJsonResponse(expected)
+                .assertJsonApiResponse(expected)
 
             val expectedDifferentId = BookDocumentMother.json(differentIdBook)
             testUseCases.`book is created`(differentIdBook)
                 .assertStatus(HttpStatusCode.Created)
-                .assertJsonResponse(expectedDifferentId)
+                .assertJsonApiResponse(expectedDifferentId)
         }
 
     // TODO missing error tests
