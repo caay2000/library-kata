@@ -8,6 +8,7 @@ import com.github.caay2000.dikt.DiKt
 import com.github.caay2000.librarykata.hexagonal.common.TestUseCases
 import com.github.caay2000.librarykata.hexagonal.context.account.mother.AccountMother
 import com.github.caay2000.librarykata.hexagonal.context.book.mother.BookCopies
+import com.github.caay2000.librarykata.hexagonal.context.book.mother.BookGroupDocumentMother
 import com.github.caay2000.librarykata.hexagonal.context.book.mother.BookMother
 import com.github.caay2000.librarykata.hexagonal.context.book.mother.JsonApiListDocumentMother
 import com.github.caay2000.librarykata.hexagonal.context.domain.account.AccountId
@@ -27,6 +28,46 @@ class SearchBookControllerTest {
         DiKt.register(override = true) { mockIdGenerator }
         DiKt.register(override = true) { mockDateProvider }
     }
+
+    @Test
+    fun `a book can be searched by Isbn`() =
+        testApplication {
+            testUseCases.`book is created`(book)
+
+            val expected = BookGroupDocumentMother.json(book)
+            testUseCases.`find book by isbn`(book.isbn)
+                .assertStatus(HttpStatusCode.OK)
+                .assertJsonResponse(expected)
+        }
+
+    @Test
+    fun `a book with multiple copies can be retrieved by Isbn`() =
+        testApplication {
+            testUseCases.`book is created`(book)
+            testUseCases.`book is created`(differentBook)
+            testUseCases.`book is created`(anotherBook)
+
+            val expected = BookGroupDocumentMother.json(book, copies = 2, available = 2)
+            testUseCases.`find book by isbn`(book.isbn)
+                .assertStatus(HttpStatusCode.OK)
+                .assertJsonResponse(expected)
+        }
+
+    @Test
+    fun `a book with multiple copies and some of them booked can be retrieved by Isbn and returns de correct amount of copies`() =
+        testApplication {
+            testUseCases.`account is created`(account)
+            testUseCases.`book is created`(book)
+            testUseCases.`book is created`(differentBook)
+            testUseCases.`book is created`(anotherBook)
+            testUseCases.`loan is created`(bookIsbn = book.isbn, accountId = AccountId(account.id.value))
+
+            // TODO missing loans relationships
+            val expected = BookGroupDocumentMother.json(book, copies = 2, available = 1, listOf())
+            testUseCases.`find book by isbn`(book.isbn)
+                .assertStatus(HttpStatusCode.OK)
+                .assertJsonResponse(expected)
+        }
 
     @Test
     fun `all books can be searched`() =

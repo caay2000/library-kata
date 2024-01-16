@@ -8,10 +8,12 @@ import com.github.caay2000.common.test.mock.MockDateProvider
 import com.github.caay2000.common.test.mock.MockIdGenerator
 import com.github.caay2000.dikt.DiKt
 import com.github.caay2000.librarykata.hexagonal.common.TestUseCases
+import com.github.caay2000.librarykata.hexagonal.configuration.jsonMapper
 import com.github.caay2000.librarykata.hexagonal.context.account.mother.AccountDocumentMother
 import com.github.caay2000.librarykata.hexagonal.context.account.mother.AccountMother
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.testing.testApplication
+import kotlinx.serialization.encodeToString
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
@@ -30,10 +32,10 @@ class CreateAccountControllerTest {
     @Test
     fun `an account can be created`() =
         testApplication {
-            val expected = AccountDocumentMother.json(account)
+            val expected = AccountDocumentMother.random(account)
             testUseCases.`account is created`(account)
                 .assertStatus(HttpStatusCode.Created)
-                .assertJsonResponse(expected)
+                .assertJsonResponse(jsonMapper.encodeToString(expected))
         }
 
     @Test

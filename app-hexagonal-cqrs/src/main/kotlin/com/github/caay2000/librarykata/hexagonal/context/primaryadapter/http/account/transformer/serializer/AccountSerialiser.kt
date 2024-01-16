@@ -1,4 +1,4 @@
-package com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.account.transformer
+package com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.account.transformer.serializer
 
 import com.github.caay2000.common.jsonapi.JsonApiRelationshipData
 import com.github.caay2000.common.jsonapi.JsonApiRelationshipIdentifier

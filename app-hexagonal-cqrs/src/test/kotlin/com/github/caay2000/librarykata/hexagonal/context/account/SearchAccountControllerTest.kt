@@ -47,7 +47,7 @@ class SearchAccountControllerTest {
             testUseCases.`account is created`(account)
             testUseCases.`account is created`(anotherAccount)
 
-            val expected = AccountListDocumentMother.json(listOf(account, anotherAccount))
+            val expected = AccountListDocumentMother.json(accounts = listOf(account, anotherAccount), loans = emptyList())
             testUseCases.`search account`()
                 .assertStatus(HttpStatusCode.OK)
                 .assertJsonResponse(expected)
@@ -60,7 +60,7 @@ class SearchAccountControllerTest {
             testUseCases.`account is created`(accountWithSimilarPhoneNumber)
             testUseCases.`account is created`(anotherAccount)
 
-            val expected = AccountListDocumentMother.json(listOf(account, accountWithSimilarPhoneNumber))
+            val expected = AccountListDocumentMother.json(accounts = listOf(account, accountWithSimilarPhoneNumber), loans = emptyList())
             testUseCases.`search account by phoneNumber`(account.phoneNumber.value.take(4))
                 .assertStatus(HttpStatusCode.OK)
                 .assertJsonResponse(expected)
@@ -73,7 +73,7 @@ class SearchAccountControllerTest {
             testUseCases.`account is created`(accountWithSimilarEmail)
             testUseCases.`account is created`(anotherAccount)
 
-            val expected = AccountListDocumentMother.json(listOf(account, accountWithSimilarEmail))
+            val expected = AccountListDocumentMother.json(accounts = listOf(account, accountWithSimilarEmail), loans = emptyList())
             testUseCases.`search account by email`(account.email.value.substringAfter("@"))
                 .assertStatus(HttpStatusCode.OK)
                 .assertJsonResponse(expected)
@@ -93,7 +93,7 @@ class SearchAccountControllerTest {
             testUseCases.`account is created`(accountWithSimilarEmail)
             testUseCases.`account is created`(anotherAccount)
 
-            val expected = AccountListDocumentMother.json(listOf(account, accountWithSimilarEmail), listOf(loan))
+            val expected = AccountListDocumentMother.json(accounts = listOf(account, accountWithSimilarEmail), loans = listOf(loan))
             testUseCases.`search account by email`(account.email.value.substringAfter("@"))
                 .assertStatus(HttpStatusCode.OK)
                 .assertJsonResponse(expected)
