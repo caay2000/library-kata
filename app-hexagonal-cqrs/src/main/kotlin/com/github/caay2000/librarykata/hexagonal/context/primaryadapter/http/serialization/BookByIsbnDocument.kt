@@ -3,9 +3,12 @@ package com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.se
 import com.github.caay2000.common.jsonapi.JsonApiListDocument
 import com.github.caay2000.common.jsonapi.JsonApiMeta
 import com.github.caay2000.librarykata.hexagonal.context.domain.book.Book
+import com.github.caay2000.librarykata.hexagonal.context.domain.loan.Loan
 import com.github.caay2000.librarykata.jsonapi.context.book.BookGroupResource
 
-fun List<Book>.toJsonApiListDocument(): JsonApiListDocument<BookGroupResource> {
+// TODO TO BE REMOVED
+
+fun List<Book>.toJsonApiListDocument(loans: List<Loan>): JsonApiListDocument<BookGroupResource> {
     val groupedBooks = this.toGroupedBookByIsbnAttributes()
     return JsonApiListDocument(
         data = groupedBooks.map { BookGroupResource(id = it.isbn, attributes = it) },

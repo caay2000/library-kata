@@ -9,21 +9,23 @@ data class Book(
     val publisher: BookPublisher,
     val available: BookAvailable,
 ) {
-
     companion object {
-        fun create(request: CreateBookRequest) = Book(
-            id = request.id,
-            isbn = request.isbn,
-            title = request.title,
-            author = request.author,
-            pages = request.pages,
-            publisher = request.publisher,
-            available = BookAvailable(true),
-        )
+        fun create(request: CreateBookRequest) =
+            Book(
+                id = request.id,
+                isbn = request.isbn,
+                title = request.title,
+                author = request.author,
+                pages = request.pages,
+                publisher = request.publisher,
+                available = BookAvailable(true),
+            )
     }
 
     fun available(): Book = updateAvailability(BookAvailable.available())
+
     fun unavailable(): Book = updateAvailability(BookAvailable.notAvailable())
+
     private fun updateAvailability(available: BookAvailable): Book = copy(available = available)
 
     val isAvailable: Boolean = available.value
@@ -51,6 +53,7 @@ value class BookPublisher(val value: String)
 value class BookAvailable(val value: Boolean) {
     companion object {
         fun available() = BookAvailable(true)
+
         fun notAvailable() = BookAvailable(false)
     }
 }

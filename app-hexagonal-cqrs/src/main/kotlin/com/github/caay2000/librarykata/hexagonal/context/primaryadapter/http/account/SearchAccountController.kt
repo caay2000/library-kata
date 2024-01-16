@@ -12,6 +12,7 @@ import com.github.caay2000.librarykata.hexagonal.context.application.account.sea
 import com.github.caay2000.librarykata.hexagonal.context.application.account.search.SearchAccountQueryHandler
 import com.github.caay2000.librarykata.hexagonal.context.domain.account.Account
 import com.github.caay2000.librarykata.hexagonal.context.domain.account.AccountRepository
+import com.github.caay2000.librarykata.hexagonal.context.domain.loan.LoanRepository
 import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.account.transformer.AccountListToAccountDocumentListTransformer
 import com.github.caay2000.librarykata.jsonapi.context.account.AccountResource
 import io.github.smiley4.ktorswaggerui.dsl.OpenApiRoute
@@ -22,18 +23,17 @@ import io.ktor.util.toMap
 import mu.KLogger
 import mu.KotlinLogging
 
-class SearchAccountController(accountRepository: AccountRepository) : Controller {
-
+class SearchAccountController(accountRepository: AccountRepository, loanRepository: LoanRepository) : Controller {
     override val logger: KLogger = KotlinLogging.logger {}
 
     private val queryHandler = SearchAccountQueryHandler(accountRepository)
 
-    private val transformer: Transformer<List<Account>, JsonApiListDocument<AccountResource>> = AccountListToAccountDocumentListTransformer()
+    private val transformer: Transformer<List<Account>, JsonApiListDocument<AccountResource>> = AccountListToAccountDocumentListTransformer(loanRepository)
 
     override suspend fun handle(call: ApplicationCall) {
         val params = call.parameters.toMap().toJsonApiRequestParams()
-        val accounts = queryHandler.invoke(params.toQuery())
-        val document = transformer.invoke(accounts.values)
+        val queryResponse = queryHandler.invoke(params.toQuery())
+        val document = transformer.invoke(queryResponse.accounts)
         call.respond(HttpStatusCode.OK, document)
     }
 

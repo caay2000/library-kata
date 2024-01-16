@@ -12,7 +12,6 @@ data class BookRequestResource(
     override val type: String = "book",
     override val attributes: Attributes,
 ) : JsonApiRequestResource {
-
     @Serializable
     @Schema(name = "BookRequestResource.Attributes")
     data class Attributes(

@@ -18,7 +18,8 @@ import com.github.caay2000.librarykata.hexagonal.context.application.account.fin
 import com.github.caay2000.librarykata.hexagonal.context.domain.account.Account
 import com.github.caay2000.librarykata.hexagonal.context.domain.account.AccountId
 import com.github.caay2000.librarykata.hexagonal.context.domain.account.AccountRepository
-import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.account.transformer.CreateAccountToAccountDocumentTransformer
+import com.github.caay2000.librarykata.hexagonal.context.domain.loan.LoanRepository
+import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.account.transformer.AccountToAccountDocumentTransformer
 import com.github.caay2000.librarykata.jsonapi.context.account.AccountRequestResource
 import com.github.caay2000.librarykata.jsonapi.context.account.AccountResource
 import io.github.smiley4.ktorswaggerui.dsl.OpenApiRoute
@@ -35,14 +36,14 @@ class CreateAccountController(
     private val idGenerator: IdGenerator,
     private val dateProvider: DateProvider,
     accountRepository: AccountRepository,
+    loanRepository: LoanRepository,
 ) : Controller {
-
     override val logger: KLogger = KotlinLogging.logger {}
 
     private val commandHandler = CreateAccountCommandHandler(accountRepository)
     private val queryHandler = FindAccountByIdQueryHandler(accountRepository)
 
-    private val transformer: Transformer<Account, JsonApiDocument<AccountResource>> = CreateAccountToAccountDocumentTransformer()
+    private val transformer: Transformer<Account, JsonApiDocument<AccountResource>> = AccountToAccountDocumentTransformer(loanRepository)
 
     override suspend fun handle(call: ApplicationCall) {
         val request = call.receive<JsonApiRequestDocument<AccountRequestResource>>()
@@ -50,11 +51,14 @@ class CreateAccountController(
         val registerDate = dateProvider.dateTime()
         commandHandler.invoke(request.toCommand(accountId, registerDate))
 
-        val queryResult = queryHandler.invoke(FindAccountByIdQuery(AccountId(accountId)))
-        call.respond(HttpStatusCode.Created, transformer.invoke(queryResult.account))
+        val queryResponse = queryHandler.invoke(FindAccountByIdQuery(AccountId(accountId)))
+        call.respond(HttpStatusCode.Created, transformer.invoke(queryResponse.account))
     }
 
-    override suspend fun handleExceptions(call: ApplicationCall, e: Exception) {
+    override suspend fun handleExceptions(
+        call: ApplicationCall,
+        e: Exception,
+    ) {
         call.serverError {
             when (e) {
                 is AccountCreatorError.IdentityNumberAlreadyExists -> ServerResponse(HttpStatusCode.BadRequest, "IdentityNumberAlreadyExists", e.message)
@@ -65,7 +69,10 @@ class CreateAccountController(
         }
     }
 
-    private fun JsonApiRequestDocument<AccountRequestResource>.toCommand(accountId: String, registerDate: LocalDateTime): CreateAccountCommand =
+    private fun JsonApiRequestDocument<AccountRequestResource>.toCommand(
+        accountId: String,
+        registerDate: LocalDateTime,
+    ): CreateAccountCommand =
         CreateAccountCommand(
             accountId = UUID.fromString(accountId),
             identityNumber = data.attributes.identityNumber,

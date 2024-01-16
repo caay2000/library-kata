@@ -28,7 +28,6 @@ import mu.KotlinLogging
 import java.util.UUID
 
 class FindAccountController(accountRepository: AccountRepository, loanRepository: LoanRepository) : Controller {
-
     override val logger: KLogger = KotlinLogging.logger {}
 
     private val accountQueryHandler = FindAccountByIdQueryHandler(accountRepository)
@@ -40,12 +39,15 @@ class FindAccountController(accountRepository: AccountRepository, loanRepository
         val accountId = AccountId(UUID.fromString(call.parameters["id"]!!).toString())
         val jsonApiParams = call.request.queryParameters.toMap().toJsonApiRequestParams()
 
-        val queryResult = accountQueryHandler.invoke(FindAccountByIdQuery(accountId))
-        val responseDocument = transformer.invoke(queryResult.account, jsonApiParams.include)
+        val queryResponse = accountQueryHandler.invoke(FindAccountByIdQuery(accountId))
+        val responseDocument = transformer.invoke(queryResponse.account, jsonApiParams.include)
         call.respond(HttpStatusCode.OK, responseDocument)
     }
 
-    override suspend fun handleExceptions(call: ApplicationCall, e: Exception) {
+    override suspend fun handleExceptions(
+        call: ApplicationCall,
+        e: Exception,
+    ) {
         call.serverError {
             when (e) {
                 is AccountFinderError.AccountNotFoundError -> ServerResponse(HttpStatusCode.NotFound, "AccountNotFoundError", e.message)

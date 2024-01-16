@@ -17,13 +17,13 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 class FinishLoanControllerTest {
-
     private val mockIdGenerator = MockIdGenerator()
     private val mockDateProvider = MockDateProvider()
-    private val testUseCases = TestUseCases(
-        mockIdGenerator = mockIdGenerator,
-        mockDateProvider = mockDateProvider,
-    )
+    private val testUseCases =
+        TestUseCases(
+            mockIdGenerator = mockIdGenerator,
+            mockDateProvider = mockDateProvider,
+        )
 
     @BeforeEach
     fun setUp() {
@@ -33,40 +33,42 @@ class FinishLoanControllerTest {
     }
 
     @Test
-    fun `a book can be returned`() = testApplication {
-        testUseCases.`book is created`(book)
-            .assertStatus(HttpStatusCode.Created)
+    fun `a book can be returned`() =
+        testApplication {
+            testUseCases.`book is created`(book)
+                .assertStatus(HttpStatusCode.Created)
 
-        testUseCases.`account is created`(account)
-            .assertStatus(HttpStatusCode.Created)
+            testUseCases.`account is created`(account)
+                .assertStatus(HttpStatusCode.Created)
 
-        testUseCases.`loan is created`(loan, book.isbn)
-            .assertStatus(HttpStatusCode.Created)
-            .assertResponse(loan.toJsonApiDocument())
+            testUseCases.`loan is created`(loan, book.isbn)
+                .assertStatus(HttpStatusCode.Created)
+                .assertResponse(loan.toJsonApiDocument())
 
-        testUseCases.`loan is finished`(bookId = BookId(book.id.value))
-            .assertStatus(HttpStatusCode.Accepted)
-    }
+            testUseCases.`loan is finished`(bookId = BookId(book.id.value))
+                .assertStatus(HttpStatusCode.Accepted)
+        }
 
     @Test
-    fun `after finishing a book it can be lended again`() = testApplication {
-        testUseCases.`book is created`(book)
-            .assertStatus(HttpStatusCode.Created)
+    fun `after finishing a book it can be lended again`() =
+        testApplication {
+            testUseCases.`book is created`(book)
+                .assertStatus(HttpStatusCode.Created)
 
-        testUseCases.`account is created`(account)
-            .assertStatus(HttpStatusCode.Created)
+            testUseCases.`account is created`(account)
+                .assertStatus(HttpStatusCode.Created)
 
-        testUseCases.`loan is created`(loan, book.isbn)
-            .assertStatus(HttpStatusCode.Created)
-            .assertResponse(loan.toJsonApiDocument())
+            testUseCases.`loan is created`(loan, book.isbn)
+                .assertStatus(HttpStatusCode.Created)
+                .assertResponse(loan.toJsonApiDocument())
 
-        testUseCases.`loan is finished`(bookId = BookId(book.id.value))
-            .assertStatus(HttpStatusCode.Accepted)
+            testUseCases.`loan is finished`(bookId = BookId(book.id.value))
+                .assertStatus(HttpStatusCode.Accepted)
 
-        testUseCases.`loan is created`(loan, book.isbn)
-            .assertStatus(HttpStatusCode.Created)
-            .assertResponse(loan.toJsonApiDocument())
-    }
+            testUseCases.`loan is created`(loan, book.isbn)
+                .assertStatus(HttpStatusCode.Created)
+                .assertResponse(loan.toJsonApiDocument())
+        }
 
     private val account = AccountMother.random()
     private val book = BookMother.random()

@@ -16,7 +16,6 @@ data class LoanResource(
     override val attributes: Attributes,
     override val relationships: Map<String, JsonApiRelationshipData>? = null,
 ) : JsonApiResource {
-
     @Serializable
     @Schema(name = "LoanResource.Attributes")
     data class Attributes(

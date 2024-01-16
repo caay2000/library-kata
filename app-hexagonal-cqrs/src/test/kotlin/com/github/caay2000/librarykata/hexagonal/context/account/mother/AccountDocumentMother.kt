@@ -7,7 +7,6 @@ import com.github.caay2000.librarykata.hexagonal.context.loan.mother.LoanMother
 import kotlinx.serialization.encodeToString
 
 object AccountDocumentMother {
-
     internal fun random(account: Account = AccountMother.random()) = account.toJsonApiDocument()
 
     internal fun random(

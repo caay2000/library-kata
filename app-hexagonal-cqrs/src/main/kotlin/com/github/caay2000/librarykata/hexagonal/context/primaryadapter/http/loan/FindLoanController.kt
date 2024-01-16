@@ -16,7 +16,6 @@ import java.util.UUID
 class FindLoanController(
     loanRepository: LoanRepository,
 ) : Controller {
-
     override val logger: KLogger = KotlinLogging.logger {}
 
     private val queryHandler = FindLoanByIdQueryHandler(loanRepository)

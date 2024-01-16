@@ -39,8 +39,8 @@ class TestUseCases(
     private val mockIdGenerator: MockIdGenerator? = null,
     private val mockDateProvider: MockDateProvider? = null,
 ) {
-
     context(ApplicationTestBuilder)
+    @TestCase
     fun `account is created`(
         account: Account = AccountMother.random(),
         accountId: AccountId? = null,
@@ -64,25 +64,26 @@ class TestUseCases(
     }
 
     context(ApplicationTestBuilder)
+    @TestCase
     fun `find account`(
         id: AccountId,
         include: List<AccountInclude> = emptyList(),
-    ): HttpDataResponse<JsonApiDocument<AccountResource>> =
-        libraryClient.findAccount(id, include)
+    ): HttpDataResponse<JsonApiDocument<AccountResource>> = libraryClient.findAccount(id, include)
 
     context(ApplicationTestBuilder)
-    fun `search account`(): HttpDataResponse<JsonApiListDocument<AccountResource>> =
-        libraryClient.searchAccount()
+    @TestCase
+    fun `search account`(): HttpDataResponse<JsonApiListDocument<AccountResource>> = libraryClient.searchAccount()
 
     context(ApplicationTestBuilder)
-    fun `search account by phoneNumber`(phoneNumber: String): HttpDataResponse<JsonApiListDocument<AccountResource>> =
-        libraryClient.searchAccountByPhoneNumber(phoneNumber)
+    @TestCase
+    fun `search account by phoneNumber`(phoneNumber: String): HttpDataResponse<JsonApiListDocument<AccountResource>> = libraryClient.searchAccountByPhoneNumber(phoneNumber)
 
     context(ApplicationTestBuilder)
-    fun `search account by email`(email: String): HttpDataResponse<JsonApiListDocument<AccountResource>> =
-        libraryClient.searchAccountByEmail(email)
+    @TestCase
+    fun `search account by email`(email: String): HttpDataResponse<JsonApiListDocument<AccountResource>> = libraryClient.searchAccountByEmail(email)
 
     context(ApplicationTestBuilder)
+    @TestCase
     fun `book is created`(
         book: Book,
         id: BookId? = null,
@@ -103,7 +104,11 @@ class TestUseCases(
     }
 
     context(ApplicationTestBuilder)
-    fun `multiple copies of the same book are created`(book: Book, copies: Int) {
+    @TestCase
+    fun `multiple copies of the same book are created`(
+        book: Book,
+        copies: Int,
+    ) {
         repeat(copies) { index ->
             if (index == 1) {
                 `book is created`(book)
@@ -114,15 +119,22 @@ class TestUseCases(
     }
 
     context(ApplicationTestBuilder)
-    fun `find book by id`(id: BookId): HttpDataResponse<JsonApiDocument<BookResource>> = libraryClient.findBookById(id)
+    @TestCase
+    fun `find book by id`(
+        id: BookId,
+        include: List<BookInclude> = emptyList(),
+    ): HttpDataResponse<JsonApiDocument<BookResource>> = libraryClient.findBook(id, include)
 
     context(ApplicationTestBuilder)
+    @TestCase
     fun `find book by isbn`(isbn: BookIsbn): HttpDataResponse<JsonApiListDocument<BookGroupResource>> = libraryClient.findBookByIsbn(isbn)
 
     context(ApplicationTestBuilder)
+    @TestCase
     fun `search book`(): HttpDataResponse<JsonApiListDocument<BookGroupResource>> = libraryClient.searchBook()
 
     context(ApplicationTestBuilder)
+    @TestCase
     fun `loan is created`(
         loan: Loan = LoanMother.random(),
         bookIsbn: BookIsbn? = null,
@@ -139,6 +151,7 @@ class TestUseCases(
     }
 
     context(ApplicationTestBuilder)
+    @TestCase
     fun `loan is finished`(
         loan: Loan = LoanMother.random(),
         bookId: BookId? = null,
@@ -151,6 +164,11 @@ class TestUseCases(
 
     enum class AccountInclude { LOANS }
 
+    enum class BookInclude { LOANS }
+
+    @TestCase
     private fun `id will be mocked`(id: UUID): UUID = mockIdGenerator?.mock(id).let { id }
+
+    @TestCase
     private fun `datetime will be mocked`(datetime: LocalDateTime): LocalDateTime = mockDateProvider?.mock(datetime).let { datetime }
 }

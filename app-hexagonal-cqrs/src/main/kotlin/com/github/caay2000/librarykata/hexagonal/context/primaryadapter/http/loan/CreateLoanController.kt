@@ -32,7 +32,6 @@ class CreateLoanController(
     accountRepository: AccountRepository,
     loanRepository: LoanRepository,
 ) : Controller {
-
     override val logger: KLogger = KotlinLogging.logger {}
 
     private val commandHandler = CreateLoanCommandHandler(bookRepository, accountRepository, loanRepository)
@@ -49,7 +48,10 @@ class CreateLoanController(
         call.respond(HttpStatusCode.Created, loanQueryResponse.loan.toJsonApiDocument())
     }
 
-    override suspend fun handleExceptions(call: ApplicationCall, e: Exception) {
+    override suspend fun handleExceptions(
+        call: ApplicationCall,
+        e: Exception,
+    ) {
         call.serverError {
             when (e) {
                 is LoanCreatorError.UserNotFound -> ServerResponse(HttpStatusCode.BadRequest, "UserNotFound", e.message)
@@ -66,11 +68,13 @@ class CreateLoanController(
 //    class UserHasTooManyLoans(accountId: AccountId) : LoanCreatorError("user ${accountId.value} has too many loans")
 //    class UnknownError(error: Throwable) : LoanCreatorError(error)
 
-    private fun JsonApiRequestDocument<LoanRequestResource>.toCreateLoanCommand(loanId: String, datetime: LocalDateTime) =
-        CreateLoanCommand(
-            loanId = UUID.fromString(loanId),
-            accountId = UUID.fromString(data.attributes.accountId),
-            bookIsbn = data.attributes.bookIsbn,
-            createdAt = datetime,
-        )
+    private fun JsonApiRequestDocument<LoanRequestResource>.toCreateLoanCommand(
+        loanId: String,
+        datetime: LocalDateTime,
+    ) = CreateLoanCommand(
+        loanId = UUID.fromString(loanId),
+        accountId = UUID.fromString(data.attributes.accountId),
+        bookIsbn = data.attributes.bookIsbn,
+        createdAt = datetime,
+    )
 }

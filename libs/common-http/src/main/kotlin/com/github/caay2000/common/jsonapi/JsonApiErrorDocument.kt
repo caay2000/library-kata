@@ -19,5 +19,8 @@ data class ServerResponse(val status: HttpStatusCode, val title: String = "Unkno
     val jsonApiErrorDocument = jsonApiErrorDocument(status, title, detail)
 }
 
-fun jsonApiErrorDocument(status: HttpStatusCode, title: String = "Unknown Error", detail: String? = title) =
-    JsonApiErrorDocument(listOf(JsonApiErrorAttribute(status = status.value.toString(), title = title, detail = detail ?: title)))
+fun jsonApiErrorDocument(
+    status: HttpStatusCode,
+    title: String = "Unknown Error",
+    detail: String? = title,
+) = JsonApiErrorDocument(listOf(JsonApiErrorAttribute(status = status.value.toString(), title = title, detail = detail ?: title)))

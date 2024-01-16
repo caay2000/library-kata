@@ -6,7 +6,6 @@ import com.github.caay2000.librarykata.hexagonal.context.domain.account.AccountR
 import com.github.caay2000.librarykata.hexagonal.context.domain.account.SearchAccountCriteria
 
 class AccountSearcher(private val accountRepository: AccountRepository) {
-
     fun invoke(criteria: SearchAccountCriteria): Either<AccountSearcherError, List<Account>> =
         accountRepository.search(criteria)
             .mapLeft { AccountSearcherError.Unknown(it) }

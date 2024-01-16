@@ -6,7 +6,7 @@
         </layout>
     </appender>
 
-    <logger name="com.github.caay2000" level="INFO">
+    <logger name="com.github.caay2000" level="DEBUG">
         <appender-ref ref="CONSOLE"/>
     </logger>
 

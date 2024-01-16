@@ -7,5 +7,5 @@ dependencies {
     implementation(project(":libs:common-serialization"))
     implementation(project(":libs:common-http"))
 
-    implementation("io.swagger.core.v3:swagger-annotations:2.2.17")
+    implementation("io.swagger.core.v3:swagger-annotations:2.2.20")
 }

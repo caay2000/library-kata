@@ -7,7 +7,6 @@ import org.junit.jupiter.api.Test
 import java.time.LocalDateTime
 
 internal class DiKtTest {
-
     @BeforeEach
     fun setUp() {
         DiKt.clear()
@@ -127,6 +126,7 @@ internal class DiKtTest {
     private fun SimpleBean.update(): SimpleBean = this.copy(aux = this.aux.plusDays(1))
 
     interface SimpleInterface
+
     data class InterfaceBean(val aux: LocalDateTime = LocalDateTime.now()) : SimpleInterface
 
     data class InterfaceDependencyBean(val dep: SimpleInterface)

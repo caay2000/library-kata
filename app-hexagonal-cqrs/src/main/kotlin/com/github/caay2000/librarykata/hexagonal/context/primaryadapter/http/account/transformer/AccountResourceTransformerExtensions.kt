@@ -6,15 +6,15 @@ import com.github.caay2000.librarykata.hexagonal.context.domain.account.Account
 import com.github.caay2000.librarykata.hexagonal.context.domain.loan.Loan
 import com.github.caay2000.librarykata.jsonapi.context.account.AccountResource
 
-internal fun Account.toJsonApiDocumentResource(loans: List<Loan> = emptyList()) =
+internal fun Account.toJsonApiDocumentAccountResource(loans: List<Loan> = emptyList()) =
     AccountResource(
         id = id.value,
         type = "account",
-        attributes = toJsonApiDocumentAttributes(),
+        attributes = toJsonApiDocumentAccountAttributes(),
         relationships = mapRelationships(loans),
     )
 
-private fun Account.toJsonApiDocumentAttributes() =
+private fun Account.toJsonApiDocumentAccountAttributes() =
     AccountResource.Attributes(
         identityNumber = identityNumber.value,
         name = name.value,
@@ -26,22 +26,23 @@ private fun Account.toJsonApiDocumentAttributes() =
         registerDate = registerDate.value,
     )
 
-private fun List<Account>.toJsonApiDocumentIncludedResource() =
-    map {
-        AccountResource(
-            id = it.id.value,
-            type = "account",
-            attributes = it.toJsonApiDocumentAttributes(),
-        )
-    }
+// private fun List<Account>.toJsonApiDocumentIncludedResource() =
+//    map {
+//        AccountResource(
+//            id = it.id.value,
+//            type = "account",
+//            attributes = it.toJsonApiDocumentAccountAttributes(),
+//        )
+//    }
 
 private fun mapRelationships(loans: List<Loan>): Map<String, JsonApiRelationshipData>? =
     if (loans.isEmpty()) {
         null
     } else {
         mapOf(
-            "loan" to JsonApiRelationshipData(
-                loans.map { JsonApiRelationshipIdentifier(id = it.id.value, type = "loan") },
-            ),
+            "loan" to
+                JsonApiRelationshipData(
+                    loans.map { JsonApiRelationshipIdentifier(id = it.id.value, type = "loan") },
+                ),
         )
     }

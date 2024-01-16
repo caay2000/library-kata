@@ -9,11 +9,13 @@ import kotlin.reflect.KType
 import kotlin.reflect.full.createType
 
 object DiKt {
-
     private val logger: KLogger = KotlinLogging.logger {}
     private val context: Context = Context()
 
-    fun register(override: Boolean = false, block: () -> Any) {
+    fun register(
+        override: Boolean = false,
+        block: () -> Any,
+    ) {
         try {
             val bean = block()
             register(bean::class.qualifiedName.toString(), override) { bean }
@@ -23,7 +25,11 @@ object DiKt {
         }
     }
 
-    fun register(name: String, override: Boolean = false, block: () -> Any) {
+    fun register(
+        name: String,
+        override: Boolean = false,
+        block: () -> Any,
+    ) {
         try {
             val bean = block()
             context.registerBean(name, override, bean)
@@ -35,9 +41,11 @@ object DiKt {
     }
 
     fun <T> get(name: String): T = context.getBean(name)
+
     inline fun <reified T : Any> get(): T = bind(T::class)
 
     inline fun <reified T : Any> bind(): T = bind(T::class)
+
     fun <T> bind(clazz: KClass<*>): T = context.bind(clazz)
 
     fun <T : Any> bind(name: String): T = context.getBean(name)
@@ -45,10 +53,13 @@ object DiKt {
     fun clear() = context.clear()
 
     internal class Context {
-
         private val context: MutableMap<BeanContext, Any> = mutableMapOf()
 
-        internal fun registerBean(name: String, override: Boolean, bean: Any) {
+        internal fun registerBean(
+            name: String,
+            override: Boolean,
+            bean: Any,
+        ) {
             if (context.keys.count { it.name == name } == 0) {
                 context[bean.toContext(name, override)] = bean
             } else {
@@ -106,11 +117,15 @@ object DiKt {
             val interfaces: List<String>,
         )
 
-        private fun Any.toContext(name: String, override: Boolean): BeanContext = BeanContext(
-            name = name,
-            type = this::class.qualifiedName!!,
-            override = override,
-            interfaces = this::class.java.interfaces.map { it.canonicalName },
-        )
+        private fun Any.toContext(
+            name: String,
+            override: Boolean,
+        ): BeanContext =
+            BeanContext(
+                name = name,
+                type = this::class.qualifiedName!!,
+                override = override,
+                interfaces = this::class.java.interfaces.map { it.canonicalName },
+            )
     }
 }

@@ -31,21 +31,23 @@ fun Application.configureSerialization() {
     }
 }
 
-val jsonMapper = Json {
-    @OptIn(ExperimentalSerializationApi::class)
-    explicitNulls = false
-    encodeDefaults = true
-    classDiscriminator = "serializationType"
-    prettyPrint = true
-    isLenient = true
-    val module = SerializersModule {
-        polymorphic(JsonApiResourceAttributes::class) {
-            subclass(LoanResource.Attributes::class, LoanResource.Attributes.serializer())
-            subclass(AccountResource.Attributes::class, AccountResource.Attributes.serializer())
-        }
-        serializersModuleOf(UUID::class, UUIDSerializer)
-        serializersModuleOf(LocalDate::class, LocalDateSerializer)
-        serializersModuleOf(LocalDateTime::class, LocalDateTimeSerializer)
+val jsonMapper =
+    Json {
+        @OptIn(ExperimentalSerializationApi::class)
+        explicitNulls = false
+        encodeDefaults = true
+        classDiscriminator = "serializationType"
+        prettyPrint = true
+        isLenient = true
+        val module =
+            SerializersModule {
+                polymorphic(JsonApiResourceAttributes::class) {
+                    subclass(LoanResource.Attributes::class, LoanResource.Attributes.serializer())
+                    subclass(AccountResource.Attributes::class, AccountResource.Attributes.serializer())
+                }
+                serializersModuleOf(UUID::class, UUIDSerializer)
+                serializersModuleOf(LocalDate::class, LocalDateSerializer)
+                serializersModuleOf(LocalDateTime::class, LocalDateTimeSerializer)
+            }
+        serializersModule = module
     }
-    serializersModule = module
-}

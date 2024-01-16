@@ -9,7 +9,6 @@ import com.github.caay2000.librarykata.jsonapi.context.book.BookGroupResource
 import kotlinx.serialization.encodeToString
 
 object JsonApiListDocumentMother {
-
     fun from(vararg books: BookCopies): JsonApiListDocument<BookGroupResource> =
         books.toList()
             .flatMap { (book, copies, available) ->
@@ -23,7 +22,7 @@ object JsonApiListDocumentMother {
                 }
                 list
             }
-            .toJsonApiListDocument()
+            .toJsonApiListDocument(emptyList())
 
     fun json(vararg books: BookCopies): String = jsonMapper.encodeToString(from(*books))
 }

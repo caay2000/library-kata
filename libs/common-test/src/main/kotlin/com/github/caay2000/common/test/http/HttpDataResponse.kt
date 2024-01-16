@@ -9,6 +9,5 @@ data class HttpDataResponse<T>(
     val httpResponse: HttpResponse,
     val error: JsonApiErrorDocument?,
 ) {
-
     suspend fun body() = this.httpResponse.bodyAsText()
 }

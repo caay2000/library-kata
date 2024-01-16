@@ -20,7 +20,6 @@ data class AccountResource(
     override val attributes: Attributes,
     override val relationships: Map<String, JsonApiRelationshipData>? = null,
 ) : JsonApiResource {
-
     @Serializable
     @Schema(name = "AccountResource.Attributes")
     data class Attributes(

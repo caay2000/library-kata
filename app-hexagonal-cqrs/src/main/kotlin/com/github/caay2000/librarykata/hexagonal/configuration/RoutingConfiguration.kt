@@ -16,19 +16,20 @@ import io.ktor.server.application.call
 import io.ktor.server.application.createApplicationPlugin
 import io.ktor.server.routing.routing
 
-val RoutingConfiguration = createApplicationPlugin(name = "RoutingConfiguration") {
-    application.routing {
+val RoutingConfiguration =
+    createApplicationPlugin(name = "RoutingConfiguration") {
+        application.routing {
 
-        get("/account", SearchAccountController.documentation) { DiKt.get<SearchAccountController>().invoke(this.call) }
-        get("/account/{id}", FindAccountController.documentation) { DiKt.get<FindAccountController>().invoke(this.call) }
-        post("/account", CreateAccountController.documentation) { DiKt.get<CreateAccountController>().invoke(this.call) }
+            get("/account", SearchAccountController.documentation) { DiKt.get<SearchAccountController>().invoke(this.call) }
+            get("/account/{id}", FindAccountController.documentation) { DiKt.get<FindAccountController>().invoke(this.call) }
+            post("/account", CreateAccountController.documentation) { DiKt.get<CreateAccountController>().invoke(this.call) }
 
-        get("/book", SearchBookController.documentation) { DiKt.get<SearchBookController>().invoke(this.call) }
-        get("/book/{id}", FindBookController.documentation) { DiKt.get<FindBookController>().invoke(this.call) }
-        post("/book", CreateBookController.documentation) { DiKt.get<CreateBookController>().invoke(this.call) }
+            get("/book", SearchBookController.documentation) { DiKt.get<SearchBookController>().invoke(this.call) }
+            get("/book/{id}", FindBookController.documentation) { DiKt.get<FindBookController>().invoke(this.call) }
+            post("/book", CreateBookController.documentation) { DiKt.get<CreateBookController>().invoke(this.call) }
 
-        post("/loan") { DiKt.get<CreateLoanController>().invoke(this.call) }
-        get("/loan/{loanId}") { DiKt.get<FindLoanController>().invoke(this.call) }
-        post("/loan/{bookId}") { DiKt.get<FinishLoanController>().invoke(this.call) }
+            post("/loan") { DiKt.get<CreateLoanController>().invoke(this.call) }
+            get("/loan/{loanId}") { DiKt.get<FindLoanController>().invoke(this.call) }
+            post("/loan/{bookId}") { DiKt.get<FinishLoanController>().invoke(this.call) }
+        }
     }
-}

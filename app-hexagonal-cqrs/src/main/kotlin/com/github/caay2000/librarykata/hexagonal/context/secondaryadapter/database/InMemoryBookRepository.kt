@@ -9,7 +9,6 @@ import com.github.caay2000.librarykata.hexagonal.context.domain.book.SearchBookC
 import com.github.caay2000.memorydb.InMemoryDatasource
 
 class InMemoryBookRepository(private val datasource: InMemoryDatasource) : BookRepository {
-
     override fun save(book: Book): Either<RepositoryError, Unit> =
         Either.catch { datasource.save(TABLE_NAME, book.id.toString(), book) }
             .mapLeft { RepositoryError.Unknown(it) }

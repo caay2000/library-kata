@@ -17,7 +17,6 @@ import com.github.caay2000.librarykata.hexagonal.context.domain.account.findOrEl
 import com.github.caay2000.librarykata.hexagonal.context.domain.account.saveOrElse
 
 class AccountCreator(private val accountRepository: AccountRepository) {
-
     fun invoke(request: CreateAccountRequest): Either<AccountCreatorError, Unit> =
         guardAccountCanBeCreated(request)
             .map { Account.create(request) }
@@ -44,7 +43,10 @@ class AccountCreator(private val accountRepository: AccountRepository) {
         ).flatMap { AccountCreatorError.EmailAlreadyExists(email).left() }
             .validateAccountNotFound()
 
-    private fun guardPhoneIsNotRepeated(phonePrefix: PhonePrefix, phoneNumber: PhoneNumber): Either<AccountCreatorError, Unit> =
+    private fun guardPhoneIsNotRepeated(
+        phonePrefix: PhonePrefix,
+        phoneNumber: PhoneNumber,
+    ): Either<AccountCreatorError, Unit> =
         accountRepository.findOrElse(
             criteria = FindAccountCriteria.ByPhone(phonePrefix, phoneNumber),
             onResourceDoesNotExist = { AccountCreatorError.AccountNotFound() },
@@ -60,8 +62,7 @@ class AccountCreator(private val accountRepository: AccountRepository) {
             }
         }
 
-    private fun Account.save(): Either<AccountCreatorError, Unit> =
-        accountRepository.saveOrElse(this) { AccountCreatorError.Unknown(it) }.map {}
+    private fun Account.save(): Either<AccountCreatorError, Unit> = accountRepository.saveOrElse(this) { AccountCreatorError.Unknown(it) }.map {}
 }
 
 sealed class AccountCreatorError : RuntimeException {
@@ -69,11 +70,14 @@ sealed class AccountCreatorError : RuntimeException {
     constructor(throwable: Throwable) : super(throwable)
 
     class Unknown(error: Throwable) : AccountCreatorError(error)
+
     class AccountNotFound : AccountCreatorError("account not foung")
+
     class IdentityNumberAlreadyExists(identityNumber: IdentityNumber) :
         AccountCreatorError("an account with identity number ${identityNumber.value} already exists")
 
     class EmailAlreadyExists(email: Email) : AccountCreatorError("an account with email ${email.value} already exists")
+
     class PhoneAlreadyExists(phonePrefix: PhonePrefix, phoneNumber: PhoneNumber) :
         AccountCreatorError("an account with phone ${phonePrefix.value} ${phoneNumber.value} already exists")
 }

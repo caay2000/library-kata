@@ -16,7 +16,6 @@ class EventBus(
     val scope: CoroutineScope = CoroutineScope(Default + CoroutineName("EventBus") + SupervisorJob()),
     private val numPartitions: Int = 3,
 ) : EventPublisher {
-
     val logger: KLogger = KotlinLogging.logger {}
 
     private val _events = List(numPartitions) { MutableSharedFlow<Event>() }

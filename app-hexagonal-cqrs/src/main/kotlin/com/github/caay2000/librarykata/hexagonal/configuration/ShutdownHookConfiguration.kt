@@ -7,10 +7,11 @@ import io.ktor.server.application.ApplicationStopping
 import io.ktor.server.application.createApplicationPlugin
 import io.ktor.server.application.hooks.MonitoringEvent
 
-val ShutdownHookConfiguration = createApplicationPlugin(name = "ShutdownHookConfiguration") {
-    on(MonitoringEvent(ApplicationStopping)) { application ->
-        application.environment.monitor.unsubscribe(ApplicationStarted) {}
-        application.environment.monitor.unsubscribe(ApplicationStopped) {}
-        DiKt.clear()
+val ShutdownHookConfiguration =
+    createApplicationPlugin(name = "ShutdownHookConfiguration") {
+        on(MonitoringEvent(ApplicationStopping)) { application ->
+            application.environment.monitor.unsubscribe(ApplicationStarted) {}
+            application.environment.monitor.unsubscribe(ApplicationStopped) {}
+            DiKt.clear()
+        }
     }
-}

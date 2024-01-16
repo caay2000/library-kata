@@ -11,20 +11,22 @@ import com.github.caay2000.librarykata.hexagonal.context.account.mother.AccountM
 import com.github.caay2000.librarykata.hexagonal.context.book.mother.BookMother
 import com.github.caay2000.librarykata.hexagonal.context.domain.account.AccountId
 import com.github.caay2000.librarykata.hexagonal.context.domain.book.BookId
+import com.github.caay2000.librarykata.hexagonal.context.domain.loan.FinishedAt
 import com.github.caay2000.librarykata.hexagonal.context.loan.mother.LoanMother
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.testing.testApplication
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import java.time.LocalDateTime
 
 class FindAccountControllerTest {
-
     private val mockIdGenerator = MockIdGenerator()
     private val mockDateProvider = MockDateProvider()
-    private val testUseCases = TestUseCases(
-        mockIdGenerator = mockIdGenerator,
-        mockDateProvider = mockDateProvider,
-    )
+    private val testUseCases =
+        TestUseCases(
+            mockIdGenerator = mockIdGenerator,
+            mockDateProvider = mockDateProvider,
+        )
 
     @BeforeEach
     fun setUp() {
@@ -34,94 +36,96 @@ class FindAccountControllerTest {
     }
 
     @Test
-    fun `an account can be retrieved`() = testApplication {
-        testUseCases.`account is created`(account)
+    fun `an account can be retrieved`() =
+        testApplication {
+            testUseCases.`account is created`(account)
 
-        val expected = AccountDocumentMother.json(account)
-        testUseCases.`find account`(account.id)
-            .assertStatus(HttpStatusCode.OK)
-            .assertJsonResponse(expected)
-    }
-
-    @Test
-    fun `a user without loans has no loans`() = testApplication {
-        testUseCases.`account is created`(account)
-        testUseCases.`book is created`(anotherBook)
-
-        val expected = AccountDocumentMother.json(account)
-        testUseCases.`find account`(account.id, listOf(TestUseCases.AccountInclude.LOANS))
-            .assertStatus(HttpStatusCode.OK)
-            .assertJsonResponse(expected)
-    }
+            val expected = AccountDocumentMother.json(account)
+            testUseCases.`find account`(account.id)
+                .assertStatus(HttpStatusCode.OK)
+                .assertJsonResponse(expected)
+        }
 
     @Test
-    fun `a user with one loan retrieves it`() = testApplication {
-        testUseCases.`account is created`(account)
-        testUseCases.`book is created`(book).value!!.data.id
-        testUseCases.`loan is created`(
-            id = loan.id,
-            bookIsbn = book.isbn,
-            accountId = AccountId(account.id.value),
-            createdAt = loan.createdAt,
-        )
-        val loan = loan.copy(accountId = account.id, bookId = book.id)
+    fun `a user without loans has no loans`() =
+        testApplication {
+            testUseCases.`account is created`(account)
+            testUseCases.`book is created`(anotherBook)
 
-        val expected = AccountDocumentMother.json(account, loan)
-        testUseCases.`find account`(account.id)
-            .assertStatus(HttpStatusCode.OK)
-            .assertJsonResponse(expected)
-    }
+            val expected = AccountDocumentMother.json(account)
+            testUseCases.`find account`(account.id, listOf(TestUseCases.AccountInclude.LOANS))
+                .assertStatus(HttpStatusCode.OK)
+                .assertJsonResponse(expected)
+        }
 
     @Test
-    fun `a user with one loan retrieves it with included information`() = testApplication {
-        testUseCases.`account is created`(account)
-        testUseCases.`book is created`(book)
-        testUseCases.`loan is created`(
-            id = loan.id,
-            bookIsbn = book.isbn,
-            accountId = account.id,
-            createdAt = loan.createdAt,
-        )
-        val loan = loan.copy(accountId = account.id, bookId = book.id)
+    fun `a user with one loan retrieves it`() =
+        testApplication {
+            testUseCases.`account is created`(account)
+            testUseCases.`book is created`(book).value!!.data.id
+            testUseCases.`loan is created`(
+                id = loan.id,
+                bookIsbn = book.isbn,
+                accountId = AccountId(account.id.value),
+                createdAt = loan.createdAt,
+            )
 
-        val expected = AccountDocumentMother.json(account, listOf(loan), listOf("loans"))
-        testUseCases.`find account`(account.id, listOf(TestUseCases.AccountInclude.LOANS))
-            .assertStatus(HttpStatusCode.OK)
-            .assertJsonResponse(expected)
-    }
+            val expected = AccountDocumentMother.json(account, loan)
+            testUseCases.`find account`(account.id)
+                .assertStatus(HttpStatusCode.OK)
+                .assertJsonResponse(expected)
+        }
 
     @Test
-    fun `a user with multiple loans retrieves them`() = testApplication {
-        testUseCases.`account is created`(account)
-        testUseCases.`book is created`(book)
-        testUseCases.`loan is created`(
-            id = loan.id,
-            bookIsbn = book.isbn,
-            accountId = AccountId(account.id.value),
-            createdAt = loan.createdAt,
-        )
-        val loan = loan.copy(accountId = account.id, bookId = book.id)
+    fun `a user with one loan retrieves it including loan information`() =
+        testApplication {
+            testUseCases.`account is created`(account)
+            testUseCases.`book is created`(book)
+            testUseCases.`loan is created`(
+                id = loan.id,
+                bookIsbn = book.isbn,
+                accountId = account.id,
+                createdAt = loan.createdAt,
+            )
 
-        testUseCases.`book is created`(anotherBook)
-        testUseCases.`loan is created`(
-            id = anotherLoan.id,
-            bookIsbn = anotherBook.isbn,
-            accountId = AccountId(account.id.value),
-            createdAt = anotherLoan.createdAt,
-        )
-        testUseCases.`loan is finished`(bookId = BookId(anotherBook.id.value), finishedAt = anotherLoan.finishedAt)
-        val anotherLoan = anotherLoan.copy(accountId = account.id, bookId = anotherBook.id)
+            val expected = AccountDocumentMother.json(account, listOf(loan), listOf("loans"))
+            testUseCases.`find account`(account.id, listOf(TestUseCases.AccountInclude.LOANS))
+                .assertStatus(HttpStatusCode.OK)
+                .assertJsonResponse(expected)
+        }
 
-        val expected = AccountDocumentMother.json(account, listOf(loan, anotherLoan), listOf("loans"))
-        testUseCases.`find account`(account.id, listOf(TestUseCases.AccountInclude.LOANS))
-            .assertStatus(HttpStatusCode.OK)
-            .assertJsonResponse(expected)
-    }
+    @Test
+    fun `a user with multiple loans retrieves them`() =
+        testApplication {
+            testUseCases.`account is created`(account)
+            testUseCases.`book is created`(book)
+            testUseCases.`loan is created`(
+                id = loan.id,
+                bookIsbn = book.isbn,
+                accountId = AccountId(account.id.value),
+                createdAt = loan.createdAt,
+            )
 
+            testUseCases.`book is created`(anotherBook)
+            testUseCases.`loan is created`(
+                id = anotherLoan.id,
+                bookIsbn = anotherBook.isbn,
+                accountId = AccountId(account.id.value),
+                createdAt = anotherLoan.createdAt,
+            )
+            testUseCases.`loan is finished`(bookId = BookId(anotherBook.id.value), finishedAt = anotherLoan.finishedAt)
+
+            val expected = AccountDocumentMother.json(account, listOf(loan, anotherLoan), listOf("loans"))
+            testUseCases.`find account`(account.id, listOf(TestUseCases.AccountInclude.LOANS))
+                .assertStatus(HttpStatusCode.OK)
+                .assertJsonResponse(expected)
+        }
+
+    private val now = LocalDateTime.now()
     private val book = BookMother.random()
     private val anotherBook = BookMother.random()
 
     private val account = AccountMother.random()
-    private val loan = LoanMother.random()
-    private val anotherLoan = LoanMother.finishedLoan()
+    private val loan = LoanMother.random(accountId = account.id, bookId = book.id)
+    private val anotherLoan = LoanMother.random(accountId = account.id, bookId = anotherBook.id).finishLoan(FinishedAt(now))
 }

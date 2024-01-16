@@ -11,7 +11,6 @@ data class LoanRequestResource(
     override val type: String = "loan",
     override val attributes: Attributes,
 ) : JsonApiRequestResource {
-
     @Serializable
     @Schema(name = "LoanRequestResource.Attributes")
     data class Attributes(

@@ -25,7 +25,6 @@ class LoanFinisher(
     private val bookRepository: BookRepository,
     private val accountRepository: AccountRepository,
 ) {
-
     fun invoke(
         bookId: BookId,
         finishedAt: FinishedAt,
@@ -73,14 +72,11 @@ class LoanFinisher(
         val account: Account
             get() = map["account"]!! as Account
 
-        fun withLoan(loan: Loan): LoanFinisherContext =
-            LoanFinisherContext(map + mutableMapOf("loan" to loan))
+        fun withLoan(loan: Loan): LoanFinisherContext = LoanFinisherContext(map + mutableMapOf("loan" to loan))
 
-        fun withBook(book: Book): LoanFinisherContext =
-            LoanFinisherContext(map + mutableMapOf("book" to book))
+        fun withBook(book: Book): LoanFinisherContext = LoanFinisherContext(map + mutableMapOf("book" to book))
 
-        fun withAccount(account: Account): LoanFinisherContext =
-            LoanFinisherContext(map + mutableMapOf("account" to account))
+        fun withAccount(account: Account): LoanFinisherContext = LoanFinisherContext(map + mutableMapOf("account" to account))
     }
 }
 
@@ -89,5 +85,6 @@ sealed class LoanFinisherError : RuntimeException {
     constructor(throwable: Throwable) : super(throwable)
 
     class LoanNotFound(bookId: BookId) : LoanFinisherError("loan for book ${bookId.value} not found")
+
     class UnknownError(error: Throwable) : LoanFinisherError(error)
 }

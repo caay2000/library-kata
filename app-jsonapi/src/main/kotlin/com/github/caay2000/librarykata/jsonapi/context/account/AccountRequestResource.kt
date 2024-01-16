@@ -14,7 +14,6 @@ data class AccountRequestResource(
     override val type: String = "account",
     override val attributes: Attributes,
 ) : JsonApiRequestResource {
-
     @Serializable
     @Schema(name = "AccountRequestResource.Attributes")
     data class Attributes(

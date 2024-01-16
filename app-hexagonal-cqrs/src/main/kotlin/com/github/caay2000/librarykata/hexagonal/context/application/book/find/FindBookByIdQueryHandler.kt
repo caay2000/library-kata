@@ -12,7 +12,6 @@ import mu.KLogger
 import mu.KotlinLogging
 
 class FindBookByIdQueryHandler(bookRepository: BookRepository) : QueryHandler<FindBookByIdQuery, FindBookByIdQueryResponse> {
-
     override val logger: KLogger = KotlinLogging.logger {}
 
     private val finder = BookFinder(bookRepository)
@@ -25,4 +24,4 @@ class FindBookByIdQueryHandler(bookRepository: BookRepository) : QueryHandler<Fi
 
 data class FindBookByIdQuery(val id: BookId) : Query
 
-data class FindBookByIdQueryResponse(val value: Book) : QueryResponse
+data class FindBookByIdQueryResponse(val book: Book) : QueryResponse

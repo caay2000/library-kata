@@ -8,7 +8,6 @@ import com.github.caay2000.librarykata.hexagonal.context.domain.book.BookReposit
 import com.github.caay2000.librarykata.hexagonal.context.domain.book.FindBookCriteria
 
 class BookFinder(private val bookRepository: BookRepository) {
-
     fun invoke(criteria: FindBookCriteria): Either<BookFinderError, Book> =
         bookRepository.find(criteria)
             .mapLeft {
@@ -28,5 +27,6 @@ sealed class BookFinderError : RuntimeException {
     constructor(throwable: Throwable) : super(throwable)
 
     class UnknownError(error: Throwable) : BookFinderError(error)
+
     class BookNotFoundError(bookId: BookId) : BookFinderError("Book ${bookId.value} not found")
 }

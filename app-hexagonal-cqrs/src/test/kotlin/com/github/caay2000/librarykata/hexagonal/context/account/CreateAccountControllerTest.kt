@@ -16,7 +16,6 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 class CreateAccountControllerTest {
-
     private val mockIdGenerator = MockIdGenerator()
     private val mockDateProvider = MockDateProvider()
     private val testUseCases = TestUseCases(mockIdGenerator = mockIdGenerator, mockDateProvider = mockDateProvider)
@@ -29,60 +28,64 @@ class CreateAccountControllerTest {
     }
 
     @Test
-    fun `an account can be created`() = testApplication {
-        val expected = AccountDocumentMother.json(account)
-        testUseCases.`account is created`(account)
-            .assertStatus(HttpStatusCode.Created)
-            .assertJsonResponse(expected)
-    }
+    fun `an account can be created`() =
+        testApplication {
+            val expected = AccountDocumentMother.json(account)
+            testUseCases.`account is created`(account)
+                .assertStatus(HttpStatusCode.Created)
+                .assertJsonResponse(expected)
+        }
 
     @Test
-    fun `an account with identityNumber repeated cannot be created`() = testApplication {
-        testUseCases.`account is created`(account)
-            .assertStatus(HttpStatusCode.Created)
+    fun `an account with identityNumber repeated cannot be created`() =
+        testApplication {
+            testUseCases.`account is created`(account)
+                .assertStatus(HttpStatusCode.Created)
 
-        testUseCases.`account is created`(sameIdentityNumberAccount)
-            .assertStatus(HttpStatusCode.BadRequest)
-            .assertJsonApiErrorDocument(
-                jsonApiErrorDocument(
-                    status = HttpStatusCode.BadRequest,
-                    title = "IdentityNumberAlreadyExists",
-                    detail = "an account with identity number ${account.identityNumber.value} already exists",
-                ),
-            )
-    }
-
-    @Test
-    fun `an account with email repeated cannot be created`() = testApplication {
-        testUseCases.`account is created`(account)
-            .assertStatus(HttpStatusCode.Created)
-
-        testUseCases.`account is created`(sameEmailAccount)
-            .assertStatus(HttpStatusCode.BadRequest)
-            .assertJsonApiErrorDocument(
-                jsonApiErrorDocument(
-                    status = HttpStatusCode.BadRequest,
-                    title = "EmailAlreadyExists",
-                    detail = "an account with email ${account.email.value} already exists",
-                ),
-            )
-    }
+            testUseCases.`account is created`(sameIdentityNumberAccount)
+                .assertStatus(HttpStatusCode.BadRequest)
+                .assertJsonApiErrorDocument(
+                    jsonApiErrorDocument(
+                        status = HttpStatusCode.BadRequest,
+                        title = "IdentityNumberAlreadyExists",
+                        detail = "an account with identity number ${account.identityNumber.value} already exists",
+                    ),
+                )
+        }
 
     @Test
-    fun `an account with phone repeated cannot be created`() = testApplication {
-        testUseCases.`account is created`(account)
-            .assertStatus(HttpStatusCode.Created)
+    fun `an account with email repeated cannot be created`() =
+        testApplication {
+            testUseCases.`account is created`(account)
+                .assertStatus(HttpStatusCode.Created)
 
-        testUseCases.`account is created`(samePhoneAccount)
-            .assertStatus(HttpStatusCode.BadRequest)
-            .assertJsonApiErrorDocument(
-                jsonApiErrorDocument(
-                    status = HttpStatusCode.BadRequest,
-                    title = "PhoneAlreadyExists",
-                    detail = "an account with phone ${account.phonePrefix.value} ${account.phoneNumber.value} already exists",
-                ),
-            )
-    }
+            testUseCases.`account is created`(sameEmailAccount)
+                .assertStatus(HttpStatusCode.BadRequest)
+                .assertJsonApiErrorDocument(
+                    jsonApiErrorDocument(
+                        status = HttpStatusCode.BadRequest,
+                        title = "EmailAlreadyExists",
+                        detail = "an account with email ${account.email.value} already exists",
+                    ),
+                )
+        }
+
+    @Test
+    fun `an account with phone repeated cannot be created`() =
+        testApplication {
+            testUseCases.`account is created`(account)
+                .assertStatus(HttpStatusCode.Created)
+
+            testUseCases.`account is created`(samePhoneAccount)
+                .assertStatus(HttpStatusCode.BadRequest)
+                .assertJsonApiErrorDocument(
+                    jsonApiErrorDocument(
+                        status = HttpStatusCode.BadRequest,
+                        title = "PhoneAlreadyExists",
+                        detail = "an account with phone ${account.phonePrefix.value} ${account.phoneNumber.value} already exists",
+                    ),
+                )
+        }
 
     private val account = AccountMother.random()
     private val sameIdentityNumberAccount = AccountMother.random().copy(identityNumber = account.identityNumber)

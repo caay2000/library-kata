@@ -40,10 +40,11 @@ private fun Map<String, String>.toJsonApiRequestParams(): JsonApiRequestParams {
                 "include" -> entry.value.split(",").map { includes.add(it.uppercase()) }
                 "page[number]" -> pageNumber = entry.value.toInt()
                 "page[size]" -> pageSize = entry.value.toInt()
-                "sort" -> entry.value.split(",")
-                    .forEach { field ->
-                        if (field.startsWith("-")) sort[field.substring(1)] = "desc" else sort[field] = "asc"
-                    }
+                "sort" ->
+                    entry.value.split(",")
+                        .forEach { field ->
+                            if (field.startsWith("-")) sort[field.substring(1)] = "desc" else sort[field] = "asc"
+                        }
 
                 in filterMatches -> filter[filterMatches[1]] = entry.value.split(",")
             }

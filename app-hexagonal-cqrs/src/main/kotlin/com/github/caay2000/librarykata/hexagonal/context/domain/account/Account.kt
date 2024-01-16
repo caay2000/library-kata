@@ -15,24 +15,26 @@ data class Account(
     val registerDate: RegisterDate,
     val currentLoans: CurrentLoans,
 ) {
-
     companion object {
-        fun create(request: CreateAccountRequest) = Account(
-            id = request.accountId,
-            identityNumber = request.identityNumber,
-            name = request.name,
-            surname = request.surname,
-            birthdate = request.birthdate,
-            email = request.email,
-            phonePrefix = request.phonePrefix,
-            phoneNumber = request.phoneNumber,
-            registerDate = request.registerDate,
-            currentLoans = CurrentLoans(0),
-        )
+        fun create(request: CreateAccountRequest) =
+            Account(
+                id = request.accountId,
+                identityNumber = request.identityNumber,
+                name = request.name,
+                surname = request.surname,
+                birthdate = request.birthdate,
+                email = request.email,
+                phonePrefix = request.phonePrefix,
+                phoneNumber = request.phoneNumber,
+                registerDate = request.registerDate,
+                currentLoans = CurrentLoans(0),
+            )
     }
 
     fun increaseLoans(): Account = copy(currentLoans = currentLoans.increase())
+
     fun decreaseLoans(): Account = copy(currentLoans = currentLoans.decrease())
+
     fun hasReachedLoanLimit(): Boolean = currentLoans.value >= 5
 }
 
@@ -66,6 +68,7 @@ value class RegisterDate(val value: LocalDateTime)
 @JvmInline
 value class CurrentLoans(val value: Int) {
     internal fun increase(value: Int = 1): CurrentLoans = CurrentLoans(this.value + value)
+
     internal fun decrease(value: Int = 1): CurrentLoans = CurrentLoans(Math.max(this.value - value, 0))
 }
 

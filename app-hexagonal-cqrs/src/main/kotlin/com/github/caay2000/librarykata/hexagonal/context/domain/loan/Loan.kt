@@ -11,7 +11,6 @@ data class Loan(
     val createdAt: CreatedAt,
     val finishedAt: FinishedAt?,
 ) {
-
     companion object {
         fun create(
             id: LoanId,

@@ -16,7 +16,6 @@ import com.github.caay2000.librarykata.hexagonal.context.domain.book.saveOrElse
 class BookCreator(
     private val bookRepository: BookRepository,
 ) {
-
     fun invoke(request: CreateBookRequest): Either<BookCreatorError, Unit> =
         guardBookIsNotAlreadyCreated(request.id)
             .flatMap { createBook(request) }
@@ -37,8 +36,7 @@ class BookCreator(
         Either.catch { Book.create(request) }
             .mapLeft { BookCreatorError.Unknown(it) }
 
-    private fun Book.save(): Either<BookCreatorError, Unit> =
-        bookRepository.saveOrElse<BookCreatorError>(this) { BookCreatorError.Unknown(it) }.map { }
+    private fun Book.save(): Either<BookCreatorError, Unit> = bookRepository.saveOrElse<BookCreatorError>(this) { BookCreatorError.Unknown(it) }.map { }
 }
 
 sealed class BookCreatorError : RuntimeException {
@@ -46,5 +44,6 @@ sealed class BookCreatorError : RuntimeException {
     constructor(throwable: Throwable) : super(throwable)
 
     class Unknown(error: Throwable) : BookCreatorError(error)
+
     class BookAlreadyExists(bookId: BookId) : BookCreatorError("book ${bookId.value} already exists")
 }

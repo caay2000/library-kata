@@ -21,7 +21,6 @@ import java.time.LocalDateTime
 import kotlin.random.Random
 
 class RealExecutionTest {
-
     private val libraryClient: LibraryClient = LibraryClient()
 
     private val books = mutableListOf<Book>()
@@ -35,42 +34,43 @@ class RealExecutionTest {
 
     @Disabled
     @Test
-    fun `real execution test`() = testApplication {
-        `multiple accounts are created`(20)
-        `multiple books are created`(100)
+    fun `real execution test`() =
+        testApplication {
+            `multiple accounts are created`(20)
+            `multiple books are created`(100)
 
-        repeat(10000) {
-            val random = Random.nextInt(1000)
-            when (random) {
-                in 1..349 -> startLoan()
-                in 350..699 -> finishLoan()
-                in 700..799 -> `create book copy`()
-                in 800..899 -> `create new book`()
-                in 900..999 -> `create new account`()
+            repeat(10000) {
+                val random = Random.nextInt(1000)
+                when (random) {
+                    in 1..349 -> startLoan()
+                    in 350..699 -> finishLoan()
+                    in 700..799 -> `create book copy`()
+                    in 800..899 -> `create new book`()
+                    in 900..999 -> `create new account`()
+                }
             }
-        }
 
-        logger.info { map }
-    }
+            logger.info { map }
+        }
 
     context(ApplicationTestBuilder)
     private fun startLoan() {
         val book = books.random()
         val account = existingAccounts.keys.random()
-        val available = libraryClient.findBookById(book.id).value!!.data.attributes.available
+        val available = libraryClient.findBook(book.id, emptyList()).value!!.data.attributes.available
         if (available && existingAccounts[account]!! < 5 && availableBooks[book.isbn]!! > 0) {
             logger.info { "Start new LOAN, book[$book], account[$account]" }
             val jsonApiDocument = libraryClient.createLoan(book.isbn, account.id).value!!
             availableBooks[book.isbn] = availableBooks[book.isbn]!!.dec()
             existingAccounts[account] = existingAccounts[account]!!.inc()
-            existingLoans[book.id] = Loan(
-                id = LoanId(jsonApiDocument.data.id),
-                bookId = book.id,
-                accountId = account.id,
-                createdAt = CreatedAt(LocalDateTime.now()),
-                finishedAt = null,
-
-            )
+            existingLoans[book.id] =
+                Loan(
+                    id = LoanId(jsonApiDocument.data.id),
+                    bookId = book.id,
+                    accountId = account.id,
+                    createdAt = CreatedAt(LocalDateTime.now()),
+                    finishedAt = null,
+                )
             map["startLoan"] = map.getOrDefault("startLoan", 0) + 1
         }
     }
@@ -111,13 +111,14 @@ class RealExecutionTest {
     private fun `create new book`() =
         with(BookMother.random()) {
             logger.info { "Create new BOOK" }
-            val id = libraryClient.createBook(
-                isbn = isbn,
-                title = title,
-                author = author,
-                pages = pages,
-                publisher = publisher,
-            ).value!!.data.id
+            val id =
+                libraryClient.createBook(
+                    isbn = isbn,
+                    title = title,
+                    author = author,
+                    pages = pages,
+                    publisher = publisher,
+                ).value!!.data.id
             books.add(this.copy(id = BookId(id)))
             availableBooks[this.isbn] = availableBooks.getOrDefault(this.isbn, 0) + 1
 
@@ -149,15 +150,16 @@ class RealExecutionTest {
     private fun `create new account`() =
         with(AccountMother.random()) {
             logger.info { "Create new ACCOUNT" }
-            val id = libraryClient.createAccount(
-                identityNumber = identityNumber,
-                name = name,
-                surname = surname,
-                birthdate = birthdate,
-                email = email,
-                phonePrefix = phonePrefix,
-                phoneNumber = phoneNumber,
-            ).value!!.data.id
+            val id =
+                libraryClient.createAccount(
+                    identityNumber = identityNumber,
+                    name = name,
+                    surname = surname,
+                    birthdate = birthdate,
+                    email = email,
+                    phonePrefix = phonePrefix,
+                    phoneNumber = phoneNumber,
+                ).value!!.data.id
             existingAccounts[this.copy(id = AccountId(id))] = 0
 
             map["createAccount"] = map.getOrDefault("createAccount", 0) + 1

@@ -16,7 +16,6 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 
 object AccountMother {
-
     fun random(
         id: AccountId = AccountIdMother.random(),
         identityNumber: IdentityNumber = IdentityNumber(RandomStringGenerator.randomUppercaseLetter() + RandomStringGenerator.randomNumber(8)),
@@ -27,16 +26,17 @@ object AccountMother {
         phonePrefix: PhonePrefix = PhonePrefix("+" + RandomStringGenerator.randomNumber(3)),
         phoneNumber: PhoneNumber = PhoneNumber("6" + RandomStringGenerator.randomNumber(8)),
         registerDate: RegisterDate = RegisterDate(LocalDateTime.now()),
-    ): Account = Account(
-        id = id,
-        identityNumber = identityNumber,
-        name = name,
-        surname = surname,
-        birthdate = birthdate,
-        email = email,
-        phonePrefix = phonePrefix,
-        phoneNumber = phoneNumber,
-        registerDate = registerDate,
-        currentLoans = CurrentLoans(0),
-    )
+    ): Account =
+        Account(
+            id = id,
+            identityNumber = identityNumber,
+            name = name,
+            surname = surname,
+            birthdate = birthdate,
+            email = email,
+            phonePrefix = phonePrefix,
+            phoneNumber = phoneNumber,
+            registerDate = registerDate,
+            currentLoans = CurrentLoans(0),
+        )
 }

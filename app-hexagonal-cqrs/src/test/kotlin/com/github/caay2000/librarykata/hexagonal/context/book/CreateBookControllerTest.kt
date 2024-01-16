@@ -1,21 +1,20 @@
 package com.github.caay2000.librarykata.hexagonal.context.book
 
-import com.github.caay2000.common.test.http.assertResponse
+import com.github.caay2000.common.test.http.assertJsonResponse
 import com.github.caay2000.common.test.http.assertStatus
 import com.github.caay2000.common.test.mock.MockDateProvider
 import com.github.caay2000.common.test.mock.MockIdGenerator
 import com.github.caay2000.dikt.DiKt
 import com.github.caay2000.librarykata.hexagonal.common.TestUseCases
+import com.github.caay2000.librarykata.hexagonal.context.book.mother.BookDocumentMother
 import com.github.caay2000.librarykata.hexagonal.context.book.mother.BookIdMother
 import com.github.caay2000.librarykata.hexagonal.context.book.mother.BookMother
-import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.serialization.toJsonApiDocument
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.testing.testApplication
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 class CreateBookControllerTest {
-
     private val mockIdGenerator = MockIdGenerator()
     private val mockDateProvider = MockDateProvider()
     private val testUseCases = TestUseCases(mockIdGenerator = mockIdGenerator, mockDateProvider = mockDateProvider)
@@ -28,22 +27,29 @@ class CreateBookControllerTest {
     }
 
     @Test
-    fun `a book can be created`() = testApplication {
-        testUseCases.`book is created`(book)
-            .assertStatus(HttpStatusCode.Created)
-            .assertResponse(book.toJsonApiDocument())
-    }
+    fun `a book can be created`() =
+        testApplication {
+            val expected = BookDocumentMother.json(book)
+            testUseCases.`book is created`(book)
+                .assertStatus(HttpStatusCode.Created)
+                .assertJsonResponse(expected)
+        }
 
     @Test
-    fun `multiple books with same isbn will have different id`() = testApplication {
-        testUseCases.`book is created`(book)
-            .assertStatus(HttpStatusCode.Created)
-            .assertResponse(book.toJsonApiDocument())
+    fun `multiple books with same isbn will have different id`() =
+        testApplication {
+            val expected = BookDocumentMother.json(book)
+            testUseCases.`book is created`(book)
+                .assertStatus(HttpStatusCode.Created)
+                .assertJsonResponse(expected)
 
-        testUseCases.`book is created`(differentIdBook)
-            .assertStatus(HttpStatusCode.Created)
-            .assertResponse(differentIdBook.toJsonApiDocument())
-    }
+            val expectedDifferentId = BookDocumentMother.json(differentIdBook)
+            testUseCases.`book is created`(differentIdBook)
+                .assertStatus(HttpStatusCode.Created)
+                .assertJsonResponse(expectedDifferentId)
+        }
+
+    // TODO missing error tests
 
     private val book = BookMother.random()
     private val differentIdBook = book.copy(id = BookIdMother.random())

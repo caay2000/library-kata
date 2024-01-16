@@ -23,7 +23,6 @@ import java.util.UUID
 class CreateAccountCommandHandler(
     accountRepository: AccountRepository,
 ) : CommandHandler<CreateAccountCommand> {
-
     override val logger: KLogger = KotlinLogging.logger {}
     private val creator = AccountCreator(accountRepository)
 

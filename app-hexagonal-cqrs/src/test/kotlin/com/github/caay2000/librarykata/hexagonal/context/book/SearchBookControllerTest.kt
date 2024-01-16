@@ -17,7 +17,6 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 class SearchBookControllerTest {
-
     private val mockIdGenerator = MockIdGenerator()
     private val mockDateProvider = MockDateProvider()
     private val testUseCases = TestUseCases(mockIdGenerator = mockIdGenerator, mockDateProvider = mockDateProvider)
@@ -30,22 +29,24 @@ class SearchBookControllerTest {
     }
 
     @Test
-    fun `all books can be searched`() = testApplication {
-        testUseCases.`multiple copies of the same book are created`(book, 5)
-        testUseCases.`multiple copies of the same book are created`(differentBook, 3)
-        testUseCases.`book is created`(anotherBook)
-        testUseCases.`account is created`(account)
-        testUseCases.`loan is created`(bookIsbn = book.isbn, accountId = AccountId(account.id.value))
+    fun `all books can be searched`() =
+        testApplication {
+            testUseCases.`multiple copies of the same book are created`(book, 5)
+            testUseCases.`multiple copies of the same book are created`(differentBook, 3)
+            testUseCases.`book is created`(anotherBook)
+            testUseCases.`account is created`(account)
+            testUseCases.`loan is created`(bookIsbn = book.isbn, accountId = AccountId(account.id.value))
 
-        val expected = JsonApiListDocumentMother.json(
-            BookCopies(book, 5, 4),
-            BookCopies(differentBook, 3),
-            BookCopies(anotherBook),
-        )
-        testUseCases.`search book`()
-            .assertStatus(HttpStatusCode.OK)
-            .assertJsonResponse(expected)
-    }
+            val expected =
+                JsonApiListDocumentMother.json(
+                    BookCopies(book, 5, 4),
+                    BookCopies(differentBook, 3),
+                    BookCopies(anotherBook),
+                )
+            testUseCases.`search book`()
+                .assertStatus(HttpStatusCode.OK)
+                .assertJsonResponse(expected)
+        }
 
     private val book = BookMother.random()
     private val differentBook = BookMother.random()

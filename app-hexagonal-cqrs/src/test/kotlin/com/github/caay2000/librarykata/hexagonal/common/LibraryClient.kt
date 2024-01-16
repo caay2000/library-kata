@@ -41,7 +41,6 @@ import mu.KLogger
 import mu.KotlinLogging
 
 class LibraryClient {
-
     private val logger: KLogger = KotlinLogging.logger {}
 
     context(ApplicationTestBuilder)
@@ -55,19 +54,22 @@ class LibraryClient {
         phoneNumber: PhoneNumber,
     ): HttpDataResponse<JsonApiDocument<AccountResource>> =
         runBlocking {
-            val request = JsonApiRequestDocument(
-                data = AccountRequestResource(
-                    attributes = AccountRequestResource.Attributes(
-                        identityNumber = identityNumber.value,
-                        name = name.value,
-                        surname = surname.value,
-                        birthdate = birthdate.value,
-                        email = email.value,
-                        phonePrefix = phonePrefix.value,
-                        phoneNumber = phoneNumber.value,
-                    ),
-                ),
-            )
+            val request =
+                JsonApiRequestDocument(
+                    data =
+                        AccountRequestResource(
+                            attributes =
+                                AccountRequestResource.Attributes(
+                                    identityNumber = identityNumber.value,
+                                    name = name.value,
+                                    surname = surname.value,
+                                    birthdate = birthdate.value,
+                                    email = email.value,
+                                    phonePrefix = phonePrefix.value,
+                                    phoneNumber = phoneNumber.value,
+                                ),
+                        ),
+                )
             val jsonRequest = jsonMapper.encodeToString<JsonApiRequestDocument<AccountRequestResource>>(request)
             logger.trace { "CreateAccount Request: $jsonRequest" }
             client.post("/account") {
@@ -77,11 +79,15 @@ class LibraryClient {
         }
 
     context(ApplicationTestBuilder)
-    fun findAccount(id: AccountId, include: List<TestUseCases.AccountInclude>): HttpDataResponse<JsonApiDocument<AccountResource>> =
+    fun findAccount(
+        id: AccountId,
+        include: List<TestUseCases.AccountInclude>,
+    ): HttpDataResponse<JsonApiDocument<AccountResource>> =
         runBlocking {
-            val includeQuery = include.joinToString { it.name.lowercase() }.let {
-                if (it.isNotBlank()) "?include=$it" else ""
-            }
+            val includeQuery =
+                include.joinToString { it.name.lowercase() }.let {
+                    if (it.isNotBlank()) "?include=$it" else ""
+                }
             client.get("/account/${id.value}$includeQuery").toHttpDataResponse<JsonApiDocument<AccountResource>>()
         }
 
@@ -106,17 +112,20 @@ class LibraryClient {
         publisher: BookPublisher,
     ): HttpDataResponse<JsonApiDocument<BookResource>> =
         runBlocking {
-            val request = JsonApiRequestDocument(
-                data = BookRequestResource(
-                    attributes = BookRequestResource.Attributes(
-                        isbn.value,
-                        title.value,
-                        author.value,
-                        pages.value,
-                        publisher.value,
-                    ),
-                ),
-            )
+            val request =
+                JsonApiRequestDocument(
+                    data =
+                        BookRequestResource(
+                            attributes =
+                                BookRequestResource.Attributes(
+                                    isbn.value,
+                                    title.value,
+                                    author.value,
+                                    pages.value,
+                                    publisher.value,
+                                ),
+                        ),
+                )
             val jsonRequest = jsonMapper.encodeToString(request)
             logger.trace { "CreateBook Request: $jsonRequest" }
             client.post("/book") {
@@ -126,16 +135,24 @@ class LibraryClient {
         }
 
     context(ApplicationTestBuilder)
-    fun findBookById(id: BookId): HttpDataResponse<JsonApiDocument<BookResource>> =
-        runBlocking { client.get("/book/${id.value}").toHttpDataResponse() }
+    fun findBook(
+        id: BookId,
+        include: List<TestUseCases.BookInclude>,
+    ): HttpDataResponse<JsonApiDocument<BookResource>> =
+        runBlocking {
+            val includeQuery =
+                include.joinToString { it.name.lowercase() }.let {
+                    if (it.isNotBlank()) "?include=$it" else ""
+                }
+            client.get("/book/${id.value}$includeQuery").toHttpDataResponse<JsonApiDocument<BookResource>>()
+        }
 
     context(ApplicationTestBuilder)
     fun findBookByIsbn(isbn: BookIsbn): HttpDataResponse<JsonApiListDocument<BookGroupResource>> =
         runBlocking { client.get("/book?filter[isbn]=${isbn.value}").toHttpDataResponse() }
 
     context(ApplicationTestBuilder)
-    fun searchBook(): HttpDataResponse<JsonApiListDocument<BookGroupResource>> =
-        runBlocking { client.get("/book").toHttpDataResponse() }
+    fun searchBook(): HttpDataResponse<JsonApiListDocument<BookGroupResource>> = runBlocking { client.get("/book").toHttpDataResponse() }
 
     context(ApplicationTestBuilder)
     fun createLoan(
@@ -144,14 +161,16 @@ class LibraryClient {
     ): HttpDataResponse<JsonApiDocument<LoanResource>> =
         runBlocking {
             client.post("/loan") {
-                val request = JsonApiRequestDocument(
-                    LoanRequestResource(
-                        attributes = LoanRequestResource.Attributes(
-                            bookIsbn = bookIsbn.value,
-                            accountId = accountId.value,
+                val request =
+                    JsonApiRequestDocument(
+                        LoanRequestResource(
+                            attributes =
+                                LoanRequestResource.Attributes(
+                                    bookIsbn = bookIsbn.value,
+                                    accountId = accountId.value,
+                                ),
                         ),
-                    ),
-                )
+                    )
                 setBody(jsonMapper.encodeToString(request))
                 contentType(ContentType.JsonApi)
             }.toHttpDataResponse()
@@ -164,9 +183,10 @@ class LibraryClient {
         }
 
     private suspend inline fun <reified T> HttpResponse.toHttpDataResponse(): HttpDataResponse<T> {
-        val body = bodyAsText().also {
-            logger.trace { "Client Response: $it" }
-        }
+        val body =
+            bodyAsText().also {
+                logger.trace { "Client Response: $it" }
+            }
         return HttpDataResponse(
             value = decodeJsonBody<T?>(body),
             httpResponse = this,

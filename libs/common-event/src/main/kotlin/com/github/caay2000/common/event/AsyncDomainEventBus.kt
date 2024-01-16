@@ -6,7 +6,6 @@ import mu.KLogger
 import mu.KotlinLogging
 
 class AsyncDomainEventBus(override val eventBus: EventBus) : DomainEventBus, DomainEventPublisher {
-
     private val logger: KLogger = KotlinLogging.logger {}
 
     override fun <EVENT : DomainEvent> publish(event: EVENT): Either<Throwable, Unit> {

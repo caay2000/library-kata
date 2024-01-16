@@ -8,7 +8,6 @@ import com.github.caay2000.librarykata.hexagonal.context.domain.account.FindAcco
 import com.github.caay2000.librarykata.hexagonal.context.domain.account.findOrElse
 
 class AccountFinder(private val accountRepository: AccountRepository) {
-
     fun invoke(accountId: AccountId): Either<AccountFinderError, Account> =
         accountRepository.findOrElse(
             criteria = FindAccountCriteria.ById(accountId),
@@ -21,5 +20,6 @@ sealed class AccountFinderError : RuntimeException {
     constructor(throwable: Throwable) : super(throwable)
 
     class Unknown(error: Throwable) : AccountFinderError(error)
+
     class AccountNotFoundError(accountId: AccountId) : AccountFinderError("account $accountId not found")
 }

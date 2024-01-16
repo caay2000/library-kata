@@ -2,6 +2,7 @@ package com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.bo
 
 import com.github.caay2000.common.http.ContentType
 import com.github.caay2000.common.http.Controller
+import com.github.caay2000.common.http.Transformer
 import com.github.caay2000.common.jsonapi.JsonApiListDocument
 import com.github.caay2000.common.jsonapi.JsonApiRequestParams
 import com.github.caay2000.common.jsonapi.documentation.errorResponses
@@ -9,8 +10,10 @@ import com.github.caay2000.common.jsonapi.documentation.responseExample
 import com.github.caay2000.common.jsonapi.toJsonApiRequestParams
 import com.github.caay2000.librarykata.hexagonal.context.application.book.search.SearchBooksQuery
 import com.github.caay2000.librarykata.hexagonal.context.application.book.search.SearchBooksQueryHandler
+import com.github.caay2000.librarykata.hexagonal.context.domain.book.Book
 import com.github.caay2000.librarykata.hexagonal.context.domain.book.BookRepository
-import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.serialization.toJsonApiListDocument
+import com.github.caay2000.librarykata.hexagonal.context.domain.loan.LoanRepository
+import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.book.transformer.BookListToBookGroupDocumentListTransformer
 import com.github.caay2000.librarykata.jsonapi.context.book.BookGroupResource
 import io.github.smiley4.ktorswaggerui.dsl.OpenApiRoute
 import io.ktor.http.HttpStatusCode
@@ -20,17 +23,17 @@ import io.ktor.util.toMap
 import mu.KLogger
 import mu.KotlinLogging
 
-class SearchBookController(bookRepository: BookRepository) : Controller {
-
+class SearchBookController(bookRepository: BookRepository, loanRepository: LoanRepository) : Controller {
     override val logger: KLogger = KotlinLogging.logger {}
 
     private val queryHandler = SearchBooksQueryHandler(bookRepository)
+    private val transformer: Transformer<List<Book>, JsonApiListDocument<BookGroupResource>> = BookListToBookGroupDocumentListTransformer(loanRepository)
 
     override suspend fun handle(call: ApplicationCall) {
         val params = call.parameters.toMap().toJsonApiRequestParams()
         val books = queryHandler.invoke(params.toQuery())
-        val document = books.values.toJsonApiListDocument()
-        call.respond(HttpStatusCode.OK, document)
+        val response = transformer.invoke(books.values)
+        call.respond(HttpStatusCode.OK, response)
     }
 
     private fun JsonApiRequestParams.toQuery() =

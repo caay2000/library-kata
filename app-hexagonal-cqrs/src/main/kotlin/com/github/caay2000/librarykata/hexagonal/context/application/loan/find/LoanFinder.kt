@@ -8,7 +8,6 @@ import com.github.caay2000.librarykata.hexagonal.context.domain.loan.LoanId
 import com.github.caay2000.librarykata.hexagonal.context.domain.loan.LoanRepository
 
 class LoanFinder(private val loanRepository: LoanRepository) {
-
     fun invoke(loanId: LoanId): Either<LoanFinderError, Loan> =
         loanRepository.find(FindLoanCriteria.ById(loanId))
             .mapLeft { error ->
@@ -24,5 +23,6 @@ sealed class LoanFinderError : RuntimeException {
     constructor(throwable: Throwable) : super(throwable)
 
     class Unknown(error: Throwable) : LoanFinderError(error)
+
     class LoanNotFoundError(id: LoanId) : LoanFinderError("loan $id not found")
 }

@@ -12,6 +12,11 @@ import java.time.format.DateTimeFormatter
 @Serializer(forClass = LocalDateTime::class)
 object LocalDateTimeSerializer : KSerializer<LocalDateTime> {
     private val dateFormat = DateTimeFormatter.ISO_DATE_TIME
-    override fun serialize(encoder: Encoder, value: LocalDateTime) = encoder.encodeString(value.format(dateFormat))
+
+    override fun serialize(
+        encoder: Encoder,
+        value: LocalDateTime,
+    ) = encoder.encodeString(value.format(dateFormat))
+
     override fun deserialize(decoder: Decoder): LocalDateTime = LocalDateTime.parse(decoder.decodeString(), dateFormat)
 }

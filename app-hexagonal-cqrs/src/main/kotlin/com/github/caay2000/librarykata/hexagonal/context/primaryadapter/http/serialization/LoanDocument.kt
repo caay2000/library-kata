@@ -7,10 +7,11 @@ import com.github.caay2000.librarykata.jsonapi.context.loan.LoanResource
 
 fun Loan.toJsonApiDocument(): JsonApiDocument<LoanResource> =
     JsonApiDocument(
-        data = LoanResource(
-            id = id.value,
-            attributes = toJsonApiDocumentAttributes(),
-        ),
+        data =
+            LoanResource(
+                id = id.value,
+                attributes = toJsonApiDocumentAttributes(),
+            ),
     )
 
 fun Loan.toJsonApiDocumentAttributes() =

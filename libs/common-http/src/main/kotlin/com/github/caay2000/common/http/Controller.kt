@@ -8,7 +8,6 @@ import io.ktor.server.response.respond
 import mu.KLogger
 
 interface Controller {
-
     val logger: KLogger
 
     suspend operator fun invoke(call: ApplicationCall) {
@@ -22,11 +21,15 @@ interface Controller {
 
     suspend fun handle(call: ApplicationCall)
 
-    suspend fun handleExceptions(call: ApplicationCall, e: Exception) {
-        val error = when (e) {
-            is InvalidJsonApiException -> ServerResponse(HttpStatusCode.BadRequest, "InvalidJsonApiException", e.message)
-            else -> ServerResponse(HttpStatusCode.InternalServerError)
-        }
+    suspend fun handleExceptions(
+        call: ApplicationCall,
+        e: Exception,
+    ) {
+        val error =
+            when (e) {
+                is InvalidJsonApiException -> ServerResponse(HttpStatusCode.BadRequest, "InvalidJsonApiException", e.message)
+                else -> ServerResponse(HttpStatusCode.InternalServerError)
+            }
         call.respond(error.status, error.jsonApiErrorDocument)
     }
 

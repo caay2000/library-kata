@@ -2,6 +2,7 @@ package com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.bo
 
 import com.github.caay2000.common.http.ContentType
 import com.github.caay2000.common.http.Controller
+import com.github.caay2000.common.http.Transformer
 import com.github.caay2000.common.idgenerator.IdGenerator
 import com.github.caay2000.common.jsonapi.JsonApiDocument
 import com.github.caay2000.common.jsonapi.JsonApiRequestDocument
@@ -13,9 +14,11 @@ import com.github.caay2000.librarykata.hexagonal.context.application.book.create
 import com.github.caay2000.librarykata.hexagonal.context.application.book.create.CreateBookCommandHandler
 import com.github.caay2000.librarykata.hexagonal.context.application.book.find.FindBookByIdQuery
 import com.github.caay2000.librarykata.hexagonal.context.application.book.find.FindBookByIdQueryHandler
+import com.github.caay2000.librarykata.hexagonal.context.domain.book.Book
 import com.github.caay2000.librarykata.hexagonal.context.domain.book.BookId
 import com.github.caay2000.librarykata.hexagonal.context.domain.book.BookRepository
-import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.serialization.toJsonApiDocument
+import com.github.caay2000.librarykata.hexagonal.context.domain.loan.LoanRepository
+import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.book.transformer.BookToBookDocumentTransformer
 import com.github.caay2000.librarykata.jsonapi.context.book.BookRequestResource
 import com.github.caay2000.librarykata.jsonapi.context.book.BookResource
 import io.github.smiley4.ktorswaggerui.dsl.OpenApiRoute
@@ -30,12 +33,13 @@ import java.util.UUID
 class CreateBookController(
     private val idGenerator: IdGenerator,
     bookRepository: BookRepository,
+    loanRepository: LoanRepository,
 ) : Controller {
-
     override val logger: KLogger = KotlinLogging.logger {}
 
     private val commandHandler = CreateBookCommandHandler(bookRepository)
     private val queryHandler = FindBookByIdQueryHandler(bookRepository)
+    private val transformer: Transformer<Book, JsonApiDocument<BookResource>> = BookToBookDocumentTransformer(loanRepository)
 
     override suspend fun handle(call: ApplicationCall) {
         val request = call.receive<JsonApiRequestDocument<BookRequestResource>>()
@@ -43,10 +47,13 @@ class CreateBookController(
         commandHandler.invoke(request.toCreateBookCommand(bookId))
 
         val queryResponse = queryHandler.invoke(FindBookByIdQuery(BookId(bookId)))
-        call.respond(HttpStatusCode.Created, queryResponse.value.toJsonApiDocument())
+        call.respond(HttpStatusCode.Created, transformer.invoke(queryResponse.book))
     }
 
-    override suspend fun handleExceptions(call: ApplicationCall, e: Exception) {
+    override suspend fun handleExceptions(
+        call: ApplicationCall,
+        e: Exception,
+    ) {
         call.serverError {
             when (e) {
                 is BookCreatorError.BookAlreadyExists -> ServerResponse(HttpStatusCode.BadRequest, "BookAlreadyExists", e.message)

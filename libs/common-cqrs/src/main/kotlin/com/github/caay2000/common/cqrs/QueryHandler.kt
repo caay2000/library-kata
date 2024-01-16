@@ -3,7 +3,6 @@ package com.github.caay2000.common.cqrs
 import mu.KLogger
 
 interface QueryHandler<Q : Query, R : QueryResponse> {
-
     val logger: KLogger
 
     fun invoke(query: Q): R {
@@ -17,4 +16,5 @@ interface QueryHandler<Q : Query, R : QueryResponse> {
 }
 
 interface Query
+
 interface QueryResponse

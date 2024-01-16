@@ -6,7 +6,6 @@ import com.github.caay2000.common.event.DomainEvent
 import com.github.caay2000.common.event.DomainEventPublisher
 
 class MockDomainEventPublisher : DomainEventPublisher {
-
     private val _events: MutableList<DomainEvent> = mutableListOf()
     val events: List<DomainEvent>
         get() = _events.toList()

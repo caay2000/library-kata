@@ -16,7 +16,6 @@ data class BookResource(
     override val attributes: Attributes,
     override val relationships: Map<String, JsonApiRelationshipData>? = null,
 ) : JsonApiResource {
-
     @Serializable
     @Schema(name = "BookResource.Attributes")
     data class Attributes(

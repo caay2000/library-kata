@@ -12,7 +12,6 @@ import com.github.caay2000.librarykata.hexagonal.context.domain.book.BookTitle
 import kotlin.random.Random
 
 object BookMother {
-
     fun random(
         id: BookId = BookIdMother.random(),
         isbn: String = BookIsbnMother.random().value,

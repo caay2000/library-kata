@@ -12,7 +12,6 @@ import mu.KLogger
 import mu.KotlinLogging
 
 class SearchBooksQueryHandler(bookRepository: BookRepository) : QueryHandler<SearchBooksQuery, SearchAllBooksQueryResponse> {
-
     override val logger: KLogger = KotlinLogging.logger {}
 
     private val searcher = BookSearcher(bookRepository)
@@ -33,6 +32,7 @@ class SearchBooksQueryHandler(bookRepository: BookRepository) : QueryHandler<Sea
 
 sealed class SearchBooksQuery : Query {
     data object SearchAllBooksQuery : SearchBooksQuery()
+
     data class SearchAllBooksByIsbnQuery(val isbn: String) : SearchBooksQuery()
 }
 

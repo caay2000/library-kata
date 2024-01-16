@@ -6,7 +6,6 @@ import com.github.caay2000.librarykata.hexagonal.context.domain.book.BookReposit
 import com.github.caay2000.librarykata.hexagonal.context.domain.book.SearchBookCriteria
 
 class BookSearcher(private val bookRepository: BookRepository) {
-
     fun invoke(criteria: SearchBookCriteria): Either<BookSearcherError, List<Book>> =
         bookRepository.search(criteria)
             .mapLeft { BookSearcherError.Unknown(it) }

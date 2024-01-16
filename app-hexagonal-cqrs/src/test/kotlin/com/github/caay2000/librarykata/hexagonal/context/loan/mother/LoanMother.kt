@@ -10,7 +10,6 @@ import java.time.LocalDateTime
 import java.util.UUID
 
 object LoanMother {
-
     fun random(
         id: LoanId = LoanIdMother.random(),
         bookId: BookId = BookId(UUID.randomUUID().toString()),
@@ -25,7 +24,5 @@ object LoanMother {
         finishedAt,
     )
 
-    fun finishedLoan(
-        finishedAt: FinishedAt = FinishedAt(LocalDateTime.now()),
-    ) = random(createdAt = CreatedAt(finishedAt.value.minusDays(3)), finishedAt = finishedAt)
+    fun finishedLoan(finishedAt: FinishedAt = FinishedAt(LocalDateTime.now())) = random(createdAt = CreatedAt(finishedAt.value.minusDays(3)), finishedAt = finishedAt)
 }

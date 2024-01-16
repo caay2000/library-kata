@@ -5,7 +5,6 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 
 class MockDateProvider : DateProvider {
-
     private var dateIndex = 0
     private var datetimeIndex = 0
     private val dateMocks: MutableList<LocalDate> = mutableListOf()

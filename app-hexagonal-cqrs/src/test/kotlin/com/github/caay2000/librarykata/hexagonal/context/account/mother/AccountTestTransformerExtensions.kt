@@ -21,45 +21,48 @@ internal fun Account.toAccountResource(loans: List<Loan> = emptyList()) =
     AccountResource(
         id = id.value,
         type = "account",
-        attributes = AccountResource.Attributes(
-            identityNumber = identityNumber.value,
-            name = name.value,
-            surname = surname.value,
-            birthdate = birthdate.value,
-            email = email.value,
-            phonePrefix = phonePrefix.value,
-            phoneNumber = phoneNumber.value,
-            registerDate = registerDate.value,
-        ),
+        attributes =
+            AccountResource.Attributes(
+                identityNumber = identityNumber.value,
+                name = name.value,
+                surname = surname.value,
+                birthdate = birthdate.value,
+                email = email.value,
+                phonePrefix = phonePrefix.value,
+                phoneNumber = phoneNumber.value,
+                registerDate = registerDate.value,
+            ),
         relationships = mapRelationships(loans),
     )
 
 private fun mapIncluded(
     included: List<String>,
     loans: List<Loan>,
-): List<JsonApiIncludedResource>? = if (included.contains("LOANS")) {
-    if (loans.isEmpty()) {
-        null
-    } else {
-        loans.map {
-            JsonApiIncludedResource(
-                id = it.id.value,
-                type = "loan",
-                attributes = it.toJsonApiDocumentAttributes(),
-            )
+): List<JsonApiIncludedResource>? =
+    if (included.contains("LOANS")) {
+        if (loans.isEmpty()) {
+            null
+        } else {
+            loans.map {
+                JsonApiIncludedResource(
+                    id = it.id.value,
+                    type = "loan",
+                    attributes = it.toJsonApiDocumentAttributes(),
+                )
+            }
         }
+    } else {
+        null
     }
-} else {
-    null
-}
 
 private fun mapRelationships(loans: List<Loan>): Map<String, JsonApiRelationshipData>? =
     if (loans.isEmpty()) {
         null
     } else {
         mapOf(
-            "loan" to JsonApiRelationshipData(
-                loans.map { JsonApiRelationshipIdentifier(id = it.id.value, type = "loan") },
-            ),
+            "loan" to
+                JsonApiRelationshipData(
+                    loans.map { JsonApiRelationshipIdentifier(id = it.id.value, type = "loan") },
+                ),
         )
     }

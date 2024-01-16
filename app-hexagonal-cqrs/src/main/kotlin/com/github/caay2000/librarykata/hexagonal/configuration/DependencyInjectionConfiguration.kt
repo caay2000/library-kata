@@ -18,26 +18,27 @@ import com.github.caay2000.librarykata.hexagonal.context.secondaryadapter.databa
 import com.github.caay2000.memorydb.InMemoryDatasource
 import io.ktor.server.application.createApplicationPlugin
 
-val DependencyInjectionConfiguration = createApplicationPlugin(name = "DependencyInjectionConfiguration") {
+val DependencyInjectionConfiguration =
+    createApplicationPlugin(name = "DependencyInjectionConfiguration") {
 
-    DiKt.register { InMemoryDatasource() }
+        DiKt.register { InMemoryDatasource() }
 
-    DiKt.register { InMemoryAccountRepository(DiKt.bind()) }
-    DiKt.register { InMemoryBookRepository(DiKt.bind()) }
-    DiKt.register { InMemoryLoanRepository(DiKt.bind()) }
+        DiKt.register { InMemoryAccountRepository(DiKt.bind()) }
+        DiKt.register { InMemoryBookRepository(DiKt.bind()) }
+        DiKt.register { InMemoryLoanRepository(DiKt.bind()) }
 
-    DiKt.register { UUIDGenerator() }
-    DiKt.register { LocalDateProvider() }
+        DiKt.register { UUIDGenerator() }
+        DiKt.register { LocalDateProvider() }
 
-    DiKt.register { CreateAccountController(DiKt.bind(), DiKt.bind(), DiKt.bind()) }
-    DiKt.register { FindAccountController(DiKt.bind(), DiKt.bind()) }
-    DiKt.register { SearchAccountController(DiKt.bind()) }
+        DiKt.register { CreateAccountController(DiKt.bind(), DiKt.bind(), DiKt.bind(), DiKt.bind()) }
+        DiKt.register { FindAccountController(DiKt.bind(), DiKt.bind()) }
+        DiKt.register { SearchAccountController(DiKt.bind(), DiKt.bind()) }
 
-    DiKt.register { CreateBookController(DiKt.bind(), DiKt.bind()) }
-    DiKt.register { FindBookController(DiKt.bind()) }
-    DiKt.register { SearchBookController(DiKt.bind()) }
+        DiKt.register { CreateBookController(DiKt.bind(), DiKt.bind(), DiKt.bind()) }
+        DiKt.register { FindBookController(DiKt.bind(), DiKt.bind()) }
+        DiKt.register { SearchBookController(DiKt.bind(), DiKt.bind()) }
 
-    DiKt.register { FindLoanController(DiKt.bind()) }
-    DiKt.register { CreateLoanController(DiKt.bind(), DiKt.bind(), DiKt.bind(), DiKt.bind(), DiKt.bind()) }
-    DiKt.register { FinishLoanController(DiKt.bind(), DiKt.bind(), DiKt.bind(), DiKt.bind()) }
-}
+        DiKt.register { FindLoanController(DiKt.bind()) }
+        DiKt.register { CreateLoanController(DiKt.bind(), DiKt.bind(), DiKt.bind(), DiKt.bind(), DiKt.bind()) }
+        DiKt.register { FinishLoanController(DiKt.bind(), DiKt.bind(), DiKt.bind(), DiKt.bind()) }
+    }

@@ -27,7 +27,6 @@ class LoanCreator(
     private val accountRepository: AccountRepository,
     private val loanRepository: LoanRepository,
 ) {
-
     fun invoke(
         loanId: LoanId,
         accountId: AccountId,
@@ -58,7 +57,10 @@ class LoanCreator(
             .flatMap { books -> books.firstOrElse(predicate = { it.isAvailable }) { LoanCreatorError.BookNotAvailable(bookIsbn) } }
             .map { book -> withBook(book) }
 
-    private fun LoanCreatorContext.createLoan(loanId: LoanId, createdAt: CreatedAt): LoanCreatorContext =
+    private fun LoanCreatorContext.createLoan(
+        loanId: LoanId,
+        createdAt: CreatedAt,
+    ): LoanCreatorContext =
         withLoan(Loan.create(id = loanId, bookId = book.id, accountId = account.id, createdAt = createdAt))
             .withBook(book.unavailable())
             .withAccount(account.increaseLoans())
@@ -77,14 +79,11 @@ class LoanCreator(
         val account: Account
             get() = map["account"]!! as Account
 
-        fun withLoan(loan: Loan): LoanCreatorContext =
-            LoanCreatorContext(map + mutableMapOf("loan" to loan))
+        fun withLoan(loan: Loan): LoanCreatorContext = LoanCreatorContext(map + mutableMapOf("loan" to loan))
 
-        fun withBook(book: Book): LoanCreatorContext =
-            LoanCreatorContext(map + mutableMapOf("book" to book))
+        fun withBook(book: Book): LoanCreatorContext = LoanCreatorContext(map + mutableMapOf("book" to book))
 
-        fun withAccount(account: Account): LoanCreatorContext =
-            LoanCreatorContext(map + mutableMapOf("account" to account))
+        fun withAccount(account: Account): LoanCreatorContext = LoanCreatorContext(map + mutableMapOf("account" to account))
     }
 }
 
@@ -95,6 +94,8 @@ sealed class LoanCreatorError : RuntimeException {
     class BookNotAvailable(bookIsbn: BookIsbn) : LoanCreatorError("book with isbn ${bookIsbn.value} is not available")
 
     class UserNotFound(accountId: AccountId) : LoanCreatorError("user ${accountId.value} not found")
+
     class UserHasTooManyLoans(accountId: AccountId) : LoanCreatorError("user ${accountId.value} has too many loans")
+
     class UnknownError(error: Throwable) : LoanCreatorError(error)
 }

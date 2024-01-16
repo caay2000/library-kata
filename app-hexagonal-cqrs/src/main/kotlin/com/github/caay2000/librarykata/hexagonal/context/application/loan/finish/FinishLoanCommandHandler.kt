@@ -18,12 +18,10 @@ class FinishLoanCommandHandler(
     bookRepository: BookRepository,
     accountRepository: AccountRepository,
 ) : CommandHandler<FinishLoanCommand> {
-
     override val logger: KLogger = KotlinLogging.logger {}
     private val finisher = LoanFinisher(loanRepository, bookRepository, accountRepository)
 
-    override fun handle(command: FinishLoanCommand): Unit =
-        finisher.invoke(bookId = BookId(command.bookId.toString()), finishedAt = FinishedAt(command.finishedAt)).getOrThrow()
+    override fun handle(command: FinishLoanCommand): Unit = finisher.invoke(bookId = BookId(command.bookId.toString()), finishedAt = FinishedAt(command.finishedAt)).getOrThrow()
 }
 
 data class FinishLoanCommand(

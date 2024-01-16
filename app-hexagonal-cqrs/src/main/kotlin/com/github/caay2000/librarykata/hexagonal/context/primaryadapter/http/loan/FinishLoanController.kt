@@ -20,7 +20,6 @@ class FinishLoanController(
     bookRepository: BookRepository,
     accountRepository: AccountRepository,
 ) : Controller {
-
     override val logger: KLogger = KotlinLogging.logger {}
 
     private val commandHandler = FinishLoanCommandHandler(loanRepository, bookRepository, accountRepository)
