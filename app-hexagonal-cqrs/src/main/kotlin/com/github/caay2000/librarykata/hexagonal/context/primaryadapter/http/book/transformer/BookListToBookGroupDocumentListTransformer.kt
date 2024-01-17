@@ -13,6 +13,7 @@ import com.github.caay2000.librarykata.hexagonal.context.application.loan.search
 import com.github.caay2000.librarykata.hexagonal.context.domain.book.Book
 import com.github.caay2000.librarykata.hexagonal.context.domain.loan.Loan
 import com.github.caay2000.librarykata.hexagonal.context.domain.loan.LoanRepository
+import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.loan.serialization.LoanRelationshipTransformer
 import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.serialization.toJsonApiDocumentIncludedResource
 import com.github.caay2000.librarykata.jsonapi.context.book.BookGroupResource
 import com.github.caay2000.librarykata.jsonapi.context.loan.LoanResource
@@ -35,7 +36,7 @@ fun List<Book>.toJsonApiBookGroupDocumentList(
     include: List<String> = emptyList(),
 ) = JsonApiDocumentList(
     data = groupBy { it.isbn }.map { it.value.toJsonApiDocumentBookGroupResource(loans) },
-    included = if (include.shouldProcess(LoanResource.type)) loans.toJsonApiDocumentIncludedResource() else null,
+    included = if (include.shouldProcess(LoanResource.TYPE)) loans.toJsonApiDocumentIncludedResource() else null,
     meta = JsonApiMeta(total = groupBy { it.isbn }.size),
 )
 
@@ -44,7 +45,7 @@ internal fun List<Book>.toJsonApiDocumentBookGroupResource(loans: Collection<Loa
         id = first().isbn.value,
         type = "book-group",
         attributes = toJsonApiDocumentBookGroupAttributes(),
-        relationships = mapRelationships(loans.filter { map { it.id }.contains(it.bookId) }),
+        relationships =  LoanRelationshipTransformer().invoke(loans.filter { map { it.id }.contains(it.bookId) }),
     )
 
 internal fun List<Book>.toJsonApiDocumentBookGroupAttributes() =
@@ -57,15 +58,3 @@ internal fun List<Book>.toJsonApiDocumentBookGroupAttributes() =
         copies = size,
         availableCopies = count { it.isAvailable },
     )
-
-private fun mapRelationships(loans: Collection<Loan>): Map<String, JsonApiRelationshipData>? =
-    if (loans.isEmpty()) {
-        null
-    } else {
-        mapOf(
-            "loan" to
-                JsonApiRelationshipData(
-                    loans.map { JsonApiRelationshipIdentifier(id = it.id.value, type = "loan") },
-                ),
-        )
-    }

@@ -33,5 +33,5 @@ fun Book.toJsonApiDocument(
     include: List<String> = emptyList(),
 ) = JsonApiDocument(
     data = toJsonApiDocumentBookResource(loans),
-    included = if (include.shouldProcess(LoanResource.type)) loans.toJsonApiDocumentIncludedResource() else null,
+    included = if (include.shouldProcess(LoanResource.TYPE)) loans.toJsonApiDocumentIncludedResource() else null,
 )

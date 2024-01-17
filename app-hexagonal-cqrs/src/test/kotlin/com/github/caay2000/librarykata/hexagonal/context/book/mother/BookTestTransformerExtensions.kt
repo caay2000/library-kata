@@ -38,14 +38,14 @@ private fun mapIncluded(
     included: List<String>,
     loans: List<Loan>,
 ): List<JsonApiIncludedResource>? =
-    if (included.contains(LoanResource.type)) {
+    if (included.contains(LoanResource.TYPE)) {
         if (loans.isEmpty()) {
             null
         } else {
             loans.map {
                 JsonApiIncludedResource(
                     id = it.id.value,
-                    type = LoanResource.type,
+                    type = LoanResource.TYPE,
                     attributes = it.toJsonApiDocumentAttributes(),
                 )
             }
@@ -59,7 +59,7 @@ private fun mapRelationships(loans: List<Loan>): Map<String, JsonApiRelationship
         null
     } else {
         mapOf(
-            LoanResource.type to
+            LoanResource.TYPE to
                 JsonApiRelationshipData(
                     loans.map { JsonApiRelationshipIdentifier(id = it.id.value, type = "loan") },
                 ),
