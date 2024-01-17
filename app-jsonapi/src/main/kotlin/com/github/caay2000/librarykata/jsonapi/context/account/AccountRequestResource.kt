@@ -10,8 +10,8 @@ import java.time.LocalDate
 
 @Serializable
 data class AccountRequestResource(
-    @field:Schema(description = "resource type - must be `account`", example = "account")
-    override val type: String = "account",
+    @field:Schema(description = "resource type - must be `account`", example = AccountResource.TYPE)
+    override val type: String = AccountResource.TYPE,
     override val attributes: Attributes,
 ) : JsonApiRequestResource {
     @Serializable
@@ -35,6 +35,6 @@ data class AccountRequestResource(
     ) : JsonApiRequestAttributes
 
     init {
-        if (type != "account") throw InvalidJsonApiException("Invalid type for AccountRequestResource: $type")
+        if (type != AccountResource.TYPE) throw InvalidJsonApiException("Invalid type for AccountRequestResource: $type")
     }
 }

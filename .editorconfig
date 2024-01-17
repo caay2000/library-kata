@@ -1,12 +1,9 @@
 root = true
 
 [*.{kt,kts}]
-ktlint_code_style = intellij_idea
 ktlint_standard_multiline-if-else = disabled
-ktlint_standard_multiline-expression-wrapping = disabled
-ktlint_function_signature_body_expression_wrapping = default
-ktlint_function_signature_rule_force_multiline_when_parameter_count_greater_or_equal_than = 3
-ktlint_function_naming_ignore_when_annotated_with = TestCaseó
+ktlint_standard_multiline-expression-wrapping = enabled
+ktlint_function_naming_ignore_when_annotated_with = TestCase
 
 indent_style = space
 indent_size = 4

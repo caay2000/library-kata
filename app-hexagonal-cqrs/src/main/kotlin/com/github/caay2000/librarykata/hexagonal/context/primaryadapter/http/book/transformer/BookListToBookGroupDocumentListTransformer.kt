@@ -5,8 +5,6 @@ import com.github.caay2000.common.http.Transformer
 import com.github.caay2000.common.http.shouldProcess
 import com.github.caay2000.common.jsonapi.JsonApiDocumentList
 import com.github.caay2000.common.jsonapi.JsonApiMeta
-import com.github.caay2000.common.jsonapi.JsonApiRelationshipData
-import com.github.caay2000.common.jsonapi.JsonApiRelationshipIdentifier
 import com.github.caay2000.librarykata.hexagonal.context.application.loan.search.SearchLoanQuery
 import com.github.caay2000.librarykata.hexagonal.context.application.loan.search.SearchLoanQueryHandler
 import com.github.caay2000.librarykata.hexagonal.context.application.loan.search.SearchLoanQueryResponse
@@ -45,7 +43,7 @@ internal fun List<Book>.toJsonApiDocumentBookGroupResource(loans: Collection<Loa
         id = first().isbn.value,
         type = "book-group",
         attributes = toJsonApiDocumentBookGroupAttributes(),
-        relationships =  LoanRelationshipTransformer().invoke(loans.filter { map { it.id }.contains(it.bookId) }),
+        relationships = LoanRelationshipTransformer().invoke(loans.filter { map { it.id }.contains(it.bookId) }),
     )
 
 internal fun List<Book>.toJsonApiDocumentBookGroupAttributes() =

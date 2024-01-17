@@ -16,7 +16,6 @@ import com.github.caay2000.librarykata.jsonapi.context.account.AccountResource
 import com.github.caay2000.librarykata.jsonapi.context.loan.LoanResource
 
 class AccountToAccountDocumentTransformer(loanRepository: LoanRepository) : Transformer<Account, JsonApiDocument<AccountResource>> {
-
     private val loanQueryHandler: QueryHandler<SearchLoanQuery, SearchLoanQueryResponse> = SearchLoanQueryHandler(loanRepository)
 
     override fun invoke(
@@ -42,7 +41,7 @@ internal fun Account.toJsonApiDocumentAccountResource(loans: Collection<Loan> = 
         id = id.value,
         type = "account",
         attributes = toJsonApiDocumentAccountAttributes(),
-        relationships = LoanRelationshipTransformer().invoke(loans.filter { it.accountId == id })
+        relationships = LoanRelationshipTransformer().invoke(loans.filter { it.accountId == id }),
     )
 
 internal fun Account.toJsonApiDocumentAccountAttributes() =

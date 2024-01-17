@@ -10,7 +10,7 @@ import com.github.caay2000.librarykata.hexagonal.context.application.loan.search
 import com.github.caay2000.librarykata.hexagonal.context.domain.book.Book
 import com.github.caay2000.librarykata.hexagonal.context.domain.loan.Loan
 import com.github.caay2000.librarykata.hexagonal.context.domain.loan.LoanRepository
-import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.book.serializer.toJsonApiDocumentBookResource
+import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.loan.serialization.LoanRelationshipTransformer
 import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.serialization.toJsonApiDocumentIncludedResource
 import com.github.caay2000.librarykata.jsonapi.context.book.BookResource
 import com.github.caay2000.librarykata.jsonapi.context.loan.LoanResource
@@ -35,3 +35,21 @@ fun Book.toJsonApiDocument(
     data = toJsonApiDocumentBookResource(loans),
     included = if (include.shouldProcess(LoanResource.TYPE)) loans.toJsonApiDocumentIncludedResource() else null,
 )
+
+internal fun Book.toJsonApiDocumentBookResource(loans: List<Loan> = emptyList()) =
+    BookResource(
+        id = id.value,
+        type = "book",
+        attributes = toJsonApiDocumentBookAttributes(),
+        relationships = LoanRelationshipTransformer().invoke(loans),
+    )
+
+private fun Book.toJsonApiDocumentBookAttributes() =
+    BookResource.Attributes(
+        isbn = isbn.value,
+        title = title.value,
+        author = author.value,
+        pages = pages.value,
+        publisher = publisher.value,
+        available = available.value,
+    )

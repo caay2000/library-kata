@@ -7,8 +7,10 @@ import com.github.caay2000.librarykata.hexagonal.context.domain.loan.Loan
 import com.github.caay2000.librarykata.jsonapi.context.loan.LoanResource
 
 class LoanRelationshipTransformer : Transformer<Collection<Loan>, Map<String, JsonApiRelationshipData>?> {
-
-    override fun invoke(value: Collection<Loan>, include: List<String>): Map<String, JsonApiRelationshipData>? =
+    override fun invoke(
+        value: Collection<Loan>,
+        include: List<String>,
+    ): Map<String, JsonApiRelationshipData>? =
         if (value.isEmpty()) {
             null
         } else {
@@ -19,5 +21,4 @@ class LoanRelationshipTransformer : Transformer<Collection<Loan>, Map<String, Js
                     ),
             )
         }
-
 }

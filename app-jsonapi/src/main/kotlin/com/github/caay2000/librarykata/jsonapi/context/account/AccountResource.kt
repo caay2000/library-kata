@@ -15,11 +15,15 @@ import java.time.LocalDateTime
 data class AccountResource(
     @field:Schema(description = "account id", example = "00000000-0000-0000-0000-000000000000")
     override val id: String,
-    @field:Schema(description = "resource type - must be `account`", example = "account")
-    override val type: String = "account",
+    @field:Schema(description = "resource type - must be `account`", example = TYPE)
+    override val type: String = TYPE,
     override val attributes: Attributes,
     override val relationships: Map<String, JsonApiRelationshipData>? = null,
 ) : JsonApiResource {
+    companion object {
+        const val TYPE = "account"
+    }
+
     @Serializable
     @Schema(name = "AccountResource.Attributes")
     data class Attributes(
@@ -44,6 +48,6 @@ data class AccountResource(
     ) : JsonApiResourceAttributes
 
     init {
-        if (type != "account") throw InvalidJsonApiException("Invalid type for AccountResource: $type")
+        if (type != TYPE) throw InvalidJsonApiException("Invalid type for AccountResource: $type")
     }
 }
