@@ -32,7 +32,7 @@ class SearchBookControllerTest {
         testApplication {
             testUseCases.`book is created`(book)
 
-            val expected = BookGroupDocumentMother.json(book)
+            val expected = BookGroupDocumentMother.random(book)
             testUseCases.`find book by isbn`(book.isbn)
                 .assertStatus(HttpStatusCode.OK)
                 .assertJsonApiResponse(expected)
@@ -45,7 +45,7 @@ class SearchBookControllerTest {
             testUseCases.`book is created`(sameBook)
             testUseCases.`book is created`(differentBook)
 
-            val expected = BookGroupDocumentMother.json(book, copies = 2, available = 2)
+            val expected = BookGroupDocumentMother.random(book, copies = 2, available = 2)
             testUseCases.`find book by isbn`(book.isbn)
                 .assertStatus(HttpStatusCode.OK)
                 .assertJsonApiResponse(expected)
@@ -60,7 +60,7 @@ class SearchBookControllerTest {
             testUseCases.`book is created`(differentBook)
             testUseCases.`loan is created`(loan)
 
-            val expected = BookGroupDocumentMother.json(book, copies = 2, available = 1, listOf(loan))
+            val expected = BookGroupDocumentMother.random(book, copies = 2, available = 1, listOf(loan))
             testUseCases.`find book by isbn`(book.isbn)
                 .assertStatus(HttpStatusCode.OK)
                 .assertJsonApiResponse(expected)
@@ -76,7 +76,7 @@ class SearchBookControllerTest {
 
             // TODO missing loans relationships
             val expected =
-                BookGroupDocumentMother.json(
+                BookGroupDocumentMother.random(
                     listOf(
                         BookGroupDocumentMother.BookCopies(book, 5, 4),
                         BookGroupDocumentMother.BookCopies(differentBook, 3),

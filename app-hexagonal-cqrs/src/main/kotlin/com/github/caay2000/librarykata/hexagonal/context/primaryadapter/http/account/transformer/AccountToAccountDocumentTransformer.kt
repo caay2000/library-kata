@@ -2,25 +2,69 @@ package com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.ac
 
 import com.github.caay2000.common.cqrs.QueryHandler
 import com.github.caay2000.common.http.Transformer
+import com.github.caay2000.common.http.shouldProcess
 import com.github.caay2000.common.jsonapi.JsonApiDocument
+import com.github.caay2000.common.jsonapi.JsonApiRelationshipData
+import com.github.caay2000.common.jsonapi.JsonApiRelationshipIdentifier
 import com.github.caay2000.librarykata.hexagonal.context.application.loan.search.SearchLoanQuery
 import com.github.caay2000.librarykata.hexagonal.context.application.loan.search.SearchLoanQueryHandler
 import com.github.caay2000.librarykata.hexagonal.context.application.loan.search.SearchLoanQueryResponse
 import com.github.caay2000.librarykata.hexagonal.context.domain.account.Account
+import com.github.caay2000.librarykata.hexagonal.context.domain.loan.Loan
 import com.github.caay2000.librarykata.hexagonal.context.domain.loan.LoanRepository
-import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.account.FindAccountController
-import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.account.serializer.toJsonApiDocument
+import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.serialization.toJsonApiDocumentIncludedResource
 import com.github.caay2000.librarykata.jsonapi.context.account.AccountResource
+import com.github.caay2000.librarykata.jsonapi.context.loan.LoanResource
 
 class AccountToAccountDocumentTransformer(loanRepository: LoanRepository) : Transformer<Account, JsonApiDocument<AccountResource>> {
     private val loanQueryHandler: QueryHandler<SearchLoanQuery, SearchLoanQueryResponse> = SearchLoanQueryHandler(loanRepository)
 
     override fun invoke(
         value: Account,
-        includes: List<String>,
+        include: List<String>,
     ): JsonApiDocument<AccountResource> {
         // TODO When the Account is brand new, this query is not needed, as it won't have any relationship
         val loans = loanQueryHandler.invoke(SearchLoanQuery.SearchLoanByAccountIdQuery(value.id.value)).value
-        return value.toJsonApiDocument(loans, includes.shouldProcess(FindAccountController.Included.LOANS))
+        return value.toJsonApiDocument(loans, include)
     }
 }
+
+fun Account.toJsonApiDocument(
+    loans: List<Loan> = emptyList(),
+    include: List<String> = emptyList(),
+) = JsonApiDocument(
+    data = toJsonApiDocumentAccountResource(loans),
+    included = if (include.shouldProcess(LoanResource.type)) loans.toJsonApiDocumentIncludedResource() else emptyList(),
+)
+
+internal fun Account.toJsonApiDocumentAccountResource(loans: Collection<Loan> = emptyList()) =
+    AccountResource(
+        id = id.value,
+        type = "account",
+        attributes = toJsonApiDocumentAccountAttributes(),
+        relationships = mapRelationships(loans.filter { it.accountId == id }),
+    )
+
+internal fun Account.toJsonApiDocumentAccountAttributes() =
+    AccountResource.Attributes(
+        identityNumber = identityNumber.value,
+        name = name.value,
+        surname = surname.value,
+        birthdate = birthdate.value,
+        email = email.value,
+        phonePrefix = phonePrefix.value,
+        phoneNumber = phoneNumber.value,
+        registerDate = registerDate.value,
+    )
+
+private fun mapRelationships(loans: List<Loan>): Map<String, JsonApiRelationshipData>? =
+    if (loans.isEmpty()) {
+        null
+    } else {
+        mapOf(
+            LoanResource.type to
+                JsonApiRelationshipData(
+                    loans.map { JsonApiRelationshipIdentifier(id = it.id.value, type = LoanResource.type) },
+                ),
+        )
+    }

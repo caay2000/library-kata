@@ -4,12 +4,12 @@ plugins {
 }
 
 dependencies {
-//    api(project(":libs:common-serialization"))
 
     implementation("io.ktor:ktor-server-core")
     implementation("io.ktor:ktor-server-netty")
     implementation("io.ktor:ktor-server-content-negotiation")
-    implementation("io.ktor:ktor-serialization-kotlinx-json")
+
+    api("io.ktor:ktor-serialization-kotlinx-json")
     api("org.jetbrains.kotlinx:kotlinx-serialization-core-jvm:${project.ext["kotlinx_serialization_version"]}")
 
     implementation("io.github.microutils:kotlin-logging-jvm")

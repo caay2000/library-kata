@@ -11,8 +11,6 @@ class AccountSearcher(private val accountRepository: AccountRepository) {
             .mapLeft { AccountSearcherError.Unknown(it) }
 }
 
-sealed class AccountSearcherError : RuntimeException {
-    constructor(throwable: Throwable) : super(throwable)
-
+sealed class AccountSearcherError(throwable: Throwable) : RuntimeException(throwable) {
     class Unknown(error: Throwable) : AccountSearcherError(error)
 }

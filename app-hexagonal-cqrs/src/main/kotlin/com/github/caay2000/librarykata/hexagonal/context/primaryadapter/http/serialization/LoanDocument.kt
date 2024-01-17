@@ -22,9 +22,9 @@ fun Loan.toJsonApiDocumentAttributes() =
         finishLoan = finishedAt?.value,
     )
 
-fun List<Loan>.toJsonApiDocumentIncludedResource(): List<JsonApiIncludedResource>? =
+fun Collection<Loan>.toJsonApiDocumentIncludedResource(): List<JsonApiIncludedResource>? =
     if (isEmpty()) {
-        null
+        emptyList()
     } else {
         this.map {
             JsonApiIncludedResource(

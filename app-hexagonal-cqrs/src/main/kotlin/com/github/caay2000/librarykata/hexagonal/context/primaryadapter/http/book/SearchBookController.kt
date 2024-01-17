@@ -3,7 +3,7 @@ package com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.bo
 import com.github.caay2000.common.http.ContentType
 import com.github.caay2000.common.http.Controller
 import com.github.caay2000.common.http.Transformer
-import com.github.caay2000.common.jsonapi.JsonApiListDocument
+import com.github.caay2000.common.jsonapi.JsonApiDocumentList
 import com.github.caay2000.common.jsonapi.JsonApiRequestParams
 import com.github.caay2000.common.jsonapi.documentation.errorResponses
 import com.github.caay2000.common.jsonapi.documentation.responseExample
@@ -27,11 +27,11 @@ class SearchBookController(bookRepository: BookRepository, loanRepository: LoanR
     override val logger: KLogger = KotlinLogging.logger {}
 
     private val queryHandler = SearchBooksQueryHandler(bookRepository)
-    private val transformer: Transformer<List<Book>, JsonApiListDocument<BookGroupResource>> = BookListToBookGroupDocumentListTransformer(loanRepository)
+    private val transformer: Transformer<List<Book>, JsonApiDocumentList<BookGroupResource>> = BookListToBookGroupDocumentListTransformer(loanRepository)
 
     override suspend fun handle(call: ApplicationCall) {
-        val params = call.parameters.toMap().toJsonApiRequestParams()
-        val books = queryHandler.invoke(params.toQuery())
+        val jsonApiParams = call.parameters.toMap().toJsonApiRequestParams()
+        val books = queryHandler.invoke(jsonApiParams.toQuery())
         val response = transformer.invoke(books.values)
         call.respond(HttpStatusCode.OK, response)
     }
@@ -57,7 +57,7 @@ class SearchBookController(bookRepository: BookRepository, loanRepository: LoanR
             response {
                 HttpStatusCode.OK to {
                     description = "Books retrieved"
-                    body<JsonApiListDocument<BookGroupResource>> {
+                    body<JsonApiDocumentList<BookGroupResource>> {
                         mediaType(ContentType.JsonApi)
                     }
                 }

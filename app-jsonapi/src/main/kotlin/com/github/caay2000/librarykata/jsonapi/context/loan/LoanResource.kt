@@ -12,10 +12,14 @@ import java.time.LocalDateTime
 @Serializable
 data class LoanResource(
     override val id: String,
-    override val type: String = "loan",
+    override val type: String = LoanResource.type,
     override val attributes: Attributes,
     override val relationships: Map<String, JsonApiRelationshipData>? = null,
 ) : JsonApiResource {
+    companion object {
+        val type = "loan"
+    }
+
     @Serializable
     @Schema(name = "LoanResource.Attributes")
     data class Attributes(
@@ -28,6 +32,6 @@ data class LoanResource(
     ) : JsonApiResourceAttributes
 
     init {
-        if (type != "loan") throw InvalidJsonApiException("Invalid type for AccountResource: $type")
+        if (type != LoanResource.type) throw InvalidJsonApiException("Invalid type for AccountResource: $type")
     }
 }

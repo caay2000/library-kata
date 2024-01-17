@@ -1,6 +1,13 @@
 root = true
 
-[{*.kt,*.kts}]
+[*.{kt,kts}]
+ktlint_code_style = intellij_idea
+ktlint_standard_multiline-if-else = disabled
+ktlint_standard_multiline-expression-wrapping = disabled
+ktlint_function_signature_body_expression_wrapping = default
+ktlint_function_signature_rule_force_multiline_when_parameter_count_greater_or_equal_than = 3
+ktlint_function_naming_ignore_when_annotated_with = TestCaseó
+
 indent_style = space
 indent_size = 4
 end_of_line = lf
@@ -8,9 +15,6 @@ charset = utf-8
 trim_trailing_whitespace = true
 insert_final_newline = true
 max_line_length = 180
-
-ktlint_standard_multiline-if-else=disabled
-ktlint_function_naming_ignore_when_annotated_with=TestCase
 
 [gradlew.bat]
 end_of_line = lf

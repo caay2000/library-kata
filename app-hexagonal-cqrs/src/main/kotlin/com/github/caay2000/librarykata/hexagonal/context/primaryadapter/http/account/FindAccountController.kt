@@ -2,7 +2,6 @@ package com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.ac
 
 import com.github.caay2000.common.http.ContentType
 import com.github.caay2000.common.http.Controller
-import com.github.caay2000.common.http.RequestInclude
 import com.github.caay2000.common.http.Transformer
 import com.github.caay2000.common.jsonapi.JsonApiDocument
 import com.github.caay2000.common.jsonapi.ServerResponse
@@ -35,8 +34,6 @@ class FindAccountController(
 
     private val accountQueryHandler = FindAccountByIdQueryHandler(accountRepository)
     private val transformer: Transformer<Account, JsonApiDocument<AccountResource>> = AccountToAccountDocumentTransformer(loanRepository)
-
-    internal enum class Included : RequestInclude { LOANS }
 
     override suspend fun handle(call: ApplicationCall) {
         val accountId = AccountId(UUID.fromString(call.parameters["id"]!!).toString())

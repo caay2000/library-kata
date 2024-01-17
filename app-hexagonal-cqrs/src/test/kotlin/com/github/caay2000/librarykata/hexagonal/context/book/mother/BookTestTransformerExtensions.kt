@@ -8,13 +8,14 @@ import com.github.caay2000.librarykata.hexagonal.context.domain.book.Book
 import com.github.caay2000.librarykata.hexagonal.context.domain.loan.Loan
 import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.serialization.toJsonApiDocumentAttributes
 import com.github.caay2000.librarykata.jsonapi.context.book.BookResource
+import com.github.caay2000.librarykata.jsonapi.context.loan.LoanResource
 
 internal fun Book.toJsonApiBookDocument(
     loans: List<Loan> = emptyList(),
-    included: List<String> = emptyList(),
+    include: List<String> = emptyList(),
 ) = JsonApiDocument(
     data = toBookResource(loans),
-    included = mapIncluded(included, loans),
+    included = mapIncluded(include, loans),
 )
 
 internal fun Book.toBookResource(loans: List<Loan> = emptyList()) =
@@ -37,14 +38,14 @@ private fun mapIncluded(
     included: List<String>,
     loans: List<Loan>,
 ): List<JsonApiIncludedResource>? =
-    if (included.contains("LOANS")) {
+    if (included.contains(LoanResource.type)) {
         if (loans.isEmpty()) {
             null
         } else {
             loans.map {
                 JsonApiIncludedResource(
                     id = it.id.value,
-                    type = "loan",
+                    type = LoanResource.type,
                     attributes = it.toJsonApiDocumentAttributes(),
                 )
             }
@@ -58,7 +59,7 @@ private fun mapRelationships(loans: List<Loan>): Map<String, JsonApiRelationship
         null
     } else {
         mapOf(
-            "loan" to
+            LoanResource.type to
                 JsonApiRelationshipData(
                     loans.map { JsonApiRelationshipIdentifier(id = it.id.value, type = "loan") },
                 ),

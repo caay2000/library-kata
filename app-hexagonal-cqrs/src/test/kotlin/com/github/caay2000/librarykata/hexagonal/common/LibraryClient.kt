@@ -2,8 +2,8 @@ package com.github.caay2000.librarykata.hexagonal.common
 
 import com.github.caay2000.common.http.ContentType
 import com.github.caay2000.common.jsonapi.JsonApiDocument
+import com.github.caay2000.common.jsonapi.JsonApiDocumentList
 import com.github.caay2000.common.jsonapi.JsonApiErrorDocument
-import com.github.caay2000.common.jsonapi.JsonApiListDocument
 import com.github.caay2000.common.jsonapi.JsonApiRequestDocument
 import com.github.caay2000.common.test.http.HttpDataResponse
 import com.github.caay2000.librarykata.hexagonal.configuration.jsonMapper
@@ -81,27 +81,39 @@ class LibraryClient {
     context(ApplicationTestBuilder)
     fun findAccount(
         id: AccountId,
-        include: List<TestUseCases.AccountInclude>,
+        include: List<String>,
     ): HttpDataResponse<JsonApiDocument<AccountResource>> =
         runBlocking {
-            val includeQuery =
-                include.joinToString { it.name.lowercase() }.let {
-                    if (it.isNotBlank()) "?include=$it" else ""
-                }
+            val includeQuery = include.joinToString { it.lowercase() }.let { if (it.isNotBlank()) "?include=$it" else "" }
             client.get("/account/${id.value}$includeQuery").toHttpDataResponse<JsonApiDocument<AccountResource>>()
         }
 
     context(ApplicationTestBuilder)
-    fun searchAccount(): HttpDataResponse<JsonApiListDocument<AccountResource>> =
-        runBlocking { client.get("/account").toHttpDataResponse<JsonApiListDocument<AccountResource>>() }
+    fun searchAccount(include: List<String>): HttpDataResponse<JsonApiDocumentList<AccountResource>> =
+        runBlocking {
+            val includeQuery = include.joinToString { it.lowercase() }.let { if (it.isNotBlank()) "?include=$it" else "" }
+            client.get("/account$includeQuery").toHttpDataResponse<JsonApiDocumentList<AccountResource>>()
+        }
 
     context(ApplicationTestBuilder)
-    fun searchAccountByPhoneNumber(phoneNumber: String): HttpDataResponse<JsonApiListDocument<AccountResource>> =
-        runBlocking { client.get("/account?filter[phoneNumber]=$phoneNumber").toHttpDataResponse<JsonApiListDocument<AccountResource>>() }
+    fun searchAccountByPhoneNumber(
+        phoneNumber: String,
+        include: List<String>,
+    ): HttpDataResponse<JsonApiDocumentList<AccountResource>> =
+        runBlocking {
+            val includeQuery = include.joinToString { it.lowercase() }.let { if (it.isNotBlank()) "&include=$it" else "" }
+            client.get("/account?filter[phoneNumber]=$phoneNumber$includeQuery").toHttpDataResponse<JsonApiDocumentList<AccountResource>>()
+        }
 
     context(ApplicationTestBuilder)
-    fun searchAccountByEmail(email: String): HttpDataResponse<JsonApiListDocument<AccountResource>> =
-        runBlocking { client.get("/account?filter[email]=$email").toHttpDataResponse<JsonApiListDocument<AccountResource>>() }
+    fun searchAccountByEmail(
+        email: String,
+        include: List<String>,
+    ): HttpDataResponse<JsonApiDocumentList<AccountResource>> =
+        runBlocking {
+            val includeQuery = include.joinToString { it.lowercase() }.let { if (it.isNotBlank()) "&include=$it" else "" }
+            client.get("/account?filter[email]=$email$includeQuery").toHttpDataResponse<JsonApiDocumentList<AccountResource>>()
+        }
 
     context(ApplicationTestBuilder)
     fun createBook(
@@ -137,22 +149,22 @@ class LibraryClient {
     context(ApplicationTestBuilder)
     fun findBook(
         id: BookId,
-        include: List<TestUseCases.BookInclude>,
+        include: List<String>,
     ): HttpDataResponse<JsonApiDocument<BookResource>> =
         runBlocking {
             val includeQuery =
-                include.joinToString { it.name.lowercase() }.let {
+                include.joinToString { it.lowercase() }.let {
                     if (it.isNotBlank()) "?include=$it" else ""
                 }
             client.get("/book/${id.value}$includeQuery").toHttpDataResponse<JsonApiDocument<BookResource>>()
         }
 
     context(ApplicationTestBuilder)
-    fun findBookByIsbn(isbn: BookIsbn): HttpDataResponse<JsonApiListDocument<BookGroupResource>> =
+    fun findBookByIsbn(isbn: BookIsbn): HttpDataResponse<JsonApiDocumentList<BookGroupResource>> =
         runBlocking { client.get("/book?filter[isbn]=${isbn.value}").toHttpDataResponse() }
 
     context(ApplicationTestBuilder)
-    fun searchBook(): HttpDataResponse<JsonApiListDocument<BookGroupResource>> = runBlocking { client.get("/book").toHttpDataResponse() }
+    fun searchBook(): HttpDataResponse<JsonApiDocumentList<BookGroupResource>> = runBlocking { client.get("/book").toHttpDataResponse() }
 
     context(ApplicationTestBuilder)
     fun createLoan(

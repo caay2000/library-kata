@@ -2,7 +2,9 @@ package com.github.caay2000.common.test.http
 
 import com.github.caay2000.common.jsonapi.JsonApiErrorDocument
 import com.github.caay2000.common.test.json.JsonApiSchemaValidator
+import com.github.caay2000.common.test.json.testJsonMapper
 import io.ktor.http.HttpStatusCode
+import kotlinx.serialization.encodeToString
 import mu.KLogger
 import mu.KotlinLogging
 import org.assertj.core.api.Assertions.assertThat
@@ -18,13 +20,13 @@ fun <T> HttpDataResponse<T>.assertResponse(response: T): HttpDataResponse<T> =
     assertThat(value).isEqualTo(response)
         .let { this }
 
-suspend inline fun <reified T> HttpDataResponse<T>.assertJsonApiResponse(expected: String): HttpDataResponse<T> =
+suspend inline fun <reified T> HttpDataResponse<T>.assertJsonApiResponse(expected: T): HttpDataResponse<T> =
     with(body()) {
         try {
-            JSONAssert.assertEquals(expected, this, true).let { this }
+            JSONAssert.assertEquals(testJsonMapper.encodeToString(expected), this, true).let { this }
             this@assertJsonApiResponse.assureJsonApiSchema()
         } catch (e: Throwable) {
-            logger.warn { "expected: $expected" }
+            logger.warn { "expected: ${testJsonMapper.encodeToString(expected)}" }
             logger.warn { "actual  : $this" }
             throw e
         }

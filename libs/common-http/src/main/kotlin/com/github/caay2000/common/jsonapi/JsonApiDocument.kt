@@ -11,8 +11,9 @@ data class JsonApiDocument<R>(
 ) where R : JsonApiResource
 
 @Serializable
-data class JsonApiListDocument<R>(
+data class JsonApiDocumentList<R>(
     val data: List<R>,
+    val included: List<JsonApiIncludedResource>? = null,
     val meta: JsonApiMeta,
 ) where R : JsonApiResource
 

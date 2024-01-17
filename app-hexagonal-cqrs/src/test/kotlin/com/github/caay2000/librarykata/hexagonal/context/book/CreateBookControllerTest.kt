@@ -29,7 +29,7 @@ class CreateBookControllerTest {
     @Test
     fun `a book can be created`() =
         testApplication {
-            val expected = BookDocumentMother.json(book)
+            val expected = BookDocumentMother.random(book)
             testUseCases.`book is created`(book)
                 .assertStatus(HttpStatusCode.Created)
                 .assertJsonApiResponse(expected)
@@ -38,12 +38,12 @@ class CreateBookControllerTest {
     @Test
     fun `multiple books with same isbn will have different id`() =
         testApplication {
-            val expected = BookDocumentMother.json(book)
+            val expected = BookDocumentMother.random(book)
             testUseCases.`book is created`(book)
                 .assertStatus(HttpStatusCode.Created)
                 .assertJsonApiResponse(expected)
 
-            val expectedDifferentId = BookDocumentMother.json(differentIdBook)
+            val expectedDifferentId = BookDocumentMother.random(differentIdBook)
             testUseCases.`book is created`(differentIdBook)
                 .assertStatus(HttpStatusCode.Created)
                 .assertJsonApiResponse(expectedDifferentId)

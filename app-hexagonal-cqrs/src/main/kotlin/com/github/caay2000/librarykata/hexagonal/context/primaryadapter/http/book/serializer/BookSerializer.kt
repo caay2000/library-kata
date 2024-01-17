@@ -24,15 +24,6 @@ private fun Book.toJsonApiDocumentBookAttributes() =
         available = available.value,
     )
 
-// private fun List<Book>.toJsonApiDocumentIncludedResource() =
-//    map {
-//        BookResource(
-//            id = it.id.value,
-//            type = "book",
-//            attributes = it.toJsonApiDocumentBookAttributes(),
-//        )
-//    }
-
 private fun mapRelationships(loans: List<Loan>): Map<String, JsonApiRelationshipData>? =
     if (loans.isEmpty()) {
         null

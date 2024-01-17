@@ -34,7 +34,7 @@ class FindBookControllerTest {
         testApplication {
             testUseCases.`book is created`(book)
 
-            val expected = BookDocumentMother.json(book)
+            val expected = BookDocumentMother.random(book)
             testUseCases.`find book by id`(book.id)
                 .assertStatus(HttpStatusCode.OK)
                 .assertJsonApiResponse(expected)
@@ -51,7 +51,7 @@ class FindBookControllerTest {
                 accountId = AccountId(account.id.value),
             )
 
-            val expected = BookDocumentMother.json(notAvailableBook, listOf(loan))
+            val expected = BookDocumentMother.random(notAvailableBook, listOf(loan))
             testUseCases.`find book by id`(book.id)
                 .assertStatus(HttpStatusCode.OK)
                 .assertJsonApiResponse(expected)
@@ -69,8 +69,8 @@ class FindBookControllerTest {
                 createdAt = loan.createdAt,
             )
 
-            val expected = BookDocumentMother.json(notAvailableBook, listOf(loan), listOf("loans"))
-            testUseCases.`find book by id`(book.id, listOf(TestUseCases.BookInclude.LOANS))
+            val expected = BookDocumentMother.random(notAvailableBook, listOf(loan), listOf("loan"))
+            testUseCases.`find book by id`(book.id, listOf("loan"))
                 .assertStatus(HttpStatusCode.OK)
                 .assertJsonApiResponse(expected)
         }

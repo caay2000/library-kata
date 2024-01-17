@@ -1,8 +1,11 @@
 plugins {
     id("project-library")
+    id("plugin-kotlin-serialization")
 }
 
 dependencies {
+    implementation(project(":app-jsonapi"))
+
     implementation(project(":libs:common-date"))
     implementation(project(":libs:common-event"))
     implementation(project(":libs:common-http"))

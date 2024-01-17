@@ -1,7 +1,7 @@
 package com.github.caay2000.librarykata.hexagonal.common
 
 import com.github.caay2000.common.jsonapi.JsonApiDocument
-import com.github.caay2000.common.jsonapi.JsonApiListDocument
+import com.github.caay2000.common.jsonapi.JsonApiDocumentList
 import com.github.caay2000.common.test.http.HttpDataResponse
 import com.github.caay2000.common.test.mock.MockDateProvider
 import com.github.caay2000.common.test.mock.MockIdGenerator
@@ -66,20 +66,26 @@ class TestUseCases(
     @TestCase
     fun `find account`(
         id: AccountId,
-        include: List<AccountInclude> = emptyList(),
+        include: List<String> = emptyList(),
     ): HttpDataResponse<JsonApiDocument<AccountResource>> = libraryClient.findAccount(id, include)
 
     context(ApplicationTestBuilder)
     @TestCase
-    fun `search account`(): HttpDataResponse<JsonApiListDocument<AccountResource>> = libraryClient.searchAccount()
+    fun `search account`(include: List<String> = emptyList()): HttpDataResponse<JsonApiDocumentList<AccountResource>> = libraryClient.searchAccount(include)
 
     context(ApplicationTestBuilder)
     @TestCase
-    fun `search account by phoneNumber`(phoneNumber: String): HttpDataResponse<JsonApiListDocument<AccountResource>> = libraryClient.searchAccountByPhoneNumber(phoneNumber)
+    fun `search account by phoneNumber`(
+        phoneNumber: String,
+        include: List<String> = emptyList(),
+    ): HttpDataResponse<JsonApiDocumentList<AccountResource>> = libraryClient.searchAccountByPhoneNumber(phoneNumber, include)
 
     context(ApplicationTestBuilder)
     @TestCase
-    fun `search account by email`(email: String): HttpDataResponse<JsonApiListDocument<AccountResource>> = libraryClient.searchAccountByEmail(email)
+    fun `search account by email`(
+        email: String,
+        include: List<String> = emptyList(),
+    ): HttpDataResponse<JsonApiDocumentList<AccountResource>> = libraryClient.searchAccountByEmail(email, include)
 
     context(ApplicationTestBuilder)
     @TestCase
@@ -121,16 +127,16 @@ class TestUseCases(
     @TestCase
     fun `find book by id`(
         id: BookId,
-        include: List<BookInclude> = emptyList(),
+        include: List<String> = emptyList(),
     ): HttpDataResponse<JsonApiDocument<BookResource>> = libraryClient.findBook(id, include)
 
     context(ApplicationTestBuilder)
     @TestCase
-    fun `find book by isbn`(isbn: BookIsbn): HttpDataResponse<JsonApiListDocument<BookGroupResource>> = libraryClient.findBookByIsbn(isbn)
+    fun `find book by isbn`(isbn: BookIsbn): HttpDataResponse<JsonApiDocumentList<BookGroupResource>> = libraryClient.findBookByIsbn(isbn)
 
     context(ApplicationTestBuilder)
     @TestCase
-    fun `search book`(): HttpDataResponse<JsonApiListDocument<BookGroupResource>> = libraryClient.searchBook()
+    fun `search book`(): HttpDataResponse<JsonApiDocumentList<BookGroupResource>> = libraryClient.searchBook()
 
     context(ApplicationTestBuilder)
     @TestCase
@@ -143,9 +149,8 @@ class TestUseCases(
     ): HttpDataResponse<JsonApiDocument<LoanResource>> {
         `id will be mocked`(UUID.fromString(id?.value ?: loan.id.value))
         `datetime will be mocked`(createdAt?.value ?: loan.createdAt.value)
-        val bookIsbn = bookIsbn ?: BookIsbn(libraryClient.findBook(loan.bookId, emptyList()).value!!.data.attributes.isbn)
         return libraryClient.createLoan(
-            bookIsbn = bookIsbn,
+            bookIsbn = bookIsbn ?: BookIsbn(libraryClient.findBook(loan.bookId, emptyList()).value!!.data.attributes.isbn),
             accountId = accountId ?: loan.accountId,
         )
     }
@@ -161,10 +166,6 @@ class TestUseCases(
         `datetime will be mocked`(finishDateTime)
         return libraryClient.finishLoan(bookId = bookId ?: loan.bookId)
     }
-
-    enum class AccountInclude { LOANS }
-
-    enum class BookInclude { LOANS }
 
     @TestCase
     private fun `id will be mocked`(id: UUID): UUID = mockIdGenerator?.mock(id).let { id }

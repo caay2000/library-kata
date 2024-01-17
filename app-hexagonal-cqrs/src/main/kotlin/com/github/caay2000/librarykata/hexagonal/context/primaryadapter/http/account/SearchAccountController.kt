@@ -3,7 +3,7 @@ package com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.ac
 import com.github.caay2000.common.http.ContentType
 import com.github.caay2000.common.http.Controller
 import com.github.caay2000.common.http.Transformer
-import com.github.caay2000.common.jsonapi.JsonApiListDocument
+import com.github.caay2000.common.jsonapi.JsonApiDocumentList
 import com.github.caay2000.common.jsonapi.JsonApiRequestParams
 import com.github.caay2000.common.jsonapi.documentation.errorResponses
 import com.github.caay2000.common.jsonapi.documentation.responseExample
@@ -30,12 +30,12 @@ class SearchAccountController(
     override val logger: KLogger = KotlinLogging.logger {}
 
     private val queryHandler = SearchAccountQueryHandler(accountRepository)
-    private val transformer: Transformer<List<Account>, JsonApiListDocument<AccountResource>> = AccountListToAccountDocumentListTransformer(loanRepository)
+    private val transformer: Transformer<List<Account>, JsonApiDocumentList<AccountResource>> = AccountListToAccountDocumentListTransformer(loanRepository)
 
     override suspend fun handle(call: ApplicationCall) {
-        val params = call.parameters.toMap().toJsonApiRequestParams()
-        val queryResponse = queryHandler.invoke(params.toQuery())
-        val document = transformer.invoke(queryResponse.accounts)
+        val jsonApiParams = call.parameters.toMap().toJsonApiRequestParams()
+        val queryResponse = queryHandler.invoke(jsonApiParams.toQuery())
+        val document = transformer.invoke(queryResponse.accounts, jsonApiParams.include)
         call.respond(HttpStatusCode.OK, document)
     }
 
@@ -66,7 +66,7 @@ class SearchAccountController(
             response {
                 HttpStatusCode.OK to {
                     description = "Accounts retrieved"
-                    body<JsonApiListDocument<AccountResource>> {
+                    body<JsonApiDocumentList<AccountResource>> {
                         mediaType(ContentType.JsonApi)
                     }
                 }

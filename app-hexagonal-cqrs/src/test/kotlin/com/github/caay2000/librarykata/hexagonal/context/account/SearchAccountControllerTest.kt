@@ -7,7 +7,7 @@ import com.github.caay2000.common.test.mock.MockDateProvider
 import com.github.caay2000.common.test.mock.MockIdGenerator
 import com.github.caay2000.dikt.DiKt
 import com.github.caay2000.librarykata.hexagonal.common.TestUseCases
-import com.github.caay2000.librarykata.hexagonal.context.account.mother.AccountListDocumentMother
+import com.github.caay2000.librarykata.hexagonal.context.account.mother.AccountDocumentListMother
 import com.github.caay2000.librarykata.hexagonal.context.account.mother.AccountMother
 import com.github.caay2000.librarykata.hexagonal.context.book.mother.BookMother
 import com.github.caay2000.librarykata.hexagonal.context.domain.account.Email
@@ -35,7 +35,7 @@ class SearchAccountControllerTest {
         testApplication {
             testUseCases.`account is created`(account)
 
-            val expected = AccountListDocumentMother.json(account)
+            val expected = AccountDocumentListMother.random(listOf(account))
             testUseCases.`search account`()
                 .assertStatus(HttpStatusCode.OK)
                 .assertJsonApiResponse(expected)
@@ -47,7 +47,7 @@ class SearchAccountControllerTest {
             testUseCases.`account is created`(account)
             testUseCases.`account is created`(anotherAccount)
 
-            val expected = AccountListDocumentMother.json(accounts = listOf(account, anotherAccount), loans = emptyList())
+            val expected = AccountDocumentListMother.random(accounts = listOf(account, anotherAccount))
             testUseCases.`search account`()
                 .assertStatus(HttpStatusCode.OK)
                 .assertJsonApiResponse(expected)
@@ -60,8 +60,28 @@ class SearchAccountControllerTest {
             testUseCases.`account is created`(accountWithSimilarPhoneNumber)
             testUseCases.`account is created`(anotherAccount)
 
-            val expected = AccountListDocumentMother.json(accounts = listOf(account, accountWithSimilarPhoneNumber), loans = emptyList())
+            val expected = AccountDocumentListMother.random(accounts = listOf(account, accountWithSimilarPhoneNumber))
             testUseCases.`search account by phoneNumber`(account.phoneNumber.value.take(4))
+                .assertStatus(HttpStatusCode.OK)
+                .assertJsonApiResponse(expected)
+        }
+
+    @Test
+    fun `multiple accounts with loans can be searched by partial phone number including loan information`() =
+        testApplication {
+            testUseCases.`account is created`(account)
+            testUseCases.`book is created`(book)
+            testUseCases.`loan is created`(loan)
+            testUseCases.`account is created`(accountWithSimilarPhoneNumber)
+            testUseCases.`account is created`(anotherAccount)
+
+            val expected =
+                AccountDocumentListMother.random(
+                    accounts = listOf(account, accountWithSimilarPhoneNumber),
+                    loans = listOf(loan),
+                    include = listOf("loan"),
+                )
+            testUseCases.`search account by phoneNumber`(account.phoneNumber.value.take(4), listOf("loan"))
                 .assertStatus(HttpStatusCode.OK)
                 .assertJsonApiResponse(expected)
         }
@@ -73,28 +93,52 @@ class SearchAccountControllerTest {
             testUseCases.`account is created`(accountWithSimilarEmail)
             testUseCases.`account is created`(anotherAccount)
 
-            val expected = AccountListDocumentMother.json(accounts = listOf(account, accountWithSimilarEmail), loans = emptyList())
+            val expected = AccountDocumentListMother.random(accounts = listOf(account, accountWithSimilarEmail))
             testUseCases.`search account by email`(account.email.value.substringAfter("@"))
                 .assertStatus(HttpStatusCode.OK)
                 .assertJsonApiResponse(expected)
         }
 
     @Test
-    fun `multiple accounts with loans can be searched by partial email`() =
+    fun `multiple accounts with loans can be searched by partial email including loan information`() =
         testApplication {
             testUseCases.`account is created`(account)
             testUseCases.`book is created`(book)
-            testUseCases.`loan is created`(
-                id = loan.id,
-                bookIsbn = book.isbn,
-                accountId = account.id,
-            )
+            testUseCases.`loan is created`(loan)
 
             testUseCases.`account is created`(accountWithSimilarEmail)
             testUseCases.`account is created`(anotherAccount)
 
-            val expected = AccountListDocumentMother.json(accounts = listOf(account, accountWithSimilarEmail), loans = listOf(loan))
-            testUseCases.`search account by email`(account.email.value.substringAfter("@"))
+            val expected =
+                AccountDocumentListMother.random(
+                    accounts = listOf(account, accountWithSimilarEmail),
+                    loans = listOf(loan),
+                    include = listOf("loan"),
+                )
+            testUseCases.`search account by email`(account.email.value.substringAfter("@"), listOf("loan"))
+                .assertStatus(HttpStatusCode.OK)
+                .assertJsonApiResponse(expected)
+        }
+
+    @Test
+    fun `multiple accounts with loans can be searched including loan information`() =
+        testApplication {
+            testUseCases.`account is created`(account)
+            testUseCases.`book is created`(book)
+            testUseCases.`loan is created`(loan)
+
+            testUseCases.`account is created`(anotherAccount)
+            testUseCases.`book is created`(anotherBook)
+            testUseCases.`loan is created`(anotherLoan)
+
+            val expected =
+                AccountDocumentListMother.random(
+                    accounts = listOf(account, anotherAccount),
+                    loans = listOf(loan, anotherLoan),
+                    include = listOf("loan"),
+                )
+
+            testUseCases.`search account`(listOf("loan"))
                 .assertStatus(HttpStatusCode.OK)
                 .assertJsonApiResponse(expected)
         }
@@ -102,7 +146,9 @@ class SearchAccountControllerTest {
     private val account = AccountMother.random()
     private val anotherAccount = AccountMother.random()
     private val book = BookMother.random()
+    private val anotherBook = BookMother.random()
     private val loan = LoanMother.random(accountId = account.id, bookId = book.id)
+    private val anotherLoan = LoanMother.random(accountId = anotherAccount.id, bookId = anotherBook.id)
 
     private val accountWithSimilarPhoneNumber =
         AccountMother.random()
