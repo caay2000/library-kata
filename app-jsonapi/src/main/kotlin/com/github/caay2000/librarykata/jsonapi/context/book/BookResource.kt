@@ -38,6 +38,6 @@ data class BookResource(
     ) : JsonApiResourceAttributes
 
     init {
-        if (type != TYPE) throw InvalidJsonApiException("Invalid type for AccountResource: $type")
+        if (type != TYPE) throw InvalidJsonApiException("Invalid type for BookResource: $type")
     }
 }

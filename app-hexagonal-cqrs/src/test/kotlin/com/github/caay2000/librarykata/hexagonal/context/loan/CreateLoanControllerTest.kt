@@ -39,25 +39,17 @@ class CreateLoanControllerTest {
     fun `a loan can be created`() =
         testApplication {
             testUseCases.`book is created`(book)
-                .assertStatus(HttpStatusCode.Created)
-
             testUseCases.`account is created`(account)
-                .assertStatus(HttpStatusCode.Created)
 
             testUseCases.`loan is created`(loan, book.isbn)
                 .assertStatus(HttpStatusCode.Created)
-                .assertResponse(loan.toJsonApiDocument(account, book, emptyList()))
+                .assertResponse(loan.toJsonApiDocument(account, book))
         }
 
     @Test
     fun `a loan for a book already lent should fail`() =
         testApplication {
-            testUseCases.`book is created`(book)
-                .assertStatus(HttpStatusCode.Created)
-            testUseCases.`account is created`(account)
-                .assertStatus(HttpStatusCode.Created)
-            testUseCases.`loan is created`(loan, book.isbn)
-                .assertStatus(HttpStatusCode.Created)
+            testUseCases.`account is created with a loan`(account, book, loan)
 
             testUseCases.`loan is created`(loan, book.isbn)
                 .assertStatus(HttpStatusCode.BadRequest)
@@ -75,10 +67,8 @@ class CreateLoanControllerTest {
         testApplication {
             testUseCases.`multiple copies of the same book are created`(book, 6)
             testUseCases.`account is created`(account)
-                .assertStatus(HttpStatusCode.Created)
             repeat(5) {
                 testUseCases.`loan is created`(accountId = AccountId(account.id.value), bookIsbn = book.isbn)
-                    .assertStatus(HttpStatusCode.Created)
             }
 
             testUseCases.`loan is created`(loan, book.isbn)
@@ -97,14 +87,11 @@ class CreateLoanControllerTest {
         testApplication {
             testUseCases.`multiple copies of the same book are created`(book, 6)
             testUseCases.`account is created`(account)
-                .assertStatus(HttpStatusCode.Created)
             repeat(5) {
                 testUseCases.`loan is created`(accountId = AccountId(account.id.value), bookIsbn = book.isbn)
-                    .assertStatus(HttpStatusCode.Created)
             }
 
             testUseCases.`loan is finished`(bookId = BookId(book.id.value))
-                .assertStatus(HttpStatusCode.Accepted)
 
             testUseCases.`loan is created`(loan, book.isbn)
                 .assertStatus(HttpStatusCode.Created)

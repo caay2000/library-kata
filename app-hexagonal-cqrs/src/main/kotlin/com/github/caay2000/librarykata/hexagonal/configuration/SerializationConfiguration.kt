@@ -6,6 +6,8 @@ import com.github.caay2000.common.serialization.LocalDateSerializer
 import com.github.caay2000.common.serialization.LocalDateTimeSerializer
 import com.github.caay2000.common.serialization.UUIDSerializer
 import com.github.caay2000.librarykata.jsonapi.context.account.AccountResource
+import com.github.caay2000.librarykata.jsonapi.context.book.BookGroupResource
+import com.github.caay2000.librarykata.jsonapi.context.book.BookResource
 import com.github.caay2000.librarykata.jsonapi.context.loan.LoanResource
 import io.ktor.serialization.kotlinx.KotlinxSerializationConverter
 import io.ktor.serialization.kotlinx.json.json
@@ -43,6 +45,8 @@ val jsonMapper =
             SerializersModule {
                 polymorphic(JsonApiResourceAttributes::class) {
                     subclass(LoanResource.Attributes::class, LoanResource.Attributes.serializer())
+                    subclass(BookResource.Attributes::class, BookResource.Attributes.serializer())
+                    subclass(BookGroupResource.Attributes::class, BookGroupResource.Attributes.serializer())
                     subclass(AccountResource.Attributes::class, AccountResource.Attributes.serializer())
                 }
                 serializersModuleOf(UUID::class, UUIDSerializer)

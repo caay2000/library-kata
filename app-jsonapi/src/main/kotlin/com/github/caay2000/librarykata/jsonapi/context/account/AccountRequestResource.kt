@@ -35,6 +35,6 @@ data class AccountRequestResource(
     ) : JsonApiRequestAttributes
 
     init {
-        if (type != AccountResource.TYPE) throw InvalidJsonApiException("Invalid type for AccountRequestResource: $type")
+        if (type != AccountResource.TYPE) throw InvalidJsonApiException("Invalid type for AccountResource: $type")
     }
 }

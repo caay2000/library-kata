@@ -4,6 +4,7 @@ import com.github.caay2000.common.http.Controller
 import com.github.caay2000.common.http.Transformer
 import com.github.caay2000.common.jsonapi.JsonApiDocument
 import com.github.caay2000.common.jsonapi.ServerResponse
+import com.github.caay2000.common.jsonapi.toJsonApiRequestParams
 import com.github.caay2000.librarykata.hexagonal.context.application.loan.find.FindLoanByIdQuery
 import com.github.caay2000.librarykata.hexagonal.context.application.loan.find.FindLoanByIdQueryHandler
 import com.github.caay2000.librarykata.hexagonal.context.application.loan.find.LoanFinderError
@@ -17,6 +18,7 @@ import com.github.caay2000.librarykata.jsonapi.context.loan.LoanResource
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.ApplicationCall
 import io.ktor.server.response.respond
+import io.ktor.util.toMap
 import mu.KLogger
 import mu.KotlinLogging
 import java.util.UUID
@@ -33,10 +35,11 @@ class FindLoanController(
 
     override suspend fun handle(call: ApplicationCall) {
         val loanId = UUID.fromString(call.parameters["loanId"]!!)
+        val jsonApiParams = call.request.queryParameters.toMap().toJsonApiRequestParams()
 
         val queryResult = queryHandler.invoke(FindLoanByIdQuery(LoanId(loanId.toString())))
 
-        call.respond(HttpStatusCode.OK, transformer.invoke(queryResult.loan))
+        call.respond(HttpStatusCode.OK, transformer.invoke(queryResult.loan, jsonApiParams.include))
     }
 
     override suspend fun handleExceptions(

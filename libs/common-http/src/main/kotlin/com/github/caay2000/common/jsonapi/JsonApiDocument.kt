@@ -7,7 +7,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class JsonApiDocument<R>(
     val data: R,
-    val included: List<JsonApiIncludedResource>? = null,
+    val included: Collection<JsonApiIncludedResource>? = null,
 ) where R : JsonApiResource
 
 @Serializable

@@ -5,10 +5,10 @@ import com.github.caay2000.librarykata.hexagonal.context.domain.book.Book
 import com.github.caay2000.librarykata.hexagonal.context.domain.loan.Loan
 import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.loan.serialization.toJsonApiDocument
 
-class LoanDocumentMother {
-    internal fun random(loan: Loan = LoanMother.random()) = loan.toJsonApiDocument()
+object LoanDocumentMother {
+    fun random(loan: Loan = LoanMother.random()) = loan.toJsonApiDocument()
 
-    internal fun random(
+    fun random(
         loan: Loan = LoanMother.random(),
         account: Account? = null,
         book: Book? = null,

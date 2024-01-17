@@ -8,17 +8,20 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class LoanRequestResource(
+    @field:Schema(description = "resource type - must be `${LoanResource.TYPE}`", example = LoanResource.TYPE)
     override val type: String = LoanResource.TYPE,
     override val attributes: Attributes,
 ) : JsonApiRequestResource {
     @Serializable
     @Schema(name = "LoanRequestResource.Attributes")
     data class Attributes(
+        @field:Schema(description = "book ISBN", example = "00000000-0000-0000-0000-000000000000")
         val bookIsbn: String,
+        @field:Schema(description = "account Id", example = "00000000-0000-0000-0000-000000000000")
         val accountId: String,
     ) : JsonApiRequestAttributes
 
     init {
-        if (type != LoanResource.TYPE) throw InvalidJsonApiException("Invalid type for AccountResource: $type")
+        if (type != LoanResource.TYPE) throw InvalidJsonApiException("Invalid type for LoanResource: $type")
     }
 }

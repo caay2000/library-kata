@@ -21,6 +21,7 @@ import com.github.caay2000.librarykata.hexagonal.context.domain.book.BookIsbn
 import com.github.caay2000.librarykata.hexagonal.context.domain.book.BookPages
 import com.github.caay2000.librarykata.hexagonal.context.domain.book.BookPublisher
 import com.github.caay2000.librarykata.hexagonal.context.domain.book.BookTitle
+import com.github.caay2000.librarykata.hexagonal.context.domain.loan.LoanId
 import com.github.caay2000.librarykata.jsonapi.context.account.AccountRequestResource
 import com.github.caay2000.librarykata.jsonapi.context.account.AccountResource
 import com.github.caay2000.librarykata.jsonapi.context.book.BookGroupResource
@@ -186,6 +187,19 @@ class LibraryClient {
                 setBody(jsonMapper.encodeToString(request))
                 contentType(ContentType.JsonApi)
             }.toHttpDataResponse()
+        }
+
+    context(ApplicationTestBuilder)
+    fun findLoan(
+        id: LoanId,
+        include: List<String>,
+    ): HttpDataResponse<JsonApiDocument<LoanResource>> =
+        runBlocking {
+            val includeQuery =
+                include.joinToString { it.lowercase() }.let {
+                    if (it.isNotBlank()) "?include=$it" else ""
+                }
+            client.get("/loan/${id.value}$includeQuery").toHttpDataResponse<JsonApiDocument<LoanResource>>()
         }
 
     context(ApplicationTestBuilder)

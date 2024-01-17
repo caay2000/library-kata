@@ -5,7 +5,6 @@ import com.github.caay2000.common.jsonapi.JsonApiRelationshipData
 import com.github.caay2000.common.jsonapi.JsonApiRelationshipIdentifier
 import com.github.caay2000.librarykata.hexagonal.context.domain.account.Account
 import com.github.caay2000.librarykata.jsonapi.context.account.AccountResource
-import com.github.caay2000.librarykata.jsonapi.context.loan.LoanResource
 
 class AccountRelationshipTransformer : Transformer<Collection<Account>, Map<String, JsonApiRelationshipData>?> {
     override fun invoke(
@@ -16,7 +15,7 @@ class AccountRelationshipTransformer : Transformer<Collection<Account>, Map<Stri
             null
         } else {
             mapOf(
-                LoanResource.TYPE to
+                AccountResource.TYPE to
                     JsonApiRelationshipData(
                         value.map { JsonApiRelationshipIdentifier(id = it.id.value, type = AccountResource.TYPE) },
                     ),
