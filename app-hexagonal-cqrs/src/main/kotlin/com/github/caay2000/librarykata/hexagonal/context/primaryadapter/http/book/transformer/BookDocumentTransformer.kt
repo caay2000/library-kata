@@ -24,27 +24,27 @@ class BookDocumentTransformer(loanRepository: LoanRepository) : Transformer<Book
     ): JsonApiDocument<BookResource> {
         // TODO When the Book is brand new, this query is not needed, as it won't have any relationship
         val loans = loanQueryHandler.invoke(SearchLoanQuery.SearchLoanByBookIdQuery(value.id.value)).value
-        return value.toJsonApiDocument(loans, include)
+        return value.toJsonApiBookDocument(loans, include)
     }
 }
 
-fun Book.toJsonApiDocument(
+fun Book.toJsonApiBookDocument(
     loans: List<Loan> = emptyList(),
     include: List<String> = emptyList(),
 ) = JsonApiDocument(
-    data = toJsonApiDocumentBookResource(loans),
+    data = toJsonApiBookResource(loans),
     included = if (include.shouldProcess(LoanResource.TYPE)) LoanIncludeTransformer().invoke(loans) else null,
 )
 
-internal fun Book.toJsonApiDocumentBookResource(loans: List<Loan> = emptyList()) =
+internal fun Book.toJsonApiBookResource(loans: List<Loan> = emptyList()) =
     BookResource(
         id = id.value,
-        type = "book",
-        attributes = toJsonApiDocumentBookAttributes(),
+        type = BookResource.TYPE,
+        attributes = toJsonApiBookAttributes(),
         relationships = LoanRelationshipTransformer().invoke(loans),
     )
 
-private fun Book.toJsonApiDocumentBookAttributes() =
+internal fun Book.toJsonApiBookAttributes() =
     BookResource.Attributes(
         isbn = isbn.value,
         title = title.value,

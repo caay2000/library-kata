@@ -38,7 +38,7 @@ val DependencyInjectionConfiguration =
         DiKt.register { FindBookController(DiKt.bind(), DiKt.bind()) }
         DiKt.register { SearchBookController(DiKt.bind(), DiKt.bind()) }
 
-        DiKt.register { FindLoanController(DiKt.bind()) }
+        DiKt.register { FindLoanController(DiKt.bind(), DiKt.bind(), DiKt.bind()) }
         DiKt.register { CreateLoanController(DiKt.bind(), DiKt.bind(), DiKt.bind(), DiKt.bind(), DiKt.bind()) }
         DiKt.register { FinishLoanController(DiKt.bind(), DiKt.bind(), DiKt.bind(), DiKt.bind()) }
     }

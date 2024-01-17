@@ -9,8 +9,8 @@ import com.github.caay2000.common.jsonapi.documentation.errorResponses
 import com.github.caay2000.common.jsonapi.documentation.responseExample
 import com.github.caay2000.common.jsonapi.toJsonApiRequestParams
 import com.github.caay2000.librarykata.hexagonal.context.application.book.find.BookFinderError
-import com.github.caay2000.librarykata.hexagonal.context.application.book.find.FindBookByIdQuery
-import com.github.caay2000.librarykata.hexagonal.context.application.book.find.FindBookByIdQueryHandler
+import com.github.caay2000.librarykata.hexagonal.context.application.book.find.FindBookQuery
+import com.github.caay2000.librarykata.hexagonal.context.application.book.find.FindBookQueryHandler
 import com.github.caay2000.librarykata.hexagonal.context.domain.book.Book
 import com.github.caay2000.librarykata.hexagonal.context.domain.book.BookId
 import com.github.caay2000.librarykata.hexagonal.context.domain.book.BookRepository
@@ -29,14 +29,14 @@ import java.util.UUID
 class FindBookController(bookRepository: BookRepository, loanRepository: LoanRepository) : Controller {
     override val logger: KLogger = KotlinLogging.logger {}
 
-    private val queryHandler = FindBookByIdQueryHandler(bookRepository)
+    private val queryHandler = FindBookQueryHandler(bookRepository)
     private val transformer: Transformer<Book, JsonApiDocument<BookResource>> = BookDocumentTransformer(loanRepository)
 
     override suspend fun handle(call: ApplicationCall) {
         val bookId = BookId(UUID.fromString(call.parameters["id"]!!).toString())
         val jsonApiParams = call.request.queryParameters.toMap().toJsonApiRequestParams()
 
-        val queryResponse = queryHandler.invoke(FindBookByIdQuery(bookId))
+        val queryResponse = queryHandler.invoke(FindBookQuery(bookId))
         val responseDocument = transformer.invoke(queryResponse.book, jsonApiParams.include)
         call.respond(HttpStatusCode.OK, responseDocument)
     }

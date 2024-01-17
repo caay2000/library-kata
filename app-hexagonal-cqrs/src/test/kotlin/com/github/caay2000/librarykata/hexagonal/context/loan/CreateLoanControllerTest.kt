@@ -46,7 +46,7 @@ class CreateLoanControllerTest {
 
             testUseCases.`loan is created`(loan, book.isbn)
                 .assertStatus(HttpStatusCode.Created)
-                .assertResponse(loan.toJsonApiDocument())
+                .assertResponse(loan.toJsonApiDocument(account, book, emptyList()))
         }
 
     @Test

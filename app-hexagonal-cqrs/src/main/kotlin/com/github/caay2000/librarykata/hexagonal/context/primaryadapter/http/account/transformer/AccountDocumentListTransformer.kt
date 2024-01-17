@@ -23,15 +23,15 @@ class AccountDocumentListTransformer(loanRepository: LoanRepository) : Transform
         include: List<String>,
     ): JsonApiDocumentList<AccountResource> {
         val loans = value.flatMap { loanQueryHandler.invoke(SearchLoanQuery.SearchLoanByAccountIdQuery(it.id.value)).value }.toSet()
-        return value.toJsonApiDocumentList(loans, include)
+        return value.toJsonApiAccountDocumentList(loans, include)
     }
 }
 
-fun List<Account>.toJsonApiDocumentList(
+fun List<Account>.toJsonApiAccountDocumentList(
     loans: Collection<Loan> = emptyList(),
     include: List<String> = emptyList(),
 ) = JsonApiDocumentList(
-    data = map { it.toJsonApiDocumentAccountResource(loans) },
+    data = map { it.toJsonApiAccountResource(loans) },
     included = if (include.shouldProcess(LoanResource.TYPE)) LoanIncludeTransformer().invoke(loans) else null,
     meta = JsonApiMeta(total = size),
 )

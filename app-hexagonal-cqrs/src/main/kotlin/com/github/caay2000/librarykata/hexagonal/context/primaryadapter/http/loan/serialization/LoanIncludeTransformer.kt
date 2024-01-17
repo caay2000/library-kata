@@ -17,7 +17,7 @@ class LoanIncludeTransformer : Transformer<Collection<Loan>, List<JsonApiInclude
                 JsonApiIncludedResource(
                     id = it.id.value,
                     type = LoanResource.TYPE,
-                    attributes = it.toJsonApiDocumentAttributes(),
+                    attributes = it.toJsonApiDocumentLoanAttributes(),
                 )
             }
         }

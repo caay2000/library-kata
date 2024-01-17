@@ -13,8 +13,8 @@ import com.github.caay2000.common.jsonapi.documentation.responseExample
 import com.github.caay2000.librarykata.hexagonal.context.application.account.create.AccountCreatorError
 import com.github.caay2000.librarykata.hexagonal.context.application.account.create.CreateAccountCommand
 import com.github.caay2000.librarykata.hexagonal.context.application.account.create.CreateAccountCommandHandler
-import com.github.caay2000.librarykata.hexagonal.context.application.account.find.FindAccountByIdQuery
-import com.github.caay2000.librarykata.hexagonal.context.application.account.find.FindAccountByIdQueryHandler
+import com.github.caay2000.librarykata.hexagonal.context.application.account.find.FindAccountQuery
+import com.github.caay2000.librarykata.hexagonal.context.application.account.find.FindAccountQueryHandler
 import com.github.caay2000.librarykata.hexagonal.context.domain.account.Account
 import com.github.caay2000.librarykata.hexagonal.context.domain.account.AccountId
 import com.github.caay2000.librarykata.hexagonal.context.domain.account.AccountRepository
@@ -41,7 +41,7 @@ class CreateAccountController(
     override val logger: KLogger = KotlinLogging.logger {}
 
     private val commandHandler = CreateAccountCommandHandler(accountRepository)
-    private val queryHandler = FindAccountByIdQueryHandler(accountRepository)
+    private val queryHandler = FindAccountQueryHandler(accountRepository)
     private val transformer: Transformer<Account, JsonApiDocument<AccountResource>> = AccountDocumentTransformer(loanRepository)
 
     override suspend fun handle(call: ApplicationCall) {
@@ -50,7 +50,7 @@ class CreateAccountController(
         val registerDate = dateProvider.dateTime()
         commandHandler.invoke(request.toCommand(accountId, registerDate))
 
-        val queryResponse = queryHandler.invoke(FindAccountByIdQuery(AccountId(accountId)))
+        val queryResponse = queryHandler.invoke(FindAccountQuery(AccountId(accountId)))
         call.respond(HttpStatusCode.Created, transformer.invoke(queryResponse.account))
     }
 

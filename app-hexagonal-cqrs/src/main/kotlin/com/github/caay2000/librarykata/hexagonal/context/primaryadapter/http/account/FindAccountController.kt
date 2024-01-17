@@ -9,8 +9,8 @@ import com.github.caay2000.common.jsonapi.documentation.errorResponses
 import com.github.caay2000.common.jsonapi.documentation.responseExample
 import com.github.caay2000.common.jsonapi.toJsonApiRequestParams
 import com.github.caay2000.librarykata.hexagonal.context.application.account.find.AccountFinderError
-import com.github.caay2000.librarykata.hexagonal.context.application.account.find.FindAccountByIdQuery
-import com.github.caay2000.librarykata.hexagonal.context.application.account.find.FindAccountByIdQueryHandler
+import com.github.caay2000.librarykata.hexagonal.context.application.account.find.FindAccountQuery
+import com.github.caay2000.librarykata.hexagonal.context.application.account.find.FindAccountQueryHandler
 import com.github.caay2000.librarykata.hexagonal.context.domain.account.Account
 import com.github.caay2000.librarykata.hexagonal.context.domain.account.AccountId
 import com.github.caay2000.librarykata.hexagonal.context.domain.account.AccountRepository
@@ -32,14 +32,14 @@ class FindAccountController(
 ) : Controller {
     override val logger: KLogger = KotlinLogging.logger {}
 
-    private val accountQueryHandler = FindAccountByIdQueryHandler(accountRepository)
+    private val accountQueryHandler = FindAccountQueryHandler(accountRepository)
     private val transformer: Transformer<Account, JsonApiDocument<AccountResource>> = AccountDocumentTransformer(loanRepository)
 
     override suspend fun handle(call: ApplicationCall) {
         val accountId = AccountId(UUID.fromString(call.parameters["id"]!!).toString())
         val jsonApiParams = call.request.queryParameters.toMap().toJsonApiRequestParams()
 
-        val queryResponse = accountQueryHandler.invoke(FindAccountByIdQuery(accountId))
+        val queryResponse = accountQueryHandler.invoke(FindAccountQuery(accountId))
         val responseDocument = transformer.invoke(queryResponse.account, jsonApiParams.include)
         call.respond(HttpStatusCode.OK, responseDocument)
     }

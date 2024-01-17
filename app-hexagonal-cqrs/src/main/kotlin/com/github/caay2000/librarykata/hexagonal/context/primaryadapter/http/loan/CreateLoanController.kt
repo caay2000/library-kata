@@ -40,7 +40,7 @@ class CreateLoanController(
 
     private val commandHandler = CreateLoanCommandHandler(bookRepository, accountRepository, loanRepository)
     private val loanQueryHandler = FindLoanByIdQueryHandler(loanRepository)
-    private val transformer: Transformer<Loan, JsonApiDocument<LoanResource>> = LoanDocumentTransformer()
+    private val transformer: Transformer<Loan, JsonApiDocument<LoanResource>> = LoanDocumentTransformer(accountRepository, bookRepository)
 
     override suspend fun handle(call: ApplicationCall) {
         val request = call.receive<JsonApiRequestDocument<LoanRequestResource>>()

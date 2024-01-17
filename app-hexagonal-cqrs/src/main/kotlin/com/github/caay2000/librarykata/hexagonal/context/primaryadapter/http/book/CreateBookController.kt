@@ -12,8 +12,8 @@ import com.github.caay2000.common.jsonapi.documentation.responseExample
 import com.github.caay2000.librarykata.hexagonal.context.application.book.create.BookCreatorError
 import com.github.caay2000.librarykata.hexagonal.context.application.book.create.CreateBookCommand
 import com.github.caay2000.librarykata.hexagonal.context.application.book.create.CreateBookCommandHandler
-import com.github.caay2000.librarykata.hexagonal.context.application.book.find.FindBookByIdQuery
-import com.github.caay2000.librarykata.hexagonal.context.application.book.find.FindBookByIdQueryHandler
+import com.github.caay2000.librarykata.hexagonal.context.application.book.find.FindBookQuery
+import com.github.caay2000.librarykata.hexagonal.context.application.book.find.FindBookQueryHandler
 import com.github.caay2000.librarykata.hexagonal.context.domain.book.Book
 import com.github.caay2000.librarykata.hexagonal.context.domain.book.BookId
 import com.github.caay2000.librarykata.hexagonal.context.domain.book.BookRepository
@@ -38,7 +38,7 @@ class CreateBookController(
     override val logger: KLogger = KotlinLogging.logger {}
 
     private val commandHandler = CreateBookCommandHandler(bookRepository)
-    private val queryHandler = FindBookByIdQueryHandler(bookRepository)
+    private val queryHandler = FindBookQueryHandler(bookRepository)
     private val transformer: Transformer<Book, JsonApiDocument<BookResource>> = BookDocumentTransformer(loanRepository)
 
     override suspend fun handle(call: ApplicationCall) {
@@ -46,7 +46,7 @@ class CreateBookController(
         val bookId = idGenerator.generate()
         commandHandler.invoke(request.toCreateBookCommand(bookId))
 
-        val queryResponse = queryHandler.invoke(FindBookByIdQuery(BookId(bookId)))
+        val queryResponse = queryHandler.invoke(FindBookQuery(BookId(bookId)))
         call.respond(HttpStatusCode.Created, transformer.invoke(queryResponse.book))
     }
 

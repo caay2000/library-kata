@@ -8,8 +8,8 @@ import com.github.caay2000.common.jsonapi.JsonApiRequestParams
 import com.github.caay2000.common.jsonapi.documentation.errorResponses
 import com.github.caay2000.common.jsonapi.documentation.responseExample
 import com.github.caay2000.common.jsonapi.toJsonApiRequestParams
-import com.github.caay2000.librarykata.hexagonal.context.application.book.search.SearchBooksQuery
-import com.github.caay2000.librarykata.hexagonal.context.application.book.search.SearchBooksQueryHandler
+import com.github.caay2000.librarykata.hexagonal.context.application.book.search.SearchBookQuery
+import com.github.caay2000.librarykata.hexagonal.context.application.book.search.SearchBookQueryHandler
 import com.github.caay2000.librarykata.hexagonal.context.domain.book.Book
 import com.github.caay2000.librarykata.hexagonal.context.domain.book.BookRepository
 import com.github.caay2000.librarykata.hexagonal.context.domain.loan.LoanRepository
@@ -26,7 +26,7 @@ import mu.KotlinLogging
 class SearchBookController(bookRepository: BookRepository, loanRepository: LoanRepository) : Controller {
     override val logger: KLogger = KotlinLogging.logger {}
 
-    private val queryHandler = SearchBooksQueryHandler(bookRepository)
+    private val queryHandler = SearchBookQueryHandler(bookRepository)
     private val transformer: Transformer<List<Book>, JsonApiDocumentList<BookGroupResource>> = BookGroupDocumentListTransformer(loanRepository)
 
     override suspend fun handle(call: ApplicationCall) {
@@ -38,8 +38,8 @@ class SearchBookController(bookRepository: BookRepository, loanRepository: LoanR
 
     private fun JsonApiRequestParams.toQuery() =
         when {
-            filter.containsKey("isbn") -> SearchBooksQuery.SearchAllBooksByIsbnQuery(filter["isbn"]!!.first())
-            else -> SearchBooksQuery.SearchAllBooksQuery
+            filter.containsKey("isbn") -> SearchBookQuery.SearchAllBookByIsbnQuery(filter["isbn"]!!.first())
+            else -> SearchBookQuery.SearchAllBookQuery
         }
 
     companion object {

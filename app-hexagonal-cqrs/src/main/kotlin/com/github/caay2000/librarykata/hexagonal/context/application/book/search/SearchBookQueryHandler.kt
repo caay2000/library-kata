@@ -11,29 +11,29 @@ import com.github.caay2000.librarykata.hexagonal.context.domain.book.SearchBookC
 import mu.KLogger
 import mu.KotlinLogging
 
-class SearchBooksQueryHandler(bookRepository: BookRepository) : QueryHandler<SearchBooksQuery, SearchAllBooksQueryResponse> {
+class SearchBookQueryHandler(bookRepository: BookRepository) : QueryHandler<SearchBookQuery, SearchBookQueryResponse> {
     override val logger: KLogger = KotlinLogging.logger {}
 
     private val searcher = BookSearcher(bookRepository)
 
-    override fun handle(query: SearchBooksQuery): SearchAllBooksQueryResponse =
+    override fun handle(query: SearchBookQuery): SearchBookQueryResponse =
         query.toCriteria().let { criteria ->
             searcher.invoke(criteria)
-                .map { books -> SearchAllBooksQueryResponse(books) }
+                .map { books -> SearchBookQueryResponse(books) }
                 .getOrThrow()
         }
 
-    private fun SearchBooksQuery.toCriteria() =
+    private fun SearchBookQuery.toCriteria() =
         when (this) {
-            is SearchBooksQuery.SearchAllBooksByIsbnQuery -> SearchBookCriteria.ByIsbn(BookIsbn(this.isbn))
-            SearchBooksQuery.SearchAllBooksQuery -> SearchBookCriteria.All
+            is SearchBookQuery.SearchAllBookByIsbnQuery -> SearchBookCriteria.ByIsbn(BookIsbn(this.isbn))
+            SearchBookQuery.SearchAllBookQuery -> SearchBookCriteria.All
         }
 }
 
-sealed class SearchBooksQuery : Query {
-    data object SearchAllBooksQuery : SearchBooksQuery()
+sealed class SearchBookQuery : Query {
+    data object SearchAllBookQuery : SearchBookQuery()
 
-    data class SearchAllBooksByIsbnQuery(val isbn: String) : SearchBooksQuery()
+    data class SearchAllBookByIsbnQuery(val isbn: String) : SearchBookQuery()
 }
 
-data class SearchAllBooksQueryResponse(val values: List<Book>) : QueryResponse
+data class SearchBookQueryResponse(val values: List<Book>) : QueryResponse

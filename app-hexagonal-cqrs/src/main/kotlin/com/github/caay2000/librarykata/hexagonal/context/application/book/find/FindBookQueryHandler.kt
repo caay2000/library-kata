@@ -11,17 +11,17 @@ import com.github.caay2000.librarykata.hexagonal.context.domain.book.FindBookCri
 import mu.KLogger
 import mu.KotlinLogging
 
-class FindBookByIdQueryHandler(bookRepository: BookRepository) : QueryHandler<FindBookByIdQuery, FindBookByIdQueryResponse> {
+class FindBookQueryHandler(bookRepository: BookRepository) : QueryHandler<FindBookQuery, FindBookQueryResponse> {
     override val logger: KLogger = KotlinLogging.logger {}
 
     private val finder = BookFinder(bookRepository)
 
-    override fun handle(query: FindBookByIdQuery): FindBookByIdQueryResponse =
+    override fun handle(query: FindBookQuery): FindBookQueryResponse =
         finder.invoke(FindBookCriteria.ById(query.id))
-            .map { book -> FindBookByIdQueryResponse(book) }
+            .map { book -> FindBookQueryResponse(book) }
             .getOrThrow()
 }
 
-data class FindBookByIdQuery(val id: BookId) : Query
+data class FindBookQuery(val id: BookId) : Query
 
-data class FindBookByIdQueryResponse(val book: Book) : QueryResponse
+data class FindBookQueryResponse(val book: Book) : QueryResponse

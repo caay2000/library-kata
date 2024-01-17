@@ -10,17 +10,17 @@ import com.github.caay2000.librarykata.hexagonal.context.domain.account.AccountR
 import mu.KLogger
 import mu.KotlinLogging
 
-class FindAccountByIdQueryHandler(accountRepository: AccountRepository) : QueryHandler<FindAccountByIdQuery, FindAccountByIdQueryResponse> {
+class FindAccountQueryHandler(accountRepository: AccountRepository) : QueryHandler<FindAccountQuery, FindAccountQueryResponse> {
     override val logger: KLogger = KotlinLogging.logger {}
 
     private val finder = AccountFinder(accountRepository)
 
-    override fun handle(query: FindAccountByIdQuery): FindAccountByIdQueryResponse =
+    override fun handle(query: FindAccountQuery): FindAccountQueryResponse =
         finder.invoke(query.accountId)
-            .map { FindAccountByIdQueryResponse(it) }
+            .map { FindAccountQueryResponse(it) }
             .getOrThrow()
 }
 
-data class FindAccountByIdQuery(val accountId: AccountId) : Query
+data class FindAccountQuery(val accountId: AccountId) : Query
 
-data class FindAccountByIdQueryResponse(val account: Account) : QueryResponse
+data class FindAccountQueryResponse(val account: Account) : QueryResponse

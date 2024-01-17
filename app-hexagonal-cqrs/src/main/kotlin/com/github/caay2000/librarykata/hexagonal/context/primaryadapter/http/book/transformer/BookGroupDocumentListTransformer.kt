@@ -33,20 +33,20 @@ fun List<Book>.toJsonApiBookGroupDocumentList(
     loans: Collection<Loan> = emptyList(),
     include: List<String> = emptyList(),
 ) = JsonApiDocumentList(
-    data = groupBy { it.isbn }.map { it.value.toJsonApiDocumentBookGroupResource(loans) },
+    data = groupBy { it.isbn }.map { it.value.toJsonApiBookGroupResource(loans) },
     included = if (include.shouldProcess(LoanResource.TYPE)) LoanIncludeTransformer().invoke(loans) else null,
     meta = JsonApiMeta(total = groupBy { it.isbn }.size),
 )
 
-internal fun List<Book>.toJsonApiDocumentBookGroupResource(loans: Collection<Loan> = emptyList()) =
+internal fun List<Book>.toJsonApiBookGroupResource(loans: Collection<Loan> = emptyList()) =
     BookGroupResource(
         id = first().isbn.value,
-        type = "book-group",
-        attributes = toJsonApiDocumentBookGroupAttributes(),
+        type = BookGroupResource.TYPE,
+        attributes = toJsonApiBookGroupAttributes(),
         relationships = LoanRelationshipTransformer().invoke(loans.filter { loan -> map { it.id }.contains(loan.bookId) }),
     )
 
-internal fun List<Book>.toJsonApiDocumentBookGroupAttributes() =
+internal fun List<Book>.toJsonApiBookGroupAttributes() =
     BookGroupResource.Attributes(
         isbn = first().isbn.value,
         title = first().title.value,
