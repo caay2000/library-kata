@@ -2,8 +2,10 @@ package com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.lo
 
 import com.github.caay2000.common.dateprovider.DateProvider
 import com.github.caay2000.common.http.Controller
+import com.github.caay2000.common.jsonapi.ServerResponse
 import com.github.caay2000.librarykata.hexagonal.context.application.loan.finish.FinishLoanCommand
 import com.github.caay2000.librarykata.hexagonal.context.application.loan.finish.FinishLoanCommandHandler
+import com.github.caay2000.librarykata.hexagonal.context.application.loan.finish.LoanFinisherError
 import com.github.caay2000.librarykata.hexagonal.context.domain.account.AccountRepository
 import com.github.caay2000.librarykata.hexagonal.context.domain.book.BookRepository
 import com.github.caay2000.librarykata.hexagonal.context.domain.loan.LoanRepository
@@ -32,5 +34,17 @@ class FinishLoanController(
 
         // TODO should it return loanId ?
         call.respond(HttpStatusCode.Accepted)
+    }
+
+    override suspend fun handleExceptions(
+        call: ApplicationCall,
+        e: Exception,
+    ) {
+        call.serverError {
+            when (e) {
+                is LoanFinisherError.LoanNotFound -> ServerResponse(HttpStatusCode.BadRequest, "LoanNotFound", e.message)
+                else -> ServerResponse(HttpStatusCode.InternalServerError, "Unknown Error", e.message)
+            }
+        }
     }
 }

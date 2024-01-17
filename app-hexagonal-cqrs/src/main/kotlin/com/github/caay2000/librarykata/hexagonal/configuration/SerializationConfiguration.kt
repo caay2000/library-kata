@@ -33,6 +33,7 @@ fun Application.configureSerialization() {
     }
 }
 
+// TestObjectMapper should be also change if this mapper is changed in order to have the same serialization in testing
 val jsonMapper =
     Json {
         @OptIn(ExperimentalSerializationApi::class)

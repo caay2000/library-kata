@@ -43,6 +43,17 @@ class FindLoanControllerTest {
         }
 
     @Test
+    fun `a loan can be retrieved with account and book information `() =
+        testApplication {
+            testUseCases.`account is created with a loan`(account, book, loan)
+
+            val expected = LoanDocumentMother.random(loan, account, lentBook, listOf("account", "book"))
+            testUseCases.`find loan`(loan.id, listOf("account", "book"))
+                .assertStatus(HttpStatusCode.OK)
+                .assertJsonApiResponse(expected)
+        }
+
+    @Test
     fun `a finished loan can be retrieved`() =
         testApplication {
             testUseCases.`account is created with a loan`(account, book, loan)
@@ -70,7 +81,7 @@ class FindLoanControllerTest {
     private val finishDate = now.plusDays(2)
     private val account = AccountMother.random()
     private val book = BookMother.random()
+    private val lentBook = book.copy(available = BookAvailable.notAvailable())
     private val loan = LoanMother.random(bookId = book.id, accountId = account.id, createdAt = CreatedAt(now))
     private val finishedLoan = loan.copy(finishedAt = FinishedAt(finishDate))
-    private val notAvailableBook = book.copy(available = BookAvailable.notAvailable())
 }

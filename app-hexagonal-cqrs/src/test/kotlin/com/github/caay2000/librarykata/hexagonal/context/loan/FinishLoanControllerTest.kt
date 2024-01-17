@@ -1,5 +1,7 @@
 package com.github.caay2000.librarykata.hexagonal.context.loan
 
+import com.github.caay2000.common.jsonapi.jsonApiErrorDocument
+import com.github.caay2000.common.test.http.assertJsonApiErrorDocument
 import com.github.caay2000.common.test.http.assertResponse
 import com.github.caay2000.common.test.http.assertStatus
 import com.github.caay2000.common.test.mock.MockDateProvider
@@ -35,39 +37,35 @@ class FinishLoanControllerTest {
     @Test
     fun `a book can be returned`() =
         testApplication {
-            testUseCases.`book is created`(book)
-                .assertStatus(HttpStatusCode.Created)
-
-            testUseCases.`account is created`(account)
-                .assertStatus(HttpStatusCode.Created)
-
-            testUseCases.`loan is created`(loan, book.isbn)
-                .assertStatus(HttpStatusCode.Created)
-                .assertResponse(loan.toJsonApiDocument(account, book, emptyList()))
+            testUseCases.`account is created with a loan`(account, book, loan)
 
             testUseCases.`loan is finished`(bookId = BookId(book.id.value))
                 .assertStatus(HttpStatusCode.Accepted)
         }
 
     @Test
-    fun `after finishing a book it can be lended again`() =
+    fun `after finishing a book it can be lent again`() =
         testApplication {
-            testUseCases.`book is created`(book)
-                .assertStatus(HttpStatusCode.Created)
-
-            testUseCases.`account is created`(account)
-                .assertStatus(HttpStatusCode.Created)
-
-            testUseCases.`loan is created`(loan, book.isbn)
-                .assertStatus(HttpStatusCode.Created)
-                .assertResponse(loan.toJsonApiDocument(account, book, emptyList()))
-
+            testUseCases.`account is created with a loan`(account, book, loan)
             testUseCases.`loan is finished`(bookId = BookId(book.id.value))
-                .assertStatus(HttpStatusCode.Accepted)
 
             testUseCases.`loan is created`(loan, book.isbn)
                 .assertStatus(HttpStatusCode.Created)
-                .assertResponse(loan.toJsonApiDocument(account, book, emptyList()))
+                .assertResponse(loan.toJsonApiDocument(account, book))
+        }
+
+    @Test
+    fun `not lent book should fail if trying to return it`() =
+        testApplication {
+            testUseCases.`loan is finished`(bookId = BookId(book.id.value))
+                .assertStatus(HttpStatusCode.BadRequest)
+                .assertJsonApiErrorDocument(
+                    jsonApiErrorDocument(
+                        status = HttpStatusCode.BadRequest,
+                        title = "LoanNotFound",
+                        detail = "loan for book ${book.id.value} not found",
+                    ),
+                )
         }
 
     private val account = AccountMother.random()
