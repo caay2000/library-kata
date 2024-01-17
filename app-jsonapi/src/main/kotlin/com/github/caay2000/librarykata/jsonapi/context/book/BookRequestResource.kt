@@ -8,8 +8,8 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class BookRequestResource(
-    @field:Schema(description = "resource type - must be `book`", example = "book")
-    override val type: String = "book",
+    @field:Schema(description = "resource type - must be `book`", example = BookResource.TYPE)
+    override val type: String = BookResource.TYPE,
     override val attributes: Attributes,
 ) : JsonApiRequestResource {
     @Serializable
@@ -28,6 +28,6 @@ data class BookRequestResource(
     ) : JsonApiRequestAttributes
 
     init {
-        if (type != "book") throw InvalidJsonApiException("Invalid type for AccountResource: $type")
+        if (type != BookResource.TYPE) throw InvalidJsonApiException("Invalid type for AccountResource: $type")
     }
 }

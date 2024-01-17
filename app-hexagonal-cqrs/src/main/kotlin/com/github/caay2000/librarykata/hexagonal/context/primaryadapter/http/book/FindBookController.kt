@@ -2,7 +2,6 @@ package com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.bo
 
 import com.github.caay2000.common.http.ContentType
 import com.github.caay2000.common.http.Controller
-import com.github.caay2000.common.http.RequestInclude
 import com.github.caay2000.common.http.Transformer
 import com.github.caay2000.common.jsonapi.JsonApiDocument
 import com.github.caay2000.common.jsonapi.ServerResponse
@@ -32,8 +31,6 @@ class FindBookController(bookRepository: BookRepository, loanRepository: LoanRep
 
     private val queryHandler = FindBookByIdQueryHandler(bookRepository)
     private val transformer: Transformer<Book, JsonApiDocument<BookResource>> = BookToBookDocumentTransformer(loanRepository)
-
-    internal enum class Included : RequestInclude { LOANS }
 
     override suspend fun handle(call: ApplicationCall) {
         val bookId = BookId(UUID.fromString(call.parameters["id"]!!).toString())

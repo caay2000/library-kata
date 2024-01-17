@@ -11,11 +11,15 @@ import kotlinx.serialization.Serializable
 data class BookResource(
     @field:Schema(description = "book id", example = "00000000-0000-0000-0000-000000000000")
     override val id: String,
-    @field:Schema(description = "resource type - must be `book`", example = "book")
-    override val type: String = "book",
+    @field:Schema(description = "resource type - must be `$TYPE`", example = TYPE)
+    override val type: String = TYPE,
     override val attributes: Attributes,
     override val relationships: Map<String, JsonApiRelationshipData>? = null,
 ) : JsonApiResource {
+    companion object {
+        const val TYPE = "book"
+    }
+
     @Serializable
     @Schema(name = "BookResource.Attributes")
     data class Attributes(
@@ -34,6 +38,6 @@ data class BookResource(
     ) : JsonApiResourceAttributes
 
     init {
-        if (type != "book") throw InvalidJsonApiException("Invalid type for AccountResource: $type")
+        if (type != TYPE) throw InvalidJsonApiException("Invalid type for AccountResource: $type")
     }
 }
