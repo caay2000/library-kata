@@ -69,9 +69,7 @@ class SearchAccountControllerTest {
     @Test
     fun `multiple accounts with loans can be searched by partial phone number including loan information`() =
         testApplication {
-            testUseCases.`account is created`(account)
-            testUseCases.`book is created`(book)
-            testUseCases.`loan is created`(loan)
+            testUseCases.`account is created with a loan`(account, book, loan)
             testUseCases.`account is created`(accountWithSimilarPhoneNumber)
             testUseCases.`account is created`(anotherAccount)
 
@@ -102,9 +100,7 @@ class SearchAccountControllerTest {
     @Test
     fun `multiple accounts with loans can be searched by partial email including loan information`() =
         testApplication {
-            testUseCases.`account is created`(account)
-            testUseCases.`book is created`(book)
-            testUseCases.`loan is created`(loan)
+            testUseCases.`account is created with a loan`(account, book, loan)
 
             testUseCases.`account is created`(accountWithSimilarEmail)
             testUseCases.`account is created`(anotherAccount)
@@ -123,13 +119,8 @@ class SearchAccountControllerTest {
     @Test
     fun `multiple accounts with loans can be searched including loan information`() =
         testApplication {
-            testUseCases.`account is created`(account)
-            testUseCases.`book is created`(book)
-            testUseCases.`loan is created`(loan)
-
-            testUseCases.`account is created`(anotherAccount)
-            testUseCases.`book is created`(anotherBook)
-            testUseCases.`loan is created`(anotherLoan)
+            testUseCases.`account is created with a loan`(account, book, loan)
+            testUseCases.`account is created with a loan`(anotherAccount, anotherBook, anotherLoan)
 
             val expected =
                 AccountDocumentListMother.random(

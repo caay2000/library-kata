@@ -61,14 +61,7 @@ class FindAccountControllerTest {
     @Test
     fun `a user with one loan retrieves it`() =
         testApplication {
-            testUseCases.`account is created`(account)
-            testUseCases.`book is created`(book).value!!.data.id
-            testUseCases.`loan is created`(
-                id = loan.id,
-                bookIsbn = book.isbn,
-                accountId = AccountId(account.id.value),
-                createdAt = loan.createdAt,
-            )
+            testUseCases.`account is created with a loan`(account, book, loan)
 
             val expected = AccountDocumentMother.random(account, listOf(loan))
             testUseCases.`find account`(account.id)
@@ -79,14 +72,7 @@ class FindAccountControllerTest {
     @Test
     fun `a user with one loan retrieves it including loan information`() =
         testApplication {
-            testUseCases.`account is created`(account)
-            testUseCases.`book is created`(book)
-            testUseCases.`loan is created`(
-                id = loan.id,
-                bookIsbn = book.isbn,
-                accountId = account.id,
-                createdAt = loan.createdAt,
-            )
+            testUseCases.`account is created with a loan`(account, book, loan)
 
             val expected = AccountDocumentMother.random(account, listOf(loan), listOf("loan"))
             testUseCases.`find account`(account.id, listOf("loan"))
@@ -97,14 +83,7 @@ class FindAccountControllerTest {
     @Test
     fun `a user with multiple loans retrieves them`() =
         testApplication {
-            testUseCases.`account is created`(account)
-            testUseCases.`book is created`(book)
-            testUseCases.`loan is created`(
-                id = loan.id,
-                bookIsbn = book.isbn,
-                accountId = AccountId(account.id.value),
-                createdAt = loan.createdAt,
-            )
+            testUseCases.`account is created with a loan`(account, book, loan)
 
             testUseCases.`book is created`(anotherBook)
             testUseCases.`loan is created`(

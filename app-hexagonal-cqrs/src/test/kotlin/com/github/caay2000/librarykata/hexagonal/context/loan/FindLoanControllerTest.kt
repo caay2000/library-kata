@@ -1,4 +1,4 @@
-package com.github.caay2000.librarykata.hexagonal.context.book
+package com.github.caay2000.librarykata.hexagonal.context.loan
 
 import com.github.caay2000.common.test.http.assertJsonApiResponse
 import com.github.caay2000.common.test.http.assertStatus
@@ -9,6 +9,7 @@ import com.github.caay2000.librarykata.hexagonal.common.TestUseCases
 import com.github.caay2000.librarykata.hexagonal.context.account.mother.AccountMother
 import com.github.caay2000.librarykata.hexagonal.context.book.mother.BookDocumentMother
 import com.github.caay2000.librarykata.hexagonal.context.book.mother.BookMother
+import com.github.caay2000.librarykata.hexagonal.context.domain.account.AccountId
 import com.github.caay2000.librarykata.hexagonal.context.domain.book.BookAvailable
 import com.github.caay2000.librarykata.hexagonal.context.loan.mother.LoanMother
 import io.ktor.http.HttpStatusCode
@@ -16,7 +17,7 @@ import io.ktor.server.testing.testApplication
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
-class FindBookControllerTest {
+class FindLoanControllerTest {
     private val mockIdGenerator = MockIdGenerator()
     private val mockDateProvider = MockDateProvider()
     private val testUseCases = TestUseCases(mockIdGenerator = mockIdGenerator, mockDateProvider = mockDateProvider)
@@ -29,7 +30,7 @@ class FindBookControllerTest {
     }
 
     @Test
-    fun `a book can be retrieved by Id`() =
+    fun `a loan can be retrieved`() =
         testApplication {
             testUseCases.`book is created`(book)
 
@@ -42,7 +43,13 @@ class FindBookControllerTest {
     @Test
     fun `a lent book can be retrieved by Id`() =
         testApplication {
-            testUseCases.`account is created with a loan`(account, book, loan)
+            testUseCases.`book is created`(book)
+            testUseCases.`account is created`(account)
+            testUseCases.`loan is created`(
+                id = loan.id,
+                bookIsbn = book.isbn,
+                accountId = AccountId(account.id.value),
+            )
 
             val expected = BookDocumentMother.random(notAvailableBook, listOf(loan))
             testUseCases.`find book by id`(book.id)
@@ -53,7 +60,14 @@ class FindBookControllerTest {
     @Test
     fun `a lent book can be retrieved by Id including loan information`() =
         testApplication {
-            testUseCases.`account is created with a loan`(account, book, loan)
+            testUseCases.`book is created`(book)
+            testUseCases.`account is created`(account)
+            testUseCases.`loan is created`(
+                id = loan.id,
+                bookIsbn = book.isbn,
+                accountId = AccountId(account.id.value),
+                createdAt = loan.createdAt,
+            )
 
             val expected = BookDocumentMother.random(notAvailableBook, listOf(loan), listOf("loan"))
             testUseCases.`find book by id`(book.id, listOf("loan"))

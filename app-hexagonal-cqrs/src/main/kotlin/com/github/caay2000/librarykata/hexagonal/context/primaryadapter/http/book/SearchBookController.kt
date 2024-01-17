@@ -13,7 +13,7 @@ import com.github.caay2000.librarykata.hexagonal.context.application.book.search
 import com.github.caay2000.librarykata.hexagonal.context.domain.book.Book
 import com.github.caay2000.librarykata.hexagonal.context.domain.book.BookRepository
 import com.github.caay2000.librarykata.hexagonal.context.domain.loan.LoanRepository
-import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.book.transformer.BookListToBookGroupDocumentListTransformer
+import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.book.transformer.BookGroupDocumentListTransformer
 import com.github.caay2000.librarykata.jsonapi.context.book.BookGroupResource
 import io.github.smiley4.ktorswaggerui.dsl.OpenApiRoute
 import io.ktor.http.HttpStatusCode
@@ -27,7 +27,7 @@ class SearchBookController(bookRepository: BookRepository, loanRepository: LoanR
     override val logger: KLogger = KotlinLogging.logger {}
 
     private val queryHandler = SearchBooksQueryHandler(bookRepository)
-    private val transformer: Transformer<List<Book>, JsonApiDocumentList<BookGroupResource>> = BookListToBookGroupDocumentListTransformer(loanRepository)
+    private val transformer: Transformer<List<Book>, JsonApiDocumentList<BookGroupResource>> = BookGroupDocumentListTransformer(loanRepository)
 
     override suspend fun handle(call: ApplicationCall) {
         val jsonApiParams = call.parameters.toMap().toJsonApiRequestParams()

@@ -30,6 +30,7 @@ class FinishLoanController(
         val datetime = dateProvider.dateTime()
         commandHandler.invoke(FinishLoanCommand(bookId = bookId, finishedAt = datetime))
 
+        // TODO should it return loanId ?
         call.respond(HttpStatusCode.Accepted)
     }
 }

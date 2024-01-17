@@ -54,11 +54,9 @@ class SearchBookControllerTest {
     @Test
     fun `a book with multiple copies and some of them booked can be retrieved by Isbn and returns de correct amount of copies`() =
         testApplication {
-            testUseCases.`account is created`(account)
-            testUseCases.`book is created`(book)
+            testUseCases.`account is created with a loan`(account, book, loan)
             testUseCases.`book is created`(sameBook)
             testUseCases.`book is created`(differentBook)
-            testUseCases.`loan is created`(loan)
 
             val expected = BookGroupDocumentMother.random(book, copies = 2, available = 1, listOf(loan))
             testUseCases.`find book by isbn`(book.isbn)

@@ -7,6 +7,7 @@ import com.github.caay2000.common.test.mock.MockDateProvider
 import com.github.caay2000.common.test.mock.MockIdGenerator
 import com.github.caay2000.librarykata.hexagonal.context.account.mother.AccountMother
 import com.github.caay2000.librarykata.hexagonal.context.book.mother.BookIdMother
+import com.github.caay2000.librarykata.hexagonal.context.book.mother.BookMother
 import com.github.caay2000.librarykata.hexagonal.context.domain.account.Account
 import com.github.caay2000.librarykata.hexagonal.context.domain.account.AccountId
 import com.github.caay2000.librarykata.hexagonal.context.domain.account.Email
@@ -60,6 +61,18 @@ class TestUseCases(
             phonePrefix = phonePrefix ?: account.phonePrefix,
             phoneNumber = phoneNumber ?: account.phoneNumber,
         )
+    }
+
+    context(ApplicationTestBuilder)
+    @TestCase
+    fun `account is created with a loan`(
+        account: Account = AccountMother.random(),
+        book: Book = BookMother.random(),
+        loan: Loan = LoanMother.random(accountId = account.id, bookId = book.id),
+    ) {
+        `account is created`(account)
+        `book is created`(book)
+        `loan is created`(loan)
     }
 
     context(ApplicationTestBuilder)

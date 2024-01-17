@@ -15,7 +15,7 @@ import com.github.caay2000.librarykata.hexagonal.context.domain.book.Book
 import com.github.caay2000.librarykata.hexagonal.context.domain.book.BookId
 import com.github.caay2000.librarykata.hexagonal.context.domain.book.BookRepository
 import com.github.caay2000.librarykata.hexagonal.context.domain.loan.LoanRepository
-import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.book.transformer.BookToBookDocumentTransformer
+import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.book.transformer.BookDocumentTransformer
 import com.github.caay2000.librarykata.jsonapi.context.book.BookResource
 import io.github.smiley4.ktorswaggerui.dsl.OpenApiRoute
 import io.ktor.http.HttpStatusCode
@@ -30,7 +30,7 @@ class FindBookController(bookRepository: BookRepository, loanRepository: LoanRep
     override val logger: KLogger = KotlinLogging.logger {}
 
     private val queryHandler = FindBookByIdQueryHandler(bookRepository)
-    private val transformer: Transformer<Book, JsonApiDocument<BookResource>> = BookToBookDocumentTransformer(loanRepository)
+    private val transformer: Transformer<Book, JsonApiDocument<BookResource>> = BookDocumentTransformer(loanRepository)
 
     override suspend fun handle(call: ApplicationCall) {
         val bookId = BookId(UUID.fromString(call.parameters["id"]!!).toString())

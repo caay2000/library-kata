@@ -2,7 +2,9 @@ package com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.lo
 
 import com.github.caay2000.common.dateprovider.DateProvider
 import com.github.caay2000.common.http.Controller
+import com.github.caay2000.common.http.Transformer
 import com.github.caay2000.common.idgenerator.IdGenerator
+import com.github.caay2000.common.jsonapi.JsonApiDocument
 import com.github.caay2000.common.jsonapi.JsonApiRequestDocument
 import com.github.caay2000.common.jsonapi.ServerResponse
 import com.github.caay2000.librarykata.hexagonal.context.application.loan.create.CreateLoanCommand
@@ -12,10 +14,12 @@ import com.github.caay2000.librarykata.hexagonal.context.application.loan.find.F
 import com.github.caay2000.librarykata.hexagonal.context.application.loan.find.FindLoanByIdQueryHandler
 import com.github.caay2000.librarykata.hexagonal.context.domain.account.AccountRepository
 import com.github.caay2000.librarykata.hexagonal.context.domain.book.BookRepository
+import com.github.caay2000.librarykata.hexagonal.context.domain.loan.Loan
 import com.github.caay2000.librarykata.hexagonal.context.domain.loan.LoanId
 import com.github.caay2000.librarykata.hexagonal.context.domain.loan.LoanRepository
-import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.serialization.toJsonApiDocument
+import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.loan.serialization.LoanDocumentTransformer
 import com.github.caay2000.librarykata.jsonapi.context.loan.LoanRequestResource
+import com.github.caay2000.librarykata.jsonapi.context.loan.LoanResource
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.ApplicationCall
 import io.ktor.server.request.receive
@@ -36,6 +40,7 @@ class CreateLoanController(
 
     private val commandHandler = CreateLoanCommandHandler(bookRepository, accountRepository, loanRepository)
     private val loanQueryHandler = FindLoanByIdQueryHandler(loanRepository)
+    private val transformer: Transformer<Loan, JsonApiDocument<LoanResource>> = LoanDocumentTransformer()
 
     override suspend fun handle(call: ApplicationCall) {
         val request = call.receive<JsonApiRequestDocument<LoanRequestResource>>()
@@ -45,7 +50,7 @@ class CreateLoanController(
         commandHandler.invoke(request.toCreateLoanCommand(loanId, datetime))
 
         val loanQueryResponse = loanQueryHandler.invoke(FindLoanByIdQuery(LoanId(loanId)))
-        call.respond(HttpStatusCode.Created, loanQueryResponse.loan.toJsonApiDocument())
+        call.respond(HttpStatusCode.Created, transformer.invoke(loanQueryResponse.loan))
     }
 
     override suspend fun handleExceptions(

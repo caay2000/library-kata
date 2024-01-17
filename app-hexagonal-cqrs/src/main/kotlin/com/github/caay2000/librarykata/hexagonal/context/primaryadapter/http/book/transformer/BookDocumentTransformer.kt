@@ -10,12 +10,12 @@ import com.github.caay2000.librarykata.hexagonal.context.application.loan.search
 import com.github.caay2000.librarykata.hexagonal.context.domain.book.Book
 import com.github.caay2000.librarykata.hexagonal.context.domain.loan.Loan
 import com.github.caay2000.librarykata.hexagonal.context.domain.loan.LoanRepository
+import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.loan.serialization.LoanIncludeTransformer
 import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.loan.serialization.LoanRelationshipTransformer
-import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.serialization.toJsonApiDocumentIncludedResource
 import com.github.caay2000.librarykata.jsonapi.context.book.BookResource
 import com.github.caay2000.librarykata.jsonapi.context.loan.LoanResource
 
-class BookToBookDocumentTransformer(loanRepository: LoanRepository) : Transformer<Book, JsonApiDocument<BookResource>> {
+class BookDocumentTransformer(loanRepository: LoanRepository) : Transformer<Book, JsonApiDocument<BookResource>> {
     private val loanQueryHandler: QueryHandler<SearchLoanQuery, SearchLoanQueryResponse> = SearchLoanQueryHandler(loanRepository)
 
     override fun invoke(
@@ -33,7 +33,7 @@ fun Book.toJsonApiDocument(
     include: List<String> = emptyList(),
 ) = JsonApiDocument(
     data = toJsonApiDocumentBookResource(loans),
-    included = if (include.shouldProcess(LoanResource.TYPE)) loans.toJsonApiDocumentIncludedResource() else null,
+    included = if (include.shouldProcess(LoanResource.TYPE)) LoanIncludeTransformer().invoke(loans) else null,
 )
 
 internal fun Book.toJsonApiDocumentBookResource(loans: List<Loan> = emptyList()) =
