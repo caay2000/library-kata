@@ -83,7 +83,6 @@ class FindAccountController(
                 errorResponses(
                     httpStatusCode = HttpStatusCode.InternalServerError,
                     summary = "Something unexpected happened",
-                    responseExample("UnknownError", "message with information about the error"),
                 )
             }
         }

@@ -17,16 +17,10 @@ class BookFinder(private val bookRepository: BookRepository) {
                             is FindBookCriteria.ById -> BookFinderError.BookNotFoundError(criteria.id)
                         }
                     }
-                    is RepositoryError.Unknown -> BookFinderError.UnknownError(it)
                 }
             }
 }
 
-sealed class BookFinderError : RuntimeException {
-    constructor(message: String) : super(message)
-    constructor(throwable: Throwable) : super(throwable)
-
-    class UnknownError(error: Throwable) : BookFinderError(error)
-
+sealed class BookFinderError(message: String) : RuntimeException(message) {
     class BookNotFoundError(bookId: BookId) : BookFinderError("Book ${bookId.value} not found")
 }

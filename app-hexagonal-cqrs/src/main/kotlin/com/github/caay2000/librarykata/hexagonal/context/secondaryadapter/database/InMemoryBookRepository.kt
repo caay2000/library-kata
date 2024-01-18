@@ -11,7 +11,7 @@ import com.github.caay2000.memorydb.InMemoryDatasource
 class InMemoryBookRepository(private val datasource: InMemoryDatasource) : BookRepository {
     override fun save(book: Book): Either<RepositoryError, Unit> =
         Either.catch { datasource.save(TABLE_NAME, book.id.toString(), book) }
-            .mapLeft { RepositoryError.Unknown(it) }
+            .mapLeft { throw it }
             .map { }
 
     override fun find(criteria: FindBookCriteria): Either<RepositoryError, Book> =
@@ -21,7 +21,7 @@ class InMemoryBookRepository(private val datasource: InMemoryDatasource) : BookR
             when (error) {
                 is NullPointerException -> RepositoryError.NotFoundError()
                 is NoSuchElementException -> RepositoryError.NotFoundError()
-                else -> RepositoryError.Unknown(error)
+                else -> throw error
             }
         }
 
@@ -29,7 +29,7 @@ class InMemoryBookRepository(private val datasource: InMemoryDatasource) : BookR
         when (criteria) {
             SearchBookCriteria.All -> Either.catch { datasource.getAll(TABLE_NAME) }
             is SearchBookCriteria.ByIsbn -> Either.catch { datasource.getAll<Book>(TABLE_NAME).filter { it.isbn == criteria.isbn } }
-        }.mapLeft { RepositoryError.Unknown(it) }
+        }.mapLeft { throw it }
 
     companion object {
         private const val TABLE_NAME = "book"

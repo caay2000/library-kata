@@ -42,7 +42,7 @@ class LoanCreator(
         accountRepository.findOrElse(
             criteria = FindAccountCriteria.ById(accountId),
             onResourceDoesNotExist = { LoanCreatorError.UserNotFound(accountId) },
-            onUnexpectedError = { LoanCreatorError.UnknownError(it) },
+            onUnexpectedError = { throw it },
         ).flatMap { account ->
             if (account.hasReachedLoanLimit()) {
                 LoanCreatorError.UserHasTooManyLoans(account.id).left()
@@ -53,7 +53,7 @@ class LoanCreator(
 
     private fun LoanCreatorContext.guardBookAvailability(bookIsbn: BookIsbn): Either<LoanCreatorError, LoanCreatorContext> =
         bookRepository.search(SearchBookCriteria.ByIsbn(bookIsbn))
-            .mapLeft { LoanCreatorError.UnknownError(it) }
+            .mapLeft { throw it }
             .flatMap { books -> books.firstOrElse(predicate = { it.isAvailable }) { LoanCreatorError.BookNotAvailable(bookIsbn) } }
             .map { book -> withBook(book) }
 
@@ -66,9 +66,9 @@ class LoanCreator(
             .withAccount(account.increaseLoans())
 
     private fun LoanCreatorContext.save() =
-        loanRepository.saveOrElse(loan) { LoanCreatorError.UnknownError(it) }
-            .flatMap { accountRepository.saveOrElse(account) { LoanCreatorError.UnknownError(it) } }
-            .flatMap { bookRepository.saveOrElse(book) { LoanCreatorError.UnknownError(it) } }
+        loanRepository.saveOrElse(loan) { throw it }
+            .flatMap { accountRepository.saveOrElse(account) { throw it } }
+            .flatMap { bookRepository.saveOrElse(book) { throw it } }
             .map { }
 
     data class LoanCreatorContext(private val map: Map<String, Any> = mapOf()) {
@@ -87,15 +87,10 @@ class LoanCreator(
     }
 }
 
-sealed class LoanCreatorError : RuntimeException {
-    constructor(message: String) : super(message)
-    constructor(throwable: Throwable) : super(throwable)
-
+sealed class LoanCreatorError(message: String) : RuntimeException(message) {
     class BookNotAvailable(bookIsbn: BookIsbn) : LoanCreatorError("book with isbn ${bookIsbn.value} is not available")
 
     class UserNotFound(accountId: AccountId) : LoanCreatorError("user ${accountId.value} not found")
 
     class UserHasTooManyLoans(accountId: AccountId) : LoanCreatorError("user ${accountId.value} has too many loans")
-
-    class UnknownError(error: Throwable) : LoanCreatorError(error)
 }

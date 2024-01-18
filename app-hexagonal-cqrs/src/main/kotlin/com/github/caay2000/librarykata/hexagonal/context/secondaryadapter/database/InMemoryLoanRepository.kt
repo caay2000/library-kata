@@ -12,7 +12,7 @@ import com.github.caay2000.memorydb.InMemoryDatasource
 class InMemoryLoanRepository(private val datasource: InMemoryDatasource) : LoanRepository {
     override fun save(loan: Loan): Either<RepositoryError, Unit> =
         Either.catch { datasource.save(TABLE_NAME, loan.id.toString(), loan) }
-            .mapLeft { RepositoryError.Unknown(it) }
+            .mapLeft { throw it }
             .map { }
 
     override fun find(criteria: FindLoanCriteria): Either<RepositoryError, Loan> =
@@ -25,7 +25,7 @@ class InMemoryLoanRepository(private val datasource: InMemoryDatasource) : LoanR
             when (error) {
                 is NullPointerException -> RepositoryError.NotFoundError()
                 is NoSuchElementException -> RepositoryError.NotFoundError()
-                else -> RepositoryError.Unknown(error)
+                else -> throw error
             }
         }
 
@@ -38,7 +38,7 @@ class InMemoryLoanRepository(private val datasource: InMemoryDatasource) : LoanR
                     val bookIds = datasource.getAll<Book>(BOOK_TABLE_NAME).filter { it.isbn == criteria.bookIsbn }.map { it.id }
                     datasource.getAll<Loan>(TABLE_NAME).filter { bookIds.contains(it.bookId) }
                 }
-        }.mapLeft { RepositoryError.Unknown(it) }
+        }.mapLeft { throw it }
 
     companion object {
         private const val TABLE_NAME = "loan"

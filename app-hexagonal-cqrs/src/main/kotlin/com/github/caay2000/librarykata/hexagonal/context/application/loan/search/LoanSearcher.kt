@@ -8,11 +8,7 @@ import com.github.caay2000.librarykata.hexagonal.context.domain.loan.SearchLoanC
 class LoanSearcher(private val loanRepository: LoanRepository) {
     fun invoke(criteria: SearchLoanCriteria): Either<LoanSearcherError, List<Loan>> =
         loanRepository.search(criteria)
-            .mapLeft { LoanSearcherError.UnknownError(it) }
+            .mapLeft { throw it }
 }
 
-sealed class LoanSearcherError : RuntimeException {
-    constructor(throwable: Throwable) : super(throwable)
-
-    class UnknownError(error: Throwable) : LoanSearcherError(error)
-}
+sealed class LoanSearcherError(throwable: Throwable) : RuntimeException(throwable)

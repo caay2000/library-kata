@@ -39,18 +39,18 @@ class LoanFinisher(
         loanRepository.findOrElse(
             criteria = FindLoanCriteria.ByBookIdAndNotFinished(bookId),
             onResourceDoesNotExist = { LoanFinisherError.LoanNotFound(bookId) },
-            onUnexpectedError = { LoanFinisherError.UnknownError(it) },
+            onUnexpectedError = { throw it },
         ).map { LoanFinisherContext().withLoan(it) }
 
     private fun LoanFinisherContext.findBook(bookId: BookId): Either<LoanFinisherError, LoanFinisherContext> =
         bookRepository.find(FindBookCriteria.ById(bookId))
             .map { book -> withBook(book) }
-            .mapLeft { LoanFinisherError.UnknownError(it) }
+            .mapLeft { throw it }
 
     private fun LoanFinisherContext.findAccount(accountId: AccountId): Either<LoanFinisherError, LoanFinisherContext> =
         accountRepository.findOrElse(
             criteria = FindAccountCriteria.ById(accountId),
-            onUnexpectedError = { LoanFinisherError.UnknownError(it) },
+            onUnexpectedError = { throw it },
         ).map { account -> withAccount(account) }
 
     private fun LoanFinisherContext.finishLoan(finishedAt: FinishedAt) =
@@ -59,9 +59,9 @@ class LoanFinisher(
             .withBook(book.available())
 
     private fun LoanFinisherContext.save() =
-        loanRepository.saveOrElse(loan) { LoanFinisherError.UnknownError(it) }
-            .flatMap { accountRepository.saveOrElse(account) { LoanFinisherError.UnknownError(it) } }
-            .flatMap { bookRepository.saveOrElse(book) { LoanFinisherError.UnknownError(it) } }
+        loanRepository.saveOrElse(loan) { throw it }
+            .flatMap { accountRepository.saveOrElse(account) { throw it } }
+            .flatMap { bookRepository.saveOrElse(book) { throw it } }
             .map { }
 
     data class LoanFinisherContext(private val map: Map<String, Any> = mapOf()) {
@@ -80,11 +80,6 @@ class LoanFinisher(
     }
 }
 
-sealed class LoanFinisherError : RuntimeException {
-    constructor(message: String) : super(message)
-    constructor(throwable: Throwable) : super(throwable)
-
+sealed class LoanFinisherError(message: String) : RuntimeException(message) {
     class LoanNotFound(bookId: BookId) : LoanFinisherError("loan for book ${bookId.value} not found")
-
-    class UnknownError(error: Throwable) : LoanFinisherError(error)
 }

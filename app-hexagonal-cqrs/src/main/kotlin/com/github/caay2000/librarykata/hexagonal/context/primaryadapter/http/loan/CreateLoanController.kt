@@ -67,12 +67,6 @@ class CreateLoanController(
         }
     }
 
-//    class BookNotAvailable(bookIsbn: BookIsbn) : LoanCreatorError("book with isbn ${bookIsbn.value} is not available")
-//
-//    class UserNotFound(accountId: AccountId) : LoanCreatorError("user ${accountId.value} not found")
-//    class UserHasTooManyLoans(accountId: AccountId) : LoanCreatorError("user ${accountId.value} has too many loans")
-//    class UnknownError(error: Throwable) : LoanCreatorError(error)
-
     private fun JsonApiRequestDocument<LoanRequestResource>.toCreateLoanCommand(
         loanId: String,
         datetime: LocalDateTime,

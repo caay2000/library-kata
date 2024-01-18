@@ -5,6 +5,4 @@ sealed class RepositoryError : RuntimeException {
     constructor(throwable: Throwable) : super(throwable)
 
     class NotFoundError : RepositoryError()
-
-    class Unknown(exception: Throwable) : RepositoryError(exception)
 }

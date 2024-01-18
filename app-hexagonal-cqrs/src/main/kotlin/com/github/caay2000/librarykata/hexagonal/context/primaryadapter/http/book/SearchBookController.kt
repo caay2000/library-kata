@@ -6,7 +6,6 @@ import com.github.caay2000.common.http.Transformer
 import com.github.caay2000.common.jsonapi.JsonApiDocumentList
 import com.github.caay2000.common.jsonapi.JsonApiRequestParams
 import com.github.caay2000.common.jsonapi.documentation.errorResponses
-import com.github.caay2000.common.jsonapi.documentation.responseExample
 import com.github.caay2000.common.jsonapi.toJsonApiRequestParams
 import com.github.caay2000.librarykata.hexagonal.context.application.book.search.SearchBookQuery
 import com.github.caay2000.librarykata.hexagonal.context.application.book.search.SearchBookQueryHandler
@@ -64,7 +63,6 @@ class SearchBookController(bookRepository: BookRepository, loanRepository: LoanR
                 errorResponses(
                     httpStatusCode = HttpStatusCode.InternalServerError,
                     summary = "Something unexpected happened",
-                    responseExample("UnknownError", "message with information about the error"),
                 )
             }
         }
