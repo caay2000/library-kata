@@ -1,0 +1,27 @@
+package com.github.caay2000.librarykata.hexagonal.context.domain.book
+
+import arrow.core.Either
+import com.github.caay2000.common.database.RepositoryError
+
+interface BookRepository {
+    fun save(book: Book): Either<RepositoryError, Unit>
+
+    fun find(criteria: FindBookCriteria): Either<RepositoryError, Book>
+
+    fun search(criteria: SearchBookCriteria): Either<RepositoryError, List<Book>>
+}
+
+sealed class FindBookCriteria {
+    class ById(val id: BookId) : FindBookCriteria()
+}
+
+sealed class SearchBookCriteria {
+    data object All : SearchBookCriteria()
+
+    data class ByIsbn(val isbn: BookIsbn) : SearchBookCriteria()
+}
+
+fun <E> BookRepository.saveOrElse(
+    book: Book,
+    onError: (Throwable) -> E,
+): Either<E, Book> = save(book).mapLeft { onError(it) }.map { book }

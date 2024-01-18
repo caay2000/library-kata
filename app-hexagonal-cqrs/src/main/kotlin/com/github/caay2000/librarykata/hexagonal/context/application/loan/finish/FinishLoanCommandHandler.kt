@@ -3,11 +3,11 @@ package com.github.caay2000.librarykata.hexagonal.context.application.loan.finis
 import com.github.caay2000.common.arrow.getOrThrow
 import com.github.caay2000.common.cqrs.Command
 import com.github.caay2000.common.cqrs.CommandHandler
-import com.github.caay2000.librarykata.hexagonal.context.application.account.AccountRepository
-import com.github.caay2000.librarykata.hexagonal.context.application.book.BookRepository
-import com.github.caay2000.librarykata.hexagonal.context.application.loan.LoanRepository
-import com.github.caay2000.librarykata.hexagonal.context.domain.BookId
-import com.github.caay2000.librarykata.hexagonal.context.domain.FinishedAt
+import com.github.caay2000.librarykata.hexagonal.context.domain.account.AccountRepository
+import com.github.caay2000.librarykata.hexagonal.context.domain.book.BookId
+import com.github.caay2000.librarykata.hexagonal.context.domain.book.BookRepository
+import com.github.caay2000.librarykata.hexagonal.context.domain.loan.FinishedAt
+import com.github.caay2000.librarykata.hexagonal.context.domain.loan.LoanRepository
 import mu.KLogger
 import mu.KotlinLogging
 import java.time.LocalDateTime
@@ -18,12 +18,10 @@ class FinishLoanCommandHandler(
     bookRepository: BookRepository,
     accountRepository: AccountRepository,
 ) : CommandHandler<FinishLoanCommand> {
-
     override val logger: KLogger = KotlinLogging.logger {}
     private val finisher = LoanFinisher(loanRepository, bookRepository, accountRepository)
 
-    override fun handle(command: FinishLoanCommand): Unit =
-        finisher.invoke(bookId = BookId(command.bookId.toString()), finishedAt = FinishedAt(command.finishedAt)).getOrThrow()
+    override fun handle(command: FinishLoanCommand): Unit = finisher.invoke(bookId = BookId(command.bookId.toString()), finishedAt = FinishedAt(command.finishedAt)).getOrThrow()
 }
 
 data class FinishLoanCommand(

@@ -2,17 +2,17 @@ package com.github.caay2000.librarykata.hexagonal.context.secondaryadapter.datab
 
 import arrow.core.Either
 import com.github.caay2000.common.database.RepositoryError
-import com.github.caay2000.librarykata.hexagonal.context.application.loan.FindLoanCriteria
-import com.github.caay2000.librarykata.hexagonal.context.application.loan.LoanRepository
-import com.github.caay2000.librarykata.hexagonal.context.application.loan.SearchLoanCriteria
-import com.github.caay2000.librarykata.hexagonal.context.domain.Loan
+import com.github.caay2000.librarykata.hexagonal.context.domain.book.Book
+import com.github.caay2000.librarykata.hexagonal.context.domain.loan.FindLoanCriteria
+import com.github.caay2000.librarykata.hexagonal.context.domain.loan.Loan
+import com.github.caay2000.librarykata.hexagonal.context.domain.loan.LoanRepository
+import com.github.caay2000.librarykata.hexagonal.context.domain.loan.SearchLoanCriteria
 import com.github.caay2000.memorydb.InMemoryDatasource
 
 class InMemoryLoanRepository(private val datasource: InMemoryDatasource) : LoanRepository {
-
     override fun save(loan: Loan): Either<RepositoryError, Unit> =
         Either.catch { datasource.save(TABLE_NAME, loan.id.toString(), loan) }
-            .mapLeft { RepositoryError.Unknown(it) }
+            .mapLeft { throw it }
             .map { }
 
     override fun find(criteria: FindLoanCriteria): Either<RepositoryError, Loan> =
@@ -25,16 +25,25 @@ class InMemoryLoanRepository(private val datasource: InMemoryDatasource) : LoanR
             when (error) {
                 is NullPointerException -> RepositoryError.NotFoundError()
                 is NoSuchElementException -> RepositoryError.NotFoundError()
-                else -> RepositoryError.Unknown(error)
+                else -> throw error
             }
         }
 
     override fun search(criteria: SearchLoanCriteria): Either<RepositoryError, List<Loan>> =
         when (criteria) {
             is SearchLoanCriteria.ByAccountId -> Either.catch { datasource.getAll<Loan>(TABLE_NAME).filter { it.accountId == criteria.accountId } }
-        }.mapLeft { RepositoryError.Unknown(it) }
+            is SearchLoanCriteria.ByBookId -> Either.catch { datasource.getAll<Loan>(TABLE_NAME).filter { it.bookId == criteria.bookId } }
+            is SearchLoanCriteria.ByBookIsbn ->
+                Either.catch {
+                    val bookIds = datasource.getAll<Book>(BOOK_TABLE_NAME).filter { it.isbn == criteria.bookIsbn }.map { it.id }
+                    datasource.getAll<Loan>(TABLE_NAME).filter { bookIds.contains(it.bookId) }
+                }
+        }.mapLeft { throw it }
 
     companion object {
         private const val TABLE_NAME = "loan"
+
+        // TODO this repository should not access Book Repository
+        private const val BOOK_TABLE_NAME = "book"
     }
 }

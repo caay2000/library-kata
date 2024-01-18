@@ -1,5 +1,6 @@
 package com.github.caay2000.librarykata.eventdriven
 
+import com.github.caay2000.common.http.ContentType
 import com.github.caay2000.common.http.Controller
 import com.github.caay2000.common.serialization.LocalDateSerializer
 import com.github.caay2000.common.serialization.LocalDateTimeSerializer
@@ -8,6 +9,7 @@ import com.github.caay2000.librarykata.eventdriven.configuration.DependencyInjec
 import com.github.caay2000.librarykata.eventdriven.configuration.RoutingConfiguration
 import com.github.caay2000.librarykata.eventdriven.configuration.ShutdownHookConfiguration
 import com.github.caay2000.librarykata.eventdriven.configuration.StartupHookConfiguration
+import io.ktor.serialization.kotlinx.KotlinxSerializationConverter
 import io.ktor.serialization.kotlinx.json.json
 import io.ktor.server.application.Application
 import io.ktor.server.application.install
@@ -16,6 +18,7 @@ import io.ktor.server.plugins.callid.callIdMdc
 import io.ktor.server.plugins.callloging.CallLogging
 import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.serializersModuleOf
 import mu.KotlinLogging
 import java.time.LocalDate
@@ -39,16 +42,27 @@ fun Application.module() {
     configureSerialization()
 }
 
-fun Application.configureSerialization() {
-    install(ContentNegotiation) {
-        json(
-            Json {
-                prettyPrint = true
-                isLenient = true
-            },
-        )
+val jsonMapper = Json {
+    prettyPrint = true
+    isLenient = true
+    val module = SerializersModule {
+//        polymorphic(JsonApiResourceAttributes::class) {
+//            subclass(LoanDocument.Resource.Attributes::class, LoanDocument.Resource.Attributes.serializer())
+//            subclass(AccountDocument.Resource.Attributes::class, AccountDocument.Resource.Attributes.serializer())
+//        }
         serializersModuleOf(UUID::class, UUIDSerializer)
         serializersModuleOf(LocalDate::class, LocalDateSerializer)
         serializersModuleOf(LocalDateTime::class, LocalDateTimeSerializer)
+    }
+    serializersModule = module
+}
+
+fun Application.configureSerialization() {
+    install(ContentNegotiation) {
+        json(
+            json = jsonMapper,
+            contentType = ContentType.JsonApi,
+        )
+        register(ContentType.JsonApi, KotlinxSerializationConverter(jsonMapper))
     }
 }

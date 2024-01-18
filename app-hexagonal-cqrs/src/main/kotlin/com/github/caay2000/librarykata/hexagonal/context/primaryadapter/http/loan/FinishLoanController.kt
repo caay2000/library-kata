@@ -2,11 +2,16 @@ package com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.lo
 
 import com.github.caay2000.common.dateprovider.DateProvider
 import com.github.caay2000.common.http.Controller
-import com.github.caay2000.librarykata.hexagonal.context.application.account.AccountRepository
-import com.github.caay2000.librarykata.hexagonal.context.application.book.BookRepository
-import com.github.caay2000.librarykata.hexagonal.context.application.loan.LoanRepository
+import com.github.caay2000.common.jsonapi.ServerResponse
+import com.github.caay2000.common.jsonapi.documentation.errorResponses
+import com.github.caay2000.common.jsonapi.documentation.responseExample
 import com.github.caay2000.librarykata.hexagonal.context.application.loan.finish.FinishLoanCommand
 import com.github.caay2000.librarykata.hexagonal.context.application.loan.finish.FinishLoanCommandHandler
+import com.github.caay2000.librarykata.hexagonal.context.application.loan.finish.LoanFinisherError
+import com.github.caay2000.librarykata.hexagonal.context.domain.account.AccountRepository
+import com.github.caay2000.librarykata.hexagonal.context.domain.book.BookRepository
+import com.github.caay2000.librarykata.hexagonal.context.domain.loan.LoanRepository
+import io.github.smiley4.ktorswaggerui.dsl.OpenApiRoute
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.ApplicationCall
 import io.ktor.server.response.respond
@@ -20,7 +25,6 @@ class FinishLoanController(
     bookRepository: BookRepository,
     accountRepository: AccountRepository,
 ) : Controller {
-
     override val logger: KLogger = KotlinLogging.logger {}
 
     private val commandHandler = FinishLoanCommandHandler(loanRepository, bookRepository, accountRepository)
@@ -31,6 +35,46 @@ class FinishLoanController(
         val datetime = dateProvider.dateTime()
         commandHandler.invoke(FinishLoanCommand(bookId = bookId, finishedAt = datetime))
 
+        // TODO should it return loanId ?
         call.respond(HttpStatusCode.Accepted)
+    }
+
+    override suspend fun handleExceptions(
+        call: ApplicationCall,
+        e: Exception,
+    ) {
+        call.serverError {
+            when (e) {
+                is LoanFinisherError.LoanNotFound -> ServerResponse(HttpStatusCode.BadRequest, "LoanNotFound", e.message)
+                else -> ServerResponse(HttpStatusCode.InternalServerError, "Unknown Error", e.message)
+            }
+        }
+    }
+
+    companion object {
+        val documentation: OpenApiRoute.() -> Unit = {
+            tags = listOf("Loan")
+            description = "Finish Loan"
+            request {
+                pathParameter<String>("id") {
+                    description = "Book Id"
+                    required = true
+                    example = "00000000-0000-0000-0000-000000000000"
+                }
+            }
+
+            response {
+                HttpStatusCode.Accepted to { }
+                errorResponses(
+                    httpStatusCode = HttpStatusCode.BadRequest,
+                    summary = "Error finding Loan",
+                    responseExample("LoanNotFound", "Loan {loanId} not found"),
+                )
+                errorResponses(
+                    httpStatusCode = HttpStatusCode.InternalServerError,
+                    summary = "Something unexpected happened",
+                )
+            }
+        }
     }
 }

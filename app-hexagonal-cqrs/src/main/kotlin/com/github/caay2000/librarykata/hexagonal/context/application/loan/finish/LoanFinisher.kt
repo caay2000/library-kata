@@ -2,30 +2,29 @@ package com.github.caay2000.librarykata.hexagonal.context.application.loan.finis
 
 import arrow.core.Either
 import arrow.core.flatMap
-import com.github.caay2000.librarykata.hexagonal.context.application.account.AccountRepository
-import com.github.caay2000.librarykata.hexagonal.context.application.account.FindAccountCriteria
-import com.github.caay2000.librarykata.hexagonal.context.application.account.findOrElse
-import com.github.caay2000.librarykata.hexagonal.context.application.account.saveOrElse
-import com.github.caay2000.librarykata.hexagonal.context.application.book.BookRepository
-import com.github.caay2000.librarykata.hexagonal.context.application.book.FindBookCriteria
-import com.github.caay2000.librarykata.hexagonal.context.application.book.saveOrElse
-import com.github.caay2000.librarykata.hexagonal.context.application.loan.FindLoanCriteria
-import com.github.caay2000.librarykata.hexagonal.context.application.loan.LoanRepository
-import com.github.caay2000.librarykata.hexagonal.context.application.loan.findOrElse
-import com.github.caay2000.librarykata.hexagonal.context.application.loan.saveOrElse
-import com.github.caay2000.librarykata.hexagonal.context.domain.Account
-import com.github.caay2000.librarykata.hexagonal.context.domain.AccountId
-import com.github.caay2000.librarykata.hexagonal.context.domain.Book
-import com.github.caay2000.librarykata.hexagonal.context.domain.BookId
-import com.github.caay2000.librarykata.hexagonal.context.domain.FinishedAt
-import com.github.caay2000.librarykata.hexagonal.context.domain.Loan
+import com.github.caay2000.librarykata.hexagonal.context.domain.account.Account
+import com.github.caay2000.librarykata.hexagonal.context.domain.account.AccountId
+import com.github.caay2000.librarykata.hexagonal.context.domain.account.AccountRepository
+import com.github.caay2000.librarykata.hexagonal.context.domain.account.FindAccountCriteria
+import com.github.caay2000.librarykata.hexagonal.context.domain.account.findOrElse
+import com.github.caay2000.librarykata.hexagonal.context.domain.account.saveOrElse
+import com.github.caay2000.librarykata.hexagonal.context.domain.book.Book
+import com.github.caay2000.librarykata.hexagonal.context.domain.book.BookId
+import com.github.caay2000.librarykata.hexagonal.context.domain.book.BookRepository
+import com.github.caay2000.librarykata.hexagonal.context.domain.book.FindBookCriteria
+import com.github.caay2000.librarykata.hexagonal.context.domain.book.saveOrElse
+import com.github.caay2000.librarykata.hexagonal.context.domain.loan.FindLoanCriteria
+import com.github.caay2000.librarykata.hexagonal.context.domain.loan.FinishedAt
+import com.github.caay2000.librarykata.hexagonal.context.domain.loan.Loan
+import com.github.caay2000.librarykata.hexagonal.context.domain.loan.LoanRepository
+import com.github.caay2000.librarykata.hexagonal.context.domain.loan.findOrElse
+import com.github.caay2000.librarykata.hexagonal.context.domain.loan.saveOrElse
 
 class LoanFinisher(
     private val loanRepository: LoanRepository,
     private val bookRepository: BookRepository,
     private val accountRepository: AccountRepository,
 ) {
-
     fun invoke(
         bookId: BookId,
         finishedAt: FinishedAt,
@@ -40,18 +39,18 @@ class LoanFinisher(
         loanRepository.findOrElse(
             criteria = FindLoanCriteria.ByBookIdAndNotFinished(bookId),
             onResourceDoesNotExist = { LoanFinisherError.LoanNotFound(bookId) },
-            onUnexpectedError = { LoanFinisherError.UnknownError(it) },
+            onUnexpectedError = { throw it },
         ).map { LoanFinisherContext().withLoan(it) }
 
     private fun LoanFinisherContext.findBook(bookId: BookId): Either<LoanFinisherError, LoanFinisherContext> =
         bookRepository.find(FindBookCriteria.ById(bookId))
             .map { book -> withBook(book) }
-            .mapLeft { LoanFinisherError.UnknownError(it) }
+            .mapLeft { throw it }
 
     private fun LoanFinisherContext.findAccount(accountId: AccountId): Either<LoanFinisherError, LoanFinisherContext> =
         accountRepository.findOrElse(
             criteria = FindAccountCriteria.ById(accountId),
-            onUnexpectedError = { LoanFinisherError.UnknownError(it) },
+            onUnexpectedError = { throw it },
         ).map { account -> withAccount(account) }
 
     private fun LoanFinisherContext.finishLoan(finishedAt: FinishedAt) =
@@ -60,9 +59,9 @@ class LoanFinisher(
             .withBook(book.available())
 
     private fun LoanFinisherContext.save() =
-        loanRepository.saveOrElse(loan) { LoanFinisherError.UnknownError(it) }
-            .flatMap { accountRepository.saveOrElse(account) { LoanFinisherError.UnknownError(it) } }
-            .flatMap { bookRepository.saveOrElse(book) { LoanFinisherError.UnknownError(it) } }
+        loanRepository.saveOrElse(loan) { throw it }
+            .flatMap { accountRepository.saveOrElse(account) { throw it } }
+            .flatMap { bookRepository.saveOrElse(book) { throw it } }
             .map { }
 
     data class LoanFinisherContext(private val map: Map<String, Any> = mapOf()) {
@@ -73,21 +72,14 @@ class LoanFinisher(
         val account: Account
             get() = map["account"]!! as Account
 
-        fun withLoan(loan: Loan): LoanFinisherContext =
-            LoanFinisherContext(map + mutableMapOf("loan" to loan))
+        fun withLoan(loan: Loan): LoanFinisherContext = LoanFinisherContext(map + mutableMapOf("loan" to loan))
 
-        fun withBook(book: Book): LoanFinisherContext =
-            LoanFinisherContext(map + mutableMapOf("book" to book))
+        fun withBook(book: Book): LoanFinisherContext = LoanFinisherContext(map + mutableMapOf("book" to book))
 
-        fun withAccount(account: Account): LoanFinisherContext =
-            LoanFinisherContext(map + mutableMapOf("account" to account))
+        fun withAccount(account: Account): LoanFinisherContext = LoanFinisherContext(map + mutableMapOf("account" to account))
     }
 }
 
-sealed class LoanFinisherError : RuntimeException {
-    constructor(message: String) : super(message)
-    constructor(throwable: Throwable) : super(throwable)
-
+sealed class LoanFinisherError(message: String) : RuntimeException(message) {
     class LoanNotFound(bookId: BookId) : LoanFinisherError("loan for book ${bookId.value} not found")
-    class UnknownError(error: Throwable) : LoanFinisherError(error)
 }

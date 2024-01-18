@@ -1,6 +1,10 @@
 root = true
 
-[{*.kt,*.kts}]
+[*.{kt,kts}]
+ktlint_standard_multiline-if-else = disabled
+ktlint_standard_multiline-expression-wrapping = enabled
+ktlint_function_naming_ignore_when_annotated_with = TestCase
+
 indent_style = space
 indent_size = 4
 end_of_line = lf

@@ -3,14 +3,14 @@ package com.github.caay2000.librarykata.hexagonal.context.application.book.creat
 import com.github.caay2000.common.arrow.getOrThrow
 import com.github.caay2000.common.cqrs.Command
 import com.github.caay2000.common.cqrs.CommandHandler
-import com.github.caay2000.librarykata.hexagonal.context.application.book.BookRepository
-import com.github.caay2000.librarykata.hexagonal.context.domain.BookAuthor
-import com.github.caay2000.librarykata.hexagonal.context.domain.BookId
-import com.github.caay2000.librarykata.hexagonal.context.domain.BookIsbn
-import com.github.caay2000.librarykata.hexagonal.context.domain.BookPages
-import com.github.caay2000.librarykata.hexagonal.context.domain.BookPublisher
-import com.github.caay2000.librarykata.hexagonal.context.domain.BookTitle
-import com.github.caay2000.librarykata.hexagonal.context.domain.CreateBookRequest
+import com.github.caay2000.librarykata.hexagonal.context.domain.book.BookAuthor
+import com.github.caay2000.librarykata.hexagonal.context.domain.book.BookId
+import com.github.caay2000.librarykata.hexagonal.context.domain.book.BookIsbn
+import com.github.caay2000.librarykata.hexagonal.context.domain.book.BookPages
+import com.github.caay2000.librarykata.hexagonal.context.domain.book.BookPublisher
+import com.github.caay2000.librarykata.hexagonal.context.domain.book.BookRepository
+import com.github.caay2000.librarykata.hexagonal.context.domain.book.BookTitle
+import com.github.caay2000.librarykata.hexagonal.context.domain.book.CreateBookRequest
 import mu.KLogger
 import mu.KotlinLogging
 import java.util.UUID
@@ -18,12 +18,10 @@ import java.util.UUID
 class CreateBookCommandHandler(
     bookRepository: BookRepository,
 ) : CommandHandler<CreateBookCommand> {
-
     override val logger: KLogger = KotlinLogging.logger {}
     private val creator = BookCreator(bookRepository)
 
-    override fun handle(command: CreateBookCommand): Unit =
-        creator.invoke(command.toCreateBookRequest()).getOrThrow()
+    override fun handle(command: CreateBookCommand): Unit = creator.invoke(command.toCreateBookRequest()).getOrThrow()
 
     private fun CreateBookCommand.toCreateBookRequest() =
         CreateBookRequest(

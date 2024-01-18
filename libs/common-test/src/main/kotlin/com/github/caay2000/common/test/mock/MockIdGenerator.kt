@@ -4,7 +4,6 @@ import com.github.caay2000.common.idgenerator.IdGenerator
 import java.util.UUID
 
 class MockIdGenerator : IdGenerator {
-
     private var index = 0
     private val responses: MutableList<String> = mutableListOf()
 

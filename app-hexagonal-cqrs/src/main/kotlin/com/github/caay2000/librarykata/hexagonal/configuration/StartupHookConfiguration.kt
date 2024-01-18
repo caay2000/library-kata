@@ -7,13 +7,15 @@ import mu.KLogger
 import mu.KotlinLogging
 import java.util.Optional
 
-val StartupHookConfiguration = createApplicationPlugin(name = "StartupHookConfiguration") {
+val StartupHookConfiguration =
+    createApplicationPlugin(name = "StartupHookConfiguration") {
 
-    val logger: KLogger = KotlinLogging.logger {}
-    val welcomeMessage = Optional.ofNullable(this::class.java.getResource("/welcome.txt")?.readText())
-        .orElse("Application Started")
+        val logger: KLogger = KotlinLogging.logger {}
+        val welcomeMessage =
+            Optional.ofNullable(this::class.java.getResource("/welcome.txt")?.readText())
+                .orElse("Application Started")
 
-    on(MonitoringEvent(ApplicationStarted)) {
-        logger.info { welcomeMessage }
+        on(MonitoringEvent(ApplicationStarted)) {
+            logger.info { welcomeMessage }
+        }
     }
-}

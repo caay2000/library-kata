@@ -1,6 +1,6 @@
 package com.github.caay2000.librarykata.hexagonal.context.book.mother
 
-import com.github.caay2000.librarykata.hexagonal.context.domain.BookIsbn
+import com.github.caay2000.librarykata.hexagonal.context.domain.book.BookIsbn
 import java.util.UUID
 
 object BookIsbnMother {

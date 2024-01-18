@@ -1,18 +1,17 @@
 package com.github.caay2000.librarykata.hexagonal.context.book.mother
 
 import com.github.caay2000.common.test.RandomStringGenerator
-import com.github.caay2000.librarykata.hexagonal.context.domain.Book
-import com.github.caay2000.librarykata.hexagonal.context.domain.BookAuthor
-import com.github.caay2000.librarykata.hexagonal.context.domain.BookAvailable
-import com.github.caay2000.librarykata.hexagonal.context.domain.BookId
-import com.github.caay2000.librarykata.hexagonal.context.domain.BookIsbn
-import com.github.caay2000.librarykata.hexagonal.context.domain.BookPages
-import com.github.caay2000.librarykata.hexagonal.context.domain.BookPublisher
-import com.github.caay2000.librarykata.hexagonal.context.domain.BookTitle
+import com.github.caay2000.librarykata.hexagonal.context.domain.book.Book
+import com.github.caay2000.librarykata.hexagonal.context.domain.book.BookAuthor
+import com.github.caay2000.librarykata.hexagonal.context.domain.book.BookAvailable
+import com.github.caay2000.librarykata.hexagonal.context.domain.book.BookId
+import com.github.caay2000.librarykata.hexagonal.context.domain.book.BookIsbn
+import com.github.caay2000.librarykata.hexagonal.context.domain.book.BookPages
+import com.github.caay2000.librarykata.hexagonal.context.domain.book.BookPublisher
+import com.github.caay2000.librarykata.hexagonal.context.domain.book.BookTitle
 import kotlin.random.Random
 
 object BookMother {
-
     fun random(
         id: BookId = BookIdMother.random(),
         isbn: String = BookIsbnMother.random().value,

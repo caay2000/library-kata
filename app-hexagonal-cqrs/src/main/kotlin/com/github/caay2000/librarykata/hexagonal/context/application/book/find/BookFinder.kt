@@ -2,27 +2,25 @@ package com.github.caay2000.librarykata.hexagonal.context.application.book.find
 
 import arrow.core.Either
 import com.github.caay2000.common.database.RepositoryError
-import com.github.caay2000.librarykata.hexagonal.context.application.book.BookRepository
-import com.github.caay2000.librarykata.hexagonal.context.application.book.FindBookCriteria
-import com.github.caay2000.librarykata.hexagonal.context.domain.Book
-import com.github.caay2000.librarykata.hexagonal.context.domain.BookId
+import com.github.caay2000.librarykata.hexagonal.context.domain.book.Book
+import com.github.caay2000.librarykata.hexagonal.context.domain.book.BookId
+import com.github.caay2000.librarykata.hexagonal.context.domain.book.BookRepository
+import com.github.caay2000.librarykata.hexagonal.context.domain.book.FindBookCriteria
 
 class BookFinder(private val bookRepository: BookRepository) {
-
-    fun invoke(id: BookId): Either<BookFinderError, Book> =
-        bookRepository.find(FindBookCriteria.ById(id))
+    fun invoke(criteria: FindBookCriteria): Either<BookFinderError, Book> =
+        bookRepository.find(criteria)
             .mapLeft {
                 when (it) {
-                    is RepositoryError.NotFoundError -> BookFinderError.BookNotFound(id)
-                    is RepositoryError.Unknown -> BookFinderError.UnknownError(it)
+                    is RepositoryError.NotFoundError -> {
+                        when (criteria) {
+                            is FindBookCriteria.ById -> BookFinderError.BookNotFoundError(criteria.id)
+                        }
+                    }
                 }
             }
 }
 
-sealed class BookFinderError : RuntimeException {
-    constructor(message: String) : super(message)
-    constructor(throwable: Throwable) : super(throwable)
-
-    class UnknownError(error: Throwable) : BookFinderError(error)
-    class BookNotFound(bookId: BookId) : BookFinderError("Book ${bookId.value} not found")
+sealed class BookFinderError(message: String) : RuntimeException(message) {
+    class BookNotFoundError(bookId: BookId) : BookFinderError("Book ${bookId.value} not found")
 }
