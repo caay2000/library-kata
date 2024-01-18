@@ -1,12 +1,15 @@
 package com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.loan
 
 import com.github.caay2000.common.dateprovider.DateProvider
+import com.github.caay2000.common.http.ContentType
 import com.github.caay2000.common.http.Controller
 import com.github.caay2000.common.http.Transformer
 import com.github.caay2000.common.idgenerator.IdGenerator
 import com.github.caay2000.common.jsonapi.JsonApiDocument
 import com.github.caay2000.common.jsonapi.JsonApiRequestDocument
 import com.github.caay2000.common.jsonapi.ServerResponse
+import com.github.caay2000.common.jsonapi.documentation.errorResponses
+import com.github.caay2000.common.jsonapi.documentation.responseExample
 import com.github.caay2000.librarykata.hexagonal.context.application.loan.create.CreateLoanCommand
 import com.github.caay2000.librarykata.hexagonal.context.application.loan.create.CreateLoanCommandHandler
 import com.github.caay2000.librarykata.hexagonal.context.application.loan.create.LoanCreatorError
@@ -20,6 +23,7 @@ import com.github.caay2000.librarykata.hexagonal.context.domain.loan.LoanReposit
 import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.loan.serialization.LoanDocumentTransformer
 import com.github.caay2000.librarykata.jsonapi.context.loan.LoanRequestResource
 import com.github.caay2000.librarykata.jsonapi.context.loan.LoanResource
+import io.github.smiley4.ktorswaggerui.dsl.OpenApiRoute
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.ApplicationCall
 import io.ktor.server.request.receive
@@ -76,4 +80,36 @@ class CreateLoanController(
         bookIsbn = data.attributes.bookIsbn,
         createdAt = datetime,
     )
+
+    companion object {
+        val documentation: OpenApiRoute.() -> Unit = {
+            tags = listOf("Loan")
+            description = "Create Loan"
+            request {
+                body<JsonApiRequestDocument<LoanRequestResource>> {
+                    mediaType(ContentType.JsonApi)
+                    required = true
+                }
+            }
+            response {
+                HttpStatusCode.Created to {
+                    description = "Loan Created"
+                    body<JsonApiDocument<LoanResource>> {
+                        mediaType(ContentType.JsonApi)
+                    }
+                }
+                errorResponses(
+                    httpStatusCode = HttpStatusCode.BadRequest,
+                    summary = "Invalid request creating Account",
+                    responseExample("UserNotFound", "book with isbn {bookIsbn} is not available"),
+                    responseExample("UserHasTooManyLoans", "user {accountId} not found"),
+                    responseExample("BookNotAvailable", "user {accountId} has too many loans"),
+                )
+                errorResponses(
+                    httpStatusCode = HttpStatusCode.InternalServerError,
+                    summary = "Something unexpected happened",
+                )
+            }
+        }
+    }
 }
