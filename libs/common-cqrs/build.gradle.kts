@@ -1,4 +1,4 @@
 plugins {
     id("project-library")
-    id("common-logging")
+    id("plugin-kotlin-logging")
 }

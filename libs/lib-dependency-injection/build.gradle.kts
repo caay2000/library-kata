@@ -1,13 +1,10 @@
 plugins {
     id("project-library")
+    id("plugin-kotlin-logging")
 }
 
 dependencies {
     implementation("org.jetbrains.kotlin:kotlin-reflect")
 
-    implementation("io.github.microutils:kotlin-logging-jvm")
-    implementation("ch.qos.logback:logback-classic")
-
-    testImplementation("org.junit.jupiter:junit-jupiter")
-    testImplementation("org.assertj:assertj-core")
+    testImplementation(project(":libs:common-test"))
 }
