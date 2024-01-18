@@ -36,7 +36,7 @@ data class JsonApiRelationshipData(
 data class JsonApiRelationshipIdentifier(
     @field:Schema(description = "resource id", example = "00000000-0000-0000-0000-000000000000")
     val id: String,
-    @field:Schema(description = "resource type", example = "type")
+    @field:Schema(description = "resource type", example = "book")
     val type: String,
 )
 
