@@ -3,7 +3,7 @@ pluginManagement {
 }
 
 plugins {
-    id("org.gradle.toolchains.foojay-resolver-convention") version "0.7.0"
+    id("org.gradle.toolchains.foojay-resolver-convention") version "0.8.0"
 }
 
 rootProject.name = "library-kata"
@@ -16,8 +16,7 @@ include(
     "libs:common-cqrs",
     "libs:common-database",
     "libs:common-date",
-    "libs:common-ddd",
-    "libs:common-event",
+//    "libs:common-ddd",
     "libs:common-http",
     "libs:common-id-generator",
     "libs:common-test",

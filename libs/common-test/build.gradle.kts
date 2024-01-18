@@ -1,19 +1,18 @@
 plugins {
     id("project-library")
+    id("plugin-kotlin-logging")
     id("plugin-kotlin-serialization")
 }
 
 dependencies {
-    implementation(project(":app-jsonapi"))
 
+    implementation(project(":app-jsonapi"))
     implementation(project(":libs:common-date"))
-    implementation(project(":libs:common-event"))
     implementation(project(":libs:common-http"))
     implementation(project(":libs:common-id-generator"))
 
-    api("com.networknt:json-schema-validator:1.1.0")
     api(kotlin("test"))
-    api("io.github.microutils:kotlin-logging-jvm")
+    api("com.networknt:json-schema-validator")
     api("org.assertj:assertj-core")
     api("org.skyscreamer:jsonassert")
     api("io.kotest.extensions:kotest-assertions-arrow")

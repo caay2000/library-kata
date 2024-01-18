@@ -1,6 +1,8 @@
 plugins {
-    id("project-common")
     `java-library`
+    id("project-common")
+    id("plugin-kotlin-logging")
+    id("plugin-kotlin-serialization")
 }
 
 dependencies {
@@ -17,13 +19,9 @@ dependencies {
 
     implementation("io.ktor:ktor-server-core")
     implementation("io.ktor:ktor-server-netty")
-    implementation("io.ktor:ktor-server-content-negotiation")
-    implementation("io.ktor:ktor-serialization-kotlinx-json")
     implementation("io.ktor:ktor-server-call-logging")
-
-    implementation("io.arrow-kt:arrow-core")
-
-    implementation("io.github.microutils:kotlin-logging-jvm")
+    implementation("io.ktor:ktor-server-call-logging-jvm")
+    implementation("io.ktor:ktor-server-call-id-jvm")
 
     testImplementation(project(":libs:common-test"))
 }
