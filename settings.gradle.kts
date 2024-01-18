@@ -17,7 +17,6 @@ include(
     "libs:common-database",
     "libs:common-date",
     "libs:common-ddd",
-    "libs:common-event",
     "libs:common-http",
     "libs:common-id-generator",
     "libs:common-test",
