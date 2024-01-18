@@ -14,6 +14,7 @@ data class Account(
     val phoneNumber: PhoneNumber,
     val registerDate: RegisterDate,
     val currentLoans: CurrentLoans,
+    val totalLoans: TotalLoans,
 ) {
     companion object {
         fun create(request: CreateAccountRequest) =
@@ -28,10 +29,11 @@ data class Account(
                 phoneNumber = request.phoneNumber,
                 registerDate = request.registerDate,
                 currentLoans = CurrentLoans(0),
+                totalLoans = TotalLoans(0),
             )
     }
 
-    fun increaseLoans(): Account = copy(currentLoans = currentLoans.increase())
+    fun increaseLoans(): Account = copy(currentLoans = currentLoans.increase(), totalLoans = totalLoans.increase())
 
     fun decreaseLoans(): Account = copy(currentLoans = currentLoans.decrease())
 
@@ -70,6 +72,11 @@ value class CurrentLoans(val value: Int) {
     internal fun increase(value: Int = 1): CurrentLoans = CurrentLoans(this.value + value)
 
     internal fun decrease(value: Int = 1): CurrentLoans = CurrentLoans(Math.max(this.value - value, 0))
+}
+
+@JvmInline
+value class TotalLoans(val value: Int) {
+    internal fun increase(value: Int = 1): TotalLoans = TotalLoans(this.value + value)
 }
 
 data class CreateAccountRequest(

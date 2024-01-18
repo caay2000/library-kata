@@ -8,6 +8,8 @@ import com.github.caay2000.dikt.DiKt
 import com.github.caay2000.librarykata.hexagonal.common.TestUseCases
 import com.github.caay2000.librarykata.hexagonal.context.account.mother.AccountMother
 import com.github.caay2000.librarykata.hexagonal.context.book.mother.BookMother
+import com.github.caay2000.librarykata.hexagonal.context.domain.account.CurrentLoans
+import com.github.caay2000.librarykata.hexagonal.context.domain.account.TotalLoans
 import com.github.caay2000.librarykata.hexagonal.context.domain.book.BookAvailable
 import com.github.caay2000.librarykata.hexagonal.context.domain.loan.CreatedAt
 import com.github.caay2000.librarykata.hexagonal.context.domain.loan.FinishedAt
@@ -47,7 +49,8 @@ class FindLoanControllerTest {
         testApplication {
             testUseCases.`account is created with a loan`(account, book, loan)
 
-            val expected = LoanDocumentMother.random(loan, account, lentBook, listOf("account", "book"))
+            val expectedAccount = account.copy(currentLoans = CurrentLoans(1), totalLoans = TotalLoans(1))
+            val expected = LoanDocumentMother.random(loan, expectedAccount, lentBook, listOf("account", "book"))
             testUseCases.`find loan`(loan.id, listOf("account", "book"))
                 .assertStatus(HttpStatusCode.OK)
                 .assertJsonApiResponse(expected)
@@ -71,7 +74,8 @@ class FindLoanControllerTest {
             testUseCases.`account is created with a loan`(account, book, loan)
             testUseCases.`loan is finished`(finishedLoan)
 
-            val expected = LoanDocumentMother.random(finishedLoan, account, book, listOf("account", "book"))
+            val expectedAccount = account.copy(currentLoans = CurrentLoans(0), totalLoans = TotalLoans(1))
+            val expected = LoanDocumentMother.random(finishedLoan, expectedAccount, book, listOf("account", "book"))
             testUseCases.`find loan`(finishedLoan.id, listOf("account", "book"))
                 .assertStatus(HttpStatusCode.OK)
                 .assertJsonApiResponse(expected)

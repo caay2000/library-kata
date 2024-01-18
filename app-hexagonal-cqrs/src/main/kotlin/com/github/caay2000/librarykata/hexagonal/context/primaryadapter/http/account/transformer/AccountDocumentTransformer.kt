@@ -54,4 +54,6 @@ internal fun Account.toJsonApiAccountAttributes() =
         phonePrefix = phonePrefix.value,
         phoneNumber = phoneNumber.value,
         registerDate = registerDate.value,
+        currentLoans = currentLoans.value,
+        totalLoans = totalLoans.value,
     )

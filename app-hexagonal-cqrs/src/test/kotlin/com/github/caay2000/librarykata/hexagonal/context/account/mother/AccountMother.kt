@@ -12,6 +12,7 @@ import com.github.caay2000.librarykata.hexagonal.context.domain.account.PhoneNum
 import com.github.caay2000.librarykata.hexagonal.context.domain.account.PhonePrefix
 import com.github.caay2000.librarykata.hexagonal.context.domain.account.RegisterDate
 import com.github.caay2000.librarykata.hexagonal.context.domain.account.Surname
+import com.github.caay2000.librarykata.hexagonal.context.domain.account.TotalLoans
 import java.time.LocalDate
 import java.time.LocalDateTime
 
@@ -26,6 +27,8 @@ object AccountMother {
         phonePrefix: PhonePrefix = PhonePrefix("+" + RandomStringGenerator.randomNumber(3)),
         phoneNumber: PhoneNumber = PhoneNumber("6" + RandomStringGenerator.randomNumber(8)),
         registerDate: RegisterDate = RegisterDate(LocalDateTime.now()),
+        currentLoans: CurrentLoans = CurrentLoans(0),
+        totalLoans: TotalLoans = TotalLoans(0),
     ): Account =
         Account(
             id = id,
@@ -37,6 +40,7 @@ object AccountMother {
             phonePrefix = phonePrefix,
             phoneNumber = phoneNumber,
             registerDate = registerDate,
-            currentLoans = CurrentLoans(0),
+            currentLoans = currentLoans,
+            totalLoans = totalLoans,
         )
 }

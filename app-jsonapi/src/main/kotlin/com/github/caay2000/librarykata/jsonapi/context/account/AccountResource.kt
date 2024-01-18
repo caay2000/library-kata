@@ -45,6 +45,10 @@ data class AccountResource(
         @field:Schema(description = "user registration date", example = "2020-01-01T00:00:00.000Z")
         @Serializable(with = LocalDateTimeSerializer::class)
         val registerDate: LocalDateTime,
+        @field:Schema(description = "current user loans", example = "2")
+        val currentLoans: Int,
+        @field:Schema(description = "lifetime user loans", example = "13")
+        val totalLoans: Int,
     ) : JsonApiResourceAttributes
 
     init {

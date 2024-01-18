@@ -10,8 +10,10 @@ import com.github.caay2000.librarykata.hexagonal.common.TestUseCases
 import com.github.caay2000.librarykata.hexagonal.context.account.mother.AccountDocumentListMother
 import com.github.caay2000.librarykata.hexagonal.context.account.mother.AccountMother
 import com.github.caay2000.librarykata.hexagonal.context.book.mother.BookMother
+import com.github.caay2000.librarykata.hexagonal.context.domain.account.CurrentLoans
 import com.github.caay2000.librarykata.hexagonal.context.domain.account.Email
 import com.github.caay2000.librarykata.hexagonal.context.domain.account.PhoneNumber
+import com.github.caay2000.librarykata.hexagonal.context.domain.account.TotalLoans
 import com.github.caay2000.librarykata.hexagonal.context.loan.mother.LoanMother
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.testing.testApplication
@@ -73,9 +75,10 @@ class SearchAccountControllerTest {
             testUseCases.`account is created`(accountWithSimilarPhoneNumber)
             testUseCases.`account is created`(anotherAccount)
 
+            val expectedAccount = account.copy(currentLoans = CurrentLoans(1), totalLoans = TotalLoans(1))
             val expected =
                 AccountDocumentListMother.random(
-                    accounts = listOf(account, accountWithSimilarPhoneNumber),
+                    accounts = listOf(expectedAccount, accountWithSimilarPhoneNumber),
                     loans = listOf(loan),
                     include = listOf("loan"),
                 )
@@ -105,9 +108,10 @@ class SearchAccountControllerTest {
             testUseCases.`account is created`(accountWithSimilarEmail)
             testUseCases.`account is created`(anotherAccount)
 
+            val expectedAccount = account.copy(currentLoans = CurrentLoans(1), totalLoans = TotalLoans(1))
             val expected =
                 AccountDocumentListMother.random(
-                    accounts = listOf(account, accountWithSimilarEmail),
+                    accounts = listOf(expectedAccount, accountWithSimilarEmail),
                     loans = listOf(loan),
                     include = listOf("loan"),
                 )
@@ -122,9 +126,11 @@ class SearchAccountControllerTest {
             testUseCases.`account is created with a loan`(account, book, loan)
             testUseCases.`account is created with a loan`(anotherAccount, anotherBook, anotherLoan)
 
+            val expectedAccount = account.copy(currentLoans = CurrentLoans(1), totalLoans = TotalLoans(1))
+            val expectedAnotherAccount = anotherAccount.copy(currentLoans = CurrentLoans(1), totalLoans = TotalLoans(1))
             val expected =
                 AccountDocumentListMother.random(
-                    accounts = listOf(account, anotherAccount),
+                    accounts = listOf(expectedAccount, expectedAnotherAccount),
                     loans = listOf(loan, anotherLoan),
                     include = listOf("loan"),
                 )

@@ -10,6 +10,8 @@ import com.github.caay2000.librarykata.hexagonal.context.account.mother.AccountD
 import com.github.caay2000.librarykata.hexagonal.context.account.mother.AccountMother
 import com.github.caay2000.librarykata.hexagonal.context.book.mother.BookMother
 import com.github.caay2000.librarykata.hexagonal.context.domain.account.AccountId
+import com.github.caay2000.librarykata.hexagonal.context.domain.account.CurrentLoans
+import com.github.caay2000.librarykata.hexagonal.context.domain.account.TotalLoans
 import com.github.caay2000.librarykata.hexagonal.context.domain.book.BookId
 import com.github.caay2000.librarykata.hexagonal.context.domain.loan.FinishedAt
 import com.github.caay2000.librarykata.hexagonal.context.loan.mother.LoanMother
@@ -63,7 +65,8 @@ class FindAccountControllerTest {
         testApplication {
             testUseCases.`account is created with a loan`(account, book, loan)
 
-            val expected = AccountDocumentMother.random(account, listOf(loan))
+            val expectedAccount = account.copy(currentLoans = CurrentLoans(1), totalLoans = TotalLoans(1))
+            val expected = AccountDocumentMother.random(expectedAccount, listOf(loan))
             testUseCases.`find account`(account.id)
                 .assertStatus(HttpStatusCode.OK)
                 .assertJsonApiResponse(expected)
@@ -74,7 +77,8 @@ class FindAccountControllerTest {
         testApplication {
             testUseCases.`account is created with a loan`(account, book, loan)
 
-            val expected = AccountDocumentMother.random(account, listOf(loan), listOf("loan"))
+            val expectedAccount = account.copy(currentLoans = CurrentLoans(1), totalLoans = TotalLoans(1))
+            val expected = AccountDocumentMother.random(expectedAccount, listOf(loan), listOf("loan"))
             testUseCases.`find account`(account.id, listOf("loan"))
                 .assertStatus(HttpStatusCode.OK)
                 .assertJsonApiResponse(expected)
@@ -94,7 +98,8 @@ class FindAccountControllerTest {
             )
             testUseCases.`loan is finished`(bookId = BookId(anotherBook.id.value), finishedAt = anotherLoan.finishedAt)
 
-            val expected = AccountDocumentMother.random(account, listOf(loan, anotherLoan), listOf("loan"))
+            val expectedAccount = account.copy(currentLoans = CurrentLoans(1), totalLoans = TotalLoans(2))
+            val expected = AccountDocumentMother.random(expectedAccount, listOf(loan, anotherLoan), listOf("loan"))
             testUseCases.`find account`(account.id, listOf("loan"))
                 .assertStatus(HttpStatusCode.OK)
                 .assertJsonApiResponse(expected)
