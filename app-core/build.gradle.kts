@@ -6,6 +6,8 @@ plugins {
 
 dependencies {
     implementation(project(":app-hexagonal-cqrs"))
+    implementation(project(":app-event-driven"))
+    implementation(project(":libs:common-ddd"))
 }
 
 tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile::class).all {

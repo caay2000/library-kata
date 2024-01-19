@@ -7,14 +7,15 @@ import com.github.caay2000.librarykata.eventdriven.context.book.domain.BookId
 import com.github.caay2000.librarykata.eventdriven.context.book.domain.BookIsbn
 
 interface BookRepository {
+    fun save(book: Book)
 
-    fun save(book: Book): Either<RepositoryError, Unit>
-    fun search(criteria: SearchBookCriteria): Either<RepositoryError, List<Book>>
+    fun search(criteria: SearchBookCriteria): List<Book>
 
-    fun findById(id: BookId): Either<RepositoryError, Book>
+    fun find(id: BookId): Either<RepositoryError, Book>
 }
 
 sealed class SearchBookCriteria {
     object All : SearchBookCriteria()
+
     data class ByIsbn(val isbn: BookIsbn) : SearchBookCriteria()
 }

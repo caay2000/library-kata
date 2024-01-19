@@ -63,15 +63,16 @@ fun Book.toBookDocument() =
 
 fun List<Book>.toBookDocument() = toAllBooksDocument().books.first()
 
-fun Book.toBookByIdDocument() = BookByIdDocument(
-    id = id.value,
-    isbn = isbn.value,
-    title = title.value,
-    author = author.value,
-    pages = pages.value,
-    publisher = publisher.value,
-    available = available.value,
-)
+fun Book.toBookByIdDocument() =
+    BookByIdDocument(
+        id = id.value,
+        isbn = isbn.value,
+        title = title.value,
+        author = author.value,
+        pages = pages.value,
+        publisher = publisher.value,
+        available = available.value,
+    )
 
 @Serializable
 data class BookCreateRequestDocument(

@@ -9,7 +9,6 @@ import mu.KLogger
 import mu.KotlinLogging
 
 class UpdateLoanBookAvailabilityOnLoanFinishedEventSubscriber(bookRepository: BookRepository) : DomainEventSubscriber<LoanFinishedEvent>() {
-
     override val logger: KLogger = KotlinLogging.logger {}
     private val commandHandler = UpdateBookAvailabilityCommandHandler(bookRepository)
 

@@ -15,7 +15,6 @@ import mu.KotlinLogging
 import java.util.UUID
 
 class CreateBookCommandHandler(bookRepository: BookRepository) : CommandHandler<CreateBookCommand> {
-
     override val logger: KLogger = KotlinLogging.logger {}
     private val creator = BookCreator(bookRepository)
 

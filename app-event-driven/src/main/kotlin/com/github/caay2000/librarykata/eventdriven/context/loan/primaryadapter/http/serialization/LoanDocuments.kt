@@ -15,11 +15,12 @@ data class LoanDocument(
     val userId: UUID,
 )
 
-fun Loan.toLoanDocument() = LoanDocument(
-    id = this.id.value,
-    bookId = this.bookId.value,
-    userId = this.userId.value,
-)
+fun Loan.toLoanDocument() =
+    LoanDocument(
+        id = this.id.value,
+        bookId = this.bookId.value,
+        userId = this.userId.value,
+    )
 
 @Serializable
 data class LoanRequestDocument(

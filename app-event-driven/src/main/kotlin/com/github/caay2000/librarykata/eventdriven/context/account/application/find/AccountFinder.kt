@@ -8,7 +8,6 @@ import com.github.caay2000.librarykata.eventdriven.context.account.domain.Accoun
 import com.github.caay2000.librarykata.eventdriven.context.account.domain.AccountId
 
 class AccountFinder(private val accountRepository: AccountRepository) {
-
     fun invoke(accountId: AccountId): Either<AccountFinderError, Account> =
         accountRepository.findBy(FindAccountCriteria.ById(accountId))
             .mapLeft { error ->
@@ -24,5 +23,6 @@ sealed class AccountFinderError : RuntimeException {
     constructor(throwable: Throwable) : super(throwable)
 
     class Unknown(error: Throwable) : AccountFinderError(error)
+
     class AccountNotFoundError(accountId: AccountId) : AccountFinderError("account $accountId not found")
 }

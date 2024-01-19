@@ -1,7 +1,6 @@
 package com.github.caay2000.librarykata.eventdriven.context.loan.application.loan.finish
 
 import arrow.core.Either
-import arrow.core.flatMap
 import com.github.caay2000.common.database.RepositoryError
 import com.github.caay2000.common.event.DomainEventPublisher
 import com.github.caay2000.librarykata.eventdriven.context.loan.application.FindLoanCriteria
@@ -14,39 +13,31 @@ class LoanFinisher(
     private val loanRepository: LoanRepository,
     private val eventPublisher: DomainEventPublisher,
 ) {
-
     fun invoke(
         bookId: BookId,
         finishedAt: FinishedAt,
     ): Either<LoanFinisherError, Unit> =
         findLoan(bookId)
             .map { loan -> loan.finishLoan(finishedAt) }
-            .flatMap { loan -> loan.save() }
-            .flatMap { loan -> loan.publishEvents() }
+            .map { loan -> loan.save() }
+            .map { loan -> loan.publishEvents() }
 
     private fun findLoan(bookId: BookId): Either<LoanFinisherError, Loan> =
         loanRepository.findBy(FindLoanCriteria.ByBookIdAndNotFinished(bookId))
             .mapLeft { error ->
                 when (error) {
                     is RepositoryError.NotFoundError -> LoanFinisherError.LoanNotFound(bookId)
-                    else -> LoanFinisherError.UnknownError(error)
+                    else -> throw error
                 }
             }
 
-    private fun Loan.save(): Either<LoanFinisherError, Loan> =
-        loanRepository.save(this)
-            .mapLeft { com.github.caay2000.librarykata.eventdriven.context.loan.application.loan.finish.LoanFinisherError.UnknownError(it) }
-            .map { this }
+    private fun Loan.save(): Loan = loanRepository.save(this)
 
-    private fun Loan.publishEvents(): Either<LoanFinisherError, Unit> =
+    private fun Loan.publishEvents() {
         eventPublisher.publish(pullEvents())
-            .mapLeft { com.github.caay2000.librarykata.eventdriven.context.loan.application.loan.finish.LoanFinisherError.UnknownError(it) }
+    }
 }
 
-sealed class LoanFinisherError : RuntimeException {
-    constructor(message: String) : super(message)
-    constructor(throwable: Throwable) : super(throwable)
-
+sealed class LoanFinisherError(message: String) : RuntimeException(message) {
     class LoanNotFound(bookId: BookId) : LoanFinisherError("loan for book ${bookId.value} not found")
-    class UnknownError(error: Throwable) : LoanFinisherError(error)
 }

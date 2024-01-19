@@ -27,7 +27,6 @@ class CreateAccountController(
     accountRepository: AccountRepository,
     eventPublisher: DomainEventPublisher,
 ) : Controller {
-
     override val logger: KLogger = KotlinLogging.logger {}
 
     private val commandHandler = CreateAccountCommandHandler(accountRepository, eventPublisher)
@@ -43,7 +42,10 @@ class CreateAccountController(
         call.respond(HttpStatusCode.Created, queryResult.account.toAccountDetailsDocument())
     }
 
-    private fun CreateAccountRequestDocument.toCommand(accountId: UUID, registerDate: LocalDateTime): CreateAccountCommand =
+    private fun CreateAccountRequestDocument.toCommand(
+        accountId: UUID,
+        registerDate: LocalDateTime,
+    ): CreateAccountCommand =
         CreateAccountCommand(
             accountId = accountId,
             identityNumber = identityNumber,

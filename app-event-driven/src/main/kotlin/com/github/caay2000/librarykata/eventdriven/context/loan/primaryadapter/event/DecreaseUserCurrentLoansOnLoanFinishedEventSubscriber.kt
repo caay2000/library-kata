@@ -9,7 +9,6 @@ import mu.KLogger
 import mu.KotlinLogging
 
 class DecreaseUserCurrentLoansOnLoanFinishedEventSubscriber(userRepository: UserRepository) : DomainEventSubscriber<LoanFinishedEvent>() {
-
     override val logger: KLogger = KotlinLogging.logger {}
     private val commandHandler = UpdateUserCurrentLoansCommandHandler(userRepository)
 

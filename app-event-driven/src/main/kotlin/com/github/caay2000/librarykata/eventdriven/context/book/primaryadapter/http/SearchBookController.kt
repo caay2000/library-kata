@@ -12,7 +12,6 @@ import mu.KLogger
 import mu.KotlinLogging
 
 class SearchBookController(bookRepository: BookRepository) : Controller {
-
     override val logger: KLogger = KotlinLogging.logger {}
 
     private val queryHandler = SearchAllBooksQueryHandler(bookRepository)

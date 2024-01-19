@@ -1,37 +1,32 @@
 package com.github.caay2000.librarykata.eventdriven.context.loan.application.user.update
 
 import arrow.core.Either
-import arrow.core.flatMap
 import com.github.caay2000.common.database.RepositoryError
 import com.github.caay2000.librarykata.eventdriven.context.loan.application.UserRepository
 import com.github.caay2000.librarykata.eventdriven.context.loan.domain.User
 import com.github.caay2000.librarykata.eventdriven.context.loan.domain.UserId
 
 class UserCurrentLoansUpdater(private val userRepository: UserRepository) {
-
-    fun invoke(userId: UserId, value: Int): Either<UserLoansUpdaterError, Unit> =
+    fun invoke(
+        userId: UserId,
+        value: Int,
+    ): Either<UserLoansUpdaterError, Unit> =
         findUser(userId)
             .map { user -> user.updateCurrentLoans(value) }
-            .flatMap { user -> user.save() }
+            .map { user -> user.save() }
 
     private fun findUser(userId: UserId): Either<UserLoansUpdaterError, User> =
-        userRepository.findById(userId)
+        userRepository.find(userId)
             .mapLeft { error ->
                 when (error) {
                     is RepositoryError.NotFoundError -> UserLoansUpdaterError.UserNotFound(userId)
-                    else -> UserLoansUpdaterError.UnknownError(error)
+                    else -> throw error
                 }
             }
 
-    private fun User.save(): Either<UserLoansUpdaterError, Unit> =
-        userRepository.save(this)
-            .mapLeft { com.github.caay2000.librarykata.eventdriven.context.loan.application.user.update.UserLoansUpdaterError.UnknownError(it) }
+    private fun User.save(): User = userRepository.save(this)
 }
 
-sealed class UserLoansUpdaterError : RuntimeException {
-    constructor(message: String) : super(message)
-    constructor(throwable: Throwable) : super(throwable)
-
-    class UnknownError(error: Throwable) : UserLoansUpdaterError(error)
+sealed class UserLoansUpdaterError(message: String) : RuntimeException(message) {
     class UserNotFound(userId: UserId) : UserLoansUpdaterError("user ${userId.value} not found")
 }

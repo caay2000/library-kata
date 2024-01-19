@@ -23,7 +23,6 @@ class LoanCreator(
     private val loanRepository: LoanRepository,
     private val eventPublisher: DomainEventPublisher,
 ) {
-
     fun invoke(
         loanId: LoanId,
         userId: UserId,
@@ -33,16 +32,12 @@ class LoanCreator(
         checkUser(userId)
             .flatMap { checkBookAvailability(bookIsbn) }
             .map { book -> Loan.create(id = loanId, bookId = book.id, userId = userId, createdAt = createdAt) }
-            .flatMap { loan -> loan.save() }
-            .flatMap { loan -> loan.publishEvents() }
+            .map { loan -> loan.save() }
+            .map { loan -> loan.publishEvents() }
 
-    private fun checkBookAvailability(bookIsbn: BookIsbn): Either<LoanCreatorError, Book> =
-        searchAllBooksByIsbn(bookIsbn)
-            .flatMap { books -> books.getFirstAvailableBook(bookIsbn) }
+    private fun checkBookAvailability(bookIsbn: BookIsbn): Either<LoanCreatorError, Book> = searchAllBooksByIsbn(bookIsbn).getFirstAvailableBook(bookIsbn)
 
-    private fun searchAllBooksByIsbn(bookIsbn: BookIsbn): Either<LoanCreatorError, List<Book>> =
-        bookRepository.searchByIsbn(bookIsbn)
-            .mapLeft { LoanCreatorError.UnknownError(it) }
+    private fun searchAllBooksByIsbn(bookIsbn: BookIsbn): List<Book> = bookRepository.searchByIsbn(bookIsbn)
 
     private fun List<Book>.getFirstAvailableBook(isbn: BookIsbn): Either<LoanCreatorError, Book> =
         Either.catch { first { it.isAvailable } }
@@ -53,37 +48,31 @@ class LoanCreator(
             .flatMap { book -> book.checkCurrentLoans() }
 
     private fun findUser(userId: UserId): Either<LoanCreatorError, User> =
-        userRepository.findById(userId)
+        userRepository.find(userId)
             .mapLeft { error ->
                 when (error) {
                     is RepositoryError.NotFoundError -> LoanCreatorError.UserNotFound(userId)
-                    else -> LoanCreatorError.UnknownError(error)
+                    else -> throw error
                 }
             }
 
     private fun User.checkCurrentLoans(): Either<LoanCreatorError, Unit> =
         when {
-            hasReachedLoanLimit() -> com.github.caay2000.librarykata.eventdriven.context.loan.application.loan.create.LoanCreatorError.UserHasTooManyLoans(id).left()
+            hasReachedLoanLimit() -> LoanCreatorError.UserHasTooManyLoans(id).left()
             else -> Unit.right()
         }
 
-    private fun Loan.save(): Either<LoanCreatorError, Loan> =
-        loanRepository.save(this)
-            .mapLeft { com.github.caay2000.librarykata.eventdriven.context.loan.application.loan.create.LoanCreatorError.UnknownError(it) }
-            .map { this }
+    private fun Loan.save(): Loan = loanRepository.save(this)
 
-    private fun Loan.publishEvents(): Either<LoanCreatorError, Unit> =
+    private fun Loan.publishEvents() {
         eventPublisher.publish(pullEvents())
-            .mapLeft { com.github.caay2000.librarykata.eventdriven.context.loan.application.loan.create.LoanCreatorError.UnknownError(it) }
+    }
 }
 
-sealed class LoanCreatorError : RuntimeException {
-    constructor(message: String) : super(message)
-    constructor(throwable: Throwable) : super(throwable)
-
+sealed class LoanCreatorError(message: String) : RuntimeException(message) {
     class BookNotAvailable(bookIsbn: BookIsbn) : LoanCreatorError("book with isbn ${bookIsbn.value} is not available")
 
     class UserNotFound(userId: UserId) : LoanCreatorError("user ${userId.value} not found")
+
     class UserHasTooManyLoans(userId: UserId) : LoanCreatorError("user ${userId.value} has too many loans")
-    class UnknownError(error: Throwable) : LoanCreatorError(error)
 }

@@ -8,6 +8,7 @@ dependencies {
 
     implementation(project(":app-jsonapi"))
     implementation(project(":libs:common-date"))
+    implementation(project(":libs:common-ddd"))
     implementation(project(":libs:common-http"))
     implementation(project(":libs:common-id-generator"))
 

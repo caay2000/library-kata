@@ -11,15 +11,19 @@ import com.github.caay2000.librarykata.eventdriven.context.account.domain.PhoneN
 import com.github.caay2000.librarykata.eventdriven.context.account.domain.PhonePrefix
 
 interface AccountRepository : Repository {
+    fun save(account: Account): Account
 
-    fun save(account: Account): Either<RepositoryError, Unit>
-    fun searchAll(): Either<RepositoryError, List<Account>>
+    fun search(): List<Account>
+
     fun findBy(criteria: FindAccountCriteria): Either<RepositoryError, Account>
 }
 
 sealed class FindAccountCriteria {
     class ById(val id: AccountId) : FindAccountCriteria()
+
     class ByIdentityNumber(val identityNumber: IdentityNumber) : FindAccountCriteria()
+
     class ByEmail(val email: Email) : FindAccountCriteria()
+
     class ByPhone(val phonePrefix: PhonePrefix, val phoneNumber: PhoneNumber) : FindAccountCriteria()
 }

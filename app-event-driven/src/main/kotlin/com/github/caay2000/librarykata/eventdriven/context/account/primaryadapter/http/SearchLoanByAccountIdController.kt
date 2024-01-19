@@ -21,7 +21,6 @@ class SearchLoanByAccountIdController(
     bookRepository: BookRepository,
     loanRepository: LoanRepository,
 ) : Controller {
-
     override val logger: KLogger = KotlinLogging.logger {}
 
     private val loanQueryHandler = SearchLoanByUserIdQueryHandler(loanRepository)
@@ -32,12 +31,14 @@ class SearchLoanByAccountIdController(
 
         val loans = loanQueryHandler.invoke(SearchLoanByAccountIdQuery(accountId)).value
 
-        val document = LoanByUserIdDocument(
-            accountId = accountId.value,
-            loans = loans.map { loan ->
-                loan.toLoanDocument(bookQueryHandler.invoke(FindBookByIdQuery(loan.bookId)).value)
-            },
-        )
+        val document =
+            LoanByUserIdDocument(
+                accountId = accountId.value,
+                loans =
+                    loans.map { loan ->
+                        loan.toLoanDocument(bookQueryHandler.invoke(FindBookByIdQuery(loan.bookId)).value)
+                    },
+            )
 
         call.respond(HttpStatusCode.OK, document)
     }

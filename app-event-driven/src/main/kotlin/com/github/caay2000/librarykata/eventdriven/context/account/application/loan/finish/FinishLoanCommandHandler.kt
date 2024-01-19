@@ -12,7 +12,6 @@ import java.time.LocalDateTime
 import java.util.UUID
 
 class FinishLoanCommandHandler(loanRepository: LoanRepository) : CommandHandler<FinishLoanCommand> {
-
     override val logger: KLogger = KotlinLogging.logger {}
     private val finisher = LoanFinisher(loanRepository)
 

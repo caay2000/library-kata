@@ -9,7 +9,6 @@ import mu.KLogger
 import mu.KotlinLogging
 
 class CreateAccountBookOnBookCreatedEventSubscriber(bookRepository: BookRepository) : DomainEventSubscriber<BookCreatedEvent>() {
-
     override val logger: KLogger = KotlinLogging.logger {}
     private val commandHandler = CreateBookCommandHandler(bookRepository)
 

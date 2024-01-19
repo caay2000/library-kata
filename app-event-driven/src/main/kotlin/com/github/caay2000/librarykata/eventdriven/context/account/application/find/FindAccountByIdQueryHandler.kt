@@ -11,7 +11,6 @@ import mu.KLogger
 import mu.KotlinLogging
 
 class FindAccountByIdQueryHandler(accountRepository: AccountRepository) : QueryHandler<FindAccountByIdQuery, FindAccountByIdQueryResponse> {
-
     override val logger: KLogger = KotlinLogging.logger {}
 
     private val finder = AccountFinder(accountRepository)

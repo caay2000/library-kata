@@ -9,7 +9,6 @@ import mu.KLogger
 import mu.KotlinLogging
 
 class CreateUserOnAccountCreatedEventSubscriber(userRepository: UserRepository) : DomainEventSubscriber<AccountCreatedEvent>() {
-
     override val logger: KLogger = KotlinLogging.logger {}
     private val commandHandler = CreateUserCommandHandler(userRepository)
 

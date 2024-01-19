@@ -1,6 +1,5 @@
 package com.github.caay2000.librarykata.eventdriven.context.account.application.loan.start
 
-import com.github.caay2000.common.arrow.getOrThrow
 import com.github.caay2000.common.cqrs.Command
 import com.github.caay2000.common.cqrs.CommandHandler
 import com.github.caay2000.librarykata.eventdriven.context.account.application.LoanRepository
@@ -14,7 +13,6 @@ import java.time.LocalDateTime
 import java.util.UUID
 
 class StartLoanCommandHandler(loanRepository: LoanRepository) : CommandHandler<StartLoanCommand> {
-
     override val logger: KLogger = KotlinLogging.logger {}
     private val starter = LoanStarter(loanRepository)
 
@@ -24,7 +22,7 @@ class StartLoanCommandHandler(loanRepository: LoanRepository) : CommandHandler<S
             accountId = AccountId(command.accountId),
             bookId = BookId(command.bookId),
             startedAt = StartLoanDateTime(command.startedAt),
-        ).getOrThrow()
+        )
 }
 
 data class StartLoanCommand(

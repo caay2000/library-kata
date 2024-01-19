@@ -22,7 +22,6 @@ class CreateLoanCommandHandler(
     loanRepository: LoanRepository,
     eventPublisher: DomainEventPublisher,
 ) : CommandHandler<CreateLoanCommand> {
-
     override val logger: KLogger = KotlinLogging.logger {}
     private val creator = LoanCreator(bookRepository, userRepository, loanRepository, eventPublisher)
 

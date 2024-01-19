@@ -9,4 +9,4 @@ data class LoanCreatedEvent(
     val bookId: UUID,
     val userId: UUID,
     val createdAt: LocalDateTime,
-) : DomainEvent(loanId)
+) : DomainEvent(loanId.toString())

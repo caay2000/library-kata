@@ -11,7 +11,6 @@ import mu.KotlinLogging
 import java.util.UUID
 
 class UpdateBookAvailabilityCommandHandler(bookRepository: BookRepository) : CommandHandler<UpdateBookAvailabilityCommand> {
-
     override val logger: KLogger = KotlinLogging.logger {}
     private val updater = BookAvailabilityUpdater(bookRepository)
 

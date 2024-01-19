@@ -10,9 +10,7 @@ data class Loan(
     val startedAt: StartLoanDateTime,
     val finishedAt: FinishLoanDateTime? = null,
 ) {
-
-    fun finish(returnedAt: FinishLoanDateTime): Loan =
-        copy(finishedAt = returnedAt)
+    fun finish(returnedAt: FinishLoanDateTime): Loan = copy(finishedAt = returnedAt)
 }
 
 @JvmInline

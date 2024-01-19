@@ -14,7 +14,6 @@ data class Loan(
     val createdAt: CreatedAt,
     val finishedAt: FinishedAt?,
 ) : Aggregate() {
-
     companion object {
         fun create(
             id: LoanId,
@@ -37,19 +36,21 @@ data class Loan(
         copy(finishedAt = finishedAt)
             .also { loan -> loan.pushEvent(loan.toLoanFinishedEvent()) }
 
-    private fun toLoanCreatedEvent() = LoanCreatedEvent(
-        loanId = id.value,
-        bookId = bookId.value,
-        userId = userId.value,
-        createdAt = createdAt.value,
-    )
+    private fun toLoanCreatedEvent() =
+        LoanCreatedEvent(
+            loanId = id.value,
+            bookId = bookId.value,
+            userId = userId.value,
+            createdAt = createdAt.value,
+        )
 
-    private fun toLoanFinishedEvent() = LoanFinishedEvent(
-        loanId = id.value,
-        bookId = bookId.value,
-        userId = userId.value,
-        finishedAt = finishedAt!!.value,
-    )
+    private fun toLoanFinishedEvent() =
+        LoanFinishedEvent(
+            loanId = id.value,
+            bookId = bookId.value,
+            userId = userId.value,
+            finishedAt = finishedAt!!.value,
+        )
 }
 
 @JvmInline

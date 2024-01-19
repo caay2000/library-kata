@@ -7,7 +7,6 @@ data class User(
     val id: UserId,
     val currentLoans: CurrentLoans,
 ) {
-
     fun updateCurrentLoans(value: Int): User =
         if (value > 0) {
             copy(currentLoans = currentLoans.increase(value))
@@ -30,5 +29,6 @@ value class UserId(val value: UUID) {
 @JvmInline
 value class CurrentLoans(val value: Int) {
     fun increase(value: Int): CurrentLoans = CurrentLoans(this.value + value)
+
     fun decrease(value: Int): CurrentLoans = CurrentLoans(Math.max(this.value - value, 0))
 }

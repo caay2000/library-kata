@@ -21,12 +21,11 @@ class AccountCreator(
     private val accountRepository: AccountRepository,
     private val eventPublisher: DomainEventPublisher,
 ) {
-
     fun invoke(request: CreateAccountRequest): Either<AccountCreatorError, Unit> =
         guardAccountCanBeCreated(request)
             .map { Account.create(request) }
-            .flatMap { account -> account.save() }
-            .flatMap { account -> account.publishEvents() }
+            .map { account -> account.save() }
+            .map { account -> account.publishEvents() }
 
     private fun guardAccountCanBeCreated(request: CreateAccountRequest): Either<AccountCreatorError, Unit> =
         guardIdentityNumberIsNotRepeated(request.identityNumber)
@@ -43,7 +42,10 @@ class AccountCreator(
             .flatMap { AccountCreatorError.EmailAlreadyExists(email).left() }
             .recover { error -> handleGuardErrors(error) }
 
-    private fun guardPhoneIsNotRepeated(phonePrefix: PhonePrefix, phoneNumber: PhoneNumber): Either<AccountCreatorError, Unit> =
+    private fun guardPhoneIsNotRepeated(
+        phonePrefix: PhonePrefix,
+        phoneNumber: PhoneNumber,
+    ): Either<AccountCreatorError, Unit> =
         accountRepository.findBy(FindAccountCriteria.ByPhone(phonePrefix, phoneNumber))
             .flatMap { AccountCreatorError.PhoneAlreadyExists(phonePrefix, phoneNumber).left() }
             .recover { error -> handleGuardErrors(error) }
@@ -56,14 +58,9 @@ class AccountCreator(
         }
     }
 
-    private fun Account.save(): Either<AccountCreatorError, Account> =
-        accountRepository.save(this)
-            .mapLeft { com.github.caay2000.librarykata.eventdriven.context.account.application.create.AccountCreatorError.Unknown(it) }
-            .map { this }
+    private fun Account.save(): Account = accountRepository.save(this).let { this }
 
-    private fun Account.publishEvents(): Either<AccountCreatorError, Unit> =
-        eventPublisher.publish(pullEvents())
-            .mapLeft { com.github.caay2000.librarykata.eventdriven.context.account.application.create.AccountCreatorError.Unknown(it) }
+    private fun Account.publishEvents() = eventPublisher.publish(pullEvents())
 }
 
 sealed class AccountCreatorError : RuntimeException {
@@ -71,8 +68,11 @@ sealed class AccountCreatorError : RuntimeException {
     constructor(throwable: Throwable) : super(throwable)
 
     class Unknown(error: Throwable) : AccountCreatorError(error)
+
     class IdentityNumberAlreadyExists(identityNumber: IdentityNumber) : AccountCreatorError("an account with identity number ${identityNumber.value} already exists")
+
     class EmailAlreadyExists(email: Email) : AccountCreatorError("an account with email ${email.value} already exists")
+
     class PhoneAlreadyExists(phonePrefix: PhonePrefix, phoneNumber: PhoneNumber) :
         AccountCreatorError("an account with phone ${phonePrefix.value} ${phoneNumber.value} already exists")
 }

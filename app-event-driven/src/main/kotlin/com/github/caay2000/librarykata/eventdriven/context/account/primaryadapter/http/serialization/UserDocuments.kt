@@ -22,17 +22,18 @@ data class AccountDetailsDocument(
     val registerDate: LocalDateTime,
 )
 
-fun Account.toAccountDetailsDocument() = AccountDetailsDocument(
-    id = id.toString(),
-    identityNumber = identityNumber.value,
-    name = name.value,
-    surname = surname.value,
-    birthdate = birthdate.value,
-    email = email.value,
-    phonePrefix = phonePrefix.value,
-    phoneNumber = phoneNumber.value,
-    registerDate = registerDate.value,
-)
+fun Account.toAccountDetailsDocument() =
+    AccountDetailsDocument(
+        id = id.toString(),
+        identityNumber = identityNumber.value,
+        name = name.value,
+        surname = surname.value,
+        birthdate = birthdate.value,
+        email = email.value,
+        phonePrefix = phonePrefix.value,
+        phoneNumber = phoneNumber.value,
+        registerDate = registerDate.value,
+    )
 
 @Serializable
 data class CreateAccountRequestDocument(

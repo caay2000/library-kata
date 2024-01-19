@@ -7,21 +7,16 @@ import com.github.caay2000.librarykata.eventdriven.context.book.domain.Book
 import com.github.caay2000.librarykata.eventdriven.context.book.domain.BookId
 
 class BookFinder(private val bookRepository: BookRepository) {
-
     fun invoke(id: BookId): Either<BookFinderError, Book> =
-        bookRepository.findById(id)
+        bookRepository.find(id)
             .mapLeft {
                 when (it) {
                     is RepositoryError.NotFoundError -> BookFinderError.BookNotFound(id)
-                    is RepositoryError.Unknown -> BookFinderError.UnknownError(it)
+                    else -> throw it
                 }
             }
 }
 
-sealed class BookFinderError : RuntimeException {
-    constructor(message: String) : super(message)
-    constructor(throwable: Throwable) : super(throwable)
-
-    class UnknownError(error: Throwable) : BookFinderError(error)
+sealed class BookFinderError(message: String) : RuntimeException(message) {
     class BookNotFound(bookId: BookId) : BookFinderError("Book ${bookId.value} not found")
 }

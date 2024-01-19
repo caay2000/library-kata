@@ -16,7 +16,6 @@ import com.github.caay2000.librarykata.eventdriven.context.account.domain.BookPu
 import com.github.caay2000.librarykata.eventdriven.context.account.domain.BookTitle
 
 class BookCreator(private val bookRepository: BookRepository) {
-
     fun invoke(
         id: BookId,
         isbn: BookIsbn,
@@ -27,10 +26,10 @@ class BookCreator(private val bookRepository: BookRepository) {
     ): Either<BookCreatorError, Unit> =
         guardBookIsNotAlreadyCreated(id)
             .flatMap { createBook(id = id, isbn = isbn, title = title, author = author, pages = pages, publisher = publisher) }
-            .flatMap { book -> book.save() }
+            .map { book -> book.save() }
 
     private fun guardBookIsNotAlreadyCreated(bookId: BookId): Either<BookCreatorError, Unit> =
-        bookRepository.findById(bookId)
+        bookRepository.find(bookId)
             .flatMap { BookCreatorError.BookAlreadyExists(bookId).left() }
             .recover { error ->
                 when (error) {
@@ -40,13 +39,20 @@ class BookCreator(private val bookRepository: BookRepository) {
                 }
             }
 
-    private fun createBook(id: BookId, isbn: BookIsbn, title: BookTitle, author: BookAuthor, pages: BookPages, publisher: BookPublisher): Either<BookCreatorError, Book> =
+    private fun createBook(
+        id: BookId,
+        isbn: BookIsbn,
+        title: BookTitle,
+        author: BookAuthor,
+        pages: BookPages,
+        publisher: BookPublisher,
+    ): Either<BookCreatorError, Book> =
         Either.catch { Book(id, isbn, title, author, pages, publisher) }
             .mapLeft { BookCreatorError.Unknown(it) }
 
-    private fun Book.save(): Either<BookCreatorError, Unit> =
+    private fun Book.save() {
         bookRepository.save(this)
-            .mapLeft { BookCreatorError.Unknown(it) }
+    }
 }
 
 sealed class BookCreatorError : RuntimeException {
@@ -54,5 +60,6 @@ sealed class BookCreatorError : RuntimeException {
     constructor(throwable: Throwable) : super(throwable)
 
     class Unknown(error: Throwable) : BookCreatorError(error)
+
     class BookAlreadyExists(bookId: BookId) : BookCreatorError("book ${bookId.value} already exists")
 }

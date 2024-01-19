@@ -10,4 +10,4 @@ data class BookCreatedEvent(
     val author: String,
     val pages: Int,
     val publisher: String,
-) : DomainEvent(bookId)
+) : DomainEvent(bookId.toString())

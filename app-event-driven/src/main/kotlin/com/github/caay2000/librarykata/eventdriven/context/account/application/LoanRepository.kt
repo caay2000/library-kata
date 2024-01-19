@@ -7,9 +7,10 @@ import com.github.caay2000.librarykata.eventdriven.context.account.domain.Loan
 import com.github.caay2000.librarykata.eventdriven.context.account.domain.LoanId
 
 interface LoanRepository {
+    fun save(loan: Loan): Loan
 
-    fun save(loan: Loan): Either<RepositoryError, Unit>
-    fun searchByAccountId(accountId: AccountId): Either<RepositoryError, List<Loan>>
+    // TODO change to search and use Criteria
+    fun searchByAccountId(accountId: AccountId): List<Loan>
 
-    fun findById(id: LoanId): Either<RepositoryError, Loan>
+    fun find(id: LoanId): Either<RepositoryError, Loan>
 }

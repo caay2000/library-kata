@@ -18,7 +18,6 @@ class FinishLoanController(
     loanRepository: LoanRepository,
     eventPublisher: DomainEventPublisher,
 ) : Controller {
-
     override val logger: KLogger = KotlinLogging.logger {}
 
     private val commandHandler = FinishLoanCommandHandler(loanRepository, eventPublisher)

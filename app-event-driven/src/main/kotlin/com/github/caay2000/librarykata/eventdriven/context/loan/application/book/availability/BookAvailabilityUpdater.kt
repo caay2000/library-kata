@@ -1,7 +1,6 @@
 package com.github.caay2000.librarykata.eventdriven.context.loan.application.book.availability
 
 import arrow.core.Either
-import arrow.core.flatMap
 import com.github.caay2000.common.database.RepositoryError
 import com.github.caay2000.librarykata.eventdriven.context.loan.application.BookRepository
 import com.github.caay2000.librarykata.eventdriven.context.loan.domain.Book
@@ -9,30 +8,28 @@ import com.github.caay2000.librarykata.eventdriven.context.loan.domain.BookAvail
 import com.github.caay2000.librarykata.eventdriven.context.loan.domain.BookId
 
 class BookAvailabilityUpdater(private val bookRepository: BookRepository) {
-
-    fun invoke(bookId: BookId, available: BookAvailable): Either<LoanBookAvailabilityUpdaterError, Unit> =
+    fun invoke(
+        bookId: BookId,
+        available: BookAvailable,
+    ): Either<LoanBookAvailabilityUpdaterError, Unit> =
         findBook(bookId)
             .map { book -> book.updateAvailability(available) }
-            .flatMap { book -> book.save() }
+            .map { book -> book.save() }
 
     private fun findBook(bookId: BookId): Either<LoanBookAvailabilityUpdaterError, Book> =
-        bookRepository.findById(bookId)
+        bookRepository.find(bookId)
             .mapLeft { error ->
                 when (error) {
                     is RepositoryError.NotFoundError -> LoanBookAvailabilityUpdaterError.BookNotFound(bookId)
-                    else -> LoanBookAvailabilityUpdaterError.UnknownError(error)
+                    else -> throw error
                 }
             }
 
-    private fun Book.save(): Either<LoanBookAvailabilityUpdaterError, Unit> =
+    private fun Book.save() {
         bookRepository.save(this)
-            .mapLeft { LoanBookAvailabilityUpdaterError.UnknownError(it) }
+    }
 }
 
-sealed class LoanBookAvailabilityUpdaterError : RuntimeException {
-    constructor(message: String) : super(message)
-    constructor(throwable: Throwable) : super(throwable)
-
-    class UnknownError(error: Throwable) : LoanBookAvailabilityUpdaterError(error)
+sealed class LoanBookAvailabilityUpdaterError(message: String) : RuntimeException(message) {
     class BookNotFound(bookId: BookId) : LoanBookAvailabilityUpdaterError("book $bookId not found")
 }

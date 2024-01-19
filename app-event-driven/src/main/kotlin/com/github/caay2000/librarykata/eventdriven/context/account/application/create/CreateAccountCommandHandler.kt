@@ -25,7 +25,6 @@ class CreateAccountCommandHandler(
     accountRepository: AccountRepository,
     eventPublisher: DomainEventPublisher,
 ) : CommandHandler<CreateAccountCommand> {
-
     override val logger: KLogger = KotlinLogging.logger {}
     private val creator = AccountCreator(accountRepository, eventPublisher)
 

@@ -8,15 +8,11 @@ import com.github.caay2000.librarykata.eventdriven.context.loan.domain.Loan
 import com.github.caay2000.memorydb.InMemoryDatasource
 
 class InMemoryLoanRepository(private val datasource: InMemoryDatasource) : LoanRepository {
-
     companion object {
         private const val TABLE_NAME = "loan.loan"
     }
 
-    override fun save(loan: Loan): Either<RepositoryError, Unit> =
-        Either.catch { datasource.save(TABLE_NAME, loan.id.toString(), loan) }
-            .mapLeft { RepositoryError.Unknown(it) }
-            .map { }
+    override fun save(loan: Loan): Loan = datasource.save(TABLE_NAME, loan.id.toString(), loan)
 
     override fun findBy(criteria: FindLoanCriteria): Either<RepositoryError, Loan> =
         Either.catch {
@@ -28,7 +24,7 @@ class InMemoryLoanRepository(private val datasource: InMemoryDatasource) : LoanR
             when (error) {
                 is NullPointerException -> RepositoryError.NotFoundError()
                 is NoSuchElementException -> RepositoryError.NotFoundError()
-                else -> RepositoryError.Unknown(error)
+                else -> throw error
             }
         }
 }

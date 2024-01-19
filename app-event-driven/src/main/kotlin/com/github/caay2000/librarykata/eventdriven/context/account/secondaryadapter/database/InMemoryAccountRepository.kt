@@ -8,19 +8,13 @@ import com.github.caay2000.librarykata.eventdriven.context.account.domain.Accoun
 import com.github.caay2000.memorydb.InMemoryDatasource
 
 class InMemoryAccountRepository(private val datasource: InMemoryDatasource) : AccountRepository {
-
     companion object {
         private const val TABLE_NAME = "account.account"
     }
 
-    override fun save(account: Account): Either<RepositoryError, Unit> =
-        Either.catch { datasource.save(TABLE_NAME, account.id.toString(), account) }
-            .mapLeft { RepositoryError.Unknown(it) }
-            .map { }
+    override fun save(account: Account): Account = datasource.save(TABLE_NAME, account.id.toString(), account)
 
-    override fun searchAll(): Either<RepositoryError, List<Account>> =
-        Either.catch { datasource.getAll<Account>(TABLE_NAME) }
-            .mapLeft { RepositoryError.Unknown(it) }
+    override fun search(): List<Account> = datasource.getAll(TABLE_NAME)
 
     override fun findBy(criteria: FindAccountCriteria): Either<RepositoryError, Account> =
         Either.catch {
@@ -34,7 +28,7 @@ class InMemoryAccountRepository(private val datasource: InMemoryDatasource) : Ac
             when (error) {
                 is NullPointerException -> RepositoryError.NotFoundError()
                 is NoSuchElementException -> RepositoryError.NotFoundError()
-                else -> RepositoryError.Unknown(error)
+                else -> throw error
             }
         }
 }

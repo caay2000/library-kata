@@ -30,7 +30,6 @@ class CreateLoanController(
     loanRepository: LoanRepository,
     eventPublisher: DomainEventPublisher,
 ) : Controller {
-
     override val logger: KLogger = KotlinLogging.logger {}
 
     private val commandHandler = CreateLoanCommandHandler(bookRepository, userRepository, loanRepository, eventPublisher)
@@ -47,11 +46,13 @@ class CreateLoanController(
         call.respond(HttpStatusCode.Created, queryResponse.loan.toLoanDocument())
     }
 
-    private fun LoanRequestDocument.toCreateLoanCommand(loanId: UUID, datetime: LocalDateTime) =
-        CreateLoanCommand(
-            loanId = loanId,
-            userId = userId,
-            bookIsbn = bookIsbn,
-            createdAt = datetime,
-        )
+    private fun LoanRequestDocument.toCreateLoanCommand(
+        loanId: UUID,
+        datetime: LocalDateTime,
+    ) = CreateLoanCommand(
+        loanId = loanId,
+        userId = userId,
+        bookIsbn = bookIsbn,
+        createdAt = datetime,
+    )
 }

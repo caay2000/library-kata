@@ -10,12 +10,10 @@ import mu.KotlinLogging
 import java.util.UUID
 
 class UpdateUserCurrentLoansCommandHandler(userRepository: UserRepository) : CommandHandler<UpdateUserCurrentLoansCommand> {
-
     override val logger: KLogger = KotlinLogging.logger {}
     private val updater = UserCurrentLoansUpdater(userRepository)
 
-    override fun handle(command: UpdateUserCurrentLoansCommand): Unit =
-        updater.invoke(userId = UserId(command.userId), command.value).getOrThrow()
+    override fun handle(command: UpdateUserCurrentLoansCommand): Unit = updater.invoke(userId = UserId(command.userId), command.value).getOrThrow()
 }
 
 sealed class UpdateUserCurrentLoansCommand(

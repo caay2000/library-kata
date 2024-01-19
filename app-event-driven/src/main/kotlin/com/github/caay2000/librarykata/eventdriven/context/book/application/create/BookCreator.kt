@@ -16,15 +16,14 @@ class BookCreator(
     private val bookRepository: BookRepository,
     private val eventPublisher: DomainEventPublisher,
 ) {
-
     fun invoke(request: CreateBookRequest): Either<BookCreatorError, Unit> =
         guardBookIsNotAlreadyCreated(request.id)
             .flatMap { createBook(request) }
-            .flatMap { book -> book.save() }
-            .flatMap { book -> book.publishEvents() }
+            .map { book -> book.save() }
+            .map { book -> book.publishEvents() }
 
     private fun guardBookIsNotAlreadyCreated(bookId: BookId): Either<BookCreatorError, Unit> =
-        bookRepository.findById(bookId)
+        bookRepository.find(bookId)
             .flatMap { BookCreatorError.BookAlreadyExists(bookId).left() }
             .recover { error ->
                 when (error) {
@@ -38,13 +37,14 @@ class BookCreator(
         Either.catch { Book.create(request) }
             .mapLeft { BookCreatorError.Unknown(it) }
 
-    private fun Book.save(): Either<BookCreatorError, Book> =
-        bookRepository.save(this).map { this }
-            .mapLeft { com.github.caay2000.librarykata.eventdriven.context.book.application.create.BookCreatorError.Unknown(it) }
+    private fun Book.save(): Book {
+        bookRepository.save(this)
+        return this
+    }
 
-    private fun Book.publishEvents(): Either<BookCreatorError, Unit> =
+    private fun Book.publishEvents() {
         eventPublisher.publish(this.pullEvents())
-            .mapLeft { com.github.caay2000.librarykata.eventdriven.context.book.application.create.BookCreatorError.Unknown(it) }
+    }
 }
 
 sealed class BookCreatorError : RuntimeException {
@@ -52,5 +52,6 @@ sealed class BookCreatorError : RuntimeException {
     constructor(throwable: Throwable) : super(throwable)
 
     class Unknown(error: Throwable) : BookCreatorError(error)
+
     class BookAlreadyExists(bookId: BookId) : BookCreatorError("book ${bookId.value} already exists")
 }

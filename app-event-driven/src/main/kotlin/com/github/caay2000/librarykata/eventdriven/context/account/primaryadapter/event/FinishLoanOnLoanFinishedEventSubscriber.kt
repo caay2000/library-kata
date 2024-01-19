@@ -11,7 +11,6 @@ import mu.KotlinLogging
 class FinishLoanOnLoanFinishedEventSubscriber(
     loanRepository: LoanRepository,
 ) : DomainEventSubscriber<LoanFinishedEvent>() {
-
     override val logger: KLogger = KotlinLogging.logger {}
     private val commandHandler = FinishLoanCommandHandler(loanRepository)
 

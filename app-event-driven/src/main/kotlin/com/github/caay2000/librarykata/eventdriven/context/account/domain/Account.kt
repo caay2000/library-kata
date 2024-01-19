@@ -18,32 +18,33 @@ data class Account(
     val phoneNumber: PhoneNumber,
     val registerDate: RegisterDate,
 ) : Aggregate() {
-
     companion object {
-        fun create(request: CreateAccountRequest) = Account(
-            id = request.accountId,
-            identityNumber = request.identityNumber,
-            name = request.name,
-            surname = request.surname,
-            birthdate = request.birthdate,
-            email = request.email,
-            phonePrefix = request.phonePrefix,
-            phoneNumber = request.phoneNumber,
-            registerDate = request.registerDate,
-        ).also { account -> account.pushEvent(account.toAccountCreatedEvent()) }
+        fun create(request: CreateAccountRequest) =
+            Account(
+                id = request.accountId,
+                identityNumber = request.identityNumber,
+                name = request.name,
+                surname = request.surname,
+                birthdate = request.birthdate,
+                email = request.email,
+                phonePrefix = request.phonePrefix,
+                phoneNumber = request.phoneNumber,
+                registerDate = request.registerDate,
+            ).also { account -> account.pushEvent(account.toAccountCreatedEvent()) }
     }
 
-    private fun toAccountCreatedEvent() = AccountCreatedEvent(
-        id = id.value,
-        identityNumber = identityNumber.value,
-        name = name.value,
-        surname = surname.value,
-        birthdate = birthdate.value,
-        email = email.value,
-        phonePrefix = phonePrefix.value,
-        phoneNumber = phoneNumber.value,
-        registerDate = registerDate.value,
-    )
+    private fun toAccountCreatedEvent() =
+        AccountCreatedEvent(
+            id = id.value,
+            identityNumber = identityNumber.value,
+            name = name.value,
+            surname = surname.value,
+            birthdate = birthdate.value,
+            email = email.value,
+            phonePrefix = phonePrefix.value,
+            phoneNumber = phoneNumber.value,
+            registerDate = registerDate.value,
+        )
 }
 
 @JvmInline

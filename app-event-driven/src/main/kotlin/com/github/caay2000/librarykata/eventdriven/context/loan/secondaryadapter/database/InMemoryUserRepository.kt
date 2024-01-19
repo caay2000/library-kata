@@ -8,23 +8,19 @@ import com.github.caay2000.librarykata.eventdriven.context.loan.domain.UserId
 import com.github.caay2000.memorydb.InMemoryDatasource
 
 class InMemoryUserRepository(private val datasource: InMemoryDatasource) : UserRepository {
-
     companion object {
         private const val TABLE_NAME = "loan.user"
     }
 
-    override fun save(user: User): Either<RepositoryError, Unit> =
-        Either.catch { datasource.save(TABLE_NAME, user.id.toString(), user) }
-            .mapLeft { RepositoryError.Unknown(it) }
-            .map { }
+    override fun save(user: User) = datasource.save(TABLE_NAME, user.id.toString(), user)
 
-    override fun findById(id: UserId): Either<RepositoryError, User> =
+    override fun find(id: UserId): Either<RepositoryError, User> =
         Either.catch { datasource.getById<User>(TABLE_NAME, id.toString())!! }
             .mapLeft { error ->
                 when (error) {
                     is NullPointerException -> RepositoryError.NotFoundError()
                     is NoSuchElementException -> RepositoryError.NotFoundError()
-                    else -> RepositoryError.Unknown(error)
+                    else -> throw error
                 }
             }
 }

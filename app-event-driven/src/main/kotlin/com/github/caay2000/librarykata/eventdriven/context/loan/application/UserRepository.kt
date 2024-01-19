@@ -6,8 +6,7 @@ import com.github.caay2000.librarykata.eventdriven.context.loan.domain.User
 import com.github.caay2000.librarykata.eventdriven.context.loan.domain.UserId
 
 interface UserRepository {
+    fun save(user: User): User
 
-    fun save(user: User): Either<RepositoryError, Unit>
-
-    fun findById(id: UserId): Either<RepositoryError, User>
+    fun find(id: UserId): Either<RepositoryError, User>
 }

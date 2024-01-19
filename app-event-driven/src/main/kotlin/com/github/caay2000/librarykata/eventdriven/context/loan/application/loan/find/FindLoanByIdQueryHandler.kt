@@ -12,7 +12,6 @@ import mu.KotlinLogging
 import java.util.UUID
 
 class FindLoanByIdQueryHandler(loanRepository: LoanRepository) : QueryHandler<FindLoanByIdQuery, FindLoanByIdQueryResponse> {
-
     override val logger: KLogger = KotlinLogging.logger {}
 
     private val finder = LoanFinder(loanRepository)
@@ -24,4 +23,5 @@ class FindLoanByIdQueryHandler(loanRepository: LoanRepository) : QueryHandler<Fi
 }
 
 data class FindLoanByIdQuery(val id: UUID) : Query
+
 data class FindLoanByIdQueryResponse(val loan: Loan) : QueryResponse

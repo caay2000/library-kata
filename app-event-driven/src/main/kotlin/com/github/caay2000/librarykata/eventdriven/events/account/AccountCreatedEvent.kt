@@ -15,4 +15,4 @@ data class AccountCreatedEvent(
     val phoneNumber: String,
     val phonePrefix: String,
     val registerDate: LocalDateTime,
-) : DomainEvent(id)
+) : DomainEvent(id.toString())

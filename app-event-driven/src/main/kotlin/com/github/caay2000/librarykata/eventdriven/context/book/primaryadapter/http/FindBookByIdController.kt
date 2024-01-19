@@ -14,7 +14,6 @@ import mu.KotlinLogging
 import java.util.UUID
 
 class FindBookByIdController(bookRepository: BookRepository) : Controller {
-
     override val logger: KLogger = KotlinLogging.logger {}
 
     private val queryHandler = FindBookByIdQueryHandler(bookRepository)

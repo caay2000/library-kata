@@ -6,8 +6,7 @@ import com.github.caay2000.librarykata.eventdriven.context.account.domain.Book
 import com.github.caay2000.librarykata.eventdriven.context.account.domain.BookId
 
 interface BookRepository {
+    fun save(book: Book): Book
 
-    fun save(book: Book): Either<RepositoryError, Unit>
-
-    fun findById(bookId: BookId): Either<RepositoryError, Book>
+    fun find(bookId: BookId): Either<RepositoryError, Book>
 }

@@ -9,27 +9,23 @@ import com.github.caay2000.librarykata.eventdriven.context.book.domain.BookId
 import com.github.caay2000.memorydb.InMemoryDatasource
 
 class InMemoryBookRepository(private val datasource: InMemoryDatasource) : BookRepository {
+    override fun save(book: Book) {
+        datasource.save(TABLE_NAME, book.id.toString(), book)
+    }
 
-    override fun save(book: Book): Either<RepositoryError, Unit> =
-        Either.catch { datasource.save(TABLE_NAME, book.id.toString(), book) }
-            .mapLeft { RepositoryError.Unknown(it) }
-            .map { }
+    override fun search(criteria: SearchBookCriteria): List<Book> =
+        when (criteria) {
+            SearchBookCriteria.All -> datasource.getAll(TABLE_NAME)
+            is SearchBookCriteria.ByIsbn -> datasource.getAll<Book>(TABLE_NAME).filter { it.isbn == criteria.isbn }
+        }
 
-    override fun search(criteria: SearchBookCriteria): Either<RepositoryError, List<Book>> =
-        Either.catch {
-            when (criteria) {
-                SearchBookCriteria.All -> datasource.getAll(TABLE_NAME)
-                is SearchBookCriteria.ByIsbn -> datasource.getAll<Book>(TABLE_NAME).filter { it.isbn == criteria.isbn }
-            }
-        }.mapLeft { RepositoryError.Unknown(it) }
-
-    override fun findById(id: BookId): Either<RepositoryError, Book> =
+    override fun find(id: BookId): Either<RepositoryError, Book> =
         Either.catch { datasource.getById<Book>(TABLE_NAME, id.toString())!! }
             .mapLeft { error ->
                 when (error) {
                     is NullPointerException -> RepositoryError.NotFoundError()
                     is NoSuchElementException -> RepositoryError.NotFoundError()
-                    else -> RepositoryError.Unknown(error)
+                    else -> throw error
                 }
             }
 
