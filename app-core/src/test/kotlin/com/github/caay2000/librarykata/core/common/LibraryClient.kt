@@ -57,17 +57,19 @@ class LibraryClient {
         runBlocking {
             val request =
                 JsonApiRequestDocument(
-                    data = AccountRequestResource(
-                        attributes = AccountRequestResource.Attributes(
-                            identityNumber = identityNumber.value,
-                            name = name.value,
-                            surname = surname.value,
-                            birthdate = birthdate.value,
-                            email = email.value,
-                            phonePrefix = phonePrefix.value,
-                            phoneNumber = phoneNumber.value,
+                    data =
+                        AccountRequestResource(
+                            attributes =
+                                AccountRequestResource.Attributes(
+                                    identityNumber = identityNumber.value,
+                                    name = name.value,
+                                    surname = surname.value,
+                                    birthdate = birthdate.value,
+                                    email = email.value,
+                                    phonePrefix = phonePrefix.value,
+                                    phoneNumber = phoneNumber.value,
+                                ),
                         ),
-                    ),
                 )
             val jsonRequest = testJsonMapper.encodeToString<JsonApiRequestDocument<AccountRequestResource>>(request)
             logger.trace { "CreateAccount Request: $jsonRequest" }
@@ -126,16 +128,16 @@ class LibraryClient {
             val request =
                 JsonApiRequestDocument(
                     data =
-                    BookRequestResource(
-                        attributes =
-                        BookRequestResource.Attributes(
-                            isbn.value,
-                            title.value,
-                            author.value,
-                            pages.value,
-                            publisher.value,
+                        BookRequestResource(
+                            attributes =
+                                BookRequestResource.Attributes(
+                                    isbn.value,
+                                    title.value,
+                                    author.value,
+                                    pages.value,
+                                    publisher.value,
+                                ),
                         ),
-                    ),
                 )
             val jsonRequest = testJsonMapper.encodeToString(request)
             logger.trace { "CreateBook Request: $jsonRequest" }
@@ -159,8 +161,7 @@ class LibraryClient {
         }
 
     context(ApplicationTestBuilder)
-    fun findBookByIsbn(isbn: BookIsbn): HttpDataResponse<JsonApiDocumentList<BookGroupResource>> =
-        runBlocking { client.get("/book?filter[isbn]=${isbn.value}").toHttpDataResponse() }
+    fun findBookByIsbn(isbn: BookIsbn): HttpDataResponse<JsonApiDocumentList<BookGroupResource>> = runBlocking { client.get("/book?filter[isbn]=${isbn.value}").toHttpDataResponse() }
 
     context(ApplicationTestBuilder)
     fun searchBook(): HttpDataResponse<JsonApiDocumentList<BookGroupResource>> = runBlocking { client.get("/book").toHttpDataResponse() }
@@ -176,10 +177,10 @@ class LibraryClient {
                     JsonApiRequestDocument(
                         LoanRequestResource(
                             attributes =
-                            LoanRequestResource.Attributes(
-                                bookIsbn = bookIsbn.value,
-                                accountId = accountId.value,
-                            ),
+                                LoanRequestResource.Attributes(
+                                    bookIsbn = bookIsbn.value,
+                                    accountId = accountId.value,
+                                ),
                         ),
                     )
                 setBody(testJsonMapper.encodeToString(request))

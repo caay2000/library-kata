@@ -19,7 +19,7 @@ class StartLoanCommandHandler(loanRepository: LoanRepository) : CommandHandler<S
     override fun handle(command: StartLoanCommand): Unit =
         starter.invoke(
             id = LoanId(command.id),
-            accountId = AccountId(command.accountId),
+            accountId = AccountId(command.accountId.toString()),
             bookId = BookId(command.bookId),
             startedAt = StartLoanDateTime(command.startedAt),
         )

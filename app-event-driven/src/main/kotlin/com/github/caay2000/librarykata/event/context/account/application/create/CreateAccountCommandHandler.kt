@@ -31,7 +31,7 @@ class CreateAccountCommandHandler(
     override fun handle(command: CreateAccountCommand): Unit =
         creator.invoke(
             CreateAccountRequest(
-                accountId = AccountId(command.accountId),
+                accountId = AccountId(command.accountId.toString()),
                 identityNumber = IdentityNumber(command.identityNumber),
                 name = Name(command.name),
                 surname = Surname(command.surname),

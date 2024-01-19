@@ -1,6 +1,7 @@
 package com.github.caay2000.librarykata.core.context.account.mother
 
 import com.github.caay2000.librarykata.core.context.loan.mother.LoanMother
+import com.github.caay2000.librarykata.event.context.account.primaryadapter.http.transformer.toJsonApiAccountDocument
 import com.github.caay2000.librarykata.hexagonal.context.domain.account.Account
 import com.github.caay2000.librarykata.hexagonal.context.domain.loan.Loan
 import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.account.transformer.toJsonApiAccountDocument

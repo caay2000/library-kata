@@ -35,7 +35,7 @@ data class Account(
 
     private fun toAccountCreatedEvent() =
         AccountCreatedEvent(
-            id = id.value,
+            id = UUID.fromString(id.value),
             identityNumber = identityNumber.value,
             name = name.value,
             surname = surname.value,
@@ -48,9 +48,7 @@ data class Account(
 }
 
 @JvmInline
-value class AccountId(val value: UUID) : DomainId {
-    override fun toString(): String = value.toString()
-}
+value class AccountId(val value: String) : DomainId
 
 @JvmInline
 value class IdentityNumber(val value: String)

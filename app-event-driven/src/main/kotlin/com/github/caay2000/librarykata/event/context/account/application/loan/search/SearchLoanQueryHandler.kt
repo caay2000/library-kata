@@ -9,16 +9,16 @@ import com.github.caay2000.librarykata.event.context.account.domain.Loan
 import mu.KLogger
 import mu.KotlinLogging
 
-class SearchLoanByUserIdQueryHandler(
+class SearchLoanQueryHandler(
     loanRepository: LoanRepository,
-) : QueryHandler<SearchLoanByAccountIdQuery, SearchLoanByAccountIdQueryResponse> {
+) : QueryHandler<SearchLoanQuery, SearchLoanQueryResponse> {
     override val logger: KLogger = KotlinLogging.logger {}
 
     private val searcher = LoanSearcher(loanRepository)
 
-    override fun handle(query: SearchLoanByAccountIdQuery): SearchLoanByAccountIdQueryResponse = SearchLoanByAccountIdQueryResponse(searcher.invoke(query.accountId))
+    override fun handle(query: SearchLoanQuery): SearchLoanQueryResponse = SearchLoanQueryResponse(searcher.invoke(AccountId(query.accountId)))
 }
 
-data class SearchLoanByAccountIdQuery(val accountId: AccountId) : Query
+data class SearchLoanQuery(val accountId: String) : Query
 
-data class SearchLoanByAccountIdQueryResponse(val value: List<Loan>) : QueryResponse
+data class SearchLoanQueryResponse(val value: List<Loan>) : QueryResponse

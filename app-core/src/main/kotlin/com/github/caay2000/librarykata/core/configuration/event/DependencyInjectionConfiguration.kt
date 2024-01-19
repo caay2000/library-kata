@@ -12,14 +12,9 @@ import com.github.caay2000.librarykata.event.context.account.primaryadapter.even
 import com.github.caay2000.librarykata.event.context.account.primaryadapter.event.StartLoanOnLoanCreatedEventSubscriber
 import com.github.caay2000.librarykata.event.context.account.primaryadapter.http.CreateAccountController
 import com.github.caay2000.librarykata.event.context.account.primaryadapter.http.FindAccountController
-import com.github.caay2000.librarykata.event.context.account.primaryadapter.http.SearchLoanController
 import com.github.caay2000.librarykata.event.context.account.secondaryadapter.database.InMemoryAccountRepository
 import com.github.caay2000.librarykata.event.context.book.primaryadapter.event.UpdateBookAvailabilityOnLoanCreatedEventSubscriber
 import com.github.caay2000.librarykata.event.context.book.primaryadapter.event.UpdateBookAvailabilityOnLoanFinishedEventSubscriber
-import com.github.caay2000.librarykata.event.context.book.primaryadapter.http.CreateBookController
-import com.github.caay2000.librarykata.event.context.book.primaryadapter.http.FindBookByIdController
-import com.github.caay2000.librarykata.event.context.book.primaryadapter.http.SearchBookByIsbnController
-import com.github.caay2000.librarykata.event.context.book.primaryadapter.http.SearchBookController
 import com.github.caay2000.librarykata.event.context.book.secondaryadapter.database.InMemoryBookRepository
 import com.github.caay2000.librarykata.event.context.loan.primaryadapter.event.CreateLoanBookOnBookCreatedEventSubscriber
 import com.github.caay2000.librarykata.event.context.loan.primaryadapter.event.CreateUserOnAccountCreatedEventSubscriber
@@ -27,8 +22,6 @@ import com.github.caay2000.librarykata.event.context.loan.primaryadapter.event.D
 import com.github.caay2000.librarykata.event.context.loan.primaryadapter.event.IncreaseUserCurrentLoansOnLoanCreatedEventSubscriber
 import com.github.caay2000.librarykata.event.context.loan.primaryadapter.event.UpdateLoanBookAvailabilityOnLoanCreatedEventSubscriber
 import com.github.caay2000.librarykata.event.context.loan.primaryadapter.event.UpdateLoanBookAvailabilityOnLoanFinishedEventSubscriber
-import com.github.caay2000.librarykata.event.context.loan.primaryadapter.http.CreateLoanController
-import com.github.caay2000.librarykata.event.context.loan.primaryadapter.http.FinishLoanController
 import com.github.caay2000.librarykata.event.context.loan.secondaryadapter.database.InMemoryLoanRepository
 import com.github.caay2000.librarykata.event.context.loan.secondaryadapter.database.InMemoryUserRepository
 import com.github.caay2000.memorydb.InMemoryDatasource
@@ -72,15 +65,15 @@ val DependencyInjectionConfiguration =
             .subscribe(IncreaseUserCurrentLoansOnLoanCreatedEventSubscriber(DiKt.get()))
             .subscribe(DecreaseUserCurrentLoansOnLoanFinishedEventSubscriber(DiKt.get()))
 
-        DiKt.register { CreateAccountController(DiKt.bind(), DiKt.bind(), DiKt.bind(), DiKt.bind()) }
-        DiKt.register { FindAccountController(DiKt.bind()) }
+        DiKt.register { CreateAccountController(DiKt.bind(), DiKt.bind(), DiKt.bind(), DiKt.bind(), DiKt.bind()) }
+        DiKt.register { FindAccountController(DiKt.bind(), DiKt.bind()) }
 
-        DiKt.register { CreateBookController(DiKt.bind(), DiKt.bind(), DiKt.bind()) }
-        DiKt.register { FindBookByIdController(DiKt.bind()) }
-        DiKt.register { SearchBookController(DiKt.bind()) }
-        DiKt.register { SearchBookByIsbnController(DiKt.bind()) }
-        DiKt.register { SearchLoanController(DiKt.bind(), DiKt.bind()) }
-
-        DiKt.register { CreateLoanController(DiKt.bind(), DiKt.bind(), DiKt.bind(), DiKt.bind(), DiKt.bind(), DiKt.bind()) }
-        DiKt.register { FinishLoanController(DiKt.bind(), DiKt.bind(), DiKt.bind()) }
+//        DiKt.register { CreateBookController(DiKt.bind(), DiKt.bind(), DiKt.bind()) }
+//        DiKt.register { FindBookByIdController(DiKt.bind()) }
+//        DiKt.register { SearchBookController(DiKt.bind()) }
+//        DiKt.register { SearchBookByIsbnController(DiKt.bind()) }
+//        DiKt.register { SearchLoanController(DiKt.bind(), DiKt.bind()) }
+//
+//        DiKt.register { CreateLoanController(DiKt.bind(), DiKt.bind(), DiKt.bind(), DiKt.bind(), DiKt.bind(), DiKt.bind()) }
+//        DiKt.register { FinishLoanController(DiKt.bind(), DiKt.bind(), DiKt.bind()) }
     }
