@@ -57,7 +57,7 @@ class AccountDocumentTransformer(loanRepository: LoanRepository) : Transformer<A
     }
 }
 
-internal fun Loan.toJsonApiDocument(
+fun Loan.toJsonApiDocument(
     account: Account? = null,
     book: Book? = null,
     include: List<String> = emptyList(),

@@ -38,6 +38,7 @@ dependencies {
         implementation("io.ktor:ktor-server-content-negotiation:${project.ext["ktor_version"]}")
         implementation("io.ktor:ktor-server-call-logging-jvm:${project.ext["ktor_version"]}")
         implementation("io.ktor:ktor-server-call-id-jvm:${project.ext["ktor_version"]}")
+        implementation("io.ktor:ktor-server-double-receive:${project.ext["ktor_version"]}")
         implementation("io.ktor:ktor-serialization-kotlinx-json:${project.ext["ktor_version"]}")
 
         implementation("io.ktor:ktor-client-core:${project.ext["ktor_version"]}")
