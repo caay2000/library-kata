@@ -1,5 +1,6 @@
 package com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.account
 
+import com.github.caay2000.common.cqrs.QueryHandler
 import com.github.caay2000.common.http.ContentType
 import com.github.caay2000.common.http.Controller
 import com.github.caay2000.common.http.Transformer
@@ -9,6 +10,7 @@ import com.github.caay2000.common.jsonapi.documentation.errorResponses
 import com.github.caay2000.common.jsonapi.toJsonApiRequestParams
 import com.github.caay2000.librarykata.hexagonal.context.application.account.search.SearchAccountQuery
 import com.github.caay2000.librarykata.hexagonal.context.application.account.search.SearchAccountQueryHandler
+import com.github.caay2000.librarykata.hexagonal.context.application.account.search.SearchAccountQueryResponse
 import com.github.caay2000.librarykata.hexagonal.context.domain.account.Account
 import com.github.caay2000.librarykata.hexagonal.context.domain.account.AccountRepository
 import com.github.caay2000.librarykata.hexagonal.context.domain.loan.LoanRepository
@@ -28,7 +30,7 @@ class SearchAccountController(
 ) : Controller {
     override val logger: KLogger = KotlinLogging.logger {}
 
-    private val queryHandler = SearchAccountQueryHandler(accountRepository)
+    private val queryHandler: QueryHandler<SearchAccountQuery, SearchAccountQueryResponse> = SearchAccountQueryHandler(accountRepository)
     private val transformer: Transformer<List<Account>, JsonApiDocumentList<AccountResource>> = AccountDocumentListTransformer(loanRepository)
 
     override suspend fun handle(call: ApplicationCall) {

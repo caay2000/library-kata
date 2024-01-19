@@ -10,10 +10,9 @@ import com.github.caay2000.librarykata.hexagonal.context.domain.loan.SearchLoanC
 import com.github.caay2000.memorydb.InMemoryDatasource
 
 class InMemoryLoanRepository(private val datasource: InMemoryDatasource) : LoanRepository {
-    override fun save(loan: Loan): Either<RepositoryError, Unit> =
-        Either.catch { datasource.save(TABLE_NAME, loan.id.toString(), loan) }
-            .mapLeft { throw it }
-            .map { }
+    override fun save(loan: Loan) {
+        datasource.save(TABLE_NAME, loan.id.toString(), loan)
+    }
 
     override fun find(criteria: FindLoanCriteria): Either<RepositoryError, Loan> =
         Either.catch {
@@ -29,21 +28,20 @@ class InMemoryLoanRepository(private val datasource: InMemoryDatasource) : LoanR
             }
         }
 
-    override fun search(criteria: SearchLoanCriteria): Either<RepositoryError, List<Loan>> =
+    override fun search(criteria: SearchLoanCriteria): List<Loan> =
         when (criteria) {
-            is SearchLoanCriteria.ByAccountId -> Either.catch { datasource.getAll<Loan>(TABLE_NAME).filter { it.accountId == criteria.accountId } }
-            is SearchLoanCriteria.ByBookId -> Either.catch { datasource.getAll<Loan>(TABLE_NAME).filter { it.bookId == criteria.bookId } }
-            is SearchLoanCriteria.ByBookIsbn ->
-                Either.catch {
-                    val bookIds = datasource.getAll<Book>(BOOK_TABLE_NAME).filter { it.isbn == criteria.bookIsbn }.map { it.id }
-                    datasource.getAll<Loan>(TABLE_NAME).filter { bookIds.contains(it.bookId) }
-                }
-        }.mapLeft { throw it }
+            is SearchLoanCriteria.ByAccountId -> datasource.getAll<Loan>(TABLE_NAME).filter { it.accountId == criteria.accountId }
+            is SearchLoanCriteria.ByBookId -> datasource.getAll<Loan>(TABLE_NAME).filter { it.bookId == criteria.bookId }
+            is SearchLoanCriteria.ByBookIsbn -> {
+                val bookIds = datasource.getAll<Book>(BOOK_TABLE_NAME).filter { it.isbn == criteria.bookIsbn }.map { it.id }
+                datasource.getAll<Loan>(TABLE_NAME).filter { bookIds.contains(it.bookId) }
+            }
+        }
 
     companion object {
         private const val TABLE_NAME = "loan"
 
-        // TODO this repository should not access Book Repository
+        // TODO having this table here is like the loan repository is doing a join with book table
         private const val BOOK_TABLE_NAME = "book"
     }
 }

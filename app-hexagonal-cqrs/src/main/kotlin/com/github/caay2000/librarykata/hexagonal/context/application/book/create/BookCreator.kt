@@ -18,8 +18,8 @@ class BookCreator(
 ) {
     fun invoke(request: CreateBookRequest): Either<BookCreatorError, Unit> =
         guardBookIsNotAlreadyCreated(request.id)
-            .flatMap { createBook(request) }
-            .flatMap { book -> book.save() }
+            .map { createBook(request) }
+            .map { book -> book.save() }
 
     private fun guardBookIsNotAlreadyCreated(bookId: BookId): Either<BookCreatorError, Unit> =
         bookRepository.find(FindBookCriteria.ById(bookId))
@@ -28,22 +28,16 @@ class BookCreator(
                 when (error) {
                     is RepositoryError.NotFoundError -> Unit.right()
                     is BookCreatorError -> raise(error)
-                    else -> raise(BookCreatorError.Unknown(error))
                 }
             }
 
-    private fun createBook(request: CreateBookRequest): Either<BookCreatorError, Book> =
-        Either.catch { Book.create(request) }
-            .mapLeft { BookCreatorError.Unknown(it) }
+    private fun createBook(request: CreateBookRequest): Book = Book.create(request)
 
-    private fun Book.save(): Either<BookCreatorError, Unit> = bookRepository.saveOrElse<BookCreatorError>(this) { BookCreatorError.Unknown(it) }.map { }
+    private fun Book.save() {
+        bookRepository.saveOrElse<BookCreatorError>(this)
+    }
 }
 
-sealed class BookCreatorError : RuntimeException {
-    constructor(message: String) : super(message)
-    constructor(throwable: Throwable) : super(throwable)
-
-    class Unknown(error: Throwable) : BookCreatorError(error)
-
-    class BookAlreadyExists(bookId: BookId) : BookCreatorError("book ${bookId.value} already exists")
+sealed class BookCreatorError(message: String) : RuntimeException(message) {
+    class BookAlreadyExists(bookId: BookId) : BookCreatorError("Book with id ${bookId.value} already exists")
 }

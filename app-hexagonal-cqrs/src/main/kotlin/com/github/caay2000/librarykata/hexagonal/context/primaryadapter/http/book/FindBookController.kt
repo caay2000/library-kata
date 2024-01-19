@@ -1,5 +1,6 @@
 package com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.book
 
+import com.github.caay2000.common.cqrs.QueryHandler
 import com.github.caay2000.common.http.ContentType
 import com.github.caay2000.common.http.Controller
 import com.github.caay2000.common.http.Transformer
@@ -11,6 +12,7 @@ import com.github.caay2000.common.jsonapi.toJsonApiRequestParams
 import com.github.caay2000.librarykata.hexagonal.context.application.book.find.BookFinderError
 import com.github.caay2000.librarykata.hexagonal.context.application.book.find.FindBookQuery
 import com.github.caay2000.librarykata.hexagonal.context.application.book.find.FindBookQueryHandler
+import com.github.caay2000.librarykata.hexagonal.context.application.book.find.FindBookQueryResponse
 import com.github.caay2000.librarykata.hexagonal.context.domain.book.Book
 import com.github.caay2000.librarykata.hexagonal.context.domain.book.BookId
 import com.github.caay2000.librarykata.hexagonal.context.domain.book.BookRepository
@@ -29,7 +31,7 @@ import java.util.UUID
 class FindBookController(bookRepository: BookRepository, loanRepository: LoanRepository) : Controller {
     override val logger: KLogger = KotlinLogging.logger {}
 
-    private val queryHandler = FindBookQueryHandler(bookRepository)
+    private val queryHandler: QueryHandler<FindBookQuery, FindBookQueryResponse> = FindBookQueryHandler(bookRepository)
     private val transformer: Transformer<Book, JsonApiDocument<BookResource>> = BookDocumentTransformer(loanRepository)
 
     override suspend fun handle(call: ApplicationCall) {

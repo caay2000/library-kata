@@ -1,5 +1,7 @@
 package com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.loan
 
+import com.github.caay2000.common.cqrs.CommandHandler
+import com.github.caay2000.common.cqrs.QueryHandler
 import com.github.caay2000.common.dateprovider.DateProvider
 import com.github.caay2000.common.http.ContentType
 import com.github.caay2000.common.http.Controller
@@ -15,6 +17,7 @@ import com.github.caay2000.librarykata.hexagonal.context.application.loan.create
 import com.github.caay2000.librarykata.hexagonal.context.application.loan.create.LoanCreatorError
 import com.github.caay2000.librarykata.hexagonal.context.application.loan.find.FindLoanByIdQuery
 import com.github.caay2000.librarykata.hexagonal.context.application.loan.find.FindLoanByIdQueryHandler
+import com.github.caay2000.librarykata.hexagonal.context.application.loan.find.FindLoanByIdQueryResponse
 import com.github.caay2000.librarykata.hexagonal.context.domain.account.AccountRepository
 import com.github.caay2000.librarykata.hexagonal.context.domain.book.BookRepository
 import com.github.caay2000.librarykata.hexagonal.context.domain.loan.Loan
@@ -42,8 +45,8 @@ class CreateLoanController(
 ) : Controller {
     override val logger: KLogger = KotlinLogging.logger {}
 
-    private val commandHandler = CreateLoanCommandHandler(bookRepository, accountRepository, loanRepository)
-    private val loanQueryHandler = FindLoanByIdQueryHandler(loanRepository)
+    private val commandHandler: CommandHandler<CreateLoanCommand> = CreateLoanCommandHandler(bookRepository, accountRepository, loanRepository)
+    private val loanQueryHandler: QueryHandler<FindLoanByIdQuery, FindLoanByIdQueryResponse> = FindLoanByIdQueryHandler(loanRepository)
     private val transformer: Transformer<Loan, JsonApiDocument<LoanResource>> = LoanDocumentTransformer(accountRepository, bookRepository)
 
     override suspend fun handle(call: ApplicationCall) {
@@ -63,9 +66,10 @@ class CreateLoanController(
     ) {
         call.serverError {
             when (e) {
-                is LoanCreatorError.UserNotFound -> ServerResponse(HttpStatusCode.BadRequest, "UserNotFound", e.message)
-                is LoanCreatorError.UserHasTooManyLoans -> ServerResponse(HttpStatusCode.BadRequest, "UserHasTooManyLoans", e.message)
+                is LoanCreatorError.AccountNotFound -> ServerResponse(HttpStatusCode.BadRequest, "AccountNotFound", e.message)
+                is LoanCreatorError.AccountHasTooManyLoans -> ServerResponse(HttpStatusCode.BadRequest, "AccountHasTooManyLoans", e.message)
                 is LoanCreatorError.BookNotAvailable -> ServerResponse(HttpStatusCode.BadRequest, "BookNotAvailable", e.message)
+                is LoanCreatorError.BookNotFound -> ServerResponse(HttpStatusCode.BadRequest, "BookNotFound", e.message)
                 else -> ServerResponse(HttpStatusCode.InternalServerError, "Unknown Error", e.message)
             }
         }

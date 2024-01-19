@@ -4,7 +4,6 @@ import arrow.core.Either
 import arrow.core.flatMap
 import arrow.core.left
 import arrow.core.right
-import com.github.caay2000.common.arrow.firstOrElse
 import com.github.caay2000.librarykata.hexagonal.context.domain.account.Account
 import com.github.caay2000.librarykata.hexagonal.context.domain.account.AccountId
 import com.github.caay2000.librarykata.hexagonal.context.domain.account.AccountRepository
@@ -41,21 +40,23 @@ class LoanCreator(
     private fun guardAccountCurrentLoans(accountId: AccountId): Either<LoanCreatorError, LoanCreatorContext> =
         accountRepository.findOrElse(
             criteria = FindAccountCriteria.ById(accountId),
-            onResourceDoesNotExist = { LoanCreatorError.UserNotFound(accountId) },
-            onUnexpectedError = { throw it },
+            onResourceDoesNotExist = { LoanCreatorError.AccountNotFound(accountId) },
         ).flatMap { account ->
             if (account.hasReachedLoanLimit()) {
-                LoanCreatorError.UserHasTooManyLoans(account.id).left()
+                LoanCreatorError.AccountHasTooManyLoans(account.id).left()
             } else {
                 LoanCreatorContext().withAccount(account).right()
             }
         }
 
-    private fun LoanCreatorContext.guardBookAvailability(bookIsbn: BookIsbn): Either<LoanCreatorError, LoanCreatorContext> =
-        bookRepository.search(SearchBookCriteria.ByIsbn(bookIsbn))
-            .mapLeft { throw it }
-            .flatMap { books -> books.firstOrElse(predicate = { it.isAvailable }) { LoanCreatorError.BookNotAvailable(bookIsbn) } }
-            .map { book -> withBook(book) }
+    private fun LoanCreatorContext.guardBookAvailability(bookIsbn: BookIsbn): Either<LoanCreatorError, LoanCreatorContext> {
+        val books = bookRepository.search(SearchBookCriteria.ByIsbn(bookIsbn))
+        return when {
+            books.isEmpty() -> LoanCreatorError.BookNotFound(bookIsbn).left()
+            books.none { it.isAvailable } -> LoanCreatorError.BookNotAvailable(bookIsbn).left()
+            else -> withBook(books.first { it.isAvailable }).right()
+        }
+    }
 
     private fun LoanCreatorContext.createLoan(
         loanId: LoanId,
@@ -88,9 +89,11 @@ class LoanCreator(
 }
 
 sealed class LoanCreatorError(message: String) : RuntimeException(message) {
-    class BookNotAvailable(bookIsbn: BookIsbn) : LoanCreatorError("book with isbn ${bookIsbn.value} is not available")
+    class BookNotAvailable(bookIsbn: BookIsbn) : LoanCreatorError("Book with isbn ${bookIsbn.value} is not available")
 
-    class UserNotFound(accountId: AccountId) : LoanCreatorError("user ${accountId.value} not found")
+    class BookNotFound(bookIsbn: BookIsbn) : LoanCreatorError("Book with isbn ${bookIsbn.value} not found")
 
-    class UserHasTooManyLoans(accountId: AccountId) : LoanCreatorError("user ${accountId.value} has too many loans")
+    class AccountNotFound(accountId: AccountId) : LoanCreatorError("Account ${accountId.value} not found")
+
+    class AccountHasTooManyLoans(accountId: AccountId) : LoanCreatorError("Account ${accountId.value} has too many loans")
 }

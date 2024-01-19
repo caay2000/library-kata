@@ -1,5 +1,7 @@
 package com.github.caay2000.librarykata.hexagonal.context.account
 
+import com.github.caay2000.common.jsonapi.jsonApiErrorDocument
+import com.github.caay2000.common.test.http.assertJsonApiErrorDocument
 import com.github.caay2000.common.test.http.assertJsonApiResponse
 import com.github.caay2000.common.test.http.assertStatus
 import com.github.caay2000.common.test.mock.MockDateProvider
@@ -103,6 +105,20 @@ class FindAccountControllerTest {
             testUseCases.`find account`(account.id, listOf("loan"))
                 .assertStatus(HttpStatusCode.OK)
                 .assertJsonApiResponse(expected)
+        }
+
+    @Test
+    fun `fails when finding a non existing AccountId`() =
+        testApplication {
+            testUseCases.`find account`(account.id)
+                .assertStatus(HttpStatusCode.NotFound)
+                .assertJsonApiErrorDocument(
+                    jsonApiErrorDocument(
+                        status = HttpStatusCode.NotFound,
+                        title = "AccountNotFoundError",
+                        detail = "Account ${account.id.value} not found",
+                    ),
+                )
         }
 
     private val now = LocalDateTime.now()

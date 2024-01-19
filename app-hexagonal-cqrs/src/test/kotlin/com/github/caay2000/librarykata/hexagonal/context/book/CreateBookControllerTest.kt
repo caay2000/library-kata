@@ -1,5 +1,7 @@
 package com.github.caay2000.librarykata.hexagonal.context.book
 
+import com.github.caay2000.common.jsonapi.jsonApiErrorDocument
+import com.github.caay2000.common.test.http.assertJsonApiErrorDocument
 import com.github.caay2000.common.test.http.assertJsonApiResponse
 import com.github.caay2000.common.test.http.assertStatus
 import com.github.caay2000.common.test.mock.MockDateProvider
@@ -49,7 +51,20 @@ class CreateBookControllerTest {
                 .assertJsonApiResponse(expectedDifferentId)
         }
 
-    // TODO missing error tests
+    @Test
+    fun `fails when creating a book with an existing BookId`() =
+        testApplication {
+            testUseCases.`book is created`(book)
+            testUseCases.`book is created`(book)
+                .assertStatus(HttpStatusCode.BadRequest)
+                .assertJsonApiErrorDocument(
+                    jsonApiErrorDocument(
+                        status = HttpStatusCode.BadRequest,
+                        title = "BookAlreadyExists",
+                        detail = "Book with id ${book.id.value} already exists",
+                    ),
+                )
+        }
 
     private val book = BookMother.random()
     private val differentIdBook = book.copy(id = BookIdMother.random())

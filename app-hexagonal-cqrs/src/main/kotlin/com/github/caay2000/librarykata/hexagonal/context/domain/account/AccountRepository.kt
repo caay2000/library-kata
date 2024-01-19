@@ -5,11 +5,11 @@ import com.github.caay2000.common.database.Repository
 import com.github.caay2000.common.database.RepositoryError
 
 interface AccountRepository : Repository {
-    fun save(account: Account): Either<RepositoryError, Unit>
+    fun save(account: Account)
 
     fun find(criteria: FindAccountCriteria): Either<RepositoryError, Account>
 
-    fun search(criteria: SearchAccountCriteria): Either<RepositoryError, List<Account>>
+    fun search(criteria: SearchAccountCriteria): List<Account>
 }
 
 sealed class FindAccountCriteria {
@@ -32,13 +32,15 @@ sealed class SearchAccountCriteria {
 
 fun <E> AccountRepository.saveOrElse(
     account: Account,
-    onError: (Throwable) -> E,
-): Either<E, Account> = save(account).mapLeft { onError(it) }.map { account }
+    onError: (Throwable) -> E = { throw it },
+): Either<E, Account> =
+    Either.catch { save(account) }
+        .mapLeft { onError(it) }.map { account }
 
 fun <E> AccountRepository.findOrElse(
     criteria: FindAccountCriteria,
-    onUnexpectedError: (Throwable) -> E,
-    onResourceDoesNotExist: (Throwable) -> E = { onUnexpectedError(it) },
+    onResourceDoesNotExist: (Throwable) -> E = { throw it },
+    onUnexpectedError: (Throwable) -> E = { throw it },
 ): Either<E, Account> =
     find(criteria).mapLeft { error ->
         if (error is RepositoryError.NotFoundError) {
