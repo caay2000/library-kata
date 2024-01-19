@@ -1,4 +1,4 @@
-package com.github.caay2000.librarykata.hexagonal.configuration
+package com.github.caay2000.librarykata.core.configuration
 
 import com.github.caay2000.common.http.ContentType
 import com.github.caay2000.common.jsonapi.JsonApiResourceAttributes

@@ -1,4 +1,4 @@
-package com.github.caay2000.librarykata.hexagonal.configuration
+package com.github.caay2000.librarykata.core.configuration
 
 import io.ktor.server.application.ApplicationStarted
 import io.ktor.server.application.createApplicationPlugin

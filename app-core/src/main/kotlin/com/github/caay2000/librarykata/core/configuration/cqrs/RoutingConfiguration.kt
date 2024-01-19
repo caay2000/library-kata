@@ -1,4 +1,4 @@
-package com.github.caay2000.librarykata.hexagonal.configuration
+package com.github.caay2000.librarykata.core.configuration.cqrs
 
 import com.github.caay2000.dikt.DiKt
 import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.account.CreateAccountController

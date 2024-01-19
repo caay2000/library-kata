@@ -1,25 +1,27 @@
-package com.github.caay2000.librarykata.hexagonal
+package com.github.caay2000.librarykata.core
 
 import com.github.caay2000.common.http.Controller
 import com.github.caay2000.common.idgenerator.UUIDGenerator
-import com.github.caay2000.librarykata.hexagonal.configuration.DependencyInjectionConfiguration
-import com.github.caay2000.librarykata.hexagonal.configuration.RoutingConfiguration
-import com.github.caay2000.librarykata.hexagonal.configuration.ShutdownHookConfiguration
-import com.github.caay2000.librarykata.hexagonal.configuration.StartupHookConfiguration
-import com.github.caay2000.librarykata.hexagonal.configuration.configureOpenApiDocumentation
-import com.github.caay2000.librarykata.hexagonal.configuration.configureSerialization
+import com.github.caay2000.librarykata.core.configuration.ShutdownHookConfiguration
+import com.github.caay2000.librarykata.core.configuration.StartupHookConfiguration
+import com.github.caay2000.librarykata.core.configuration.configureOpenApiDocumentation
+import com.github.caay2000.librarykata.core.configuration.configureSerialization
 import io.ktor.server.application.Application
 import io.ktor.server.application.install
 import io.ktor.server.plugins.callid.CallId
 import io.ktor.server.plugins.callid.callIdMdc
 import io.ktor.server.plugins.callloging.CallLogging
 import mu.KotlinLogging
+import com.github.caay2000.librarykata.core.configuration.cqrs.DependencyInjectionConfiguration as CRQRSDependencyInjectionConfiguration
+import com.github.caay2000.librarykata.core.configuration.cqrs.RoutingConfiguration as CQRSRoutingConfiguration
 
 fun Application.main() {
     module()
 }
 
 fun Application.module() {
+    val codeArchitecture = "CQRS"
+
     install(CallId) { generate { UUIDGenerator().generate() } }
     install(CallLogging) {
         callIdMdc("correlationId")
@@ -29,8 +31,12 @@ fun Application.module() {
     }
     install(StartupHookConfiguration)
     install(ShutdownHookConfiguration)
-    install(DependencyInjectionConfiguration)
-    install(RoutingConfiguration)
+    if (codeArchitecture == "CQRS")
+        {
+            install(CRQRSDependencyInjectionConfiguration)
+            install(CQRSRoutingConfiguration)
+        }
+
     configureOpenApiDocumentation()
     configureSerialization()
 }

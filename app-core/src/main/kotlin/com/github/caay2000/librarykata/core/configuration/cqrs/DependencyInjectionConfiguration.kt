@@ -1,4 +1,4 @@
-package com.github.caay2000.librarykata.hexagonal.configuration
+package com.github.caay2000.librarykata.core.configuration.cqrs
 
 import com.github.caay2000.common.dateprovider.LocalDateProvider
 import com.github.caay2000.common.idgenerator.UUIDGenerator
@@ -22,13 +22,12 @@ val DependencyInjectionConfiguration =
     createApplicationPlugin(name = "DependencyInjectionConfiguration") {
 
         DiKt.register { InMemoryDatasource() }
+        DiKt.register { UUIDGenerator() }
+        DiKt.register { LocalDateProvider() }
 
         DiKt.register { InMemoryAccountRepository(DiKt.bind()) }
         DiKt.register { InMemoryBookRepository(DiKt.bind()) }
         DiKt.register { InMemoryLoanRepository(DiKt.bind()) }
-
-        DiKt.register { UUIDGenerator() }
-        DiKt.register { LocalDateProvider() }
 
         DiKt.register { CreateAccountController(DiKt.bind(), DiKt.bind(), DiKt.bind(), DiKt.bind()) }
         DiKt.register { FindAccountController(DiKt.bind(), DiKt.bind()) }

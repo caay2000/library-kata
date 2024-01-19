@@ -1,4 +1,4 @@
-package com.github.caay2000.librarykata.hexagonal.configuration
+package com.github.caay2000.librarykata.core.configuration
 
 import io.github.smiley4.ktorswaggerui.SwaggerUI
 import io.ktor.server.application.Application
