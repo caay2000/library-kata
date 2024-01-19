@@ -1,15 +1,12 @@
 package com.github.caay2000.librarykata.core.configuration.event
 
 import com.github.caay2000.dikt.DiKt
-import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.account.CreateAccountController
-import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.account.FindAccountController
-import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.account.SearchAccountController
-import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.book.CreateBookController
-import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.book.FindBookController
-import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.book.SearchBookController
-import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.loan.CreateLoanController
-import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.loan.FindLoanController
-import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.loan.FinishLoanController
+import com.github.caay2000.librarykata.event.context.account.primaryadapter.http.CreateAccountController
+import com.github.caay2000.librarykata.event.context.account.primaryadapter.http.FindAccountController
+import com.github.caay2000.librarykata.event.context.book.primaryadapter.http.CreateBookController
+import com.github.caay2000.librarykata.event.context.book.primaryadapter.http.SearchBookController
+import com.github.caay2000.librarykata.event.context.loan.primaryadapter.http.CreateLoanController
+import com.github.caay2000.librarykata.event.context.loan.primaryadapter.http.FinishLoanController
 import io.github.smiley4.ktorswaggerui.dsl.get
 import io.github.smiley4.ktorswaggerui.dsl.post
 import io.ktor.server.application.call
