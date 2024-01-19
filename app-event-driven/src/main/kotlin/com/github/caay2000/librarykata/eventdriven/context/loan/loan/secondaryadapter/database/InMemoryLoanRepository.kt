@@ -1,0 +1,40 @@
+package com.github.caay2000.librarykata.eventdriven.context.loan.loan.secondaryadapter.database
+
+import arrow.core.Either
+import com.github.caay2000.common.database.RepositoryError
+import com.github.caay2000.librarykata.eventdriven.context.loan.loan.domain.FindLoanCriteria
+import com.github.caay2000.librarykata.eventdriven.context.loan.loan.domain.Loan
+import com.github.caay2000.librarykata.eventdriven.context.loan.loan.domain.LoanRepository
+import com.github.caay2000.librarykata.eventdriven.context.loan.loan.domain.SearchLoanCriteria
+import com.github.caay2000.memorydb.InMemoryDatasource
+
+class InMemoryLoanRepository(private val datasource: InMemoryDatasource) : LoanRepository {
+    override fun save(loan: Loan) {
+        datasource.save(TABLE_NAME, loan.id.toString(), loan)
+    }
+
+    override fun find(criteria: FindLoanCriteria): Either<RepositoryError, Loan> =
+        Either.catch {
+            when (criteria) {
+                is FindLoanCriteria.ById -> datasource.getById<Loan>(TABLE_NAME, criteria.id.toString())!!
+                is FindLoanCriteria.ByBookIdAndNotFinished -> datasource.getAll<Loan>(TABLE_NAME).filter { it.bookId == criteria.bookId }.first { it.isNotFinished }
+            }
+        }.mapLeft { error ->
+            when (error) {
+                is NullPointerException -> RepositoryError.NotFoundError()
+                is NoSuchElementException -> RepositoryError.NotFoundError()
+                else -> throw error
+            }
+        }
+
+    override fun search(criteria: SearchLoanCriteria): List<Loan> =
+        when (criteria) {
+            is SearchLoanCriteria.ByAccountId -> datasource.getAll<Loan>(TABLE_NAME).filter { it.accountId == criteria.accountId }
+            is SearchLoanCriteria.ByBookId -> datasource.getAll<Loan>(TABLE_NAME).filter { it.bookId == criteria.bookId }
+            is SearchLoanCriteria.ByBookIsbn -> TODO()
+        }
+
+    companion object {
+        private const val TABLE_NAME = "loan.loan"
+    }
+}

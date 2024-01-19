@@ -1,4 +1,4 @@
-package com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.loan
+package com.github.caay2000.librarykata.eventdriven.context.loan.loan.primaryadapter.http
 
 import com.github.caay2000.common.cqrs.CommandHandler
 import com.github.caay2000.common.cqrs.QueryHandler
@@ -12,18 +12,16 @@ import com.github.caay2000.common.jsonapi.JsonApiRequestDocument
 import com.github.caay2000.common.jsonapi.ServerResponse
 import com.github.caay2000.common.jsonapi.documentation.errorResponses
 import com.github.caay2000.common.jsonapi.documentation.responseExample
-import com.github.caay2000.librarykata.hexagonal.context.application.loan.create.CreateLoanCommand
-import com.github.caay2000.librarykata.hexagonal.context.application.loan.create.CreateLoanCommandHandler
-import com.github.caay2000.librarykata.hexagonal.context.application.loan.create.LoanCreatorError
-import com.github.caay2000.librarykata.hexagonal.context.application.loan.find.FindLoanByIdQuery
-import com.github.caay2000.librarykata.hexagonal.context.application.loan.find.FindLoanByIdQueryHandler
-import com.github.caay2000.librarykata.hexagonal.context.application.loan.find.FindLoanByIdQueryResponse
-import com.github.caay2000.librarykata.hexagonal.context.domain.account.AccountRepository
-import com.github.caay2000.librarykata.hexagonal.context.domain.book.BookRepository
-import com.github.caay2000.librarykata.hexagonal.context.domain.loan.Loan
-import com.github.caay2000.librarykata.hexagonal.context.domain.loan.LoanId
-import com.github.caay2000.librarykata.hexagonal.context.domain.loan.LoanRepository
-import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.loan.serialization.LoanDocumentTransformer
+import com.github.caay2000.librarykata.eventdriven.context.loan.loan.application.create.CreateLoanCommand
+import com.github.caay2000.librarykata.eventdriven.context.loan.loan.application.create.CreateLoanCommandHandler
+import com.github.caay2000.librarykata.eventdriven.context.loan.loan.application.create.LoanCreatorError
+import com.github.caay2000.librarykata.eventdriven.context.loan.loan.application.find.FindLoanHandler
+import com.github.caay2000.librarykata.eventdriven.context.loan.loan.application.find.FindLoanQuery
+import com.github.caay2000.librarykata.eventdriven.context.loan.loan.application.find.FindLoanQueryResponse
+import com.github.caay2000.librarykata.eventdriven.context.loan.loan.domain.Loan
+import com.github.caay2000.librarykata.eventdriven.context.loan.loan.domain.LoanId
+import com.github.caay2000.librarykata.eventdriven.context.loan.loan.domain.LoanRepository
+import com.github.caay2000.librarykata.eventdriven.context.loan.loan.primaryadapter.http.serialization.LoanDocumentTransformer
 import com.github.caay2000.librarykata.jsonapi.context.loan.LoanRequestResource
 import com.github.caay2000.librarykata.jsonapi.context.loan.LoanResource
 import io.github.smiley4.ktorswaggerui.dsl.OpenApiRoute
@@ -39,15 +37,13 @@ import java.util.UUID
 class CreateLoanController(
     private val idGenerator: IdGenerator,
     private val dateProvider: DateProvider,
-    bookRepository: BookRepository,
-    accountRepository: AccountRepository,
     loanRepository: LoanRepository,
 ) : Controller {
     override val logger: KLogger = KotlinLogging.logger {}
 
-    private val commandHandler: CommandHandler<CreateLoanCommand> = CreateLoanCommandHandler(bookRepository, accountRepository, loanRepository)
-    private val loanQueryHandler: QueryHandler<FindLoanByIdQuery, FindLoanByIdQueryResponse> = FindLoanByIdQueryHandler(loanRepository)
-    private val transformer: Transformer<Loan, JsonApiDocument<LoanResource>> = LoanDocumentTransformer(accountRepository, bookRepository)
+    private val commandHandler: CommandHandler<CreateLoanCommand> = CreateLoanCommandHandler(loanRepository)
+    private val loanQueryHandler: QueryHandler<FindLoanQuery, FindLoanQueryResponse> = FindLoanHandler(loanRepository)
+    private val transformer: Transformer<Loan, JsonApiDocument<LoanResource>> = LoanDocumentTransformer()
 
     override suspend fun handle(call: ApplicationCall) {
         val request = call.receive<JsonApiRequestDocument<LoanRequestResource>>()
@@ -56,7 +52,7 @@ class CreateLoanController(
         val datetime = dateProvider.dateTime()
         commandHandler.invoke(request.toCreateLoanCommand(loanId, datetime))
 
-        val loanQueryResponse = loanQueryHandler.invoke(FindLoanByIdQuery(LoanId(loanId)))
+        val loanQueryResponse = loanQueryHandler.invoke(FindLoanQuery(LoanId(loanId)))
         call.respond(HttpStatusCode.Created, transformer.invoke(loanQueryResponse.loan))
     }
 

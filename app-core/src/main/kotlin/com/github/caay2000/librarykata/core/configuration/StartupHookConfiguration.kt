@@ -12,7 +12,7 @@ internal fun startupHookConfiguration(architecture: Architecture) =
     createApplicationPlugin(name = "StartupHookConfiguration") {
         val logger: KLogger = KotlinLogging.logger {}
         val welcomeMessage =
-            Optional.ofNullable(this::class.java.getResource("/welcome${architecture.name}.txt")?.readText())
+            Optional.ofNullable(this::class.java.getResource("/welcome-${architecture.name.lowercase()}.txt")?.readText())
                 .orElse("Application Started")
 
         on(MonitoringEvent(ApplicationStarted)) {

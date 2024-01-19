@@ -9,8 +9,8 @@ import io.ktor.server.application.Application
 import io.ktor.server.application.install
 import com.github.caay2000.librarykata.core.configuration.cqrs.DependencyInjectionConfiguration as CRQRDependencyInjectionConfiguration
 import com.github.caay2000.librarykata.core.configuration.cqrs.RoutingConfiguration as CQRSRoutingConfiguration
-import com.github.caay2000.librarykata.core.configuration.event.DependencyInjectionConfiguration as EventDependencyInjectionConfiguration
-import com.github.caay2000.librarykata.core.configuration.event.RoutingConfiguration as EventRoutingConfiguration
+import com.github.caay2000.librarykata.core.configuration.eventdriven.DependencyInjectionConfiguration as EventDependencyInjectionConfiguration
+import com.github.caay2000.librarykata.core.configuration.eventdriven.RoutingConfiguration as EventRoutingConfiguration
 
 fun Application.main() {
     module()

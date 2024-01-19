@@ -1,11 +1,14 @@
-package com.github.caay2000.librarykata.hexagonal.context.domain.account
+package com.github.caay2000.librarykata.eventdriven.context.account.domain
 
+import com.github.caay2000.common.ddd.Aggregate
+import com.github.caay2000.common.ddd.AggregateId
+import com.github.caay2000.librarykata.eventdriven.events.account.AccountCreatedEvent
 import java.time.LocalDate
 import java.time.LocalDateTime
 import kotlin.math.max
 
 data class Account(
-    val id: AccountId,
+    override val id: AccountId,
     val identityNumber: IdentityNumber,
     val name: Name,
     val surname: Surname,
@@ -16,7 +19,7 @@ data class Account(
     val registerDate: RegisterDate,
     val currentLoans: CurrentLoans,
     val totalLoans: TotalLoans,
-) {
+) : Aggregate() {
     companion object {
         fun create(request: CreateAccountRequest) =
             Account(
@@ -31,8 +34,21 @@ data class Account(
                 registerDate = request.registerDate,
                 currentLoans = CurrentLoans(0),
                 totalLoans = TotalLoans(0),
-            )
+            ).also { account -> account.pushEvent(account.toAccountCreatedEvent()) }
     }
+
+    private fun toAccountCreatedEvent() =
+        AccountCreatedEvent(
+            id = id.value,
+            identityNumber = identityNumber.value,
+            name = name.value,
+            surname = surname.value,
+            birthdate = birthdate.value,
+            email = email.value,
+            phonePrefix = phonePrefix.value,
+            phoneNumber = phoneNumber.value,
+            registerDate = registerDate.value,
+        )
 
     fun increaseLoans(): Account = copy(currentLoans = currentLoans.increase(), totalLoans = totalLoans.increase())
 
@@ -42,7 +58,7 @@ data class Account(
 }
 
 @JvmInline
-value class AccountId(val value: String)
+value class AccountId(val value: String) : AggregateId
 
 @JvmInline
 value class IdentityNumber(val value: String)

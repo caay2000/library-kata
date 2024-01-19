@@ -32,7 +32,7 @@ class EventBus(
     override fun <EVENT : Event> publish(event: EVENT) {
         scope.launch {
             val partition = Integer.decode("0x${event.aggregateId.last()}") % numPartitions
-            logger.debug { "publishing event $event into partition $partition" }
+//            logger.debug { "publishing event $event into partition $partition" }
             _events[partition].emit(event)
 //            _partitions[partition]!!.add(event)
         }
@@ -44,7 +44,7 @@ class EventBus(
                 it.filter { it is EVENT }
                     .map { it as EVENT }
                     .collect {
-                        logger.debug { "consuming event $it from partition $i" }
+//                        logger.debug { "consuming event $it from partition $i" }
                         subscriber.handle(it)
                     }
             }

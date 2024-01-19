@@ -5,7 +5,7 @@ import com.github.caay2000.common.event.DomainEvent
 abstract class Aggregate {
     private var events: MutableSet<DomainEvent> = mutableSetOf()
 
-    abstract val id: DomainId
+    abstract val id: AggregateId
 
     fun pullEvents(): List<DomainEvent> {
         val pulledEvents: MutableSet<DomainEvent> = events
@@ -21,3 +21,5 @@ abstract class Aggregate {
         this.events.addAll(events)
     }
 }
+
+interface AggregateId
