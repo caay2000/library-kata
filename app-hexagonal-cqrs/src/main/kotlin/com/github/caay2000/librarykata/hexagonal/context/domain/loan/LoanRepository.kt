@@ -7,11 +7,11 @@ import com.github.caay2000.librarykata.hexagonal.context.domain.book.BookId
 import com.github.caay2000.librarykata.hexagonal.context.domain.book.BookIsbn
 
 interface LoanRepository {
-    fun save(loan: Loan): Either<RepositoryError, Unit>
+    fun save(loan: Loan)
 
     fun find(criteria: FindLoanCriteria): Either<RepositoryError, Loan>
 
-    fun search(criteria: SearchLoanCriteria): Either<RepositoryError, List<Loan>>
+    fun search(criteria: SearchLoanCriteria): List<Loan>
 }
 
 sealed class FindLoanCriteria {
@@ -30,18 +30,20 @@ sealed class SearchLoanCriteria {
 
 fun <E> LoanRepository.saveOrElse(
     loan: Loan,
-    onError: (Throwable) -> E,
-): Either<E, Loan> = save(loan).mapLeft { onError(it) }.map { loan }
+    onError: (Throwable) -> E = { throw it },
+): Either<E, Loan> =
+    Either.catch { save(loan) }
+        .mapLeft { onError(it) }.map { loan }
 
 fun <E> LoanRepository.findOrElse(
     criteria: FindLoanCriteria,
-    onResourceDoesNotExist: () -> E,
-    onUnexpectedError: (Throwable) -> E,
+    onResourceDoesNotExist: (Throwable) -> E = { throw it },
+    onUnexpectedError: (Throwable) -> E = { throw it },
 ): Either<E, Loan> =
     find(criteria)
         .mapLeft { error ->
             if (error is RepositoryError.NotFoundError) {
-                onResourceDoesNotExist()
+                onResourceDoesNotExist(error)
             } else {
                 onUnexpectedError(error)
             }

@@ -1,5 +1,7 @@
 package com.github.caay2000.librarykata.hexagonal.context.loan
 
+import com.github.caay2000.common.jsonapi.jsonApiErrorDocument
+import com.github.caay2000.common.test.http.assertJsonApiErrorDocument
 import com.github.caay2000.common.test.http.assertJsonApiResponse
 import com.github.caay2000.common.test.http.assertStatus
 import com.github.caay2000.common.test.mock.MockDateProvider
@@ -42,6 +44,20 @@ class FindLoanControllerTest {
             testUseCases.`find loan`(loan.id)
                 .assertStatus(HttpStatusCode.OK)
                 .assertJsonApiResponse(expected)
+        }
+
+    @Test
+    fun `fails when finding a non existing LoanId`() =
+        testApplication {
+            testUseCases.`find loan`(loan.id)
+                .assertStatus(HttpStatusCode.NotFound)
+                .assertJsonApiErrorDocument(
+                    jsonApiErrorDocument(
+                        status = HttpStatusCode.NotFound,
+                        title = "LoanNotFoundError",
+                        detail = "Loan ${loan.id.value} not found",
+                    ),
+                )
         }
 
     @Test

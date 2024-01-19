@@ -31,7 +31,6 @@ class AccountCreator(private val accountRepository: AccountRepository) {
         accountRepository.findOrElse(
             criteria = FindAccountCriteria.ByIdentityNumber(identityNumber),
             onResourceDoesNotExist = { AccountCreatorError.AccountNotFound() },
-            onUnexpectedError = { AccountCreatorError.Unknown(it) },
         ).flatMap { AccountCreatorError.IdentityNumberAlreadyExists(identityNumber).left() }
             .validateAccountNotFound()
 
@@ -39,7 +38,6 @@ class AccountCreator(private val accountRepository: AccountRepository) {
         accountRepository.findOrElse(
             criteria = FindAccountCriteria.ByEmail(email),
             onResourceDoesNotExist = { AccountCreatorError.AccountNotFound() },
-            onUnexpectedError = { AccountCreatorError.Unknown(it) },
         ).flatMap { AccountCreatorError.EmailAlreadyExists(email).left() }
             .validateAccountNotFound()
 
@@ -50,7 +48,6 @@ class AccountCreator(private val accountRepository: AccountRepository) {
         accountRepository.findOrElse(
             criteria = FindAccountCriteria.ByPhone(phonePrefix, phoneNumber),
             onResourceDoesNotExist = { AccountCreatorError.AccountNotFound() },
-            onUnexpectedError = { AccountCreatorError.Unknown(it) },
         ).flatMap { AccountCreatorError.PhoneAlreadyExists(phonePrefix, phoneNumber).left() }
             .validateAccountNotFound()
 
@@ -62,15 +59,10 @@ class AccountCreator(private val accountRepository: AccountRepository) {
             }
         }
 
-    private fun Account.save(): Either<AccountCreatorError, Unit> = accountRepository.saveOrElse(this) { AccountCreatorError.Unknown(it) }.map {}
+    private fun Account.save(): Either<AccountCreatorError, Unit> = accountRepository.saveOrElse(this) { throw it }.map {}
 }
 
-sealed class AccountCreatorError : RuntimeException {
-    constructor(message: String) : super(message)
-    constructor(throwable: Throwable) : super(throwable)
-
-    class Unknown(error: Throwable) : AccountCreatorError(error)
-
+sealed class AccountCreatorError(message: String) : RuntimeException(message) {
     class AccountNotFound : AccountCreatorError("account not foung")
 
     class IdentityNumberAlreadyExists(identityNumber: IdentityNumber) :

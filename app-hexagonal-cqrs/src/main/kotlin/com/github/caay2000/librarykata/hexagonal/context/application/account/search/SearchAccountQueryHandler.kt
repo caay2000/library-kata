@@ -1,6 +1,5 @@
 package com.github.caay2000.librarykata.hexagonal.context.application.account.search
 
-import com.github.caay2000.common.arrow.getOrThrow
 import com.github.caay2000.common.cqrs.Query
 import com.github.caay2000.common.cqrs.QueryHandler
 import com.github.caay2000.common.cqrs.QueryResponse
@@ -17,12 +16,7 @@ class SearchAccountQueryHandler(accountRepository: AccountRepository) : QueryHan
 
     private val searcher = AccountSearcher(accountRepository)
 
-    override fun handle(query: SearchAccountQuery): SearchAccountQueryResponse =
-        query.toCriteria().let { criteria ->
-            searcher.invoke(criteria)
-                .map { books -> SearchAccountQueryResponse(books) }
-                .getOrThrow()
-        }
+    override fun handle(query: SearchAccountQuery): SearchAccountQueryResponse = SearchAccountQueryResponse(searcher.invoke(query.toCriteria()))
 
     private fun SearchAccountQuery.toCriteria() =
         when (this) {

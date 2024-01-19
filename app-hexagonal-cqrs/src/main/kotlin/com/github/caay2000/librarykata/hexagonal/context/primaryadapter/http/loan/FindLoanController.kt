@@ -1,5 +1,6 @@
 package com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.loan
 
+import com.github.caay2000.common.cqrs.QueryHandler
 import com.github.caay2000.common.http.ContentType
 import com.github.caay2000.common.http.Controller
 import com.github.caay2000.common.http.Transformer
@@ -10,6 +11,7 @@ import com.github.caay2000.common.jsonapi.documentation.responseExample
 import com.github.caay2000.common.jsonapi.toJsonApiRequestParams
 import com.github.caay2000.librarykata.hexagonal.context.application.loan.find.FindLoanByIdQuery
 import com.github.caay2000.librarykata.hexagonal.context.application.loan.find.FindLoanByIdQueryHandler
+import com.github.caay2000.librarykata.hexagonal.context.application.loan.find.FindLoanByIdQueryResponse
 import com.github.caay2000.librarykata.hexagonal.context.application.loan.find.LoanFinderError
 import com.github.caay2000.librarykata.hexagonal.context.domain.account.AccountRepository
 import com.github.caay2000.librarykata.hexagonal.context.domain.book.BookRepository
@@ -34,7 +36,7 @@ class FindLoanController(
 ) : Controller {
     override val logger: KLogger = KotlinLogging.logger {}
 
-    private val queryHandler = FindLoanByIdQueryHandler(loanRepository)
+    private val queryHandler: QueryHandler<FindLoanByIdQuery, FindLoanByIdQueryResponse> = FindLoanByIdQueryHandler(loanRepository)
     private val transformer: Transformer<Loan, JsonApiDocument<LoanResource>> = LoanDocumentTransformer(accountRepository, bookRepository)
 
     override suspend fun handle(call: ApplicationCall) {

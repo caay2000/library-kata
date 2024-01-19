@@ -37,7 +37,7 @@ class CreateAccountControllerTest {
         }
 
     @Test
-    fun `an account with identityNumber repeated cannot be created`() =
+    fun `fails when creating an account with repeated identityNumber`() =
         testApplication {
             testUseCases.`account is created`(account)
                 .assertStatus(HttpStatusCode.Created)
@@ -54,7 +54,7 @@ class CreateAccountControllerTest {
         }
 
     @Test
-    fun `an account with email repeated cannot be created`() =
+    fun `fails when creating an account with repeated email`() =
         testApplication {
             testUseCases.`account is created`(account)
                 .assertStatus(HttpStatusCode.Created)
@@ -71,7 +71,7 @@ class CreateAccountControllerTest {
         }
 
     @Test
-    fun `an account with phone repeated cannot be created`() =
+    fun `fails when creating an account with repeated phone`() =
         testApplication {
             testUseCases.`account is created`(account)
                 .assertStatus(HttpStatusCode.Created)

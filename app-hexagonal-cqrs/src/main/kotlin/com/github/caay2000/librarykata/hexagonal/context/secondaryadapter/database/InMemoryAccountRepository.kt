@@ -9,10 +9,9 @@ import com.github.caay2000.librarykata.hexagonal.context.domain.account.SearchAc
 import com.github.caay2000.memorydb.InMemoryDatasource
 
 class InMemoryAccountRepository(private val datasource: InMemoryDatasource) : AccountRepository {
-    override fun save(account: Account): Either<RepositoryError, Unit> =
-        Either.catch { datasource.save(TABLE_NAME, account.id.toString(), account) }
-            .mapLeft { throw it }
-            .map { }
+    override fun save(account: Account) {
+        datasource.save(TABLE_NAME, account.id.toString(), account)
+    }
 
     override fun find(criteria: FindAccountCriteria): Either<RepositoryError, Account> =
         Either.catch {
@@ -30,14 +29,12 @@ class InMemoryAccountRepository(private val datasource: InMemoryDatasource) : Ac
             }
         }
 
-    override fun search(criteria: SearchAccountCriteria): Either<RepositoryError, List<Account>> =
-        Either.catch {
-            when (criteria) {
-                SearchAccountCriteria.All -> datasource.getAll(TABLE_NAME)
-                is SearchAccountCriteria.ByPhoneNumber -> datasource.getAll<Account>(TABLE_NAME).filter { it.phoneNumber.value.contains(criteria.phoneNumber.value) }
-                is SearchAccountCriteria.ByEmail -> datasource.getAll<Account>(TABLE_NAME).filter { it.email.value.contains(criteria.email.value) }
-            }
-        }.mapLeft { throw it }
+    override fun search(criteria: SearchAccountCriteria): List<Account> =
+        when (criteria) {
+            SearchAccountCriteria.All -> datasource.getAll(TABLE_NAME)
+            is SearchAccountCriteria.ByPhoneNumber -> datasource.getAll<Account>(TABLE_NAME).filter { it.phoneNumber.value.contains(criteria.phoneNumber.value) }
+            is SearchAccountCriteria.ByEmail -> datasource.getAll<Account>(TABLE_NAME).filter { it.email.value.contains(criteria.email.value) }
+        }
 
     companion object {
         private const val TABLE_NAME = "account"

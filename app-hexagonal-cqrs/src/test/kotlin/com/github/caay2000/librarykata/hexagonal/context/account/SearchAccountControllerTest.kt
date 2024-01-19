@@ -140,6 +140,24 @@ class SearchAccountControllerTest {
                 .assertJsonApiResponse(expected)
         }
 
+    @Test
+    fun `no account is returned if phone number is not found`() =
+        testApplication {
+            val expected = AccountDocumentListMother.empty()
+            testUseCases.`search account by phoneNumber`(account.phoneNumber.value.take(4))
+                .assertStatus(HttpStatusCode.OK)
+                .assertJsonApiResponse(expected)
+        }
+
+    @Test
+    fun `no account is returned if email is not found`() =
+        testApplication {
+            val expected = AccountDocumentListMother.empty()
+            testUseCases.`search account by email`(account.email.value.substringAfter("@"), listOf("loan"))
+                .assertStatus(HttpStatusCode.OK)
+                .assertJsonApiResponse(expected)
+        }
+
     private val account = AccountMother.random()
     private val anotherAccount = AccountMother.random()
     private val book = BookMother.random()

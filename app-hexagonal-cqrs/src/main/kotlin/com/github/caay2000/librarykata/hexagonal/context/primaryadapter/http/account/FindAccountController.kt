@@ -1,5 +1,6 @@
 package com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.account
 
+import com.github.caay2000.common.cqrs.QueryHandler
 import com.github.caay2000.common.http.ContentType
 import com.github.caay2000.common.http.Controller
 import com.github.caay2000.common.http.Transformer
@@ -11,6 +12,7 @@ import com.github.caay2000.common.jsonapi.toJsonApiRequestParams
 import com.github.caay2000.librarykata.hexagonal.context.application.account.find.AccountFinderError
 import com.github.caay2000.librarykata.hexagonal.context.application.account.find.FindAccountQuery
 import com.github.caay2000.librarykata.hexagonal.context.application.account.find.FindAccountQueryHandler
+import com.github.caay2000.librarykata.hexagonal.context.application.account.find.FindAccountQueryResponse
 import com.github.caay2000.librarykata.hexagonal.context.domain.account.Account
 import com.github.caay2000.librarykata.hexagonal.context.domain.account.AccountId
 import com.github.caay2000.librarykata.hexagonal.context.domain.account.AccountRepository
@@ -32,7 +34,7 @@ class FindAccountController(
 ) : Controller {
     override val logger: KLogger = KotlinLogging.logger {}
 
-    private val accountQueryHandler = FindAccountQueryHandler(accountRepository)
+    private val accountQueryHandler: QueryHandler<FindAccountQuery, FindAccountQueryResponse> = FindAccountQueryHandler(accountRepository)
     private val transformer: Transformer<Account, JsonApiDocument<AccountResource>> = AccountDocumentTransformer(loanRepository)
 
     override suspend fun handle(call: ApplicationCall) {

@@ -1,6 +1,5 @@
 package com.github.caay2000.librarykata.hexagonal.context.application.book.search
 
-import com.github.caay2000.common.arrow.getOrThrow
 import com.github.caay2000.common.cqrs.Query
 import com.github.caay2000.common.cqrs.QueryHandler
 import com.github.caay2000.common.cqrs.QueryResponse
@@ -17,11 +16,9 @@ class SearchBookQueryHandler(bookRepository: BookRepository) : QueryHandler<Sear
     private val searcher = BookSearcher(bookRepository)
 
     override fun handle(query: SearchBookQuery): SearchBookQueryResponse =
-        query.toCriteria().let { criteria ->
-            searcher.invoke(criteria)
-                .map { books -> SearchBookQueryResponse(books) }
-                .getOrThrow()
-        }
+        SearchBookQueryResponse(
+            searcher.invoke(query.toCriteria()),
+        )
 
     private fun SearchBookQuery.toCriteria() =
         when (this) {

@@ -55,7 +55,7 @@ class FinishLoanControllerTest {
         }
 
     @Test
-    fun `not lent book should fail if trying to return it`() =
+    fun `fails when trying to return a not lent book`() =
         testApplication {
             testUseCases.`loan is finished`(bookId = BookId(book.id.value))
                 .assertStatus(HttpStatusCode.BadRequest)

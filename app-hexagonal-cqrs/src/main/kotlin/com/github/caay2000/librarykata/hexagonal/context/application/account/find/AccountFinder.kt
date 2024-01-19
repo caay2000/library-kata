@@ -11,15 +11,10 @@ class AccountFinder(private val accountRepository: AccountRepository) {
     fun invoke(accountId: AccountId): Either<AccountFinderError, Account> =
         accountRepository.findOrElse(
             criteria = FindAccountCriteria.ById(accountId),
-            onUnexpectedError = { AccountFinderError.Unknown(it) },
-        ) { AccountFinderError.AccountNotFoundError(accountId) }
+            onResourceDoesNotExist = { AccountFinderError.AccountNotFoundError(accountId) },
+        )
 }
 
-sealed class AccountFinderError : RuntimeException {
-    constructor(message: String) : super(message)
-    constructor(throwable: Throwable) : super(throwable)
-
-    class Unknown(error: Throwable) : AccountFinderError(error)
-
-    class AccountNotFoundError(accountId: AccountId) : AccountFinderError("account $accountId not found")
+sealed class AccountFinderError(message: String) : RuntimeException(message) {
+    class AccountNotFoundError(accountId: AccountId) : AccountFinderError("Account ${accountId.value} not found")
 }

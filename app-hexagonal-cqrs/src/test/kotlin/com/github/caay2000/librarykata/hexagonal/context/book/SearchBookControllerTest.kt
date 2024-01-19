@@ -39,6 +39,15 @@ class SearchBookControllerTest {
         }
 
     @Test
+    fun `no book is returned if isbn is not found`() =
+        testApplication {
+            val expected = BookGroupDocumentMother.empty()
+            testUseCases.`find book by isbn`(book.isbn)
+                .assertStatus(HttpStatusCode.OK)
+                .assertJsonApiResponse(expected)
+        }
+
+    @Test
     fun `a book with multiple copies can be retrieved by Isbn`() =
         testApplication {
             testUseCases.`book is created`(book)
@@ -72,7 +81,6 @@ class SearchBookControllerTest {
             testUseCases.`multiple copies of the same book are created`(differentBook, 3)
             testUseCases.`loan is created`(loan)
 
-            // TODO missing loans relationships
             val expected =
                 BookGroupDocumentMother.random(
                     listOf(

@@ -9,10 +9,9 @@ import com.github.caay2000.librarykata.hexagonal.context.domain.book.SearchBookC
 import com.github.caay2000.memorydb.InMemoryDatasource
 
 class InMemoryBookRepository(private val datasource: InMemoryDatasource) : BookRepository {
-    override fun save(book: Book): Either<RepositoryError, Unit> =
-        Either.catch { datasource.save(TABLE_NAME, book.id.toString(), book) }
-            .mapLeft { throw it }
-            .map { }
+    override fun save(book: Book) {
+        datasource.save(TABLE_NAME, book.id.toString(), book)
+    }
 
     override fun find(criteria: FindBookCriteria): Either<RepositoryError, Book> =
         when (criteria) {
@@ -25,11 +24,11 @@ class InMemoryBookRepository(private val datasource: InMemoryDatasource) : BookR
             }
         }
 
-    override fun search(criteria: SearchBookCriteria): Either<RepositoryError, List<Book>> =
+    override fun search(criteria: SearchBookCriteria): List<Book> =
         when (criteria) {
-            SearchBookCriteria.All -> Either.catch { datasource.getAll(TABLE_NAME) }
-            is SearchBookCriteria.ByIsbn -> Either.catch { datasource.getAll<Book>(TABLE_NAME).filter { it.isbn == criteria.isbn } }
-        }.mapLeft { throw it }
+            SearchBookCriteria.All -> datasource.getAll(TABLE_NAME)
+            is SearchBookCriteria.ByIsbn -> datasource.getAll<Book>(TABLE_NAME).filter { it.isbn == criteria.isbn }
+        }
 
     companion object {
         private const val TABLE_NAME = "book"

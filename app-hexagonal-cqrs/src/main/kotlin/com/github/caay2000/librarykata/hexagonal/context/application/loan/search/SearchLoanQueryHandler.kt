@@ -1,6 +1,5 @@
 package com.github.caay2000.librarykata.hexagonal.context.application.loan.search
 
-import com.github.caay2000.common.arrow.getOrThrow
 import com.github.caay2000.common.cqrs.Query
 import com.github.caay2000.common.cqrs.QueryHandler
 import com.github.caay2000.common.cqrs.QueryResponse
@@ -20,10 +19,7 @@ class SearchLoanQueryHandler(
 
     private val searcher = LoanSearcher(loanRepository)
 
-    override fun handle(query: SearchLoanQuery): SearchLoanQueryResponse =
-        searcher.invoke(query.toCriteria())
-            .map { loans -> SearchLoanQueryResponse(loans) }
-            .getOrThrow()
+    override fun handle(query: SearchLoanQuery): SearchLoanQueryResponse = SearchLoanQueryResponse(searcher.invoke(query.toCriteria()))
 
     private fun SearchLoanQuery.toCriteria() =
         when (this) {

@@ -1,5 +1,7 @@
 package com.github.caay2000.librarykata.hexagonal.context.book
 
+import com.github.caay2000.common.jsonapi.jsonApiErrorDocument
+import com.github.caay2000.common.test.http.assertJsonApiErrorDocument
 import com.github.caay2000.common.test.http.assertJsonApiResponse
 import com.github.caay2000.common.test.http.assertStatus
 import com.github.caay2000.common.test.mock.MockDateProvider
@@ -59,6 +61,20 @@ class FindBookControllerTest {
             testUseCases.`find book by id`(book.id, listOf("loan"))
                 .assertStatus(HttpStatusCode.OK)
                 .assertJsonApiResponse(expected)
+        }
+
+    @Test
+    fun `fails when finding a non existing BookId`() =
+        testApplication {
+            testUseCases.`find book by id`(book.id)
+                .assertStatus(HttpStatusCode.NotFound)
+                .assertJsonApiErrorDocument(
+                    jsonApiErrorDocument(
+                        status = HttpStatusCode.NotFound,
+                        title = "BookNotFoundError",
+                        detail = "Book ${book.id.value} not found",
+                    ),
+                )
         }
 
     private val account = AccountMother.random()
