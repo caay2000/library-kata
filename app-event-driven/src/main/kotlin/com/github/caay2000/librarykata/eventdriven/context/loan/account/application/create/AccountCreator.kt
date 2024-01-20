@@ -6,8 +6,7 @@ import com.github.caay2000.librarykata.eventdriven.context.loan.account.domain.A
 
 class AccountCreator(private val accountRepository: AccountRepository) {
     fun invoke(accountId: AccountId) {
-        Account.create(accountId).save()
+        val account = Account.create(accountId)
+        accountRepository.save(account)
     }
-
-    private fun Account.save(): Account = accountRepository.save(this)
 }

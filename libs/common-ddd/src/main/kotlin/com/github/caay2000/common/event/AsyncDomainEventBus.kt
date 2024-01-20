@@ -8,7 +8,7 @@ class AsyncDomainEventBus(override val eventBus: EventBus) : DomainEventBus, Dom
     private val logger: KLogger = KotlinLogging.logger {}
 
     override fun <EVENT : DomainEvent> publish(event: EVENT) {
-        logger.info { "publishing event $event" }
+        logger.info { ">> publishing event $event" }
         return eventBus.publish(event)
     }
 }

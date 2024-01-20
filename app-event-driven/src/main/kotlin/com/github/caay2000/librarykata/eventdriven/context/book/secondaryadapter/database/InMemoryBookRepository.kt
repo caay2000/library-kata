@@ -9,13 +9,11 @@ import com.github.caay2000.librarykata.eventdriven.context.book.domain.SearchBoo
 import com.github.caay2000.memorydb.InMemoryDatasource
 
 class InMemoryBookRepository(private val datasource: InMemoryDatasource) : BookRepository {
-    override fun save(book: Book) {
-        datasource.save(TABLE_NAME, book.id.toString(), book)
-    }
+    override fun save(book: Book) = datasource.save(TABLE_NAME, book.id.value, book)
 
     override fun find(criteria: FindBookCriteria): Either<RepositoryError, Book> =
         when (criteria) {
-            is FindBookCriteria.ById -> Either.catch { datasource.getById<Book>(TABLE_NAME, criteria.id.toString())!! }
+            is FindBookCriteria.ById -> Either.catch { datasource.getById<Book>(TABLE_NAME, criteria.id.value)!! }
         }.mapLeft { error ->
             when (error) {
                 is NullPointerException -> RepositoryError.NotFoundError()

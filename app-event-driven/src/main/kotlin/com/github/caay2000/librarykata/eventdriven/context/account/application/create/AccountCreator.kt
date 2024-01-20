@@ -23,7 +23,7 @@ class AccountCreator(
     fun invoke(request: CreateAccountRequest): Either<AccountCreatorError, Unit> =
         guardAccountCanBeCreated(request)
             .map { Account.create(request) }
-            .map { account -> account.save() }
+            .map { account -> accountRepository.save(account) }
             .map { account -> eventPublisher.publish(account.pullEvents()) }
 
     private fun guardAccountCanBeCreated(request: CreateAccountRequest): Either<AccountCreatorError, Unit> =
@@ -35,22 +35,16 @@ class AccountCreator(
         accountRepository.findOrElse(
             criteria = FindAccountCriteria.ByIdentityNumber(identityNumber),
             onResourceDoesNotExist = { AccountCreatorError.AccountNotFound() },
-        ).flatMap {
-            AccountCreatorError.IdentityNumberAlreadyExists(
-                identityNumber,
-            ).left()
-        }
+        )
+            .flatMap { AccountCreatorError.IdentityNumberAlreadyExists(identityNumber).left() }
             .validateAccountNotFound()
 
     private fun guardEmailIsNotRepeated(email: Email): Either<AccountCreatorError, Unit> =
         accountRepository.findOrElse(
             criteria = FindAccountCriteria.ByEmail(email),
             onResourceDoesNotExist = { AccountCreatorError.AccountNotFound() },
-        ).flatMap {
-            AccountCreatorError.EmailAlreadyExists(
-                email,
-            ).left()
-        }
+        )
+            .flatMap { AccountCreatorError.EmailAlreadyExists(email).left() }
             .validateAccountNotFound()
 
     private fun guardPhoneIsNotRepeated(
@@ -75,8 +69,6 @@ class AccountCreator(
                 else -> raise(error)
             }
         }
-
-    private fun Account.save(): Account = accountRepository.save(this)
 }
 
 sealed class AccountCreatorError(message: String) : RuntimeException(message) {

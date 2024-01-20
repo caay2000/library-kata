@@ -53,8 +53,6 @@ data class Account(
     fun increaseLoans(): Account = copy(currentLoans = currentLoans.increase(), totalLoans = totalLoans.increase())
 
     fun decreaseLoans(): Account = copy(currentLoans = currentLoans.decrease())
-
-    fun hasReachedLoanLimit(): Boolean = currentLoans.value >= 5
 }
 
 @JvmInline

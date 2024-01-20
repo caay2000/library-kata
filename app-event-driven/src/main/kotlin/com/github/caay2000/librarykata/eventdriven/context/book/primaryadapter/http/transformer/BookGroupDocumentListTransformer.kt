@@ -38,7 +38,7 @@ internal fun List<Book>.toJsonApiBookGroupResource(loans: Collection<Loan> = emp
         id = first().isbn.value,
         type = BookGroupResource.TYPE,
         attributes = toJsonApiBookGroupAttributes(),
-        relationships = LoanRelationshipTransformer().invoke(loans.filter { loan -> map { it.id }.contains(loan.bookId) }),
+        relationships = LoanRelationshipTransformer().invoke(loans.filter { loan -> map { it.id.value }.contains(loan.bookId.value) }),
     )
 
 internal fun List<Book>.toJsonApiBookGroupAttributes() =

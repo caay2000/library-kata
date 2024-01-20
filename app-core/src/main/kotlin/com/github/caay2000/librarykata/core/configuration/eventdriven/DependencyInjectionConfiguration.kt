@@ -16,6 +16,7 @@ import com.github.caay2000.librarykata.eventdriven.context.book.primaryadapter.h
 import com.github.caay2000.librarykata.eventdriven.context.book.primaryadapter.http.SearchBookController
 import com.github.caay2000.librarykata.eventdriven.context.book.secondaryadapter.database.InMemoryBookRepository
 import com.github.caay2000.librarykata.eventdriven.context.loan.account.primaryadapter.event.CreateAccountOnAccountCreatedEventSubscriber
+import com.github.caay2000.librarykata.eventdriven.context.loan.book.primaryadapter.event.CreateBookOnBookCreatedEventSubscriber
 import com.github.caay2000.librarykata.eventdriven.context.loan.loan.primaryadapter.http.CreateLoanController
 import com.github.caay2000.librarykata.eventdriven.context.loan.loan.primaryadapter.http.FindLoanController
 import com.github.caay2000.librarykata.eventdriven.context.loan.loan.primaryadapter.http.FinishLoanController
@@ -34,23 +35,29 @@ val DependencyInjectionConfiguration =
         DiKt.register { InMemoryBookRepository(DiKt.bind()) }
         DiKt.register { InMemoryLoanRepository(DiKt.bind()) }
 
-        DiKt.register { com.github.caay2000.librarykata.eventdriven.context.loan.account.secondaryadapter.InMemoryAccountRepository(DiKt.bind()) }
+        DiKt.register {
+            com.github.caay2000.librarykata.eventdriven.context.loan.account.secondaryadapter.database.InMemoryAccountRepository(
+                DiKt.bind(),
+            )
+        }
+        DiKt.register { com.github.caay2000.librarykata.eventdriven.context.loan.book.secondaryadapter.database.InMemoryBookRepository(DiKt.bind()) }
 
         DiKt.register { EventBus(numPartitions = 3) }
         DiKt.register { AsyncDomainEventBus(DiKt.bind()) }
         DiKt.get<DomainEventBus>()
             .subscribe(CreateAccountOnAccountCreatedEventSubscriber(DiKt.bind()))
+            .subscribe(CreateBookOnBookCreatedEventSubscriber(DiKt.bind()))
 
         DiKt.register { CreateAccountController(DiKt.bind(), DiKt.bind(), DiKt.bind(), DiKt.bind()) }
         DiKt.register { FindAccountController(DiKt.bind()) }
         DiKt.register { SearchAccountController(DiKt.bind()) }
 
-        DiKt.register { CreateBookController(DiKt.bind(), DiKt.bind()) }
+        DiKt.register { CreateBookController(DiKt.bind(), DiKt.bind(), DiKt.bind()) }
         DiKt.register { FindBookController(DiKt.bind()) }
         DiKt.register { SearchBookController(DiKt.bind()) }
 
-        DiKt.register { FindLoanController(DiKt.bind()) }
-        DiKt.register { CreateLoanController(DiKt.bind(), DiKt.bind(), DiKt.bind()) }
+        DiKt.register { FindLoanController(DiKt.bind(), DiKt.bind(), DiKt.bind()) }
+        DiKt.register { CreateLoanController(DiKt.bind(), DiKt.bind(), DiKt.bind(), DiKt.bind(), DiKt.bind()) }
         DiKt.register { FinishLoanController(DiKt.bind(), DiKt.bind()) }
 
 //        DiKt.register { InMemoryDatasource() }

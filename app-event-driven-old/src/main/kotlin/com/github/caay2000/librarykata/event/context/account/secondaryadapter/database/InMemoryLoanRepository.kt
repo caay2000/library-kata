@@ -9,12 +9,12 @@ import com.github.caay2000.librarykata.event.context.account.domain.LoanId
 import com.github.caay2000.memorydb.InMemoryDatasource
 
 class InMemoryLoanRepository(private val datasource: InMemoryDatasource) : LoanRepository {
-    override fun save(loan: Loan): Loan = datasource.save(TABLE_NAME, loan.id.toString(), loan)
+    override fun save(loan: Loan): Loan = datasource.save(TABLE_NAME, loan.id.value, loan)
 
     override fun searchByAccountId(accountId: AccountId): List<Loan> = datasource.getAll<Loan>(TABLE_NAME).filter { it.accountId == accountId }
 
     override fun find(id: LoanId): Either<RepositoryError, Loan> =
-        Either.catch { datasource.getById<Loan>(TABLE_NAME, id.toString())!! }
+        Either.catch { datasource.getById<Loan>(TABLE_NAME, id.value)!! }
             .mapLeft { error ->
                 when (error) {
                     is NullPointerException -> RepositoryError.NotFoundError()

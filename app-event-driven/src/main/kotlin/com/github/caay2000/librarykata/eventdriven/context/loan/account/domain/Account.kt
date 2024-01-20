@@ -1,6 +1,5 @@
 package com.github.caay2000.librarykata.eventdriven.context.loan.account.domain
 
-import com.github.caay2000.common.ddd.AggregateId
 import kotlin.math.max
 
 data class Account(
@@ -10,10 +9,12 @@ data class Account(
     companion object {
         fun create(accountId: AccountId) = Account(accountId, CurrentLoans(0))
     }
+
+    fun hasReachedLoanLimit(): Boolean = currentLoans.value >= 5
 }
 
 @JvmInline
-value class AccountId(val value: String) : AggregateId
+value class AccountId(val value: String)
 
 @JvmInline
 value class CurrentLoans(val value: Int) {

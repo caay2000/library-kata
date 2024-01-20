@@ -9,12 +9,12 @@ import com.github.caay2000.librarykata.eventdriven.context.account.domain.Search
 import com.github.caay2000.memorydb.InMemoryDatasource
 
 class InMemoryAccountRepository(private val datasource: InMemoryDatasource) : AccountRepository {
-    override fun save(account: Account) = datasource.save(TABLE_NAME, account.id.toString(), account)
+    override fun save(account: Account) = datasource.save(TABLE_NAME, account.id.value, account)
 
     override fun find(criteria: FindAccountCriteria): Either<RepositoryError, Account> =
         Either.catch {
             when (criteria) {
-                is FindAccountCriteria.ById -> datasource.getById<Account>(TABLE_NAME, criteria.id.toString())!!
+                is FindAccountCriteria.ById -> datasource.getById<Account>(TABLE_NAME, criteria.id.value)!!
                 is FindAccountCriteria.ByIdentityNumber -> datasource.getAll<Account>(TABLE_NAME).first { it.identityNumber == criteria.identityNumber }
                 is FindAccountCriteria.ByEmail -> datasource.getAll<Account>(TABLE_NAME).first { it.email == criteria.email }
                 is FindAccountCriteria.ByPhone -> datasource.getAll<Account>(TABLE_NAME).first { it.phonePrefix == criteria.phonePrefix && it.phoneNumber == criteria.phoneNumber }

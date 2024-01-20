@@ -3,6 +3,7 @@ package com.github.caay2000.librarykata.eventdriven.context.book.application.cre
 import com.github.caay2000.common.arrow.getOrThrow
 import com.github.caay2000.common.cqrs.Command
 import com.github.caay2000.common.cqrs.CommandHandler
+import com.github.caay2000.common.event.DomainEventPublisher
 import com.github.caay2000.librarykata.eventdriven.context.book.domain.BookAuthor
 import com.github.caay2000.librarykata.eventdriven.context.book.domain.BookId
 import com.github.caay2000.librarykata.eventdriven.context.book.domain.BookIsbn
@@ -17,9 +18,10 @@ import java.util.UUID
 
 class CreateBookCommandHandler(
     bookRepository: BookRepository,
+    eventPublisher: DomainEventPublisher,
 ) : CommandHandler<CreateBookCommand> {
     override val logger: KLogger = KotlinLogging.logger {}
-    private val creator = BookCreator(bookRepository)
+    private val creator = BookCreator(bookRepository, eventPublisher)
 
     override fun handle(command: CreateBookCommand): Unit = creator.invoke(command.toCreateBookRequest()).getOrThrow()
 

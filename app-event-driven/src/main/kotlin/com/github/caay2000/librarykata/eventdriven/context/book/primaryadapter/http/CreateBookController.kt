@@ -2,6 +2,7 @@ package com.github.caay2000.librarykata.eventdriven.context.book.primaryadapter.
 
 import com.github.caay2000.common.cqrs.CommandHandler
 import com.github.caay2000.common.cqrs.QueryHandler
+import com.github.caay2000.common.event.DomainEventPublisher
 import com.github.caay2000.common.http.ContentType
 import com.github.caay2000.common.http.Controller
 import com.github.caay2000.common.http.Transformer
@@ -35,10 +36,11 @@ import java.util.UUID
 class CreateBookController(
     private val idGenerator: IdGenerator,
     bookRepository: BookRepository,
+    eventPublisher: DomainEventPublisher,
 ) : Controller {
     override val logger: KLogger = KotlinLogging.logger {}
 
-    private val commandHandler: CommandHandler<CreateBookCommand> = CreateBookCommandHandler(bookRepository)
+    private val commandHandler: CommandHandler<CreateBookCommand> = CreateBookCommandHandler(bookRepository, eventPublisher)
     private val queryHandler: QueryHandler<FindBookQuery, FindBookQueryResponse> = FindBookQueryHandler(bookRepository)
     private val transformer: Transformer<Book, JsonApiDocument<BookResource>> = BookDocumentTransformer()
 

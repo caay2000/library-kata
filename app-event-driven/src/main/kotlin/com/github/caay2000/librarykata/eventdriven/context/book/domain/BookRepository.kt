@@ -4,7 +4,7 @@ import arrow.core.Either
 import com.github.caay2000.common.database.RepositoryError
 
 interface BookRepository {
-    fun save(book: Book)
+    fun save(book: Book): Book
 
     fun find(criteria: FindBookCriteria): Either<RepositoryError, Book>
 

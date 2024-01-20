@@ -3,12 +3,12 @@ package com.github.caay2000.librarykata.eventdriven.context.account.primaryadapt
 import com.github.caay2000.common.http.Transformer
 import com.github.caay2000.common.jsonapi.JsonApiRelationshipData
 import com.github.caay2000.common.jsonapi.JsonApiRelationshipIdentifier
-import com.github.caay2000.librarykata.eventdriven.context.account.domain.Account
+import com.github.caay2000.librarykata.eventdriven.context.account.domain.AccountId
 import com.github.caay2000.librarykata.jsonapi.context.account.AccountResource
 
-class AccountRelationshipTransformer : Transformer<Collection<Account>, Map<String, JsonApiRelationshipData>?> {
+class AccountRelationshipTransformer : Transformer<Collection<AccountId>, Map<String, JsonApiRelationshipData>?> {
     override fun invoke(
-        value: Collection<Account>,
+        value: Collection<AccountId>,
         include: List<String>,
     ): Map<String, JsonApiRelationshipData>? =
         if (value.isEmpty()) {
@@ -17,7 +17,7 @@ class AccountRelationshipTransformer : Transformer<Collection<Account>, Map<Stri
             mapOf(
                 AccountResource.TYPE to
                     JsonApiRelationshipData(
-                        value.map { JsonApiRelationshipIdentifier(id = it.id.value, type = AccountResource.TYPE) },
+                        value.map { JsonApiRelationshipIdentifier(id = it.value, type = AccountResource.TYPE) },
                     ),
             )
         }

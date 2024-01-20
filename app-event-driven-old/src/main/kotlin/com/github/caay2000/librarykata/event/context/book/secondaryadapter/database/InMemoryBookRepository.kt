@@ -10,7 +10,7 @@ import com.github.caay2000.memorydb.InMemoryDatasource
 
 class InMemoryBookRepository(private val datasource: InMemoryDatasource) : BookRepository {
     override fun save(book: Book) {
-        datasource.save(TABLE_NAME, book.id.toString(), book)
+        datasource.save(TABLE_NAME, book.id.value, book)
     }
 
     override fun search(criteria: SearchBookCriteria): List<Book> =
@@ -20,7 +20,7 @@ class InMemoryBookRepository(private val datasource: InMemoryDatasource) : BookR
         }
 
     override fun find(id: BookId): Either<RepositoryError, Book> =
-        Either.catch { datasource.getById<Book>(TABLE_NAME, id.toString())!! }
+        Either.catch { datasource.getById<Book>(TABLE_NAME, id.value)!! }
             .mapLeft { error ->
                 when (error) {
                     is NullPointerException -> RepositoryError.NotFoundError()

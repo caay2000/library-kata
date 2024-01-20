@@ -2,8 +2,8 @@ package com.github.caay2000.librarykata.eventdriven.context.loan.loan.domain
 
 import com.github.caay2000.common.ddd.Aggregate
 import com.github.caay2000.common.ddd.AggregateId
-import com.github.caay2000.librarykata.eventdriven.context.account.domain.AccountId
-import com.github.caay2000.librarykata.eventdriven.context.book.domain.BookId
+import com.github.caay2000.librarykata.eventdriven.context.loan.account.domain.AccountId
+import com.github.caay2000.librarykata.eventdriven.context.loan.book.domain.BookId
 import com.github.caay2000.librarykata.eventdriven.events.loan.LoanCreatedEvent
 import com.github.caay2000.librarykata.eventdriven.events.loan.LoanFinishedEvent
 import java.time.LocalDateTime

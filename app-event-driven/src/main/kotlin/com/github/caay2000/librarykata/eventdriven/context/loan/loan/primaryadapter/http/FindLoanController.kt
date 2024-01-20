@@ -9,6 +9,8 @@ import com.github.caay2000.common.jsonapi.ServerResponse
 import com.github.caay2000.common.jsonapi.documentation.errorResponses
 import com.github.caay2000.common.jsonapi.documentation.responseExample
 import com.github.caay2000.common.jsonapi.toJsonApiRequestParams
+import com.github.caay2000.librarykata.eventdriven.context.loan.account.domain.AccountRepository
+import com.github.caay2000.librarykata.eventdriven.context.loan.book.domain.BookRepository
 import com.github.caay2000.librarykata.eventdriven.context.loan.loan.application.find.FindLoanHandler
 import com.github.caay2000.librarykata.eventdriven.context.loan.loan.application.find.FindLoanQuery
 import com.github.caay2000.librarykata.eventdriven.context.loan.loan.application.find.FindLoanQueryResponse
@@ -28,12 +30,14 @@ import mu.KotlinLogging
 import java.util.UUID
 
 class FindLoanController(
+    accountRepository: AccountRepository,
+    bookRepository: BookRepository,
     loanRepository: LoanRepository,
 ) : Controller {
     override val logger: KLogger = KotlinLogging.logger {}
 
     private val queryHandler: QueryHandler<FindLoanQuery, FindLoanQueryResponse> = FindLoanHandler(loanRepository)
-    private val transformer: Transformer<Loan, JsonApiDocument<LoanResource>> = LoanDocumentTransformer()
+    private val transformer: Transformer<Loan, JsonApiDocument<LoanResource>> = LoanDocumentTransformer(accountRepository, bookRepository)
 
     override suspend fun handle(call: ApplicationCall) {
         val loanId = UUID.fromString(call.parameters["loanId"]!!)

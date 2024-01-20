@@ -13,10 +13,10 @@ class InMemoryBookRepository(private val datasource: InMemoryDatasource) : BookR
         private const val TABLE_NAME = "loan.book"
     }
 
-    override fun save(book: Book): Book = datasource.save(TABLE_NAME, book.id.toString(), book)
+    override fun save(book: Book): Book = datasource.save(TABLE_NAME, book.id.value, book)
 
     override fun find(id: BookId): Either<RepositoryError, Book> =
-        Either.catch { datasource.getById<Book>(TABLE_NAME, id.toString())!! }
+        Either.catch { datasource.getById<Book>(TABLE_NAME, id.value)!! }
             .mapLeft { error ->
                 when (error) {
                     is NullPointerException -> RepositoryError.NotFoundError()

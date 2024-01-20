@@ -6,20 +6,22 @@ import arrow.core.left
 import arrow.core.recover
 import arrow.core.right
 import com.github.caay2000.common.database.RepositoryError
+import com.github.caay2000.common.event.DomainEventPublisher
 import com.github.caay2000.librarykata.eventdriven.context.book.domain.Book
 import com.github.caay2000.librarykata.eventdriven.context.book.domain.BookId
 import com.github.caay2000.librarykata.eventdriven.context.book.domain.BookRepository
 import com.github.caay2000.librarykata.eventdriven.context.book.domain.CreateBookRequest
 import com.github.caay2000.librarykata.eventdriven.context.book.domain.FindBookCriteria
-import com.github.caay2000.librarykata.eventdriven.context.book.domain.saveOrElse
 
 class BookCreator(
     private val bookRepository: BookRepository,
+    private val eventPublisher: DomainEventPublisher,
 ) {
     fun invoke(request: CreateBookRequest): Either<BookCreatorError, Unit> =
         guardBookIsNotAlreadyCreated(request.id)
-            .map { createBook(request) }
-            .map { book -> book.save() }
+            .map { Book.create(request) }
+            .map { book -> bookRepository.save(book) }
+            .map { book -> eventPublisher.publish(book.pullEvents()) }
 
     private fun guardBookIsNotAlreadyCreated(bookId: BookId): Either<BookCreatorError, Unit> =
         bookRepository.find(FindBookCriteria.ById(bookId))
@@ -30,12 +32,6 @@ class BookCreator(
                     is BookCreatorError -> raise(error)
                 }
             }
-
-    private fun createBook(request: CreateBookRequest): Book = Book.create(request)
-
-    private fun Book.save() {
-        bookRepository.saveOrElse<BookCreatorError>(this)
-    }
 }
 
 sealed class BookCreatorError(message: String) : RuntimeException(message) {

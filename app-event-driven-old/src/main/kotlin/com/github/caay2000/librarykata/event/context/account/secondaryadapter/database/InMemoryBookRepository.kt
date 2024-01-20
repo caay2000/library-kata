@@ -8,10 +8,10 @@ import com.github.caay2000.librarykata.event.context.account.domain.BookId
 import com.github.caay2000.memorydb.InMemoryDatasource
 
 class InMemoryBookRepository(private val datasource: InMemoryDatasource) : BookRepository {
-    override fun save(book: Book): Book = datasource.save(TABLE_NAME, book.id.toString(), book)
+    override fun save(book: Book): Book = datasource.save(TABLE_NAME, book.id.value, book)
 
     override fun find(bookId: BookId): Either<RepositoryError, Book> =
-        Either.catch { datasource.getById<Book>(TABLE_NAME, bookId.toString())!! }
+        Either.catch { datasource.getById<Book>(TABLE_NAME, bookid.value)!! }
             .mapLeft { error ->
                 when (error) {
                     is NullPointerException -> RepositoryError.NotFoundError()

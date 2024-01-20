@@ -10,14 +10,14 @@ import com.github.caay2000.memorydb.InMemoryDatasource
 
 class InMemoryLoanRepository(private val datasource: InMemoryDatasource) : LoanRepository {
     override fun save(loan: Loan) {
-        datasource.save(TABLE_NAME, loan.id.toString(), loan)
+        datasource.save(TABLE_NAME, loan.id.value, loan)
     }
 
     override fun find(criteria: FindLoanCriteria): Either<RepositoryError, Loan> =
         Either.catch {
             when (criteria) {
-                is FindLoanCriteria.ById -> datasource.getById<Loan>(TABLE_NAME, criteria.id.toString())!!
-                is FindLoanCriteria.ByBookIdAndNotFinished -> datasource.getAll<Loan>(TABLE_NAME).filter { it.bookId == criteria.bookId }.first { it.isNotFinished }
+                is FindLoanCriteria.ById -> datasource.getById<Loan>(TABLE_NAME, criteria.id.value)!!
+                is FindLoanCriteria.ByBookIdAndNotFinished -> datasource.getAll<Loan>(TABLE_NAME).filter { it.bookId.value == criteria.bookId.value }.first { it.isNotFinished }
             }
         }.mapLeft { error ->
             when (error) {
@@ -29,8 +29,8 @@ class InMemoryLoanRepository(private val datasource: InMemoryDatasource) : LoanR
 
     override fun search(criteria: SearchLoanCriteria): List<Loan> =
         when (criteria) {
-            is SearchLoanCriteria.ByAccountId -> datasource.getAll<Loan>(TABLE_NAME).filter { it.accountId == criteria.accountId }
-            is SearchLoanCriteria.ByBookId -> datasource.getAll<Loan>(TABLE_NAME).filter { it.bookId == criteria.bookId }
+            is SearchLoanCriteria.ByAccountId -> datasource.getAll<Loan>(TABLE_NAME).filter { it.accountId.value == criteria.accountId.value }
+            is SearchLoanCriteria.ByBookId -> datasource.getAll<Loan>(TABLE_NAME).filter { it.bookId.value == criteria.bookId.value }
             is SearchLoanCriteria.ByBookIsbn -> TODO()
         }
 

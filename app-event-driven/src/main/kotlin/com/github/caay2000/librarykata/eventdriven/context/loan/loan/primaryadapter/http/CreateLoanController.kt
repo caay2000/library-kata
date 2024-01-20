@@ -12,6 +12,8 @@ import com.github.caay2000.common.jsonapi.JsonApiRequestDocument
 import com.github.caay2000.common.jsonapi.ServerResponse
 import com.github.caay2000.common.jsonapi.documentation.errorResponses
 import com.github.caay2000.common.jsonapi.documentation.responseExample
+import com.github.caay2000.librarykata.eventdriven.context.loan.account.domain.AccountRepository
+import com.github.caay2000.librarykata.eventdriven.context.loan.book.domain.BookRepository
 import com.github.caay2000.librarykata.eventdriven.context.loan.loan.application.create.CreateLoanCommand
 import com.github.caay2000.librarykata.eventdriven.context.loan.loan.application.create.CreateLoanCommandHandler
 import com.github.caay2000.librarykata.eventdriven.context.loan.loan.application.create.LoanCreatorError
@@ -37,13 +39,15 @@ import java.util.UUID
 class CreateLoanController(
     private val idGenerator: IdGenerator,
     private val dateProvider: DateProvider,
+    accountRepository: AccountRepository,
+    bookRepository: BookRepository,
     loanRepository: LoanRepository,
 ) : Controller {
     override val logger: KLogger = KotlinLogging.logger {}
 
-    private val commandHandler: CommandHandler<CreateLoanCommand> = CreateLoanCommandHandler(loanRepository)
+    private val commandHandler: CommandHandler<CreateLoanCommand> = CreateLoanCommandHandler(accountRepository, bookRepository, loanRepository)
     private val loanQueryHandler: QueryHandler<FindLoanQuery, FindLoanQueryResponse> = FindLoanHandler(loanRepository)
-    private val transformer: Transformer<Loan, JsonApiDocument<LoanResource>> = LoanDocumentTransformer()
+    private val transformer: Transformer<Loan, JsonApiDocument<LoanResource>> = LoanDocumentTransformer(accountRepository, bookRepository)
 
     override suspend fun handle(call: ApplicationCall) {
         val request = call.receive<JsonApiRequestDocument<LoanRequestResource>>()

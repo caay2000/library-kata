@@ -3,8 +3,10 @@ package com.github.caay2000.librarykata.eventdriven.context.loan.loan.applicatio
 import com.github.caay2000.common.arrow.getOrThrow
 import com.github.caay2000.common.cqrs.Command
 import com.github.caay2000.common.cqrs.CommandHandler
-import com.github.caay2000.librarykata.eventdriven.context.account.domain.AccountId
-import com.github.caay2000.librarykata.eventdriven.context.book.domain.BookIsbn
+import com.github.caay2000.librarykata.eventdriven.context.loan.account.domain.AccountId
+import com.github.caay2000.librarykata.eventdriven.context.loan.account.domain.AccountRepository
+import com.github.caay2000.librarykata.eventdriven.context.loan.book.domain.BookIsbn
+import com.github.caay2000.librarykata.eventdriven.context.loan.book.domain.BookRepository
 import com.github.caay2000.librarykata.eventdriven.context.loan.loan.domain.CreatedAt
 import com.github.caay2000.librarykata.eventdriven.context.loan.loan.domain.LoanId
 import com.github.caay2000.librarykata.eventdriven.context.loan.loan.domain.LoanRepository
@@ -14,10 +16,12 @@ import java.time.LocalDateTime
 import java.util.UUID
 
 class CreateLoanCommandHandler(
+    accountRepository: AccountRepository,
+    bookRepository: BookRepository,
     loanRepository: LoanRepository,
 ) : CommandHandler<CreateLoanCommand> {
     override val logger: KLogger = KotlinLogging.logger {}
-    private val creator = LoanCreator(loanRepository)
+    private val creator = LoanCreator(accountRepository, bookRepository, loanRepository)
 
     override fun handle(command: CreateLoanCommand): Unit =
         creator.invoke(

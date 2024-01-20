@@ -36,7 +36,7 @@ internal fun Account.toJsonApiAccountResource(loans: Collection<Loan> = emptyLis
         id = id.value,
         type = AccountResource.TYPE,
         attributes = toJsonApiAccountAttributes(),
-        relationships = LoanRelationshipTransformer().invoke(loans.filter { it.accountId == id }),
+        relationships = LoanRelationshipTransformer().invoke(loans.filter { it.accountId.value == id.value }),
     )
 
 internal fun Account.toJsonApiAccountAttributes() =
