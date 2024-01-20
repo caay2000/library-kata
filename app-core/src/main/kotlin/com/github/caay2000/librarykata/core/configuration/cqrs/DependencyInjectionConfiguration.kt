@@ -1,4 +1,8 @@
+<<<<<<< HEAD:app-core/src/main/kotlin/com/github/caay2000/librarykata/core/configuration/cqrs/DependencyInjectionConfiguration.kt
 package com.github.caay2000.librarykata.core.configuration.cqrs
+=======
+package com.github.caay2000.librarykata.core.configuration.event
+>>>>>>> 6d34f98c8e73ac7f270054ff85b9324726027990:app-core/src/main/kotlin/com/github/caay2000/librarykata/core/configuration/event/DependencyInjectionConfiguration.kt
 
 import com.github.caay2000.common.dateprovider.LocalDateProvider
 import com.github.caay2000.common.idgenerator.UUIDGenerator
