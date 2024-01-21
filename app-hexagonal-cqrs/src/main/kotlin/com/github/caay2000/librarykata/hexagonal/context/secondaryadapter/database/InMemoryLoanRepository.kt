@@ -30,7 +30,7 @@ class InMemoryLoanRepository(private val datasource: InMemoryDatasource) : LoanR
 
     override fun search(criteria: SearchLoanCriteria): List<Loan> =
         when (criteria) {
-            is SearchLoanCriteria.ByAccountId -> datasource.getAll<Loan>(TABLE_NAME).filter { it.accountId == criteria.accountId }
+            is SearchLoanCriteria.ByAccountIdAndNotFinished -> datasource.getAll<Loan>(TABLE_NAME).filter { it.accountId == criteria.accountId && it.isNotFinished }
             is SearchLoanCriteria.ByBookId -> datasource.getAll<Loan>(TABLE_NAME).filter { it.bookId == criteria.bookId }
             is SearchLoanCriteria.ByBookIsbn -> {
                 val bookIds = datasource.getAll<Book>(BOOK_TABLE_NAME).filter { it.isbn == criteria.bookIsbn }.map { it.id }

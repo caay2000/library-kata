@@ -54,7 +54,6 @@ class FindAccountControllerTest {
     fun `a user without loans has no loans`() =
         testApplication {
             testUseCases.`account is created`(account)
-            testUseCases.`book is created`(anotherBook)
 
             val expected = AccountDocumentMother.random(account, emptyList())
             testUseCases.`find account`(account.id, listOf("loan"))

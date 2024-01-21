@@ -5,16 +5,16 @@ import com.github.caay2000.librarykata.eventdriven.context.account.application.l
 import com.github.caay2000.librarykata.eventdriven.context.account.application.loan.remove.RemoveLoanCommandHandler
 import com.github.caay2000.librarykata.eventdriven.context.account.domain.LoanId
 import com.github.caay2000.librarykata.eventdriven.context.account.domain.LoanRepository
-import com.github.caay2000.librarykata.eventdriven.events.loan.LoanCreatedEvent
+import com.github.caay2000.librarykata.eventdriven.events.loan.LoanFinishedEvent
 import mu.KLogger
 import mu.KotlinLogging
 
-class RemoveLoanOnLoanFinishedEventSubscriber(loanRepository: LoanRepository) : DomainEventSubscriber<LoanCreatedEvent>() {
+class RemoveLoanOnLoanFinishedEventSubscriber(loanRepository: LoanRepository) : DomainEventSubscriber<LoanFinishedEvent>() {
     override val logger: KLogger = KotlinLogging.logger {}
 
     private val commandHandler = RemoveLoanCommandHandler(loanRepository)
 
-    override fun handleEvent(event: LoanCreatedEvent) {
+    override fun handleEvent(event: LoanFinishedEvent) {
         commandHandler.invoke(RemoveLoanCommand(LoanId(event.loanId)))
     }
 }

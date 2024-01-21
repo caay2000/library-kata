@@ -23,14 +23,14 @@ class SearchLoanQueryHandler(
 
     private fun SearchLoanQuery.toCriteria() =
         when (this) {
-            is SearchLoanQuery.SearchLoanByAccountIdQuery -> SearchLoanCriteria.ByAccountId(AccountId(accountId))
+            is SearchLoanQuery.SearchLoanByAccountIdAndNotFinishedQuery -> SearchLoanCriteria.ByAccountIdAndNotFinished(AccountId(accountId))
             is SearchLoanQuery.SearchLoanByBookIdQuery -> SearchLoanCriteria.ByBookId(BookId(bookId))
             is SearchLoanQuery.SearchLoanByBookIsbnQuery -> SearchLoanCriteria.ByBookIsbn(BookIsbn(bookIsbn))
         }
 }
 
 sealed class SearchLoanQuery : Query {
-    data class SearchLoanByAccountIdQuery(val accountId: String) : SearchLoanQuery()
+    data class SearchLoanByAccountIdAndNotFinishedQuery(val accountId: String) : SearchLoanQuery()
 
     data class SearchLoanByBookIdQuery(val bookId: String) : SearchLoanQuery()
 

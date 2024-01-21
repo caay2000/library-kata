@@ -3,6 +3,7 @@ package com.github.caay2000.librarykata.core.configuration.eventdriven
 import com.github.caay2000.common.dateprovider.LocalDateProvider
 import com.github.caay2000.common.event.AsyncDomainEventBus
 import com.github.caay2000.common.event.DomainEventBus
+import com.github.caay2000.common.event.init
 import com.github.caay2000.common.event.subscribe
 import com.github.caay2000.common.eventbus.EventBus
 import com.github.caay2000.common.idgenerator.UUIDGenerator
@@ -55,6 +56,7 @@ val DependencyInjectionConfiguration =
             .subscribe(DecreaseLoansOnLoanCreatedEventSubscriber(DiKt.bind()))
             .subscribe(CreateAccountOnAccountCreatedEventSubscriber(DiKt.bind()))
             .subscribe(CreateBookOnBookCreatedEventSubscriber(DiKt.bind()))
+            .init()
 
         DiKt.register { CreateAccountController(DiKt.bind(), DiKt.bind(), DiKt.bind(), DiKt.bind(), DiKt.bind()) }
         DiKt.register { FindAccountController(DiKt.bind(), DiKt.bind()) }

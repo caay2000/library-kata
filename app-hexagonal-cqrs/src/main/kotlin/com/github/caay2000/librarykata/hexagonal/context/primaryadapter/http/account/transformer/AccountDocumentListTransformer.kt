@@ -22,7 +22,7 @@ class AccountDocumentListTransformer(loanRepository: LoanRepository) : Transform
         value: List<Account>,
         include: List<String>,
     ): JsonApiDocumentList<AccountResource> {
-        val loans = value.flatMap { loanQueryHandler.invoke(SearchLoanQuery.SearchLoanByAccountIdQuery(it.id.value)).value }.toSet()
+        val loans = value.flatMap { loanQueryHandler.invoke(SearchLoanQuery.SearchLoanByAccountIdAndNotFinishedQuery(it.id.value)).value }.toSet()
         return value.toJsonApiAccountDocumentList(loans, include)
     }
 }

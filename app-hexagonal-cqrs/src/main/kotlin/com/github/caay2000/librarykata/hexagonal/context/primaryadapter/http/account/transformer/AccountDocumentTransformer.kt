@@ -23,7 +23,7 @@ class AccountDocumentTransformer(loanRepository: LoanRepository) : Transformer<A
         include: List<String>,
     ): JsonApiDocument<AccountResource> {
         // TODO When the Account is brand new, this query is not needed, as it won't have any relationship
-        val loans = loanQueryHandler.invoke(SearchLoanQuery.SearchLoanByAccountIdQuery(value.id.value)).value
+        val loans = loanQueryHandler.invoke(SearchLoanQuery.SearchLoanByAccountIdAndNotFinishedQuery(value.id.value)).value
         return value.toJsonApiAccountDocument(loans, include)
     }
 }
