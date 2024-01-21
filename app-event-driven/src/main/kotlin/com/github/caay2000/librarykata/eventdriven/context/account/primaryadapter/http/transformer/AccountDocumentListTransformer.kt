@@ -26,7 +26,7 @@ fun List<Account>.toJsonApiAccountDocumentList(
     loans: Collection<Loan> = emptyList(),
     include: List<String> = emptyList(),
 ) = JsonApiDocumentList(
-    data = map { it.toJsonApiAccountResource(loans) },
+    data = map { it.toJsonApiAccountResource(emptyList()) },
     included = if (include.shouldProcess(LoanResource.TYPE)) LoanIncludeTransformer().invoke(loans) else null,
     meta = JsonApiMeta(total = size),
 )

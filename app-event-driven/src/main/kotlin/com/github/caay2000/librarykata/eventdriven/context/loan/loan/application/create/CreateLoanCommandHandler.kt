@@ -3,6 +3,7 @@ package com.github.caay2000.librarykata.eventdriven.context.loan.loan.applicatio
 import com.github.caay2000.common.arrow.getOrThrow
 import com.github.caay2000.common.cqrs.Command
 import com.github.caay2000.common.cqrs.CommandHandler
+import com.github.caay2000.common.event.DomainEventPublisher
 import com.github.caay2000.librarykata.eventdriven.context.loan.account.domain.AccountId
 import com.github.caay2000.librarykata.eventdriven.context.loan.account.domain.AccountRepository
 import com.github.caay2000.librarykata.eventdriven.context.loan.book.domain.BookIsbn
@@ -19,9 +20,10 @@ class CreateLoanCommandHandler(
     accountRepository: AccountRepository,
     bookRepository: BookRepository,
     loanRepository: LoanRepository,
+    eventPublisher: DomainEventPublisher,
 ) : CommandHandler<CreateLoanCommand> {
     override val logger: KLogger = KotlinLogging.logger {}
-    private val creator = LoanCreator(accountRepository, bookRepository, loanRepository)
+    private val creator = LoanCreator(accountRepository, bookRepository, loanRepository, eventPublisher)
 
     override fun handle(command: CreateLoanCommand): Unit =
         creator.invoke(

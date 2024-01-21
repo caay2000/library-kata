@@ -22,6 +22,7 @@ import com.github.caay2000.librarykata.eventdriven.context.account.application.f
 import com.github.caay2000.librarykata.eventdriven.context.account.domain.Account
 import com.github.caay2000.librarykata.eventdriven.context.account.domain.AccountId
 import com.github.caay2000.librarykata.eventdriven.context.account.domain.AccountRepository
+import com.github.caay2000.librarykata.eventdriven.context.account.domain.LoanRepository
 import com.github.caay2000.librarykata.eventdriven.context.account.primaryadapter.http.transformer.AccountDocumentTransformer
 import com.github.caay2000.librarykata.jsonapi.context.account.AccountRequestResource
 import com.github.caay2000.librarykata.jsonapi.context.account.AccountResource
@@ -40,13 +41,13 @@ class CreateAccountController(
     private val dateProvider: DateProvider,
     accountRepository: AccountRepository,
     eventPublisher: DomainEventPublisher,
-//    loanRepository: LoanRepository,
+    loanRepository: LoanRepository,
 ) : Controller {
     override val logger: KLogger = KotlinLogging.logger {}
 
     private val commandHandler: CommandHandler<CreateAccountCommand> = CreateAccountCommandHandler(accountRepository, eventPublisher)
     private val queryHandler: QueryHandler<FindAccountQuery, FindAccountQueryResponse> = FindAccountQueryHandler(accountRepository)
-    private val transformer: Transformer<Account, JsonApiDocument<AccountResource>> = AccountDocumentTransformer()
+    private val transformer: Transformer<Account, JsonApiDocument<AccountResource>> = AccountDocumentTransformer(loanRepository)
 
     override suspend fun handle(call: ApplicationCall) {
         val request = call.receive<JsonApiRequestDocument<AccountRequestResource>>()

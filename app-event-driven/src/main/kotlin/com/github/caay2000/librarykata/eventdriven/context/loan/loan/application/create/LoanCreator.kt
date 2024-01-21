@@ -4,6 +4,7 @@ import arrow.core.Either
 import arrow.core.flatMap
 import arrow.core.left
 import arrow.core.right
+import com.github.caay2000.common.event.DomainEventPublisher
 import com.github.caay2000.librarykata.eventdriven.context.loan.account.domain.AccountId
 import com.github.caay2000.librarykata.eventdriven.context.loan.account.domain.AccountRepository
 import com.github.caay2000.librarykata.eventdriven.context.loan.book.domain.Book
@@ -18,6 +19,7 @@ class LoanCreator(
     private val accountRepository: AccountRepository,
     private val bookRepository: BookRepository,
     private val loanRepository: LoanRepository,
+    private val eventPublisher: DomainEventPublisher,
 ) {
     fun invoke(
         loanId: LoanId,
@@ -37,6 +39,7 @@ class LoanCreator(
                 )
             }
             .map { loan -> loanRepository.save(loan) }
+            .map { loan -> eventPublisher.publish(loan.pullEvents()) }
 
     private fun guardAccountCurrentLoans(accountId: AccountId): Either<LoanCreatorError, Unit> {
         val account = accountRepository.find(accountId)

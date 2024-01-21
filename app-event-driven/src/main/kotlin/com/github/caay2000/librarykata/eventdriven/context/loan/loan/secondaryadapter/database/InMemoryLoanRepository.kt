@@ -9,9 +9,7 @@ import com.github.caay2000.librarykata.eventdriven.context.loan.loan.domain.Sear
 import com.github.caay2000.memorydb.InMemoryDatasource
 
 class InMemoryLoanRepository(private val datasource: InMemoryDatasource) : LoanRepository {
-    override fun save(loan: Loan) {
-        datasource.save(TABLE_NAME, loan.id.value, loan)
-    }
+    override fun save(loan: Loan) = datasource.save(TABLE_NAME, loan.id.value, loan)
 
     override fun find(criteria: FindLoanCriteria): Either<RepositoryError, Loan> =
         Either.catch {

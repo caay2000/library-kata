@@ -1,25 +1,31 @@
 package com.github.caay2000.librarykata.eventdriven.context.account.primaryadapter.http.transformer
 
+import com.github.caay2000.common.cqrs.QueryHandler
 import com.github.caay2000.common.http.Transformer
 import com.github.caay2000.common.http.shouldProcess
 import com.github.caay2000.common.jsonapi.JsonApiDocument
+import com.github.caay2000.librarykata.eventdriven.context.account.application.loan.search.SearchLoanQuery
+import com.github.caay2000.librarykata.eventdriven.context.account.application.loan.search.SearchLoanQueryHandler
+import com.github.caay2000.librarykata.eventdriven.context.account.application.loan.search.SearchLoanQueryResponse
 import com.github.caay2000.librarykata.eventdriven.context.account.domain.Account
-import com.github.caay2000.librarykata.eventdriven.context.loan.loan.domain.Loan
+import com.github.caay2000.librarykata.eventdriven.context.account.domain.Loan
+import com.github.caay2000.librarykata.eventdriven.context.account.domain.LoanRepository
 import com.github.caay2000.librarykata.eventdriven.context.loan.loan.primaryadapter.http.serialization.LoanIncludeTransformer
-import com.github.caay2000.librarykata.eventdriven.context.loan.loan.primaryadapter.http.serialization.LoanRelationshipTransformer
 import com.github.caay2000.librarykata.jsonapi.context.account.AccountResource
 import com.github.caay2000.librarykata.jsonapi.context.loan.LoanResource
+import com.github.caay2000.librarykata.jsonapi.transformer.RelationshipIdentifier
+import com.github.caay2000.librarykata.jsonapi.transformer.RelationshipTransformer
 
-class AccountDocumentTransformer : Transformer<Account, JsonApiDocument<AccountResource>> {
-//    private val loanQueryHandler: QueryHandler<SearchLoanQuery, SearchLoanQueryResponse> = SearchLoanQueryHandler(loanRepository)
+class AccountDocumentTransformer(loanRepository: LoanRepository) : Transformer<Account, JsonApiDocument<AccountResource>> {
+    private val loanQueryHandler: QueryHandler<SearchLoanQuery, SearchLoanQueryResponse> = SearchLoanQueryHandler(loanRepository)
 
     override fun invoke(
         value: Account,
         include: List<String>,
     ): JsonApiDocument<AccountResource> {
         // TODO When the Account is brand new, this query is not needed, as it won't have any relationship
-//        val loans = loanQueryHandler.invoke(SearchLoanQuery.SearchLoanByAccountIdQuery(value.id.value)).value
-        return value.toJsonApiAccountDocument(emptyList(), include)
+        val loans = loanQueryHandler.invoke(SearchLoanQuery(value.id)).accounts
+        return value.toJsonApiAccountDocument(loans, include)
     }
 }
 
@@ -28,7 +34,7 @@ fun Account.toJsonApiAccountDocument(
     include: List<String> = emptyList(),
 ) = JsonApiDocument(
     data = toJsonApiAccountResource(loans),
-    included = if (include.shouldProcess(LoanResource.TYPE)) LoanIncludeTransformer().invoke(loans) else null,
+    included = if (include.shouldProcess(LoanResource.TYPE)) LoanIncludeTransformer().invoke(emptyList()) else null,
 )
 
 internal fun Account.toJsonApiAccountResource(loans: Collection<Loan> = emptyList()) =
@@ -36,7 +42,7 @@ internal fun Account.toJsonApiAccountResource(loans: Collection<Loan> = emptyLis
         id = id.value,
         type = AccountResource.TYPE,
         attributes = toJsonApiAccountAttributes(),
-        relationships = LoanRelationshipTransformer().invoke(loans.filter { it.accountId.value == id.value }),
+        relationships = RelationshipTransformer().invoke(loans.map { RelationshipIdentifier(it.id.value, LoanResource.TYPE) }),
     )
 
 internal fun Account.toJsonApiAccountAttributes() =

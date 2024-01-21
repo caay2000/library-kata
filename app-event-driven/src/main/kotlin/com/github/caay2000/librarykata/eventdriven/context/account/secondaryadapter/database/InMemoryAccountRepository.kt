@@ -35,6 +35,6 @@ class InMemoryAccountRepository(private val datasource: InMemoryDatasource) : Ac
         }
 
     companion object {
-        private const val TABLE_NAME = "account"
+        private const val TABLE_NAME = "account.account"
     }
 }

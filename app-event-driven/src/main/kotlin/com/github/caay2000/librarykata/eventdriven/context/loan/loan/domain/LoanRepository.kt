@@ -7,7 +7,7 @@ import com.github.caay2000.librarykata.eventdriven.context.book.domain.BookId
 import com.github.caay2000.librarykata.eventdriven.context.book.domain.BookIsbn
 
 interface LoanRepository {
-    fun save(loan: Loan)
+    fun save(loan: Loan): Loan
 
     fun find(criteria: FindLoanCriteria): Either<RepositoryError, Loan>
 

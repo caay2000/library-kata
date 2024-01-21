@@ -3,6 +3,7 @@ package com.github.caay2000.librarykata.eventdriven.context.loan.loan.primaryada
 import com.github.caay2000.common.cqrs.CommandHandler
 import com.github.caay2000.common.cqrs.QueryHandler
 import com.github.caay2000.common.dateprovider.DateProvider
+import com.github.caay2000.common.event.DomainEventPublisher
 import com.github.caay2000.common.http.ContentType
 import com.github.caay2000.common.http.Controller
 import com.github.caay2000.common.http.Transformer
@@ -42,10 +43,11 @@ class CreateLoanController(
     accountRepository: AccountRepository,
     bookRepository: BookRepository,
     loanRepository: LoanRepository,
+    eventPublisher: DomainEventPublisher,
 ) : Controller {
     override val logger: KLogger = KotlinLogging.logger {}
 
-    private val commandHandler: CommandHandler<CreateLoanCommand> = CreateLoanCommandHandler(accountRepository, bookRepository, loanRepository)
+    private val commandHandler: CommandHandler<CreateLoanCommand> = CreateLoanCommandHandler(accountRepository, bookRepository, loanRepository, eventPublisher)
     private val loanQueryHandler: QueryHandler<FindLoanQuery, FindLoanQueryResponse> = FindLoanHandler(loanRepository)
     private val transformer: Transformer<Loan, JsonApiDocument<LoanResource>> = LoanDocumentTransformer(accountRepository, bookRepository)
 

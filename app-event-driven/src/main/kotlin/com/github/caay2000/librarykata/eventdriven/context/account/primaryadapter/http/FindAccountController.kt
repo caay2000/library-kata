@@ -16,6 +16,7 @@ import com.github.caay2000.librarykata.eventdriven.context.account.application.f
 import com.github.caay2000.librarykata.eventdriven.context.account.domain.Account
 import com.github.caay2000.librarykata.eventdriven.context.account.domain.AccountId
 import com.github.caay2000.librarykata.eventdriven.context.account.domain.AccountRepository
+import com.github.caay2000.librarykata.eventdriven.context.account.domain.LoanRepository
 import com.github.caay2000.librarykata.eventdriven.context.account.primaryadapter.http.transformer.AccountDocumentTransformer
 import com.github.caay2000.librarykata.jsonapi.context.account.AccountResource
 import io.github.smiley4.ktorswaggerui.dsl.OpenApiRoute
@@ -29,11 +30,12 @@ import java.util.UUID
 
 class FindAccountController(
     accountRepository: AccountRepository,
+    loanRepository: LoanRepository,
 ) : Controller {
     override val logger: KLogger = KotlinLogging.logger {}
 
     private val accountQueryHandler: QueryHandler<FindAccountQuery, FindAccountQueryResponse> = FindAccountQueryHandler(accountRepository)
-    private val transformer: Transformer<Account, JsonApiDocument<AccountResource>> = AccountDocumentTransformer()
+    private val transformer: Transformer<Account, JsonApiDocument<AccountResource>> = AccountDocumentTransformer(loanRepository)
 
     override suspend fun handle(call: ApplicationCall) {
         val accountId = AccountId(UUID.fromString(call.parameters["id"]!!).toString())

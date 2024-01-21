@@ -1,8 +1,8 @@
 package com.github.caay2000.librarykata.eventdriven.context.account.domain
 
 data class Loan(
+    val id: LoanId,
     val accountId: AccountId,
-    val loanId: LoanId,
     val bookId: BookId,
 )
 

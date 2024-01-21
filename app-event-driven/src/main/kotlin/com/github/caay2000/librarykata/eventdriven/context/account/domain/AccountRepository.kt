@@ -30,13 +30,6 @@ sealed class SearchAccountCriteria {
     data class ByEmail(val email: Email) : SearchAccountCriteria()
 }
 
-fun <E> AccountRepository.saveOrElse(
-    account: Account,
-    onError: (Throwable) -> E = { throw it },
-): Either<E, Account> =
-    Either.catch { save(account) }
-        .mapLeft { onError(it) }.map { account }
-
 fun <E> AccountRepository.findOrElse(
     criteria: FindAccountCriteria,
     onResourceDoesNotExist: (Throwable) -> E = { throw it },

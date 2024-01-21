@@ -7,6 +7,8 @@ import com.github.caay2000.common.event.subscribe
 import com.github.caay2000.common.eventbus.EventBus
 import com.github.caay2000.common.idgenerator.UUIDGenerator
 import com.github.caay2000.dikt.DiKt
+import com.github.caay2000.librarykata.eventdriven.context.account.primaryadapter.event.CreateLoanOnLoanCreatedEventSubscriber
+import com.github.caay2000.librarykata.eventdriven.context.account.primaryadapter.event.IncreaseLoansOnLoanCreatedEventSubscriber
 import com.github.caay2000.librarykata.eventdriven.context.account.primaryadapter.http.CreateAccountController
 import com.github.caay2000.librarykata.eventdriven.context.account.primaryadapter.http.FindAccountController
 import com.github.caay2000.librarykata.eventdriven.context.account.primaryadapter.http.SearchAccountController
@@ -23,6 +25,9 @@ import com.github.caay2000.librarykata.eventdriven.context.loan.loan.primaryadap
 import com.github.caay2000.librarykata.eventdriven.context.loan.loan.secondaryadapter.database.InMemoryLoanRepository
 import com.github.caay2000.memorydb.InMemoryDatasource
 import io.ktor.server.application.createApplicationPlugin
+import com.github.caay2000.librarykata.eventdriven.context.account.secondaryadapter.database.InMemoryLoanRepository as InMemoryLoanRepositoryAccountContext
+import com.github.caay2000.librarykata.eventdriven.context.loan.account.secondaryadapter.database.InMemoryAccountRepository as InMemoryAccountRepositoryLoanContext
+import com.github.caay2000.librarykata.eventdriven.context.loan.book.secondaryadapter.database.InMemoryBookRepository as InMemoryBookRepositoryLoanContext
 
 val DependencyInjectionConfiguration =
     createApplicationPlugin(name = "DependencyInjectionConfiguration") {
@@ -35,21 +40,20 @@ val DependencyInjectionConfiguration =
         DiKt.register { InMemoryBookRepository(DiKt.bind()) }
         DiKt.register { InMemoryLoanRepository(DiKt.bind()) }
 
-        DiKt.register {
-            com.github.caay2000.librarykata.eventdriven.context.loan.account.secondaryadapter.database.InMemoryAccountRepository(
-                DiKt.bind(),
-            )
-        }
-        DiKt.register { com.github.caay2000.librarykata.eventdriven.context.loan.book.secondaryadapter.database.InMemoryBookRepository(DiKt.bind()) }
+        DiKt.register { InMemoryLoanRepositoryAccountContext(DiKt.bind()) }
+        DiKt.register { InMemoryAccountRepositoryLoanContext(DiKt.bind()) }
+        DiKt.register { InMemoryBookRepositoryLoanContext(DiKt.bind()) }
 
         DiKt.register { EventBus(numPartitions = 3) }
         DiKt.register { AsyncDomainEventBus(DiKt.bind()) }
         DiKt.get<DomainEventBus>()
+            .subscribe(CreateLoanOnLoanCreatedEventSubscriber(DiKt.bind()))
+            .subscribe(IncreaseLoansOnLoanCreatedEventSubscriber(DiKt.bind()))
             .subscribe(CreateAccountOnAccountCreatedEventSubscriber(DiKt.bind()))
             .subscribe(CreateBookOnBookCreatedEventSubscriber(DiKt.bind()))
 
-        DiKt.register { CreateAccountController(DiKt.bind(), DiKt.bind(), DiKt.bind(), DiKt.bind()) }
-        DiKt.register { FindAccountController(DiKt.bind()) }
+        DiKt.register { CreateAccountController(DiKt.bind(), DiKt.bind(), DiKt.bind(), DiKt.bind(), DiKt.bind()) }
+        DiKt.register { FindAccountController(DiKt.bind(), DiKt.bind()) }
         DiKt.register { SearchAccountController(DiKt.bind()) }
 
         DiKt.register { CreateBookController(DiKt.bind(), DiKt.bind(), DiKt.bind()) }
@@ -57,7 +61,7 @@ val DependencyInjectionConfiguration =
         DiKt.register { SearchBookController(DiKt.bind()) }
 
         DiKt.register { FindLoanController(DiKt.bind(), DiKt.bind(), DiKt.bind()) }
-        DiKt.register { CreateLoanController(DiKt.bind(), DiKt.bind(), DiKt.bind(), DiKt.bind(), DiKt.bind()) }
+        DiKt.register { CreateLoanController(DiKt.bind(), DiKt.bind(), DiKt.bind(), DiKt.bind(), DiKt.bind(), DiKt.bind()) }
         DiKt.register { FinishLoanController(DiKt.bind(), DiKt.bind()) }
 
 //        DiKt.register { InMemoryDatasource() }
