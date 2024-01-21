@@ -101,7 +101,7 @@ class FindAccountControllerTest {
             testUseCases.`loan is finished`(bookId = BookId(anotherBook.id.value), finishedAt = anotherLoan.finishedAt)
 
             val expectedAccount = account.copy(currentLoans = CurrentLoans(1), totalLoans = TotalLoans(2))
-            val expected = AccountDocumentMother.random(expectedAccount, listOf(loan, anotherLoan), listOf("loan"))
+            val expected = AccountDocumentMother.random(expectedAccount, listOf(loan), listOf("loan"))
             testUseCases.`find account`(account.id, listOf("loan"))
                 .assertStatus(HttpStatusCode.OK)
                 .assertJsonApiResponse(expected)

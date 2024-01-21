@@ -8,7 +8,9 @@ import com.github.caay2000.common.eventbus.EventBus
 import com.github.caay2000.common.idgenerator.UUIDGenerator
 import com.github.caay2000.dikt.DiKt
 import com.github.caay2000.librarykata.eventdriven.context.account.primaryadapter.event.CreateLoanOnLoanCreatedEventSubscriber
+import com.github.caay2000.librarykata.eventdriven.context.account.primaryadapter.event.DecreaseLoansOnLoanCreatedEventSubscriber
 import com.github.caay2000.librarykata.eventdriven.context.account.primaryadapter.event.IncreaseLoansOnLoanCreatedEventSubscriber
+import com.github.caay2000.librarykata.eventdriven.context.account.primaryadapter.event.RemoveLoanOnLoanFinishedEventSubscriber
 import com.github.caay2000.librarykata.eventdriven.context.account.primaryadapter.http.CreateAccountController
 import com.github.caay2000.librarykata.eventdriven.context.account.primaryadapter.http.FindAccountController
 import com.github.caay2000.librarykata.eventdriven.context.account.primaryadapter.http.SearchAccountController
@@ -48,7 +50,9 @@ val DependencyInjectionConfiguration =
         DiKt.register { AsyncDomainEventBus(DiKt.bind()) }
         DiKt.get<DomainEventBus>()
             .subscribe(CreateLoanOnLoanCreatedEventSubscriber(DiKt.bind()))
+            .subscribe(RemoveLoanOnLoanFinishedEventSubscriber(DiKt.bind()))
             .subscribe(IncreaseLoansOnLoanCreatedEventSubscriber(DiKt.bind()))
+            .subscribe(DecreaseLoansOnLoanCreatedEventSubscriber(DiKt.bind()))
             .subscribe(CreateAccountOnAccountCreatedEventSubscriber(DiKt.bind()))
             .subscribe(CreateBookOnBookCreatedEventSubscriber(DiKt.bind()))
 
@@ -62,7 +66,7 @@ val DependencyInjectionConfiguration =
 
         DiKt.register { FindLoanController(DiKt.bind(), DiKt.bind(), DiKt.bind()) }
         DiKt.register { CreateLoanController(DiKt.bind(), DiKt.bind(), DiKt.bind(), DiKt.bind(), DiKt.bind(), DiKt.bind()) }
-        DiKt.register { FinishLoanController(DiKt.bind(), DiKt.bind()) }
+        DiKt.register { FinishLoanController(DiKt.bind(), DiKt.bind(), DiKt.bind()) }
 
 //        DiKt.register { InMemoryDatasource() }
 //        // Account Context

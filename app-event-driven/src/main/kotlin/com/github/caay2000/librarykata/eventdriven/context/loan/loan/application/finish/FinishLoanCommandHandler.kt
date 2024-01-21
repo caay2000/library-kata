@@ -3,6 +3,7 @@ package com.github.caay2000.librarykata.eventdriven.context.loan.loan.applicatio
 import com.github.caay2000.common.arrow.getOrThrow
 import com.github.caay2000.common.cqrs.Command
 import com.github.caay2000.common.cqrs.CommandHandler
+import com.github.caay2000.common.event.DomainEventPublisher
 import com.github.caay2000.librarykata.eventdriven.context.book.domain.BookId
 import com.github.caay2000.librarykata.eventdriven.context.loan.loan.domain.FinishedAt
 import com.github.caay2000.librarykata.eventdriven.context.loan.loan.domain.LoanRepository
@@ -13,11 +14,12 @@ import java.util.UUID
 
 class FinishLoanCommandHandler(
     loanRepository: LoanRepository,
+    eventPublisher: DomainEventPublisher,
 ) : CommandHandler<FinishLoanCommand> {
     override val logger: KLogger = KotlinLogging.logger {}
-    private val finisher = LoanFinisher(loanRepository)
+    private val finisher = LoanFinisher(loanRepository, eventPublisher)
 
-    override fun handle(command: FinishLoanCommand): Unit = finisher.invoke(bookId = BookId(command.bookId.toString()), finishedAt = FinishedAt(command.finishedAt)).getOrThrow()
+    override fun handle(command: FinishLoanCommand) = finisher.invoke(bookId = BookId(command.bookId.toString()), finishedAt = FinishedAt(command.finishedAt)).getOrThrow()
 }
 
 data class FinishLoanCommand(

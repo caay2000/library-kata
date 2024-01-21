@@ -1,6 +1,7 @@
 package com.github.caay2000.librarykata.eventdriven.context.loan.loan.primaryadapter.http
 
 import com.github.caay2000.common.dateprovider.DateProvider
+import com.github.caay2000.common.event.DomainEventPublisher
 import com.github.caay2000.common.http.Controller
 import com.github.caay2000.common.jsonapi.ServerResponse
 import com.github.caay2000.common.jsonapi.documentation.errorResponses
@@ -20,10 +21,11 @@ import java.util.UUID
 class FinishLoanController(
     private val dateProvider: DateProvider,
     loanRepository: LoanRepository,
+    eventPublisher: DomainEventPublisher,
 ) : Controller {
     override val logger: KLogger = KotlinLogging.logger {}
 
-    private val commandHandler = FinishLoanCommandHandler(loanRepository)
+    private val commandHandler = FinishLoanCommandHandler(loanRepository, eventPublisher)
 
     override suspend fun handle(call: ApplicationCall) {
         val bookId = UUID.fromString(call.parameters["bookId"])
