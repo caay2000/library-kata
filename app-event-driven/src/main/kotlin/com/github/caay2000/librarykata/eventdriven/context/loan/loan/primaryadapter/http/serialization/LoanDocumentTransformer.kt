@@ -6,8 +6,6 @@ import com.github.caay2000.common.http.shouldProcess
 import com.github.caay2000.common.jsonapi.JsonApiDocument
 import com.github.caay2000.common.jsonapi.JsonApiIncludedResource
 import com.github.caay2000.common.jsonapi.JsonApiRelationshipData
-import com.github.caay2000.librarykata.eventdriven.context.account.primaryadapter.http.transformer.AccountRelationshipTransformer
-import com.github.caay2000.librarykata.eventdriven.context.book.primaryadapter.http.transformer.BookRelationshipTransformer
 import com.github.caay2000.librarykata.eventdriven.context.loan.account.application.find.FindAccountQuery
 import com.github.caay2000.librarykata.eventdriven.context.loan.account.application.find.FindAccountQueryHandler
 import com.github.caay2000.librarykata.eventdriven.context.loan.account.application.find.FindAccountQueryResponse
@@ -24,6 +22,8 @@ import com.github.caay2000.librarykata.eventdriven.context.loan.loan.domain.Loan
 import com.github.caay2000.librarykata.jsonapi.context.account.AccountResource
 import com.github.caay2000.librarykata.jsonapi.context.book.BookResource
 import com.github.caay2000.librarykata.jsonapi.context.loan.LoanResource
+import com.github.caay2000.librarykata.jsonapi.transformer.RelationshipIdentifier
+import com.github.caay2000.librarykata.jsonapi.transformer.RelationshipTransformer
 
 class LoanDocumentTransformer(
     accountRepository: AccountRepository,
@@ -68,13 +68,13 @@ private fun manageLoanRelationships(
 ): Map<String, JsonApiRelationshipData> {
     val map = mutableMapOf<String, JsonApiRelationshipData>()
     if (accountId != null) {
-        val relationship = AccountRelationshipTransformer().invoke(listOf(com.github.caay2000.librarykata.eventdriven.context.account.domain.AccountId(accountId.value)))
+        val relationship = RelationshipTransformer.invoke(RelationshipIdentifier(accountId.value, AccountResource.TYPE))
         if (relationship != null) {
             map.putAll(relationship)
         }
     }
     if (bookId != null) {
-        val relationship = BookRelationshipTransformer().invoke(listOf(com.github.caay2000.librarykata.eventdriven.context.book.domain.BookId(bookId.value)))
+        val relationship = RelationshipTransformer.invoke(RelationshipIdentifier(bookId.value, BookResource.TYPE))
         if (relationship != null) {
             map.putAll(relationship)
         }

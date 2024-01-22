@@ -128,7 +128,7 @@ class TestUseCases(
         copies: Int,
     ) {
         repeat(copies) { index ->
-            if (index == 1) {
+            if (index == 0) {
                 `book is created`(book)
             } else {
                 `book is created`(book, id = BookIdMother.random())

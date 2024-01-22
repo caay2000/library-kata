@@ -5,7 +5,12 @@ import com.github.caay2000.common.jsonapi.JsonApiRelationshipData
 import com.github.caay2000.common.jsonapi.JsonApiRelationshipIdentifier
 import com.github.caay2000.librarykata.jsonapi.context.loan.LoanResource
 
-class RelationshipTransformer : Transformer<Collection<RelationshipIdentifier>, Map<String, JsonApiRelationshipData>?> {
+object RelationshipTransformer : Transformer<Collection<RelationshipIdentifier>, Map<String, JsonApiRelationshipData>?> {
+    fun invoke(
+        value: RelationshipIdentifier,
+        include: List<String> = emptyList(),
+    ): Map<String, JsonApiRelationshipData>? = this.invoke(listOf(value), include)
+
     override fun invoke(
         value: Collection<RelationshipIdentifier>,
         include: List<String>,
@@ -21,8 +26,3 @@ class RelationshipTransformer : Transformer<Collection<RelationshipIdentifier>, 
             )
         }
 }
-
-data class RelationshipIdentifier(
-    val id: String,
-    val type: String,
-)

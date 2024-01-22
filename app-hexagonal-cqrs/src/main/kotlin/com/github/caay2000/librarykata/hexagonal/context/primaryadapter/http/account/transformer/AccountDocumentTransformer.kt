@@ -10,10 +10,12 @@ import com.github.caay2000.librarykata.hexagonal.context.application.loan.search
 import com.github.caay2000.librarykata.hexagonal.context.domain.account.Account
 import com.github.caay2000.librarykata.hexagonal.context.domain.loan.Loan
 import com.github.caay2000.librarykata.hexagonal.context.domain.loan.LoanRepository
-import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.loan.serialization.LoanIncludeTransformer
-import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.loan.serialization.LoanRelationshipTransformer
+import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.loan.serialization.toJsonApiLoanResource
 import com.github.caay2000.librarykata.jsonapi.context.account.AccountResource
 import com.github.caay2000.librarykata.jsonapi.context.loan.LoanResource
+import com.github.caay2000.librarykata.jsonapi.transformer.IncludeTransformer
+import com.github.caay2000.librarykata.jsonapi.transformer.RelationshipIdentifier
+import com.github.caay2000.librarykata.jsonapi.transformer.RelationshipTransformer
 
 class AccountDocumentTransformer(loanRepository: LoanRepository) : Transformer<Account, JsonApiDocument<AccountResource>> {
     private val loanQueryHandler: QueryHandler<SearchLoanQuery, SearchLoanQueryResponse> = SearchLoanQueryHandler(loanRepository)
@@ -33,7 +35,7 @@ fun Account.toJsonApiAccountDocument(
     include: List<String> = emptyList(),
 ) = JsonApiDocument(
     data = toJsonApiAccountResource(loans),
-    included = if (include.shouldProcess(LoanResource.TYPE)) LoanIncludeTransformer().invoke(loans) else null,
+    included = if (include.shouldProcess(LoanResource.TYPE)) IncludeTransformer.invoke(loans.map { it.toJsonApiLoanResource() }) else null,
 )
 
 internal fun Account.toJsonApiAccountResource(loans: Collection<Loan> = emptyList()) =
@@ -41,7 +43,11 @@ internal fun Account.toJsonApiAccountResource(loans: Collection<Loan> = emptyLis
         id = id.value,
         type = AccountResource.TYPE,
         attributes = toJsonApiAccountAttributes(),
-        relationships = LoanRelationshipTransformer().invoke(loans.filter { it.accountId == id }),
+        relationships =
+            RelationshipTransformer.invoke(
+                loans.filter { it.accountId == id }
+                    .map { RelationshipIdentifier(it.id.value, LoanResource.TYPE) },
+            ),
     )
 
 internal fun Account.toJsonApiAccountAttributes() =

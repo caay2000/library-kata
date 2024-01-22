@@ -28,13 +28,6 @@ sealed class SearchLoanCriteria {
     class ByBookIsbn(val bookIsbn: BookIsbn) : SearchLoanCriteria()
 }
 
-fun <E> LoanRepository.saveOrElse(
-    loan: Loan,
-    onError: (Throwable) -> E = { throw it },
-): Either<E, Loan> =
-    Either.catch { save(loan) }
-        .mapLeft { onError(it) }.map { loan }
-
 fun <E> LoanRepository.findOrElse(
     criteria: FindLoanCriteria,
     onResourceDoesNotExist: (Throwable) -> E = { throw it },

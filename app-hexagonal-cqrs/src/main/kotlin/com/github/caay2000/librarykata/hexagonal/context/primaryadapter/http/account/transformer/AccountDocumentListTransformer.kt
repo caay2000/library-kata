@@ -11,9 +11,10 @@ import com.github.caay2000.librarykata.hexagonal.context.application.loan.search
 import com.github.caay2000.librarykata.hexagonal.context.domain.account.Account
 import com.github.caay2000.librarykata.hexagonal.context.domain.loan.Loan
 import com.github.caay2000.librarykata.hexagonal.context.domain.loan.LoanRepository
-import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.loan.serialization.LoanIncludeTransformer
+import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.loan.serialization.toJsonApiLoanResource
 import com.github.caay2000.librarykata.jsonapi.context.account.AccountResource
 import com.github.caay2000.librarykata.jsonapi.context.loan.LoanResource
+import com.github.caay2000.librarykata.jsonapi.transformer.IncludeTransformer
 
 class AccountDocumentListTransformer(loanRepository: LoanRepository) : Transformer<List<Account>, JsonApiDocumentList<AccountResource>> {
     private val loanQueryHandler: QueryHandler<SearchLoanQuery, SearchLoanQueryResponse> = SearchLoanQueryHandler(loanRepository)
@@ -32,6 +33,6 @@ fun List<Account>.toJsonApiAccountDocumentList(
     include: List<String> = emptyList(),
 ) = JsonApiDocumentList(
     data = map { it.toJsonApiAccountResource(loans) },
-    included = if (include.shouldProcess(LoanResource.TYPE)) LoanIncludeTransformer().invoke(loans) else null,
+    included = if (include.shouldProcess(LoanResource.TYPE)) IncludeTransformer.invoke(loans.map { it.toJsonApiLoanResource() }) else null,
     meta = JsonApiMeta(total = size),
 )

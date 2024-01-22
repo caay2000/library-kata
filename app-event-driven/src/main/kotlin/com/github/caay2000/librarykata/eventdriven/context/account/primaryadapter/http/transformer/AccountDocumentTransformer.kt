@@ -10,9 +10,9 @@ import com.github.caay2000.librarykata.eventdriven.context.account.application.l
 import com.github.caay2000.librarykata.eventdriven.context.account.domain.Account
 import com.github.caay2000.librarykata.eventdriven.context.account.domain.Loan
 import com.github.caay2000.librarykata.eventdriven.context.account.domain.LoanRepository
-import com.github.caay2000.librarykata.eventdriven.context.loan.loan.primaryadapter.http.serialization.LoanIncludeTransformer
 import com.github.caay2000.librarykata.jsonapi.context.account.AccountResource
 import com.github.caay2000.librarykata.jsonapi.context.loan.LoanResource
+import com.github.caay2000.librarykata.jsonapi.transformer.IncludeTransformer
 import com.github.caay2000.librarykata.jsonapi.transformer.RelationshipIdentifier
 import com.github.caay2000.librarykata.jsonapi.transformer.RelationshipTransformer
 
@@ -34,7 +34,7 @@ fun Account.toJsonApiAccountDocument(
     include: List<String> = emptyList(),
 ) = JsonApiDocument(
     data = toJsonApiAccountResource(loans),
-    included = if (include.shouldProcess(LoanResource.TYPE)) LoanIncludeTransformer().invoke(emptyList()) else null,
+    included = if (include.shouldProcess(LoanResource.TYPE)) IncludeTransformer.invoke(emptyList()) else null,
 )
 
 internal fun Account.toJsonApiAccountResource(loans: Collection<Loan> = emptyList()) =
@@ -42,7 +42,7 @@ internal fun Account.toJsonApiAccountResource(loans: Collection<Loan> = emptyLis
         id = id.value,
         type = AccountResource.TYPE,
         attributes = toJsonApiAccountAttributes(),
-        relationships = RelationshipTransformer().invoke(loans.map { RelationshipIdentifier(it.id.value, LoanResource.TYPE) }),
+        relationships = RelationshipTransformer.invoke(loans.map { RelationshipIdentifier(it.id.value, LoanResource.TYPE) }),
     )
 
 internal fun Account.toJsonApiAccountAttributes() =

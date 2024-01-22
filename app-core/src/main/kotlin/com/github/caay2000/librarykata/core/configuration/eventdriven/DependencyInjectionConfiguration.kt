@@ -29,6 +29,8 @@ import com.github.caay2000.librarykata.eventdriven.context.loan.loan.secondaryad
 import com.github.caay2000.memorydb.InMemoryDatasource
 import io.ktor.server.application.createApplicationPlugin
 import com.github.caay2000.librarykata.eventdriven.context.account.secondaryadapter.database.InMemoryLoanRepository as InMemoryLoanRepositoryAccountContext
+import com.github.caay2000.librarykata.eventdriven.context.loan.account.primaryadapter.event.DecreaseLoansOnLoanCreatedEventSubscriber as LoanDecreaseLoansOnLoanCreatedEventSubscriber
+import com.github.caay2000.librarykata.eventdriven.context.loan.account.primaryadapter.event.IncreaseLoansOnLoanCreatedEventSubscriber as LoanIncreaseLoansOnLoanCreatedEventSubscriber
 import com.github.caay2000.librarykata.eventdriven.context.loan.account.secondaryadapter.database.InMemoryAccountRepository as InMemoryAccountRepositoryLoanContext
 import com.github.caay2000.librarykata.eventdriven.context.loan.book.secondaryadapter.database.InMemoryBookRepository as InMemoryBookRepositoryLoanContext
 
@@ -56,6 +58,8 @@ val DependencyInjectionConfiguration =
             .subscribe(DecreaseLoansOnLoanCreatedEventSubscriber(DiKt.bind()))
             .subscribe(CreateAccountOnAccountCreatedEventSubscriber(DiKt.bind()))
             .subscribe(CreateBookOnBookCreatedEventSubscriber(DiKt.bind()))
+            .subscribe(LoanIncreaseLoansOnLoanCreatedEventSubscriber(DiKt.bind()))
+            .subscribe(LoanDecreaseLoansOnLoanCreatedEventSubscriber(DiKt.bind()))
             .init()
 
         DiKt.register { CreateAccountController(DiKt.bind(), DiKt.bind(), DiKt.bind(), DiKt.bind(), DiKt.bind()) }

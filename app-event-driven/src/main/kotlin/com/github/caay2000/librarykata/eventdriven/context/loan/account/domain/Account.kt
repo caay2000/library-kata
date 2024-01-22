@@ -10,6 +10,10 @@ data class Account(
         fun create(accountId: AccountId) = Account(accountId, CurrentLoans(0))
     }
 
+    fun increaseLoans(): Account = copy(currentLoans = currentLoans.increase())
+
+    fun decreaseLoans(): Account = copy(currentLoans = currentLoans.decrease())
+
     fun hasReachedLoanLimit(): Boolean = currentLoans.value >= 5
 }
 

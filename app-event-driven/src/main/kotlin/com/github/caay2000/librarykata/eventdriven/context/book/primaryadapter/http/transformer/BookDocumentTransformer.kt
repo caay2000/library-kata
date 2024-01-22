@@ -5,10 +5,12 @@ import com.github.caay2000.common.http.shouldProcess
 import com.github.caay2000.common.jsonapi.JsonApiDocument
 import com.github.caay2000.librarykata.eventdriven.context.book.domain.Book
 import com.github.caay2000.librarykata.eventdriven.context.loan.loan.domain.Loan
-import com.github.caay2000.librarykata.eventdriven.context.loan.loan.primaryadapter.http.serialization.LoanIncludeTransformer
-import com.github.caay2000.librarykata.eventdriven.context.loan.loan.primaryadapter.http.serialization.LoanRelationshipTransformer
+import com.github.caay2000.librarykata.eventdriven.context.loan.loan.primaryadapter.http.serialization.toJsonApiLoanResource
 import com.github.caay2000.librarykata.jsonapi.context.book.BookResource
 import com.github.caay2000.librarykata.jsonapi.context.loan.LoanResource
+import com.github.caay2000.librarykata.jsonapi.transformer.IncludeTransformer
+import com.github.caay2000.librarykata.jsonapi.transformer.RelationshipIdentifier
+import com.github.caay2000.librarykata.jsonapi.transformer.RelationshipTransformer
 
 class BookDocumentTransformer() : Transformer<Book, JsonApiDocument<BookResource>> {
 //    private val loanQueryHandler: QueryHandler<SearchLoanQuery, SearchLoanQueryResponse> = SearchLoanQueryHandler(loanRepository)
@@ -28,7 +30,7 @@ fun Book.toJsonApiBookDocument(
     include: List<String> = emptyList(),
 ) = JsonApiDocument(
     data = toJsonApiBookResource(loans),
-    included = if (include.shouldProcess(LoanResource.TYPE)) LoanIncludeTransformer().invoke(loans) else null,
+    included = if (include.shouldProcess(LoanResource.TYPE)) IncludeTransformer.invoke(loans.map { it.toJsonApiLoanResource() }) else null,
 )
 
 internal fun Book.toJsonApiBookResource(loans: List<Loan> = emptyList()) =
@@ -36,7 +38,7 @@ internal fun Book.toJsonApiBookResource(loans: List<Loan> = emptyList()) =
         id = id.value,
         type = BookResource.TYPE,
         attributes = toJsonApiBookAttributes(),
-        relationships = LoanRelationshipTransformer().invoke(loans),
+        relationships = RelationshipTransformer.invoke(loans.map { RelationshipIdentifier(it.id.value, LoanResource.TYPE) }),
     )
 
 internal fun Book.toJsonApiBookAttributes() =

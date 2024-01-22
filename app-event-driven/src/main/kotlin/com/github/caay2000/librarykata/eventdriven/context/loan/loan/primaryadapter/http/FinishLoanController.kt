@@ -16,7 +16,6 @@ import io.ktor.server.application.ApplicationCall
 import io.ktor.server.response.respond
 import mu.KLogger
 import mu.KotlinLogging
-import java.util.UUID
 
 class FinishLoanController(
     private val dateProvider: DateProvider,
@@ -28,7 +27,7 @@ class FinishLoanController(
     private val commandHandler = FinishLoanCommandHandler(loanRepository, eventPublisher)
 
     override suspend fun handle(call: ApplicationCall) {
-        val bookId = UUID.fromString(call.parameters["bookId"])
+        val bookId = call.parameters["bookId"]!!
 
         val datetime = dateProvider.dateTime()
         commandHandler.invoke(FinishLoanCommand(bookId = bookId, finishedAt = datetime))

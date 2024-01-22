@@ -10,7 +10,6 @@ import com.github.caay2000.librarykata.eventdriven.context.loan.loan.domain.Loan
 import mu.KLogger
 import mu.KotlinLogging
 import java.time.LocalDateTime
-import java.util.UUID
 
 class FinishLoanCommandHandler(
     loanRepository: LoanRepository,
@@ -19,10 +18,10 @@ class FinishLoanCommandHandler(
     override val logger: KLogger = KotlinLogging.logger {}
     private val finisher = LoanFinisher(loanRepository, eventPublisher)
 
-    override fun handle(command: FinishLoanCommand) = finisher.invoke(bookId = BookId(command.bookId.toString()), finishedAt = FinishedAt(command.finishedAt)).getOrThrow()
+    override fun handle(command: FinishLoanCommand) = finisher.invoke(bookId = BookId(command.bookId), finishedAt = FinishedAt(command.finishedAt)).getOrThrow()
 }
 
 data class FinishLoanCommand(
-    val bookId: UUID,
+    val bookId: String,
     val finishedAt: LocalDateTime,
 ) : Command
