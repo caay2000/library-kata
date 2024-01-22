@@ -2,38 +2,28 @@ package com.github.caay2000.librarykata.eventdriven.context.book.secondaryadapte
 
 import arrow.core.Either
 import com.github.caay2000.common.database.RepositoryError
-import com.github.caay2000.librarykata.eventdriven.context.book.application.BookRepository
-import com.github.caay2000.librarykata.eventdriven.context.book.application.SearchBookCriteria
+import com.github.caay2000.common.database.mapRepositoryErrors
 import com.github.caay2000.librarykata.eventdriven.context.book.domain.Book
-import com.github.caay2000.librarykata.eventdriven.context.book.domain.BookId
+import com.github.caay2000.librarykata.eventdriven.context.book.domain.BookRepository
+import com.github.caay2000.librarykata.eventdriven.context.book.domain.FindBookCriteria
+import com.github.caay2000.librarykata.eventdriven.context.book.domain.SearchBookCriteria
 import com.github.caay2000.memorydb.InMemoryDatasource
 
 class InMemoryBookRepository(private val datasource: InMemoryDatasource) : BookRepository {
+    override fun save(book: Book) = datasource.save(TABLE_NAME, book.id.value, book)
 
-    override fun save(book: Book): Either<RepositoryError, Unit> =
-        Either.catch { datasource.save(TABLE_NAME, book.id.toString(), book) }
-            .mapLeft { RepositoryError.Unknown(it) }
-            .map { }
+    override fun find(criteria: FindBookCriteria): Either<RepositoryError, Book> =
+        when (criteria) {
+            is FindBookCriteria.ById -> Either.catch { datasource.getById<Book>(TABLE_NAME, criteria.id.value)!! }
+        }.mapRepositoryErrors()
 
-    override fun search(criteria: SearchBookCriteria): Either<RepositoryError, List<Book>> =
-        Either.catch {
-            when (criteria) {
-                SearchBookCriteria.All -> datasource.getAll(TABLE_NAME)
-                is SearchBookCriteria.ByIsbn -> datasource.getAll<Book>(TABLE_NAME).filter { it.isbn == criteria.isbn }
-            }
-        }.mapLeft { RepositoryError.Unknown(it) }
-
-    override fun findById(id: BookId): Either<RepositoryError, Book> =
-        Either.catch { datasource.getById<Book>(TABLE_NAME, id.toString())!! }
-            .mapLeft { error ->
-                when (error) {
-                    is NullPointerException -> RepositoryError.NotFoundError()
-                    is NoSuchElementException -> RepositoryError.NotFoundError()
-                    else -> RepositoryError.Unknown(error)
-                }
-            }
+    override fun search(criteria: SearchBookCriteria): List<Book> =
+        when (criteria) {
+            SearchBookCriteria.All -> datasource.getAll(TABLE_NAME)
+            is SearchBookCriteria.ByIsbn -> datasource.getAll<Book>(TABLE_NAME).filter { it.isbn == criteria.isbn }
+        }
 
     companion object {
-        private const val TABLE_NAME = "book.book"
+        private const val TABLE_NAME = "book"
     }
 }

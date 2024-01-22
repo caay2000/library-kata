@@ -6,9 +6,9 @@ interface CommandHandler<T : Command> {
     val logger: KLogger
 
     fun invoke(command: T) {
-        logger.trace { "processing $command" }
+        logger.info { ">> processing $command" }
         return handle(command).also {
-            logger.info { "processed $command" }
+            logger.info { "<< processed $command" }
         }
     }
 

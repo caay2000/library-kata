@@ -2,6 +2,7 @@ package com.github.caay2000.librarykata.hexagonal.context.domain.account
 
 import java.time.LocalDate
 import java.time.LocalDateTime
+import kotlin.math.max
 
 data class Account(
     val id: AccountId,
@@ -71,7 +72,7 @@ value class RegisterDate(val value: LocalDateTime)
 value class CurrentLoans(val value: Int) {
     internal fun increase(value: Int = 1): CurrentLoans = CurrentLoans(this.value + value)
 
-    internal fun decrease(value: Int = 1): CurrentLoans = CurrentLoans(Math.max(this.value - value, 0))
+    internal fun decrease(value: Int = 1): CurrentLoans = CurrentLoans(max(this.value - value, 0))
 }
 
 @JvmInline

@@ -11,10 +11,13 @@ import com.github.caay2000.librarykata.hexagonal.context.application.loan.search
 import com.github.caay2000.librarykata.hexagonal.context.domain.book.Book
 import com.github.caay2000.librarykata.hexagonal.context.domain.loan.Loan
 import com.github.caay2000.librarykata.hexagonal.context.domain.loan.LoanRepository
-import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.loan.serialization.LoanIncludeTransformer
-import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.loan.serialization.LoanRelationshipTransformer
+import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.loan.serialization.toJsonApiLoanResource
+import com.github.caay2000.librarykata.jsonapi.context.account.AccountResource
 import com.github.caay2000.librarykata.jsonapi.context.book.BookGroupResource
 import com.github.caay2000.librarykata.jsonapi.context.loan.LoanResource
+import com.github.caay2000.librarykata.jsonapi.transformer.IncludeTransformer
+import com.github.caay2000.librarykata.jsonapi.transformer.RelationshipIdentifier
+import com.github.caay2000.librarykata.jsonapi.transformer.RelationshipTransformer
 
 class BookGroupDocumentListTransformer(loanRepository: LoanRepository) : Transformer<List<Book>, JsonApiDocumentList<BookGroupResource>> {
     private val loanQueryHandler: QueryHandler<SearchLoanQuery, SearchLoanQueryResponse> = SearchLoanQueryHandler(loanRepository)
@@ -34,7 +37,7 @@ fun List<Book>.toJsonApiBookGroupDocumentList(
     include: List<String> = emptyList(),
 ) = JsonApiDocumentList(
     data = groupBy { it.isbn }.map { it.value.toJsonApiBookGroupResource(loans) },
-    included = if (include.shouldProcess(LoanResource.TYPE)) LoanIncludeTransformer().invoke(loans) else null,
+    included = if (include.shouldProcess(LoanResource.TYPE)) IncludeTransformer.invoke(loans.map { it.toJsonApiLoanResource() }) else null,
     meta = JsonApiMeta(total = groupBy { it.isbn }.size),
 )
 
@@ -43,7 +46,11 @@ internal fun List<Book>.toJsonApiBookGroupResource(loans: Collection<Loan> = emp
         id = first().isbn.value,
         type = BookGroupResource.TYPE,
         attributes = toJsonApiBookGroupAttributes(),
-        relationships = LoanRelationshipTransformer().invoke(loans.filter { loan -> map { it.id }.contains(loan.bookId) }),
+        relationships =
+            RelationshipTransformer.invoke(
+                loans.filter { loan -> map { it.id }.contains(loan.bookId) }
+                    .map { RelationshipIdentifier(it.id.value, AccountResource.TYPE) },
+            ),
     )
 
 internal fun List<Book>.toJsonApiBookGroupAttributes() =

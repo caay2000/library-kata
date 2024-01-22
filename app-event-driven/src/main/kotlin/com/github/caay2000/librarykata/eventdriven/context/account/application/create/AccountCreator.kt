@@ -3,30 +3,28 @@ package com.github.caay2000.librarykata.eventdriven.context.account.application.
 import arrow.core.Either
 import arrow.core.flatMap
 import arrow.core.left
-import arrow.core.raise.Raise
 import arrow.core.recover
 import arrow.core.right
-import com.github.caay2000.common.database.RepositoryError
 import com.github.caay2000.common.event.DomainEventPublisher
-import com.github.caay2000.librarykata.eventdriven.context.account.application.AccountRepository
-import com.github.caay2000.librarykata.eventdriven.context.account.application.FindAccountCriteria
 import com.github.caay2000.librarykata.eventdriven.context.account.domain.Account
+import com.github.caay2000.librarykata.eventdriven.context.account.domain.AccountRepository
 import com.github.caay2000.librarykata.eventdriven.context.account.domain.CreateAccountRequest
 import com.github.caay2000.librarykata.eventdriven.context.account.domain.Email
+import com.github.caay2000.librarykata.eventdriven.context.account.domain.FindAccountCriteria
 import com.github.caay2000.librarykata.eventdriven.context.account.domain.IdentityNumber
 import com.github.caay2000.librarykata.eventdriven.context.account.domain.PhoneNumber
 import com.github.caay2000.librarykata.eventdriven.context.account.domain.PhonePrefix
+import com.github.caay2000.librarykata.eventdriven.context.account.domain.findOrElse
 
 class AccountCreator(
     private val accountRepository: AccountRepository,
     private val eventPublisher: DomainEventPublisher,
 ) {
-
     fun invoke(request: CreateAccountRequest): Either<AccountCreatorError, Unit> =
         guardAccountCanBeCreated(request)
             .map { Account.create(request) }
-            .flatMap { account -> account.save() }
-            .flatMap { account -> account.publishEvents() }
+            .map { account -> accountRepository.save(account) }
+            .map { account -> eventPublisher.publish(account.pullEvents()) }
 
     private fun guardAccountCanBeCreated(request: CreateAccountRequest): Either<AccountCreatorError, Unit> =
         guardIdentityNumberIsNotRepeated(request.identityNumber)
@@ -34,45 +32,53 @@ class AccountCreator(
             .flatMap { guardPhoneIsNotRepeated(request.phonePrefix, request.phoneNumber) }
 
     private fun guardIdentityNumberIsNotRepeated(identityNumber: IdentityNumber): Either<AccountCreatorError, Unit> =
-        accountRepository.findBy(FindAccountCriteria.ByIdentityNumber(identityNumber))
+        accountRepository.findOrElse(
+            criteria = FindAccountCriteria.ByIdentityNumber(identityNumber),
+            onResourceDoesNotExist = { AccountCreatorError.AccountNotFound() },
+        )
             .flatMap { AccountCreatorError.IdentityNumberAlreadyExists(identityNumber).left() }
-            .recover { error -> handleGuardErrors(error) }
+            .validateAccountNotFound()
 
     private fun guardEmailIsNotRepeated(email: Email): Either<AccountCreatorError, Unit> =
-        accountRepository.findBy(FindAccountCriteria.ByEmail(email))
+        accountRepository.findOrElse(
+            criteria = FindAccountCriteria.ByEmail(email),
+            onResourceDoesNotExist = { AccountCreatorError.AccountNotFound() },
+        )
             .flatMap { AccountCreatorError.EmailAlreadyExists(email).left() }
-            .recover { error -> handleGuardErrors(error) }
+            .validateAccountNotFound()
 
-    private fun guardPhoneIsNotRepeated(phonePrefix: PhonePrefix, phoneNumber: PhoneNumber): Either<AccountCreatorError, Unit> =
-        accountRepository.findBy(FindAccountCriteria.ByPhone(phonePrefix, phoneNumber))
-            .flatMap { AccountCreatorError.PhoneAlreadyExists(phonePrefix, phoneNumber).left() }
-            .recover { error -> handleGuardErrors(error) }
-
-    private fun Raise<AccountCreatorError>.handleGuardErrors(error: java.lang.RuntimeException) {
-        when (error) {
-            is RepositoryError.NotFoundError -> Unit.right()
-            is AccountCreatorError -> raise(error)
-            else -> raise(AccountCreatorError.Unknown(error))
+    private fun guardPhoneIsNotRepeated(
+        phonePrefix: PhonePrefix,
+        phoneNumber: PhoneNumber,
+    ): Either<AccountCreatorError, Unit> =
+        accountRepository.findOrElse(
+            criteria = FindAccountCriteria.ByPhone(phonePrefix, phoneNumber),
+            onResourceDoesNotExist = { AccountCreatorError.AccountNotFound() },
+        ).flatMap {
+            AccountCreatorError.PhoneAlreadyExists(
+                phonePrefix,
+                phoneNumber,
+            ).left()
         }
-    }
+            .validateAccountNotFound()
 
-    private fun Account.save(): Either<AccountCreatorError, Account> =
-        accountRepository.save(this)
-            .mapLeft { com.github.caay2000.librarykata.eventdriven.context.account.application.create.AccountCreatorError.Unknown(it) }
-            .map { this }
-
-    private fun Account.publishEvents(): Either<AccountCreatorError, Unit> =
-        eventPublisher.publish(pullEvents())
-            .mapLeft { com.github.caay2000.librarykata.eventdriven.context.account.application.create.AccountCreatorError.Unknown(it) }
+    private fun Either<AccountCreatorError, Unit>.validateAccountNotFound() =
+        recover { error ->
+            when (error) {
+                is AccountCreatorError.AccountNotFound -> Unit.right()
+                else -> raise(error)
+            }
+        }
 }
 
-sealed class AccountCreatorError : RuntimeException {
-    constructor(message: String) : super(message)
-    constructor(throwable: Throwable) : super(throwable)
+sealed class AccountCreatorError(message: String) : RuntimeException(message) {
+    class AccountNotFound : AccountCreatorError("account not foung")
 
-    class Unknown(error: Throwable) : AccountCreatorError(error)
-    class IdentityNumberAlreadyExists(identityNumber: IdentityNumber) : AccountCreatorError("an account with identity number ${identityNumber.value} already exists")
+    class IdentityNumberAlreadyExists(identityNumber: IdentityNumber) :
+        AccountCreatorError("an account with identity number ${identityNumber.value} already exists")
+
     class EmailAlreadyExists(email: Email) : AccountCreatorError("an account with email ${email.value} already exists")
+
     class PhoneAlreadyExists(phonePrefix: PhonePrefix, phoneNumber: PhoneNumber) :
         AccountCreatorError("an account with phone ${phonePrefix.value} ${phoneNumber.value} already exists")
 }

@@ -57,20 +57,6 @@ class CreateAccountController(
         call.respond(HttpStatusCode.Created, transformer.invoke(queryResponse.account))
     }
 
-    override suspend fun handleExceptions(
-        call: ApplicationCall,
-        e: Exception,
-    ) {
-        call.serverError {
-            when (e) {
-                is AccountCreatorError.IdentityNumberAlreadyExists -> ServerResponse(HttpStatusCode.BadRequest, "IdentityNumberAlreadyExists", e.message)
-                is AccountCreatorError.EmailAlreadyExists -> ServerResponse(HttpStatusCode.BadRequest, "EmailAlreadyExists", e.message)
-                is AccountCreatorError.PhoneAlreadyExists -> ServerResponse(HttpStatusCode.BadRequest, "PhoneAlreadyExists", e.message)
-                else -> ServerResponse(HttpStatusCode.InternalServerError, "Unknown Error", e.message)
-            }
-        }
-    }
-
     private fun JsonApiRequestDocument<AccountRequestResource>.toCommand(
         accountId: String,
         registerDate: LocalDateTime,
@@ -86,6 +72,20 @@ class CreateAccountController(
             birthdate = data.attributes.birthdate,
             registerDate = registerDate,
         )
+
+    override suspend fun handleExceptions(
+        call: ApplicationCall,
+        e: Exception,
+    ) {
+        call.serverError {
+            when (e) {
+                is AccountCreatorError.IdentityNumberAlreadyExists -> ServerResponse(HttpStatusCode.BadRequest, "IdentityNumberAlreadyExists", e.message)
+                is AccountCreatorError.EmailAlreadyExists -> ServerResponse(HttpStatusCode.BadRequest, "EmailAlreadyExists", e.message)
+                is AccountCreatorError.PhoneAlreadyExists -> ServerResponse(HttpStatusCode.BadRequest, "PhoneAlreadyExists", e.message)
+                else -> ServerResponse(HttpStatusCode.InternalServerError, "Unknown Error", e.message)
+            }
+        }
+    }
 
     companion object {
         val documentation: OpenApiRoute.() -> Unit = {

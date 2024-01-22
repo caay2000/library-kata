@@ -161,8 +161,7 @@ class LibraryClient {
         }
 
     context(ApplicationTestBuilder)
-    fun findBookByIsbn(isbn: BookIsbn): HttpDataResponse<JsonApiDocumentList<BookGroupResource>> =
-        runBlocking { client.get("/book?filter[isbn]=${isbn.value}").toHttpDataResponse() }
+    fun findBookByIsbn(isbn: BookIsbn): HttpDataResponse<JsonApiDocumentList<BookGroupResource>> = runBlocking { client.get("/book?filter[isbn]=${isbn.value}").toHttpDataResponse() }
 
     context(ApplicationTestBuilder)
     fun searchBook(): HttpDataResponse<JsonApiDocumentList<BookGroupResource>> = runBlocking { client.get("/book").toHttpDataResponse() }

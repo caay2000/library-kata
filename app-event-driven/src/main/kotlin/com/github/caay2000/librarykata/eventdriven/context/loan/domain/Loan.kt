@@ -1,30 +1,28 @@
 package com.github.caay2000.librarykata.eventdriven.context.loan.domain
 
 import com.github.caay2000.common.ddd.Aggregate
-import com.github.caay2000.common.ddd.DomainId
+import com.github.caay2000.common.ddd.AggregateId
 import com.github.caay2000.librarykata.eventdriven.events.loan.LoanCreatedEvent
 import com.github.caay2000.librarykata.eventdriven.events.loan.LoanFinishedEvent
 import java.time.LocalDateTime
-import java.util.UUID
 
 data class Loan(
     override val id: LoanId,
     val bookId: BookId,
-    val userId: UserId,
+    val accountId: AccountId,
     val createdAt: CreatedAt,
     val finishedAt: FinishedAt?,
 ) : Aggregate() {
-
     companion object {
         fun create(
             id: LoanId,
             bookId: BookId,
-            userId: UserId,
+            accountId: AccountId,
             createdAt: CreatedAt,
         ) = Loan(
             id = id,
             bookId = bookId,
-            userId = userId,
+            accountId = accountId,
             createdAt = createdAt,
             finishedAt = null,
         ).also { loan -> loan.pushEvent(loan.toLoanCreatedEvent()) }
@@ -37,30 +35,25 @@ data class Loan(
         copy(finishedAt = finishedAt)
             .also { loan -> loan.pushEvent(loan.toLoanFinishedEvent()) }
 
-    private fun toLoanCreatedEvent() = LoanCreatedEvent(
-        loanId = id.value,
-        bookId = bookId.value,
-        userId = userId.value,
-        createdAt = createdAt.value,
-    )
+    private fun toLoanCreatedEvent() =
+        LoanCreatedEvent(
+            loanId = id.value,
+            bookId = bookId.value,
+            accountId = accountId.value,
+            createdAt = createdAt.value,
+        )
 
-    private fun toLoanFinishedEvent() = LoanFinishedEvent(
-        loanId = id.value,
-        bookId = bookId.value,
-        userId = userId.value,
-        finishedAt = finishedAt!!.value,
-    )
+    private fun toLoanFinishedEvent() =
+        LoanFinishedEvent(
+            loanId = id.value,
+            bookId = bookId.value,
+            accountId = accountId.value,
+            finishedAt = finishedAt!!.value,
+        )
 }
 
 @JvmInline
-value class LoanId(val value: UUID) : DomainId {
-    override fun toString(): String = value.toString()
-}
-
-@JvmInline
-value class BookId(val value: UUID) {
-    override fun toString(): String = value.toString()
-}
+value class LoanId(val value: String) : AggregateId
 
 @JvmInline
 value class CreatedAt(val value: LocalDateTime)

@@ -1,9 +1,8 @@
 package com.github.caay2000.librarykata.eventdriven.context.book.domain
 
 import com.github.caay2000.common.ddd.Aggregate
-import com.github.caay2000.common.ddd.DomainId
+import com.github.caay2000.common.ddd.AggregateId
 import com.github.caay2000.librarykata.eventdriven.events.book.BookCreatedEvent
-import java.util.UUID
 
 data class Book(
     override val id: BookId,
@@ -14,35 +13,40 @@ data class Book(
     val publisher: BookPublisher,
     val available: BookAvailable,
 ) : Aggregate() {
-
     companion object {
-        fun create(request: CreateBookRequest) = Book(
-            id = request.id,
-            isbn = request.isbn,
-            title = request.title,
-            author = request.author,
-            pages = request.pages,
-            publisher = request.publisher,
-            available = BookAvailable(true),
-        ).also { book -> book.pushEvent(book.bookCreatedEvent()) }
+        fun create(request: CreateBookRequest) =
+            Book(
+                id = request.id,
+                isbn = request.isbn,
+                title = request.title,
+                author = request.author,
+                pages = request.pages,
+                publisher = request.publisher,
+                available = BookAvailable(true),
+            ).also { book -> book.pushEvent(book.bookCreatedEvent()) }
     }
 
-    private fun bookCreatedEvent() = BookCreatedEvent(
-        bookId = id.value,
-        isbn = isbn.value,
-        title = title.value,
-        author = author.value,
-        pages = pages.value,
-        publisher = publisher.value,
-    )
+    private fun bookCreatedEvent() =
+        BookCreatedEvent(
+            bookId = id.value,
+            isbn = isbn.value,
+            title = title.value,
+            author = author.value,
+            pages = pages.value,
+            publisher = publisher.value,
+        )
 
-    fun updateAvailability(available: BookAvailable): Book = copy(available = available)
+    fun available(): Book = updateAvailability(BookAvailable.available())
+
+    fun unavailable(): Book = updateAvailability(BookAvailable.notAvailable())
+
+    private fun updateAvailability(available: BookAvailable): Book = copy(available = available)
+
+    val isAvailable: Boolean = available.value
 }
 
 @JvmInline
-value class BookId(val value: UUID) : DomainId {
-    override fun toString(): String = value.toString()
-}
+value class BookId(val value: String) : AggregateId
 
 @JvmInline
 value class BookIsbn(val value: String)
@@ -63,6 +67,7 @@ value class BookPublisher(val value: String)
 value class BookAvailable(val value: Boolean) {
     companion object {
         fun available() = BookAvailable(true)
+
         fun notAvailable() = BookAvailable(false)
     }
 }

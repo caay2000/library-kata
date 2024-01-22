@@ -21,7 +21,7 @@ sealed class FindLoanCriteria {
 }
 
 sealed class SearchLoanCriteria {
-    class ByAccountId(val accountId: AccountId) : SearchLoanCriteria()
+    class ByAccountIdAndNotFinished(val accountId: AccountId) : SearchLoanCriteria()
 
     class ByBookId(val bookId: BookId) : SearchLoanCriteria()
 

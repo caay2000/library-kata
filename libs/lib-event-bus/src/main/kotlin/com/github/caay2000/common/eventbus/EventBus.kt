@@ -6,9 +6,8 @@ import kotlinx.coroutines.Dispatchers.Default
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.flow.filter
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import mu.KLogger
 import mu.KotlinLogging
 
@@ -26,27 +25,35 @@ class EventBus(
             .associateWith<Int, MutableList<Event>> { mutableListOf() }
             .toMutableMap()
 
+    val subscribers: MutableMap<String, List<EventSubscriber<*>>> = mutableMapOf()
+
     val partitions: Map<Int, List<Event>>
         get() = _partitions.toMap()
 
     override fun <EVENT : Event> publish(event: EVENT) {
-        scope.launch {
+        runBlocking {
             val partition = Integer.decode("0x${event.aggregateId.last()}") % numPartitions
-            logger.debug { "publishing event $event into partition $partition" }
+            logger.trace { "publishing event ${event::class.java.simpleName} into partition $partition" }
             _events[partition].emit(event)
 //            _partitions[partition]!!.add(event)
         }
     }
 
     inline fun <reified EVENT : Event> subscribe(subscriber: EventSubscriber<EVENT>) {
+        subscribers[EVENT::class.java.canonicalName] =
+            subscribers.getOrDefault(EVENT::class.java.canonicalName, mutableListOf()) + subscriber
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    fun init() {
         events.forEachIndexed { i, it ->
             scope.launch {
-                it.filter { it is EVENT }
-                    .map { it as EVENT }
-                    .collect {
-                        logger.debug { "consuming event $it from partition $i" }
+                it.collect {
+                    (subscribers[it::class.java.canonicalName] as List<EventSubscriber<Event>>?)?.forEach { subscriber ->
+                        logger.trace { "${subscriber::class.java.simpleName} handling event ${it::class.java.simpleName} from partition $i" }
                         subscriber.handle(it)
                     }
+                }
             }
         }
     }

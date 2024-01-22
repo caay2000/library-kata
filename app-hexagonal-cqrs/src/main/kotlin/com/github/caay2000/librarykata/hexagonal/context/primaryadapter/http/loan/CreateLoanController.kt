@@ -105,9 +105,10 @@ class CreateLoanController(
                 errorResponses(
                     httpStatusCode = HttpStatusCode.BadRequest,
                     summary = "Invalid request creating Account",
-                    responseExample("UserNotFound", "book with isbn {bookIsbn} is not available"),
-                    responseExample("UserHasTooManyLoans", "user {accountId} not found"),
-                    responseExample("BookNotAvailable", "user {accountId} has too many loans"),
+                    responseExample("AccountNotFound", "Account {accountId} not found"),
+                    responseExample("AccountHasTooManyLoans", "Account {accountId} has too many loans"),
+                    responseExample("BookNotAvailable", "Account {accountId} has too many loans"),
+                    responseExample("BookNotFound", "Book with isbn {bookIsbn} not found"),
                 )
                 errorResponses(
                     httpStatusCode = HttpStatusCode.InternalServerError,

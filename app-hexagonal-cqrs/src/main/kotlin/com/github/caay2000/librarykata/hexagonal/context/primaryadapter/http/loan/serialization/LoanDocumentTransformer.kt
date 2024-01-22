@@ -12,23 +12,19 @@ import com.github.caay2000.librarykata.hexagonal.context.application.account.fin
 import com.github.caay2000.librarykata.hexagonal.context.application.book.find.FindBookQuery
 import com.github.caay2000.librarykata.hexagonal.context.application.book.find.FindBookQueryHandler
 import com.github.caay2000.librarykata.hexagonal.context.application.book.find.FindBookQueryResponse
-import com.github.caay2000.librarykata.hexagonal.context.application.loan.search.SearchLoanQuery
-import com.github.caay2000.librarykata.hexagonal.context.application.loan.search.SearchLoanQueryHandler
-import com.github.caay2000.librarykata.hexagonal.context.application.loan.search.SearchLoanQueryResponse
 import com.github.caay2000.librarykata.hexagonal.context.domain.account.Account
 import com.github.caay2000.librarykata.hexagonal.context.domain.account.AccountRepository
 import com.github.caay2000.librarykata.hexagonal.context.domain.book.Book
 import com.github.caay2000.librarykata.hexagonal.context.domain.book.BookRepository
 import com.github.caay2000.librarykata.hexagonal.context.domain.loan.Loan
-import com.github.caay2000.librarykata.hexagonal.context.domain.loan.LoanRepository
-import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.account.transformer.AccountIncludeTransformer
-import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.account.transformer.AccountRelationshipTransformer
-import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.account.transformer.toJsonApiAccountDocument
-import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.book.transformer.BookIncludeTransformer
-import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.book.transformer.BookRelationshipTransformer
+import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.account.transformer.toJsonApiAccountResource
+import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.book.transformer.toJsonApiBookResource
 import com.github.caay2000.librarykata.jsonapi.context.account.AccountResource
 import com.github.caay2000.librarykata.jsonapi.context.book.BookResource
 import com.github.caay2000.librarykata.jsonapi.context.loan.LoanResource
+import com.github.caay2000.librarykata.jsonapi.transformer.IncludeTransformer
+import com.github.caay2000.librarykata.jsonapi.transformer.RelationshipIdentifier
+import com.github.caay2000.librarykata.jsonapi.transformer.RelationshipTransformer
 
 class LoanDocumentTransformer(accountRepository: AccountRepository, bookRepository: BookRepository) : Transformer<Loan, JsonApiDocument<LoanResource>> {
     private val accountQueryHandler: QueryHandler<FindAccountQuery, FindAccountQueryResponse> = FindAccountQueryHandler(accountRepository)
@@ -41,19 +37,6 @@ class LoanDocumentTransformer(accountRepository: AccountRepository, bookReposito
         val account = accountQueryHandler.handle(FindAccountQuery(value.accountId)).account
         val book = bookQueryHandler.handle(FindBookQuery(value.bookId)).book
         return value.toJsonApiDocument(account, book, include)
-    }
-}
-
-class AccountDocumentTransformer(loanRepository: LoanRepository) : Transformer<Account, JsonApiDocument<AccountResource>> {
-    private val loanQueryHandler: QueryHandler<SearchLoanQuery, SearchLoanQueryResponse> = SearchLoanQueryHandler(loanRepository)
-
-    override fun invoke(
-        value: Account,
-        include: List<String>,
-    ): JsonApiDocument<AccountResource> {
-        // TODO When the Account is brand new, this query is not needed, as it won't have any relationship
-        val loans = loanQueryHandler.invoke(SearchLoanQuery.SearchLoanByAccountIdQuery(value.id.value)).value
-        return value.toJsonApiAccountDocument(loans, include)
     }
 }
 
@@ -83,13 +66,13 @@ fun manageLoanRelationships(
 ): Map<String, JsonApiRelationshipData> {
     val map = mutableMapOf<String, JsonApiRelationshipData>()
     if (account != null) {
-        val relationship = AccountRelationshipTransformer().invoke(listOf(account))
+        val relationship = RelationshipTransformer.invoke(RelationshipIdentifier(account.id.value, AccountResource.TYPE))
         if (relationship != null) {
             map.putAll(relationship)
         }
     }
     if (book != null) {
-        val relationship = BookRelationshipTransformer().invoke(listOf(book))
+        val relationship = RelationshipTransformer.invoke(RelationshipIdentifier(book.id.value, BookResource.TYPE))
         if (relationship != null) {
             map.putAll(relationship)
         }
@@ -105,16 +88,10 @@ private fun manageLoanIncludes(
     if (include.isEmpty()) return null
     val included = mutableSetOf<JsonApiIncludedResource>()
     if (include.shouldProcess(AccountResource.TYPE) && account != null) {
-        val elements = AccountIncludeTransformer().invoke(listOf(account))
-        if (elements != null) {
-            included.addAll(elements)
-        }
+        included.add(IncludeTransformer.invoke(account.toJsonApiAccountResource()))
     }
     if (include.shouldProcess(BookResource.TYPE) && book != null) {
-        val elements = BookIncludeTransformer().invoke(listOf(book))
-        if (elements != null) {
-            included.addAll(elements)
-        }
+        included.add(IncludeTransformer.invoke(book.toJsonApiBookResource()))
     }
     return included
 }

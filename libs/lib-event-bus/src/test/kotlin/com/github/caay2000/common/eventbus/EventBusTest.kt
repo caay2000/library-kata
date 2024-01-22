@@ -32,6 +32,7 @@ internal class EventBusTest {
                 launch(UnconfinedTestDispatcher(testScheduler)) {
                     val sut = EventBus(this)
                     sut.subscribe(stringSubscriber)
+                    sut.init()
 
                     sut.publish(event)
                 }
@@ -54,6 +55,7 @@ internal class EventBusTest {
                     val sut = EventBus(this)
                     sut.subscribe(stringSubscriber1)
                     sut.subscribe(stringSubscriber2)
+                    sut.init()
 
                     sut.publish(event)
                 }
@@ -79,6 +81,7 @@ internal class EventBusTest {
                     val sut = EventBus(this)
                     sut.subscribe(stringSubscriber)
                     sut.subscribe(intSubscriber)
+                    sut.init()
 
                     sut.publish(stringEvent)
                     sut.publish(intEvent)

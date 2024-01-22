@@ -19,6 +19,13 @@ class InMemoryDatasource : Datasource {
         return value
     }
 
+    fun delete(
+        table: String,
+        key: String,
+    ) {
+        database[table]?.remove(key)
+    }
+
     fun <T> getById(
         table: String,
         id: String,

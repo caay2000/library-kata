@@ -2,11 +2,10 @@ package com.github.caay2000.librarykata.eventdriven.events.loan
 
 import com.github.caay2000.common.event.DomainEvent
 import java.time.LocalDateTime
-import java.util.UUID
 
 data class LoanCreatedEvent(
-    val loanId: UUID,
-    val bookId: UUID,
-    val userId: UUID,
+    val loanId: String,
+    val bookId: String,
+    val accountId: String,
     val createdAt: LocalDateTime,
 ) : DomainEvent(loanId)
