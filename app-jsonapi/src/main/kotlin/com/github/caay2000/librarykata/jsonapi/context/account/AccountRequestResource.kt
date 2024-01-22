@@ -9,6 +9,7 @@ import kotlinx.serialization.Serializable
 import java.time.LocalDate
 
 @Serializable
+@Schema(name = "AccountRequestResource")
 data class AccountRequestResource(
     @field:Schema(description = "resource type - must be `account`", example = AccountResource.TYPE)
     override val type: String = AccountResource.TYPE,

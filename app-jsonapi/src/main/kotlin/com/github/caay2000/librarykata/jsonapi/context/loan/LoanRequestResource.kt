@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.media.Schema
 import kotlinx.serialization.Serializable
 
 @Serializable
+@Schema(name = "LoanRequestResource")
 data class LoanRequestResource(
     @field:Schema(description = "resource type - must be `${LoanResource.TYPE}`", example = LoanResource.TYPE)
     override val type: String = LoanResource.TYPE,

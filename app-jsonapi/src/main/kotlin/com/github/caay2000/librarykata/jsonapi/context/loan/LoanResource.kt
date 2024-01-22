@@ -10,6 +10,7 @@ import kotlinx.serialization.Serializable
 import java.time.LocalDateTime
 
 @Serializable
+@Schema(name = "LoanResource")
 data class LoanResource(
     @field:Schema(description = "loan id", example = "00000000-0000-0000-0000-000000000000")
     override val id: String,

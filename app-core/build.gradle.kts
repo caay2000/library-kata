@@ -15,6 +15,6 @@ tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile::class).all {
 }
 
 jib {
-    container.mainClass = "com.github.caay2000.librarykata.hexagonal.AppKt.module"
+    container.mainClass = "com.github.caay2000.librarykata.core.AppKt.module"
     to.image = "caay2000/library-kata-hexagonal-cqrs:${project.version}"
 }
