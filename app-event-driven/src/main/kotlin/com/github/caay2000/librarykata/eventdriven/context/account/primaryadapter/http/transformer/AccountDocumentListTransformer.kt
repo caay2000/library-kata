@@ -5,8 +5,8 @@ import com.github.caay2000.common.http.shouldProcess
 import com.github.caay2000.common.jsonapi.JsonApiDocumentList
 import com.github.caay2000.common.jsonapi.JsonApiMeta
 import com.github.caay2000.librarykata.eventdriven.context.account.domain.Account
-import com.github.caay2000.librarykata.eventdriven.context.loan.loan.domain.Loan
-import com.github.caay2000.librarykata.eventdriven.context.loan.loan.primaryadapter.http.serialization.toJsonApiLoanResource
+import com.github.caay2000.librarykata.eventdriven.context.loan.domain.Loan
+import com.github.caay2000.librarykata.eventdriven.context.loan.primaryadapter.http.transformer.toJsonApiLoanResource
 import com.github.caay2000.librarykata.jsonapi.context.account.AccountResource
 import com.github.caay2000.librarykata.jsonapi.context.loan.LoanResource
 import com.github.caay2000.librarykata.jsonapi.transformer.IncludeTransformer

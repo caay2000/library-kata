@@ -7,9 +7,9 @@ import com.github.caay2000.librarykata.eventdriven.context.account.primaryadapte
 import com.github.caay2000.librarykata.eventdriven.context.book.primaryadapter.http.CreateBookController
 import com.github.caay2000.librarykata.eventdriven.context.book.primaryadapter.http.FindBookController
 import com.github.caay2000.librarykata.eventdriven.context.book.primaryadapter.http.SearchBookController
-import com.github.caay2000.librarykata.eventdriven.context.loan.loan.primaryadapter.http.CreateLoanController
-import com.github.caay2000.librarykata.eventdriven.context.loan.loan.primaryadapter.http.FindLoanController
-import com.github.caay2000.librarykata.eventdriven.context.loan.loan.primaryadapter.http.FinishLoanController
+import com.github.caay2000.librarykata.eventdriven.context.loan.primaryadapter.http.CreateLoanController
+import com.github.caay2000.librarykata.eventdriven.context.loan.primaryadapter.http.FindLoanController
+import com.github.caay2000.librarykata.eventdriven.context.loan.primaryadapter.http.FinishLoanController
 import io.github.smiley4.ktorswaggerui.dsl.get
 import io.github.smiley4.ktorswaggerui.dsl.post
 import io.ktor.server.application.call

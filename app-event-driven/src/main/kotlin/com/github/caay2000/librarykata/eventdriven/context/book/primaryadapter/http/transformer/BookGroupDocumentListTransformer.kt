@@ -5,15 +5,15 @@ import com.github.caay2000.common.http.shouldProcess
 import com.github.caay2000.common.jsonapi.JsonApiDocumentList
 import com.github.caay2000.common.jsonapi.JsonApiMeta
 import com.github.caay2000.librarykata.eventdriven.context.book.domain.Book
-import com.github.caay2000.librarykata.eventdriven.context.loan.loan.domain.Loan
-import com.github.caay2000.librarykata.eventdriven.context.loan.loan.primaryadapter.http.serialization.toJsonApiLoanResource
+import com.github.caay2000.librarykata.eventdriven.context.loan.domain.Loan
+import com.github.caay2000.librarykata.eventdriven.context.loan.primaryadapter.http.transformer.toJsonApiLoanResource
 import com.github.caay2000.librarykata.jsonapi.context.book.BookGroupResource
 import com.github.caay2000.librarykata.jsonapi.context.loan.LoanResource
 import com.github.caay2000.librarykata.jsonapi.transformer.IncludeTransformer
 import com.github.caay2000.librarykata.jsonapi.transformer.RelationshipIdentifier
 import com.github.caay2000.librarykata.jsonapi.transformer.RelationshipTransformer
 
-class BookGroupDocumentListTransformer() : Transformer<List<Book>, JsonApiDocumentList<BookGroupResource>> {
+class BookGroupDocumentListTransformer : Transformer<List<Book>, JsonApiDocumentList<BookGroupResource>> {
 //    private val loanQueryHandler: QueryHandler<SearchLoanQuery, SearchLoanQueryResponse> = SearchLoanQueryHandler(loanRepository)
 
     override fun invoke(
