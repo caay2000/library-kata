@@ -5,12 +5,14 @@ import io.swagger.v3.oas.annotations.media.Schema
 import kotlinx.serialization.Serializable
 
 @Serializable
+@Schema(name = "JsonApiDocument")
 data class JsonApiDocument<R>(
     val data: R,
     val included: Collection<JsonApiIncludedResource>? = null,
 ) where R : JsonApiResource
 
 @Serializable
+@Schema(name = "JsonApiDocumentList")
 data class JsonApiDocumentList<R>(
     val data: List<R>,
     val included: List<JsonApiIncludedResource>? = null,
@@ -27,12 +29,14 @@ interface JsonApiResource {
 interface JsonApiResourceAttributes
 
 @Serializable
+@Schema(name = "JsonApiRelationshipData")
 data class JsonApiRelationshipData(
     @field:ArraySchema(contains = Schema(implementation = JsonApiRelationshipIdentifier::class))
     val data: List<JsonApiRelationshipIdentifier>,
 )
 
 @Serializable
+@Schema(name = "JsonApiRelationshipIdentifier")
 data class JsonApiRelationshipIdentifier(
     @field:Schema(description = "resource id", example = "00000000-0000-0000-0000-000000000000")
     val id: String,
@@ -43,6 +47,7 @@ data class JsonApiRelationshipIdentifier(
 // TODO this should be deleted and JsonApiDocument should use the JsonApiResource interface
 // Until kotlin serializer does not allow to hide classDiscriminator, this won't pass jsonapi schema validator
 @Serializable
+@Schema(name = "JsonApiIncludedResource")
 data class JsonApiIncludedResource(
     @field:Schema(description = "resource id", example = "00000000-0000-0000-0000-000000000000")
     val id: String,
@@ -54,4 +59,8 @@ data class JsonApiIncludedResource(
 )
 
 @Serializable
-data class JsonApiMeta(val total: Int)
+@Schema(name = "JsonApiMeta")
+data class JsonApiMeta(
+    @field:Schema(description = "total responses", example = "1")
+    val total: Int,
+)

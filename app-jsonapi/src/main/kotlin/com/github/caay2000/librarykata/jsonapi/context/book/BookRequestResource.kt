@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.media.Schema
 import kotlinx.serialization.Serializable
 
 @Serializable
+@Schema(name = "BookRequestResource")
 data class BookRequestResource(
     @field:Schema(description = "resource type - must be `book`", example = BookResource.TYPE)
     override val type: String = BookResource.TYPE,

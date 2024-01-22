@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.media.Schema
 import kotlinx.serialization.Serializable
 
 @Serializable
+@Schema(name = "BookResource")
 data class BookResource(
     @field:Schema(description = "book id", example = "00000000-0000-0000-0000-000000000000")
     override val id: String,
