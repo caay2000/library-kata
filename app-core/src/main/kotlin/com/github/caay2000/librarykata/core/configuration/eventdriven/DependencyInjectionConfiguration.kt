@@ -22,6 +22,8 @@ import com.github.caay2000.librarykata.eventdriven.context.book.primaryadapter.h
 import com.github.caay2000.librarykata.eventdriven.context.book.secondaryadapter.database.InMemoryBookRepository
 import com.github.caay2000.librarykata.eventdriven.context.loan.account.primaryadapter.event.CreateAccountOnAccountCreatedEventSubscriber
 import com.github.caay2000.librarykata.eventdriven.context.loan.book.primaryadapter.event.CreateBookOnBookCreatedEventSubscriber
+import com.github.caay2000.librarykata.eventdriven.context.loan.book.primaryadapter.event.UpdateBookAvailabilityOnLoanCreatedEventSubscriber
+import com.github.caay2000.librarykata.eventdriven.context.loan.book.primaryadapter.event.UpdateBookAvailabilityOnLoanFinishedEventSubscriber
 import com.github.caay2000.librarykata.eventdriven.context.loan.loan.primaryadapter.http.CreateLoanController
 import com.github.caay2000.librarykata.eventdriven.context.loan.loan.primaryadapter.http.FindLoanController
 import com.github.caay2000.librarykata.eventdriven.context.loan.loan.primaryadapter.http.FinishLoanController
@@ -60,6 +62,8 @@ val DependencyInjectionConfiguration =
             .subscribe(CreateBookOnBookCreatedEventSubscriber(DiKt.bind()))
             .subscribe(LoanIncreaseLoansOnLoanCreatedEventSubscriber(DiKt.bind()))
             .subscribe(LoanDecreaseLoansOnLoanCreatedEventSubscriber(DiKt.bind()))
+            .subscribe(UpdateBookAvailabilityOnLoanCreatedEventSubscriber(DiKt.bind()))
+            .subscribe(UpdateBookAvailabilityOnLoanFinishedEventSubscriber(DiKt.bind()))
             .init()
 
         DiKt.register { CreateAccountController(DiKt.bind(), DiKt.bind(), DiKt.bind(), DiKt.bind(), DiKt.bind()) }

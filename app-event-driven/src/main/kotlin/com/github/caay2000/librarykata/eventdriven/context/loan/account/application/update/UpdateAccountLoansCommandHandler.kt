@@ -1,5 +1,6 @@
 package com.github.caay2000.librarykata.eventdriven.context.loan.account.application.update
 
+import com.github.caay2000.common.arrow.getOrThrow
 import com.github.caay2000.common.cqrs.Command
 import com.github.caay2000.common.cqrs.CommandHandler
 import com.github.caay2000.librarykata.eventdriven.context.loan.account.domain.AccountId
@@ -21,7 +22,7 @@ class UpdateAccountLoansCommandHandler(
                     is UpdateAccountLoansCommand.IncreaseAccountLoansCommand -> AccountLoansUpdater.UpdateType.INCREASE
                     is UpdateAccountLoansCommand.DecreaseAccountLoansCommand -> AccountLoansUpdater.UpdateType.DECREASE
                 },
-        )
+        ).getOrThrow()
 }
 
 sealed class UpdateAccountLoansCommand(open val accountId: AccountId) : Command {

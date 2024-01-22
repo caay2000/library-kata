@@ -1,5 +1,6 @@
 package com.github.caay2000.librarykata.eventdriven.context.loan.account.application.find
 
+import com.github.caay2000.common.arrow.getOrThrow
 import com.github.caay2000.common.cqrs.Query
 import com.github.caay2000.common.cqrs.QueryHandler
 import com.github.caay2000.common.cqrs.QueryResponse
@@ -14,7 +15,10 @@ class FindAccountQueryHandler(accountRepository: AccountRepository) : QueryHandl
 
     private val finder = AccountFinder(accountRepository)
 
-    override fun handle(query: FindAccountQuery): FindAccountQueryResponse = FindAccountQueryResponse(finder.invoke(query.accountId))
+    override fun handle(query: FindAccountQuery): FindAccountQueryResponse =
+        finder.invoke(query.accountId)
+            .map { FindAccountQueryResponse(it) }
+            .getOrThrow()
 }
 
 data class FindAccountQuery(val accountId: AccountId) : Query

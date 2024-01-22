@@ -2,6 +2,7 @@ package com.github.caay2000.librarykata.eventdriven.context.account.secondaryada
 
 import arrow.core.Either
 import com.github.caay2000.common.database.RepositoryError
+import com.github.caay2000.common.database.mapRepositoryErrors
 import com.github.caay2000.librarykata.eventdriven.context.account.domain.Account
 import com.github.caay2000.librarykata.eventdriven.context.account.domain.AccountRepository
 import com.github.caay2000.librarykata.eventdriven.context.account.domain.FindAccountCriteria
@@ -19,13 +20,7 @@ class InMemoryAccountRepository(private val datasource: InMemoryDatasource) : Ac
                 is FindAccountCriteria.ByEmail -> datasource.getAll<Account>(TABLE_NAME).first { it.email == criteria.email }
                 is FindAccountCriteria.ByPhone -> datasource.getAll<Account>(TABLE_NAME).first { it.phonePrefix == criteria.phonePrefix && it.phoneNumber == criteria.phoneNumber }
             }
-        }.mapLeft { error ->
-            when (error) {
-                is NullPointerException -> RepositoryError.NotFoundError()
-                is NoSuchElementException -> RepositoryError.NotFoundError()
-                else -> throw error
-            }
-        }
+        }.mapRepositoryErrors()
 
     override fun search(criteria: SearchAccountCriteria): List<Account> =
         when (criteria) {

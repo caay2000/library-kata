@@ -2,6 +2,7 @@ package com.github.caay2000.librarykata.hexagonal.context.secondaryadapter.datab
 
 import arrow.core.Either
 import com.github.caay2000.common.database.RepositoryError
+import com.github.caay2000.common.database.mapRepositoryErrors
 import com.github.caay2000.librarykata.hexagonal.context.domain.book.Book
 import com.github.caay2000.librarykata.hexagonal.context.domain.loan.FindLoanCriteria
 import com.github.caay2000.librarykata.hexagonal.context.domain.loan.Loan
@@ -20,13 +21,7 @@ class InMemoryLoanRepository(private val datasource: InMemoryDatasource) : LoanR
                 is FindLoanCriteria.ById -> datasource.getById<Loan>(TABLE_NAME, criteria.id.value)!!
                 is FindLoanCriteria.ByBookIdAndNotFinished -> datasource.getAll<Loan>(TABLE_NAME).filter { it.bookId == criteria.bookId }.first { it.isNotFinished }
             }
-        }.mapLeft { error ->
-            when (error) {
-                is NullPointerException -> RepositoryError.NotFoundError()
-                is NoSuchElementException -> RepositoryError.NotFoundError()
-                else -> throw error
-            }
-        }
+        }.mapRepositoryErrors()
 
     override fun search(criteria: SearchLoanCriteria): List<Loan> =
         when (criteria) {

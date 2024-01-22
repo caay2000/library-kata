@@ -7,6 +7,7 @@ import arrow.core.right
 import com.github.caay2000.common.event.DomainEventPublisher
 import com.github.caay2000.librarykata.eventdriven.context.loan.account.domain.AccountId
 import com.github.caay2000.librarykata.eventdriven.context.loan.account.domain.AccountRepository
+import com.github.caay2000.librarykata.eventdriven.context.loan.account.domain.findOrElse
 import com.github.caay2000.librarykata.eventdriven.context.loan.book.domain.Book
 import com.github.caay2000.librarykata.eventdriven.context.loan.book.domain.BookIsbn
 import com.github.caay2000.librarykata.eventdriven.context.loan.book.domain.BookRepository
@@ -41,27 +42,25 @@ class LoanCreator(
             .map { loan -> loanRepository.save(loan) }
             .map { loan -> eventPublisher.publish(loan.pullEvents()) }
 
-    private fun guardAccountCurrentLoans(accountId: AccountId): Either<LoanCreatorError, Unit> {
-        val account = accountRepository.find(accountId)
-        return if (account.hasReachedLoanLimit()) {
-            LoanCreatorError.AccountHasTooManyLoans(account.id).left()
-        } else {
-            Unit.right()
+    private fun guardAccountCurrentLoans(accountId: AccountId): Either<LoanCreatorError, Unit> =
+        accountRepository.findOrElse(
+            id = accountId,
+            onResourceDoesNotExist = { LoanCreatorError.AccountNotFound(accountId) },
+        ).flatMap { account ->
+            if (account.hasReachedLoanLimit()) LoanCreatorError.AccountHasTooManyLoans(account.id).left() else Unit.right()
         }
-    }
 
     private fun searchBook(bookIsbn: BookIsbn): List<Book> = bookRepository.search(bookIsbn)
 
     private fun guardBookAvailability(
         books: List<Book>,
         bookIsbn: BookIsbn,
-    ): Either<LoanCreatorError, Book> {
-        return when {
+    ): Either<LoanCreatorError, Book> =
+        when {
             books.isEmpty() -> LoanCreatorError.BookNotFound(bookIsbn).left()
             books.none { it.isAvailable } -> LoanCreatorError.BookNotAvailable(bookIsbn).left()
             else -> books.first { it.isAvailable }.right()
         }
-    }
 }
 
 sealed class LoanCreatorError(message: String) : RuntimeException(message) {

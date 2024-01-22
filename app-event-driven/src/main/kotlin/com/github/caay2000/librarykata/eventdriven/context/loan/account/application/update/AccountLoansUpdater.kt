@@ -11,8 +11,8 @@ class AccountLoansUpdater(
         accountId: AccountId,
         type: UpdateType,
     ) = findAccount(accountId)
-        .update(type)
-        .save()
+        .map { it.update(type) }
+        .map { it.save() }
 
     private fun findAccount(accountId: AccountId) = accountRepository.find(accountId)
 

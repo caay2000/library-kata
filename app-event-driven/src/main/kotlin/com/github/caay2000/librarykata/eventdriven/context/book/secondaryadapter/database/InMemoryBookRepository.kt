@@ -2,6 +2,7 @@ package com.github.caay2000.librarykata.eventdriven.context.book.secondaryadapte
 
 import arrow.core.Either
 import com.github.caay2000.common.database.RepositoryError
+import com.github.caay2000.common.database.mapRepositoryErrors
 import com.github.caay2000.librarykata.eventdriven.context.book.domain.Book
 import com.github.caay2000.librarykata.eventdriven.context.book.domain.BookRepository
 import com.github.caay2000.librarykata.eventdriven.context.book.domain.FindBookCriteria
@@ -14,13 +15,7 @@ class InMemoryBookRepository(private val datasource: InMemoryDatasource) : BookR
     override fun find(criteria: FindBookCriteria): Either<RepositoryError, Book> =
         when (criteria) {
             is FindBookCriteria.ById -> Either.catch { datasource.getById<Book>(TABLE_NAME, criteria.id.value)!! }
-        }.mapLeft { error ->
-            when (error) {
-                is NullPointerException -> RepositoryError.NotFoundError()
-                is NoSuchElementException -> RepositoryError.NotFoundError()
-                else -> throw error
-            }
-        }
+        }.mapRepositoryErrors()
 
     override fun search(criteria: SearchBookCriteria): List<Book> =
         when (criteria) {
