@@ -2,6 +2,6 @@ plugins {
     id("project-library")
 }
 
-dependencies{
+dependencies {
     implementation(project(":libs:common-arrow"))
 }
