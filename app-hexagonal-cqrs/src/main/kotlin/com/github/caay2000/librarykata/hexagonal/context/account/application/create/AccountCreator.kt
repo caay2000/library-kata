@@ -48,5 +48,5 @@ sealed class AccountCreatorError(message: String) : RuntimeException(message) {
     class EmailAlreadyExists(email: Email) : AccountCreatorError("an account with email ${email.value} already exists")
 
     class PhoneAlreadyExists(phone: Phone) :
-        AccountCreatorError("an account with phone ${phone.prefix.value} ${phone.number.value} already exists")
+        AccountCreatorError("an account with phone $phone already exists")
 }

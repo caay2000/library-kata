@@ -81,13 +81,7 @@ class CreateAccountController(
     ) {
         call.serverError {
             when (e) {
-                is AccountCreatorError.IdentityNumberAlreadyExists ->
-                    ServerResponse(
-                        HttpStatusCode.BadRequest,
-                        "IdentityNumberAlreadyExists",
-                        e.message,
-                    )
-
+                is AccountCreatorError.IdentityNumberAlreadyExists -> ServerResponse(HttpStatusCode.BadRequest, "IdentityNumberAlreadyExists", e.message)
                 is AccountCreatorError.EmailAlreadyExists -> ServerResponse(HttpStatusCode.BadRequest, "EmailAlreadyExists", e.message)
                 is AccountCreatorError.PhoneAlreadyExists -> ServerResponse(HttpStatusCode.BadRequest, "PhoneAlreadyExists", e.message)
                 else -> ServerResponse(HttpStatusCode.InternalServerError, "Unknown Error", e.message)

@@ -32,6 +32,8 @@ data class Account(
             )
     }
 
+    // TODO we should validate inputs in their own VO, for example email should have an email format and birthdate cannot be in the future
+
     fun increaseLoans(): Account = copy(currentLoans = currentLoans.increase(), totalLoans = totalLoans.increase())
 
     fun decreaseLoans(): Account = copy(currentLoans = currentLoans.decrease())
@@ -47,8 +49,10 @@ value class IdentityNumber(val value: String)
 
 @JvmInline
 value class Email(val value: String)
+// TODO validate email format
 
 data class Phone(val prefix: PhonePrefix, val number: PhoneNumber) {
+    // TODO validate phone format
     companion object {
         fun create(
             prefix: String,
@@ -74,7 +78,10 @@ value class Name(val value: String)
 value class Surname(val value: String)
 
 typealias Birthdate = Date
+// TODO validate birthdate in the future or minimum age
+
 typealias RegisterDate = DateTime
+// TODO validate registerDate in the future
 
 @JvmInline
 value class CurrentLoans(val value: Int) {

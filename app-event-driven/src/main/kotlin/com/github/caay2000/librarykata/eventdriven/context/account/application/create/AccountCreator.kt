@@ -12,8 +12,6 @@ import com.github.caay2000.librarykata.eventdriven.context.account.domain.Email
 import com.github.caay2000.librarykata.eventdriven.context.account.domain.FindAccountCriteria
 import com.github.caay2000.librarykata.eventdriven.context.account.domain.IdentityNumber
 import com.github.caay2000.librarykata.eventdriven.context.account.domain.Phone
-import com.github.caay2000.librarykata.eventdriven.context.account.domain.PhoneNumber
-import com.github.caay2000.librarykata.eventdriven.context.account.domain.PhonePrefix
 
 class AccountCreator(
     private val accountRepository: AccountRepository,
@@ -28,7 +26,7 @@ class AccountCreator(
     private fun guardAccountCanBeCreated(request: CreateAccountRequest): Either<AccountCreatorError, Unit> =
         guardIdentityNumberIsNotRepeated(request.identityNumber)
             .flatMap { guardEmailIsNotRepeated(request.email) }
-            .flatMap { guardPhoneIsNotRepeated(Phone.create(request.phonePrefix.value, request.phoneNumber.value)) }
+            .flatMap { guardPhoneIsNotRepeated(request.phone) }
 
     private fun guardIdentityNumberIsNotRepeated(identityNumber: IdentityNumber): Either<AccountCreatorError, Unit> =
         accountRepository.find(FindAccountCriteria.ByIdentityNumber(identityNumber))
@@ -42,7 +40,7 @@ class AccountCreator(
 
     private fun guardPhoneIsNotRepeated(phone: Phone): Either<AccountCreatorError, Unit> =
         accountRepository.find(FindAccountCriteria.ByPhone(phone))
-            ?.let { AccountCreatorError.PhoneAlreadyExists(phone.prefix, phone.number).left() }
+            ?.let { AccountCreatorError.PhoneAlreadyExists(phone).left() }
             ?: Unit.right()
 }
 
@@ -52,6 +50,6 @@ sealed class AccountCreatorError(message: String) : RuntimeException(message) {
 
     class EmailAlreadyExists(email: Email) : AccountCreatorError("an account with email ${email.value} already exists")
 
-    class PhoneAlreadyExists(phonePrefix: PhonePrefix, phoneNumber: PhoneNumber) :
-        AccountCreatorError("an account with phone ${phonePrefix.value} ${phoneNumber.value} already exists")
+    class PhoneAlreadyExists(phone: Phone) :
+        AccountCreatorError("an account with phone $phone already exists")
 }
