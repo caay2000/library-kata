@@ -11,10 +11,10 @@ import com.github.caay2000.librarykata.core.context.account.mother.AccountDocume
 import com.github.caay2000.librarykata.core.context.account.mother.AccountMother
 import com.github.caay2000.librarykata.core.context.book.mother.BookMother
 import com.github.caay2000.librarykata.core.context.loan.mother.LoanMother
-import com.github.caay2000.librarykata.hexagonal.context.domain.account.CurrentLoans
-import com.github.caay2000.librarykata.hexagonal.context.domain.account.Email
-import com.github.caay2000.librarykata.hexagonal.context.domain.account.PhoneNumber
-import com.github.caay2000.librarykata.hexagonal.context.domain.account.TotalLoans
+import com.github.caay2000.librarykata.hexagonal.context.account.domain.CurrentLoans
+import com.github.caay2000.librarykata.hexagonal.context.account.domain.Email
+import com.github.caay2000.librarykata.hexagonal.context.account.domain.PhoneNumber
+import com.github.caay2000.librarykata.hexagonal.context.account.domain.TotalLoans
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.testing.testApplication
 import org.junit.jupiter.api.BeforeEach

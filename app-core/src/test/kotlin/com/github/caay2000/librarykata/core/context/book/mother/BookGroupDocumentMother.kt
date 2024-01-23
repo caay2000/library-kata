@@ -2,9 +2,9 @@ package com.github.caay2000.librarykata.core.context.book.mother
 
 import com.github.caay2000.common.jsonapi.JsonApiDocumentList
 import com.github.caay2000.common.jsonapi.JsonApiMeta
-import com.github.caay2000.librarykata.hexagonal.context.domain.book.Book
-import com.github.caay2000.librarykata.hexagonal.context.domain.loan.Loan
-import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.book.transformer.toJsonApiBookGroupDocumentList
+import com.github.caay2000.librarykata.hexagonal.context.book.domain.Book
+import com.github.caay2000.librarykata.hexagonal.context.book.primaryadapter.http.transformer.toJsonApiBookGroupDocumentList
+import com.github.caay2000.librarykata.hexagonal.context.loan.domain.Loan
 import com.github.caay2000.librarykata.jsonapi.context.book.BookGroupResource
 
 object BookGroupDocumentMother {

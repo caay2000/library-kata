@@ -1,6 +1,6 @@
 package com.github.caay2000.librarykata.core.context.loan.mother
 
-import com.github.caay2000.librarykata.hexagonal.context.domain.loan.LoanId
+import com.github.caay2000.librarykata.hexagonal.context.loan.domain.LoanId
 import java.util.UUID
 
 object LoanIdMother {

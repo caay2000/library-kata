@@ -1,11 +1,11 @@
 package com.github.caay2000.librarykata.core.context.loan.mother
 
-import com.github.caay2000.librarykata.hexagonal.context.domain.account.AccountId
-import com.github.caay2000.librarykata.hexagonal.context.domain.book.BookId
-import com.github.caay2000.librarykata.hexagonal.context.domain.loan.CreatedAt
-import com.github.caay2000.librarykata.hexagonal.context.domain.loan.FinishedAt
-import com.github.caay2000.librarykata.hexagonal.context.domain.loan.Loan
-import com.github.caay2000.librarykata.hexagonal.context.domain.loan.LoanId
+import com.github.caay2000.librarykata.hexagonal.context.account.domain.AccountId
+import com.github.caay2000.librarykata.hexagonal.context.book.domain.BookId
+import com.github.caay2000.librarykata.hexagonal.context.loan.domain.CreatedAt
+import com.github.caay2000.librarykata.hexagonal.context.loan.domain.FinishedAt
+import com.github.caay2000.librarykata.hexagonal.context.loan.domain.Loan
+import com.github.caay2000.librarykata.hexagonal.context.loan.domain.LoanId
 import java.time.LocalDateTime
 import java.util.UUID
 
