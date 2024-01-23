@@ -82,7 +82,7 @@ class CreateAccountControllerTest {
                     jsonApiErrorDocument(
                         status = HttpStatusCode.BadRequest,
                         title = "PhoneAlreadyExists",
-                        detail = "an account with phone ${account.phone.prefix.value} ${account.phone.number.value} already exists",
+                        detail = "an account with phone ${account.phone} already exists",
                     ),
                 )
         }
