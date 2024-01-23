@@ -1,10 +1,10 @@
 package com.github.caay2000.librarykata.eventdriven.context.account.domain
 
+import com.github.caay2000.common.date.Date
+import com.github.caay2000.common.date.DateTime
 import com.github.caay2000.common.ddd.Aggregate
 import com.github.caay2000.common.ddd.AggregateId
 import com.github.caay2000.librarykata.eventdriven.events.account.AccountCreatedEvent
-import java.time.LocalDate
-import java.time.LocalDateTime
 import kotlin.math.max
 
 data class Account(
@@ -87,12 +87,6 @@ value class Name(val value: String)
 value class Surname(val value: String)
 
 @JvmInline
-value class Birthdate(val value: LocalDate)
-
-@JvmInline
-value class RegisterDate(val value: LocalDateTime)
-
-@JvmInline
 value class CurrentLoans(val value: Int) {
     internal fun increase(value: Int = 1): CurrentLoans = CurrentLoans(this.value + value)
 
@@ -103,6 +97,9 @@ value class CurrentLoans(val value: Int) {
 value class TotalLoans(val value: Int) {
     internal fun increase(value: Int = 1): TotalLoans = TotalLoans(this.value + value)
 }
+
+typealias Birthdate = Date
+typealias RegisterDate = DateTime
 
 data class CreateAccountRequest(
     val accountId: AccountId,

@@ -1,7 +1,7 @@
 package com.github.caay2000.librarykata.hexagonal.context.account.domain
 
-import java.time.LocalDate
-import java.time.LocalDateTime
+import com.github.caay2000.common.date.Date
+import com.github.caay2000.common.date.DateTime
 import kotlin.math.max
 
 data class Account(
@@ -73,11 +73,8 @@ value class Name(val value: String)
 @JvmInline
 value class Surname(val value: String)
 
-@JvmInline
-value class Birthdate(val value: LocalDate)
-
-@JvmInline
-value class RegisterDate(val value: LocalDateTime)
+typealias Birthdate = Date
+typealias RegisterDate = DateTime
 
 @JvmInline
 value class CurrentLoans(val value: Int) {

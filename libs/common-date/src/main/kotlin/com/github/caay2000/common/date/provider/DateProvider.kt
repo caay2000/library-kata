@@ -1,4 +1,4 @@
-package com.github.caay2000.common.dateprovider
+package com.github.caay2000.common.date.provider
 
 import java.time.LocalDate
 import java.time.LocalDateTime

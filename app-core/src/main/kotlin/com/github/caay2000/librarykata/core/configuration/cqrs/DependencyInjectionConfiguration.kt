@@ -1,6 +1,6 @@
 package com.github.caay2000.librarykata.core.configuration.cqrs
 
-import com.github.caay2000.common.dateprovider.LocalDateProvider
+import com.github.caay2000.common.date.provider.LocalDateProvider
 import com.github.caay2000.common.idgenerator.UUIDGenerator
 import com.github.caay2000.dikt.DiKt
 import com.github.caay2000.librarykata.hexagonal.context.account.primaryadapter.http.CreateAccountController

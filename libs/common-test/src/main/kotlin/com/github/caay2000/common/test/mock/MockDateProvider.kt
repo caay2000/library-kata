@@ -1,6 +1,6 @@
 package com.github.caay2000.common.test.mock
 
-import com.github.caay2000.common.dateprovider.DateProvider
+import com.github.caay2000.common.date.provider.DateProvider
 import java.time.LocalDate
 import java.time.LocalDateTime
 

@@ -21,6 +21,6 @@ class InMemoryBookRepository(private val datasource: InMemoryDatasource) : BookR
         }
 
     companion object {
-        private const val TABLE_NAME = "book"
+        private const val TABLE_NAME = "book.book"
     }
 }

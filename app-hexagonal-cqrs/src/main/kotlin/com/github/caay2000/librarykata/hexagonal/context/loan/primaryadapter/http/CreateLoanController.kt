@@ -2,7 +2,7 @@ package com.github.caay2000.librarykata.hexagonal.context.loan.primaryadapter.ht
 
 import com.github.caay2000.common.cqrs.CommandHandler
 import com.github.caay2000.common.cqrs.QueryHandler
-import com.github.caay2000.common.dateprovider.DateProvider
+import com.github.caay2000.common.date.provider.DateProvider
 import com.github.caay2000.common.http.ContentType
 import com.github.caay2000.common.http.Controller
 import com.github.caay2000.common.http.Transformer

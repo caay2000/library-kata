@@ -1,6 +1,6 @@
 package com.github.caay2000.librarykata.core.configuration.eventdriven
 
-import com.github.caay2000.common.dateprovider.LocalDateProvider
+import com.github.caay2000.common.date.provider.LocalDateProvider
 import com.github.caay2000.common.event.AsyncDomainEventBus
 import com.github.caay2000.common.event.DomainEventBus
 import com.github.caay2000.common.event.init

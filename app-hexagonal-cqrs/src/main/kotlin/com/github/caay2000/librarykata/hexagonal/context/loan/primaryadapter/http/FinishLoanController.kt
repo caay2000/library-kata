@@ -1,6 +1,6 @@
 package com.github.caay2000.librarykata.hexagonal.context.loan.primaryadapter.http
 
-import com.github.caay2000.common.dateprovider.DateProvider
+import com.github.caay2000.common.date.provider.DateProvider
 import com.github.caay2000.common.http.Controller
 import com.github.caay2000.common.jsonapi.ServerResponse
 import com.github.caay2000.common.jsonapi.documentation.errorResponses

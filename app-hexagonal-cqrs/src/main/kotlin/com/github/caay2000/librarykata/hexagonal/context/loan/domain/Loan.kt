@@ -1,8 +1,8 @@
 package com.github.caay2000.librarykata.hexagonal.context.loan.domain
 
+import com.github.caay2000.common.date.DateTime
 import com.github.caay2000.librarykata.hexagonal.context.account.domain.AccountId
 import com.github.caay2000.librarykata.hexagonal.context.book.domain.BookId
-import java.time.LocalDateTime
 
 data class Loan(
     val id: LoanId,
@@ -35,8 +35,5 @@ data class Loan(
 @JvmInline
 value class LoanId(val value: String)
 
-@JvmInline
-value class CreatedAt(val value: LocalDateTime)
-
-@JvmInline
-value class FinishedAt(val value: LocalDateTime)
+typealias CreatedAt = DateTime
+typealias FinishedAt = DateTime
