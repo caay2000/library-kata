@@ -1,8 +1,5 @@
 package com.github.caay2000.librarykata.hexagonal.context.secondaryadapter.database
 
-import arrow.core.Either
-import com.github.caay2000.common.database.RepositoryError
-import com.github.caay2000.common.database.mapRepositoryErrors
 import com.github.caay2000.librarykata.hexagonal.context.domain.book.Book
 import com.github.caay2000.librarykata.hexagonal.context.domain.loan.FindLoanCriteria
 import com.github.caay2000.librarykata.hexagonal.context.domain.loan.Loan
@@ -11,17 +8,13 @@ import com.github.caay2000.librarykata.hexagonal.context.domain.loan.SearchLoanC
 import com.github.caay2000.memorydb.InMemoryDatasource
 
 class InMemoryLoanRepository(private val datasource: InMemoryDatasource) : LoanRepository {
-    override fun save(loan: Loan) {
-        datasource.save(TABLE_NAME, loan.id.value, loan)
-    }
+    override fun save(loan: Loan): Loan = datasource.save(TABLE_NAME, loan.id.value, loan)
 
-    override fun find(criteria: FindLoanCriteria): Either<RepositoryError, Loan> =
-        Either.catch {
-            when (criteria) {
-                is FindLoanCriteria.ById -> datasource.getById<Loan>(TABLE_NAME, criteria.id.value)!!
-                is FindLoanCriteria.ByBookIdAndNotFinished -> datasource.getAll<Loan>(TABLE_NAME).filter { it.bookId == criteria.bookId }.first { it.isNotFinished }
-            }
-        }.mapRepositoryErrors()
+    override fun find(criteria: FindLoanCriteria): Loan? =
+        when (criteria) {
+            is FindLoanCriteria.ById -> datasource.getById<Loan>(TABLE_NAME, criteria.id.value)
+            is FindLoanCriteria.ByBookIdAndNotFinished -> datasource.getAll<Loan>(TABLE_NAME).firstOrNull { it.isNotFinished && it.bookId == criteria.bookId }
+        }
 
     override fun search(criteria: SearchLoanCriteria): List<Loan> =
         when (criteria) {

@@ -1,18 +1,18 @@
 package com.github.caay2000.librarykata.eventdriven.context.loan.application.find
 
 import arrow.core.Either
+import arrow.core.left
+import arrow.core.right
 import com.github.caay2000.librarykata.eventdriven.context.loan.domain.FindLoanCriteria
 import com.github.caay2000.librarykata.eventdriven.context.loan.domain.Loan
 import com.github.caay2000.librarykata.eventdriven.context.loan.domain.LoanId
 import com.github.caay2000.librarykata.eventdriven.context.loan.domain.LoanRepository
-import com.github.caay2000.librarykata.eventdriven.context.loan.domain.findOrElse
 
 class LoanFinder(private val loanRepository: LoanRepository) {
     fun invoke(loanId: LoanId): Either<LoanFinderError, Loan> =
-        loanRepository.findOrElse(
-            criteria = FindLoanCriteria.ById(loanId),
-            onResourceDoesNotExist = { LoanFinderError.LoanNotFoundError(loanId) },
-        )
+        loanRepository.find(FindLoanCriteria.ById(loanId))
+            ?.right()
+            ?: LoanFinderError.LoanNotFoundError(loanId).left()
 }
 
 sealed class LoanFinderError(message: String) : RuntimeException(message) {

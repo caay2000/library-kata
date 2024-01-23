@@ -1,6 +1,6 @@
 package com.github.caay2000.librarykata.eventdriven.context.account.domain
 
-import com.github.caay2000.common.database.Repository
+import com.github.caay2000.memorydb.Repository
 
 interface LoanRepository : Repository {
     fun save(loan: Loan): Loan

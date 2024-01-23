@@ -1,13 +1,14 @@
 package com.github.caay2000.librarykata.eventdriven.context.loan.application.finish
 
 import arrow.core.Either
+import arrow.core.left
+import arrow.core.right
 import com.github.caay2000.common.event.DomainEventPublisher
 import com.github.caay2000.librarykata.eventdriven.context.book.domain.BookId
 import com.github.caay2000.librarykata.eventdriven.context.loan.domain.FindLoanCriteria
 import com.github.caay2000.librarykata.eventdriven.context.loan.domain.FinishedAt
 import com.github.caay2000.librarykata.eventdriven.context.loan.domain.Loan
 import com.github.caay2000.librarykata.eventdriven.context.loan.domain.LoanRepository
-import com.github.caay2000.librarykata.eventdriven.context.loan.domain.findOrElse
 
 class LoanFinisher(
     private val loanRepository: LoanRepository,
@@ -23,10 +24,9 @@ class LoanFinisher(
             .map { loan -> eventPublisher.publish(loan.pullEvents()) }
 
     private fun findLoan(bookId: BookId): Either<LoanFinisherError, Loan> =
-        loanRepository.findOrElse(
-            criteria = FindLoanCriteria.ByBookIdAndNotFinished(bookId),
-            onResourceDoesNotExist = { LoanFinisherError.LoanNotFound(bookId) },
-        )
+        loanRepository.find(FindLoanCriteria.ByBookIdAndNotFinished(bookId))
+            ?.right()
+            ?: LoanFinisherError.LoanNotFound(bookId).left()
 }
 
 sealed class LoanFinisherError(message: String) : RuntimeException(message) {

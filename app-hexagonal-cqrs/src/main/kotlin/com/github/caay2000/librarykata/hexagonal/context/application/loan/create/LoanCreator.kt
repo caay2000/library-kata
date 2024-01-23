@@ -8,18 +8,14 @@ import com.github.caay2000.librarykata.hexagonal.context.domain.account.Account
 import com.github.caay2000.librarykata.hexagonal.context.domain.account.AccountId
 import com.github.caay2000.librarykata.hexagonal.context.domain.account.AccountRepository
 import com.github.caay2000.librarykata.hexagonal.context.domain.account.FindAccountCriteria
-import com.github.caay2000.librarykata.hexagonal.context.domain.account.findOrElse
-import com.github.caay2000.librarykata.hexagonal.context.domain.account.saveOrElse
 import com.github.caay2000.librarykata.hexagonal.context.domain.book.Book
 import com.github.caay2000.librarykata.hexagonal.context.domain.book.BookIsbn
 import com.github.caay2000.librarykata.hexagonal.context.domain.book.BookRepository
 import com.github.caay2000.librarykata.hexagonal.context.domain.book.SearchBookCriteria
-import com.github.caay2000.librarykata.hexagonal.context.domain.book.saveOrElse
 import com.github.caay2000.librarykata.hexagonal.context.domain.loan.CreatedAt
 import com.github.caay2000.librarykata.hexagonal.context.domain.loan.Loan
 import com.github.caay2000.librarykata.hexagonal.context.domain.loan.LoanId
 import com.github.caay2000.librarykata.hexagonal.context.domain.loan.LoanRepository
-import com.github.caay2000.librarykata.hexagonal.context.domain.loan.saveOrElse
 
 class LoanCreator(
     private val bookRepository: BookRepository,
@@ -35,19 +31,17 @@ class LoanCreator(
         guardAccountCurrentLoans(accountId)
             .flatMap { ctx -> ctx.guardBookAvailability(bookIsbn) }
             .map { ctx -> ctx.createLoan(loanId = loanId, createdAt = createdAt) }
-            .flatMap { ctx -> ctx.save() }
+            .map { ctx -> ctx.save() }
 
     private fun guardAccountCurrentLoans(accountId: AccountId): Either<LoanCreatorError, LoanCreatorContext> =
-        accountRepository.findOrElse(
-            criteria = FindAccountCriteria.ById(accountId),
-            onResourceDoesNotExist = { LoanCreatorError.AccountNotFound(accountId) },
-        ).flatMap { account ->
-            if (account.hasReachedLoanLimit()) {
-                LoanCreatorError.AccountHasTooManyLoans(account.id).left()
-            } else {
-                LoanCreatorContext().withAccount(account).right()
+        accountRepository.find(FindAccountCriteria.ById(accountId))
+            .let { account ->
+                when {
+                    account == null -> LoanCreatorError.AccountNotFound(accountId).left()
+                    account.hasReachedLoanLimit() -> LoanCreatorError.AccountHasTooManyLoans(account.id).left()
+                    else -> LoanCreatorContext().withAccount(account).right()
+                }
             }
-        }
 
     private fun LoanCreatorContext.guardBookAvailability(bookIsbn: BookIsbn): Either<LoanCreatorError, LoanCreatorContext> {
         val books = bookRepository.search(SearchBookCriteria.ByIsbn(bookIsbn))
@@ -67,10 +61,9 @@ class LoanCreator(
             .withAccount(account.increaseLoans())
 
     private fun LoanCreatorContext.save() =
-        loanRepository.saveOrElse(loan) { throw it }
-            .flatMap { accountRepository.saveOrElse(account) { throw it } }
-            .flatMap { bookRepository.saveOrElse(book) { throw it } }
-            .map { }
+        loanRepository.save(loan)
+            .let { accountRepository.save(account) }
+            .let { bookRepository.save(book) }
 
     data class LoanCreatorContext(private val map: Map<String, Any> = mapOf()) {
         val loan: Loan

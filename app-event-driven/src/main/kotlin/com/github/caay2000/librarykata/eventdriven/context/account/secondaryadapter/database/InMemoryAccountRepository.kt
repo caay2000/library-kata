@@ -1,8 +1,5 @@
 package com.github.caay2000.librarykata.eventdriven.context.account.secondaryadapter.database
 
-import arrow.core.Either
-import com.github.caay2000.common.database.RepositoryError
-import com.github.caay2000.common.database.mapRepositoryErrors
 import com.github.caay2000.librarykata.eventdriven.context.account.domain.Account
 import com.github.caay2000.librarykata.eventdriven.context.account.domain.AccountRepository
 import com.github.caay2000.librarykata.eventdriven.context.account.domain.FindAccountCriteria
@@ -12,15 +9,13 @@ import com.github.caay2000.memorydb.InMemoryDatasource
 class InMemoryAccountRepository(private val datasource: InMemoryDatasource) : AccountRepository {
     override fun save(account: Account) = datasource.save(TABLE_NAME, account.id.value, account)
 
-    override fun find(criteria: FindAccountCriteria): Either<RepositoryError, Account> =
-        Either.catch {
-            when (criteria) {
-                is FindAccountCriteria.ById -> datasource.getById<Account>(TABLE_NAME, criteria.id.value)!!
-                is FindAccountCriteria.ByIdentityNumber -> datasource.getAll<Account>(TABLE_NAME).first { it.identityNumber == criteria.identityNumber }
-                is FindAccountCriteria.ByEmail -> datasource.getAll<Account>(TABLE_NAME).first { it.email == criteria.email }
-                is FindAccountCriteria.ByPhone -> datasource.getAll<Account>(TABLE_NAME).first { it.phone == criteria.phone }
-            }
-        }.mapRepositoryErrors()
+    override fun find(criteria: FindAccountCriteria): Account? =
+        when (criteria) {
+            is FindAccountCriteria.ById -> datasource.getById<Account>(TABLE_NAME, criteria.id.value)
+            is FindAccountCriteria.ByIdentityNumber -> datasource.getAll<Account>(TABLE_NAME).firstOrNull { it.identityNumber == criteria.identityNumber }
+            is FindAccountCriteria.ByEmail -> datasource.getAll<Account>(TABLE_NAME).firstOrNull { it.email == criteria.email }
+            is FindAccountCriteria.ByPhone -> datasource.getAll<Account>(TABLE_NAME).firstOrNull { it.phone == criteria.phone }
+        }
 
     override fun search(criteria: SearchAccountCriteria): List<Account> =
         when (criteria) {

@@ -1,7 +1,8 @@
 package com.github.caay2000.librarykata.eventdriven.context.account.application.update
 
 import arrow.core.Either
-import com.github.caay2000.common.database.RepositoryError
+import arrow.core.left
+import arrow.core.right
 import com.github.caay2000.librarykata.eventdriven.context.account.domain.Account
 import com.github.caay2000.librarykata.eventdriven.context.account.domain.AccountId
 import com.github.caay2000.librarykata.eventdriven.context.account.domain.AccountRepository
@@ -15,17 +16,13 @@ class AccountLoansUpdater(
         type: UpdateType,
     ): Either<AccountLoansUpdaterError, Unit> =
         findAccount(accountId)
-            .map { account -> account.update(type) }
-            .map { account -> accountRepository.save(account) }
-
-    private fun findAccount(accountId: AccountId) =
-        accountRepository.find(FindAccountCriteria.ById(accountId))
-            .mapLeft {
-                if (it is RepositoryError.NotFoundError)
-                    AccountLoansUpdaterError.AccountNotFound()
-                else
-                    throw it
+            ?.let { account ->
+                accountRepository.save(account.update(type))
+                Unit.right()
             }
+            ?: AccountLoansUpdaterError.AccountNotFound().left()
+
+    private fun findAccount(accountId: AccountId) = accountRepository.find(FindAccountCriteria.ById(accountId))
 
     private fun Account.update(type: UpdateType) =
         when (type) {

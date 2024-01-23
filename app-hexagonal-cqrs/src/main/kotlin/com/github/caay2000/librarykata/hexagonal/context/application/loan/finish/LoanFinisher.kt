@@ -2,21 +2,20 @@ package com.github.caay2000.librarykata.hexagonal.context.application.loan.finis
 
 import arrow.core.Either
 import arrow.core.flatMap
+import arrow.core.left
+import arrow.core.right
 import com.github.caay2000.librarykata.hexagonal.context.domain.account.Account
 import com.github.caay2000.librarykata.hexagonal.context.domain.account.AccountId
 import com.github.caay2000.librarykata.hexagonal.context.domain.account.AccountRepository
 import com.github.caay2000.librarykata.hexagonal.context.domain.account.FindAccountCriteria
-import com.github.caay2000.librarykata.hexagonal.context.domain.account.findOrElse
 import com.github.caay2000.librarykata.hexagonal.context.domain.book.Book
 import com.github.caay2000.librarykata.hexagonal.context.domain.book.BookId
 import com.github.caay2000.librarykata.hexagonal.context.domain.book.BookRepository
 import com.github.caay2000.librarykata.hexagonal.context.domain.book.FindBookCriteria
-import com.github.caay2000.librarykata.hexagonal.context.domain.book.findOrElse
 import com.github.caay2000.librarykata.hexagonal.context.domain.loan.FindLoanCriteria
 import com.github.caay2000.librarykata.hexagonal.context.domain.loan.FinishedAt
 import com.github.caay2000.librarykata.hexagonal.context.domain.loan.Loan
 import com.github.caay2000.librarykata.hexagonal.context.domain.loan.LoanRepository
-import com.github.caay2000.librarykata.hexagonal.context.domain.loan.findOrElse
 
 class LoanFinisher(
     private val loanRepository: LoanRepository,
@@ -34,22 +33,19 @@ class LoanFinisher(
             .map { ctx -> ctx.save() }
 
     private fun findLoan(bookId: BookId): Either<LoanFinisherError, LoanFinisherContext> =
-        loanRepository.findOrElse(
-            criteria = FindLoanCriteria.ByBookIdAndNotFinished(bookId),
-            onResourceDoesNotExist = { LoanFinisherError.LoanNotFound(bookId) },
-        ).map { LoanFinisherContext().withLoan(it) }
+        loanRepository.find(FindLoanCriteria.ByBookIdAndNotFinished(bookId))
+            ?.let { LoanFinisherContext().withLoan(it).right() }
+            ?: LoanFinisherError.LoanNotFound(bookId).left()
 
     private fun LoanFinisherContext.findBook(bookId: BookId): Either<LoanFinisherError, LoanFinisherContext> =
-        bookRepository.findOrElse(
-            criteria = FindBookCriteria.ById(bookId),
-            onResourceDoesNotExist = { throw it },
-        ).map { book -> withBook(book) }
+        bookRepository.find(FindBookCriteria.ById(bookId))
+            ?.let { withBook(it).right() }
+            ?: LoanFinisherError.BookNotFound(bookId).left()
 
     private fun LoanFinisherContext.findAccount(accountId: AccountId): Either<LoanFinisherError, LoanFinisherContext> =
-        accountRepository.findOrElse(
-            criteria = FindAccountCriteria.ById(accountId),
-            onResourceDoesNotExist = { throw it },
-        ).map { account -> withAccount(account) }
+        accountRepository.find(FindAccountCriteria.ById(accountId))
+            ?.let { withAccount(it).right() }
+            ?: LoanFinisherError.AccountNotFound(accountId).left()
 
     private fun LoanFinisherContext.finishLoan(finishedAt: FinishedAt): LoanFinisherContext =
         withLoan(loan.finishLoan(finishedAt))
@@ -80,4 +76,8 @@ class LoanFinisher(
 
 sealed class LoanFinisherError(message: String) : RuntimeException(message) {
     class LoanNotFound(bookId: BookId) : LoanFinisherError("loan for book ${bookId.value} not found")
+
+    class BookNotFound(bookId: BookId) : LoanFinisherError("book ${bookId.value} not found")
+
+    class AccountNotFound(accountId: AccountId) : LoanFinisherError("account ${accountId.value} not found")
 }
