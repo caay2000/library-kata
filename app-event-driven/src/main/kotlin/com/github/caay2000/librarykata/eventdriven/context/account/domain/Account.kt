@@ -14,8 +14,7 @@ data class Account(
     val surname: Surname,
     val birthdate: Birthdate,
     val email: Email,
-    val phonePrefix: PhonePrefix,
-    val phoneNumber: PhoneNumber,
+    val phone: Phone,
     val registerDate: RegisterDate,
     val currentLoans: CurrentLoans,
     val totalLoans: TotalLoans,
@@ -29,8 +28,7 @@ data class Account(
                 surname = request.surname,
                 birthdate = request.birthdate,
                 email = request.email,
-                phonePrefix = request.phonePrefix,
-                phoneNumber = request.phoneNumber,
+                phone = Phone.create(request.phonePrefix.value, request.phoneNumber.value),
                 registerDate = request.registerDate,
                 currentLoans = CurrentLoans(0),
                 totalLoans = TotalLoans(0),
@@ -45,8 +43,7 @@ data class Account(
             surname = surname.value,
             birthdate = birthdate.value,
             email = email.value,
-            phonePrefix = phonePrefix.value,
-            phoneNumber = phoneNumber.value,
+            phone = phone.toString(),
             registerDate = registerDate.value,
         )
 
@@ -63,6 +60,19 @@ value class IdentityNumber(val value: String)
 
 @JvmInline
 value class Email(val value: String)
+
+data class Phone(val prefix: PhonePrefix, val number: PhoneNumber) {
+    companion object {
+        fun create(
+            prefix: String,
+            number: String,
+        ): Phone = Phone(PhonePrefix(prefix), PhoneNumber(number))
+    }
+
+    override fun toString(): String {
+        return "$prefix $number"
+    }
+}
 
 @JvmInline
 value class PhoneNumber(val value: String)
