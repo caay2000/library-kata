@@ -9,7 +9,7 @@ import com.github.caay2000.librarykata.eventdriven.events.loan.LoanFinishedEvent
 import mu.KLogger
 import mu.KotlinLogging
 
-class DecreaseLoansOnLoanCreatedEventSubscriber(accountRepository: AccountRepository) : DomainEventSubscriber<LoanFinishedEvent>() {
+class DecreaseLoansOnLoanFinishedEventSubscriber(accountRepository: AccountRepository) : DomainEventSubscriber<LoanFinishedEvent>() {
     override val logger: KLogger = KotlinLogging.logger {}
 
     private val commandHandler = UpdateAccountLoansCommandHandler(accountRepository)
