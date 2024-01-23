@@ -18,7 +18,7 @@ fun Application.main() {
 
 fun Application.module() {
     // TODO ADD HOCON Configuration to decide Architecture
-    val architecture = Architecture.EVENT
+    val architecture = Architecture.CQRS
 
     install(startupHookConfiguration(architecture))
     install(ShutdownHookConfiguration)
