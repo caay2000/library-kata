@@ -8,6 +8,7 @@ import com.github.caay2000.librarykata.hexagonal.context.domain.account.CurrentL
 import com.github.caay2000.librarykata.hexagonal.context.domain.account.Email
 import com.github.caay2000.librarykata.hexagonal.context.domain.account.IdentityNumber
 import com.github.caay2000.librarykata.hexagonal.context.domain.account.Name
+import com.github.caay2000.librarykata.hexagonal.context.domain.account.Phone
 import com.github.caay2000.librarykata.hexagonal.context.domain.account.PhoneNumber
 import com.github.caay2000.librarykata.hexagonal.context.domain.account.PhonePrefix
 import com.github.caay2000.librarykata.hexagonal.context.domain.account.RegisterDate
@@ -37,8 +38,7 @@ object AccountMother {
             surname = surname,
             birthdate = birthdate,
             email = email,
-            phonePrefix = phonePrefix,
-            phoneNumber = phoneNumber,
+            phone = Phone.create(phonePrefix.value, phoneNumber.value),
             registerDate = registerDate,
             currentLoans = currentLoans,
             totalLoans = totalLoans,

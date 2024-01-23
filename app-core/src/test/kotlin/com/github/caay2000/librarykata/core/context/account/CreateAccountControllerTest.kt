@@ -82,7 +82,7 @@ class CreateAccountControllerTest {
                     jsonApiErrorDocument(
                         status = HttpStatusCode.BadRequest,
                         title = "PhoneAlreadyExists",
-                        detail = "an account with phone ${account.phonePrefix.value} ${account.phoneNumber.value} already exists",
+                        detail = "an account with phone ${account.phone.prefix.value} ${account.phone.number.value} already exists",
                     ),
                 )
         }
@@ -90,5 +90,5 @@ class CreateAccountControllerTest {
     private val account = AccountMother.random()
     private val sameIdentityNumberAccount = AccountMother.random().copy(identityNumber = account.identityNumber)
     private val sameEmailAccount = AccountMother.random().copy(email = account.email)
-    private val samePhoneAccount = AccountMother.random().copy(phonePrefix = account.phonePrefix, phoneNumber = account.phoneNumber)
+    private val samePhoneAccount = AccountMother.random().copy(phone = account.phone)
 }

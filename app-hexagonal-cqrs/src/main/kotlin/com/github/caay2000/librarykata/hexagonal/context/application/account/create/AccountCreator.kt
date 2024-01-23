@@ -11,8 +11,7 @@ import com.github.caay2000.librarykata.hexagonal.context.domain.account.CreateAc
 import com.github.caay2000.librarykata.hexagonal.context.domain.account.Email
 import com.github.caay2000.librarykata.hexagonal.context.domain.account.FindAccountCriteria
 import com.github.caay2000.librarykata.hexagonal.context.domain.account.IdentityNumber
-import com.github.caay2000.librarykata.hexagonal.context.domain.account.PhoneNumber
-import com.github.caay2000.librarykata.hexagonal.context.domain.account.PhonePrefix
+import com.github.caay2000.librarykata.hexagonal.context.domain.account.Phone
 import com.github.caay2000.librarykata.hexagonal.context.domain.account.findOrElse
 import com.github.caay2000.librarykata.hexagonal.context.domain.account.saveOrElse
 
@@ -25,7 +24,7 @@ class AccountCreator(private val accountRepository: AccountRepository) {
     private fun guardAccountCanBeCreated(request: CreateAccountRequest): Either<AccountCreatorError, Unit> =
         guardIdentityNumberIsNotRepeated(request.identityNumber)
             .flatMap { guardEmailIsNotRepeated(request.email) }
-            .flatMap { guardPhoneIsNotRepeated(request.phonePrefix, request.phoneNumber) }
+            .flatMap { guardPhoneIsNotRepeated(request.phone) }
 
     private fun guardIdentityNumberIsNotRepeated(identityNumber: IdentityNumber): Either<AccountCreatorError, Unit> =
         accountRepository.findOrElse(
@@ -41,14 +40,11 @@ class AccountCreator(private val accountRepository: AccountRepository) {
         ).flatMap { AccountCreatorError.EmailAlreadyExists(email).left() }
             .validateAccountNotFound()
 
-    private fun guardPhoneIsNotRepeated(
-        phonePrefix: PhonePrefix,
-        phoneNumber: PhoneNumber,
-    ): Either<AccountCreatorError, Unit> =
+    private fun guardPhoneIsNotRepeated(phone: Phone): Either<AccountCreatorError, Unit> =
         accountRepository.findOrElse(
-            criteria = FindAccountCriteria.ByPhone(phonePrefix, phoneNumber),
+            criteria = FindAccountCriteria.ByPhone(phone),
             onResourceDoesNotExist = { AccountCreatorError.AccountNotFound() },
-        ).flatMap { AccountCreatorError.PhoneAlreadyExists(phonePrefix, phoneNumber).left() }
+        ).flatMap { AccountCreatorError.PhoneAlreadyExists(phone).left() }
             .validateAccountNotFound()
 
     private fun Either<AccountCreatorError, Unit>.validateAccountNotFound() =
@@ -70,6 +66,6 @@ sealed class AccountCreatorError(message: String) : RuntimeException(message) {
 
     class EmailAlreadyExists(email: Email) : AccountCreatorError("an account with email ${email.value} already exists")
 
-    class PhoneAlreadyExists(phonePrefix: PhonePrefix, phoneNumber: PhoneNumber) :
-        AccountCreatorError("an account with phone ${phonePrefix.value} ${phoneNumber.value} already exists")
+    class PhoneAlreadyExists(phone: Phone) :
+        AccountCreatorError("an account with phone ${phone.prefix.value} ${phone.number.value} already exists")
 }

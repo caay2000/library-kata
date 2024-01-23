@@ -10,8 +10,7 @@ import com.github.caay2000.librarykata.hexagonal.context.domain.account.CreateAc
 import com.github.caay2000.librarykata.hexagonal.context.domain.account.Email
 import com.github.caay2000.librarykata.hexagonal.context.domain.account.IdentityNumber
 import com.github.caay2000.librarykata.hexagonal.context.domain.account.Name
-import com.github.caay2000.librarykata.hexagonal.context.domain.account.PhoneNumber
-import com.github.caay2000.librarykata.hexagonal.context.domain.account.PhonePrefix
+import com.github.caay2000.librarykata.hexagonal.context.domain.account.Phone
 import com.github.caay2000.librarykata.hexagonal.context.domain.account.RegisterDate
 import com.github.caay2000.librarykata.hexagonal.context.domain.account.Surname
 import mu.KLogger
@@ -35,8 +34,7 @@ class CreateAccountCommandHandler(
                 surname = Surname(command.surname),
                 birthdate = Birthdate(command.birthdate),
                 email = Email(command.email),
-                phonePrefix = PhonePrefix(command.phonePrefix),
-                phoneNumber = PhoneNumber(command.phoneNumber),
+                phone = Phone.create(command.phonePrefix, command.phoneNumber),
                 registerDate = RegisterDate(command.registerDate),
             ),
         ).getOrThrow()

@@ -157,8 +157,8 @@ class RealExecutionTest {
                     surname = surname,
                     birthdate = birthdate,
                     email = email,
-                    phonePrefix = phonePrefix,
-                    phoneNumber = phoneNumber,
+                    phonePrefix = phone.prefix,
+                    phoneNumber = phone.number,
                 ).value!!.data.id
             existingAccounts[this.copy(id = AccountId(id))] = 0
 

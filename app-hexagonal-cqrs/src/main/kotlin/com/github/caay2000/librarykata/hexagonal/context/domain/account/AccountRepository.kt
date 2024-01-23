@@ -19,7 +19,7 @@ sealed class FindAccountCriteria {
 
     class ByEmail(val email: Email) : FindAccountCriteria()
 
-    class ByPhone(val phonePrefix: PhonePrefix, val phoneNumber: PhoneNumber) : FindAccountCriteria()
+    class ByPhone(val phone: Phone) : FindAccountCriteria()
 }
 
 sealed class SearchAccountCriteria {

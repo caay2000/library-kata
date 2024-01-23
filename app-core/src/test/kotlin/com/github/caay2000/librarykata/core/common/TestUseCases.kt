@@ -58,8 +58,8 @@ class TestUseCases(
             surname = account.surname,
             birthdate = account.birthdate,
             email = email ?: account.email,
-            phonePrefix = phonePrefix ?: account.phonePrefix,
-            phoneNumber = phoneNumber ?: account.phoneNumber,
+            phonePrefix = phonePrefix ?: account.phone.prefix,
+            phoneNumber = phoneNumber ?: account.phone.number,
         )
     }
 

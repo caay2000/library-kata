@@ -20,14 +20,14 @@ class InMemoryAccountRepository(private val datasource: InMemoryDatasource) : Ac
                 is FindAccountCriteria.ById -> datasource.getById<Account>(TABLE_NAME, criteria.id.value)!!
                 is FindAccountCriteria.ByIdentityNumber -> datasource.getAll<Account>(TABLE_NAME).first { it.identityNumber == criteria.identityNumber }
                 is FindAccountCriteria.ByEmail -> datasource.getAll<Account>(TABLE_NAME).first { it.email == criteria.email }
-                is FindAccountCriteria.ByPhone -> datasource.getAll<Account>(TABLE_NAME).first { it.phonePrefix == criteria.phonePrefix && it.phoneNumber == criteria.phoneNumber }
+                is FindAccountCriteria.ByPhone -> datasource.getAll<Account>(TABLE_NAME).first { it.phone == criteria.phone }
             }
         }.mapRepositoryErrors()
 
     override fun search(criteria: SearchAccountCriteria): List<Account> =
         when (criteria) {
             SearchAccountCriteria.All -> datasource.getAll(TABLE_NAME)
-            is SearchAccountCriteria.ByPhoneNumber -> datasource.getAll<Account>(TABLE_NAME).filter { it.phoneNumber.value.contains(criteria.phoneNumber.value) }
+            is SearchAccountCriteria.ByPhoneNumber -> datasource.getAll<Account>(TABLE_NAME).filter { it.phone.number.value.contains(criteria.phoneNumber.value) }
             is SearchAccountCriteria.ByEmail -> datasource.getAll<Account>(TABLE_NAME).filter { it.email.value.contains(criteria.email.value) }
         }
 
