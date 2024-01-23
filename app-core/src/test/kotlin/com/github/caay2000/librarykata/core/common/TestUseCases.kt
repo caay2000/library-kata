@@ -9,23 +9,23 @@ import com.github.caay2000.librarykata.core.context.account.mother.AccountMother
 import com.github.caay2000.librarykata.core.context.book.mother.BookIdMother
 import com.github.caay2000.librarykata.core.context.book.mother.BookMother
 import com.github.caay2000.librarykata.core.context.loan.mother.LoanMother
-import com.github.caay2000.librarykata.hexagonal.context.domain.account.Account
-import com.github.caay2000.librarykata.hexagonal.context.domain.account.AccountId
-import com.github.caay2000.librarykata.hexagonal.context.domain.account.Email
-import com.github.caay2000.librarykata.hexagonal.context.domain.account.IdentityNumber
-import com.github.caay2000.librarykata.hexagonal.context.domain.account.PhoneNumber
-import com.github.caay2000.librarykata.hexagonal.context.domain.account.PhonePrefix
-import com.github.caay2000.librarykata.hexagonal.context.domain.book.Book
-import com.github.caay2000.librarykata.hexagonal.context.domain.book.BookAuthor
-import com.github.caay2000.librarykata.hexagonal.context.domain.book.BookId
-import com.github.caay2000.librarykata.hexagonal.context.domain.book.BookIsbn
-import com.github.caay2000.librarykata.hexagonal.context.domain.book.BookPages
-import com.github.caay2000.librarykata.hexagonal.context.domain.book.BookPublisher
-import com.github.caay2000.librarykata.hexagonal.context.domain.book.BookTitle
-import com.github.caay2000.librarykata.hexagonal.context.domain.loan.CreatedAt
-import com.github.caay2000.librarykata.hexagonal.context.domain.loan.FinishedAt
-import com.github.caay2000.librarykata.hexagonal.context.domain.loan.Loan
-import com.github.caay2000.librarykata.hexagonal.context.domain.loan.LoanId
+import com.github.caay2000.librarykata.hexagonal.context.account.domain.Account
+import com.github.caay2000.librarykata.hexagonal.context.account.domain.AccountId
+import com.github.caay2000.librarykata.hexagonal.context.account.domain.Email
+import com.github.caay2000.librarykata.hexagonal.context.account.domain.IdentityNumber
+import com.github.caay2000.librarykata.hexagonal.context.account.domain.PhoneNumber
+import com.github.caay2000.librarykata.hexagonal.context.account.domain.PhonePrefix
+import com.github.caay2000.librarykata.hexagonal.context.book.domain.Book
+import com.github.caay2000.librarykata.hexagonal.context.book.domain.BookAuthor
+import com.github.caay2000.librarykata.hexagonal.context.book.domain.BookId
+import com.github.caay2000.librarykata.hexagonal.context.book.domain.BookIsbn
+import com.github.caay2000.librarykata.hexagonal.context.book.domain.BookPages
+import com.github.caay2000.librarykata.hexagonal.context.book.domain.BookPublisher
+import com.github.caay2000.librarykata.hexagonal.context.book.domain.BookTitle
+import com.github.caay2000.librarykata.hexagonal.context.loan.domain.CreatedAt
+import com.github.caay2000.librarykata.hexagonal.context.loan.domain.FinishedAt
+import com.github.caay2000.librarykata.hexagonal.context.loan.domain.Loan
+import com.github.caay2000.librarykata.hexagonal.context.loan.domain.LoanId
 import com.github.caay2000.librarykata.jsonapi.context.account.AccountResource
 import com.github.caay2000.librarykata.jsonapi.context.book.BookGroupResource
 import com.github.caay2000.librarykata.jsonapi.context.book.BookResource
@@ -58,8 +58,8 @@ class TestUseCases(
             surname = account.surname,
             birthdate = account.birthdate,
             email = email ?: account.email,
-            phonePrefix = phonePrefix ?: account.phonePrefix,
-            phoneNumber = phoneNumber ?: account.phoneNumber,
+            phonePrefix = phonePrefix ?: account.phone.prefix,
+            phoneNumber = phoneNumber ?: account.phone.number,
         )
     }
 

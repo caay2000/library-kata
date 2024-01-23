@@ -13,7 +13,6 @@ dependencies {
 
     implementation(project(":libs:common-arrow"))
     implementation(project(":libs:common-cqrs"))
-    implementation(project(":libs:common-database"))
     implementation(project(":libs:common-date"))
     implementation(project(":libs:common-http"))
     implementation(project(":libs:common-id-generator"))

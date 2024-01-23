@@ -12,7 +12,7 @@ import com.github.caay2000.librarykata.core.context.account.mother.AccountMother
 import com.github.caay2000.librarykata.core.context.book.mother.BookDocumentMother
 import com.github.caay2000.librarykata.core.context.book.mother.BookMother
 import com.github.caay2000.librarykata.core.context.loan.mother.LoanMother
-import com.github.caay2000.librarykata.hexagonal.context.domain.book.BookAvailable
+import com.github.caay2000.librarykata.hexagonal.context.book.domain.BookAvailable
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.testing.testApplication
 import org.junit.jupiter.api.BeforeEach

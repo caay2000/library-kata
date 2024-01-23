@@ -2,7 +2,7 @@ package com.github.caay2000.librarykata.eventdriven.context.account.primaryadapt
 
 import com.github.caay2000.common.cqrs.CommandHandler
 import com.github.caay2000.common.cqrs.QueryHandler
-import com.github.caay2000.common.dateprovider.DateProvider
+import com.github.caay2000.common.date.provider.DateProvider
 import com.github.caay2000.common.event.DomainEventPublisher
 import com.github.caay2000.common.http.ContentType
 import com.github.caay2000.common.http.Controller
@@ -81,13 +81,7 @@ class CreateAccountController(
     ) {
         call.serverError {
             when (e) {
-                is AccountCreatorError.IdentityNumberAlreadyExists ->
-                    ServerResponse(
-                        HttpStatusCode.BadRequest,
-                        "IdentityNumberAlreadyExists",
-                        e.message,
-                    )
-
+                is AccountCreatorError.IdentityNumberAlreadyExists -> ServerResponse(HttpStatusCode.BadRequest, "IdentityNumberAlreadyExists", e.message)
                 is AccountCreatorError.EmailAlreadyExists -> ServerResponse(HttpStatusCode.BadRequest, "EmailAlreadyExists", e.message)
                 is AccountCreatorError.PhoneAlreadyExists -> ServerResponse(HttpStatusCode.BadRequest, "PhoneAlreadyExists", e.message)
                 else -> ServerResponse(HttpStatusCode.InternalServerError, "Unknown Error", e.message)

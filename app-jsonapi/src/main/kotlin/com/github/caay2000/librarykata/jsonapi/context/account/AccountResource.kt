@@ -39,10 +39,8 @@ data class AccountResource(
         val birthdate: LocalDate,
         @field:Schema(description = "user email", example = "john.doe@email.example")
         val email: String,
-        @field:Schema(description = "user phone prefix", example = "+44")
-        val phonePrefix: String,
-        @field:Schema(description = "user phone prefix", example = "+44")
-        val phoneNumber: String,
+        @field:Schema(description = "user phone (prefix and number)", example = "+44 123456789")
+        val phone: String,
         @field:Schema(description = "user registration date", example = "2020-01-01T00:00:00.000Z")
         @Serializable(with = LocalDateTimeSerializer::class)
         val registerDate: LocalDateTime,

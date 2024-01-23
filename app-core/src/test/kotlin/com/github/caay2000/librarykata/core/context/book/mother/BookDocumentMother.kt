@@ -1,9 +1,9 @@
 package com.github.caay2000.librarykata.core.context.book.mother
 
 import com.github.caay2000.librarykata.core.context.loan.mother.LoanMother
-import com.github.caay2000.librarykata.hexagonal.context.domain.book.Book
-import com.github.caay2000.librarykata.hexagonal.context.domain.loan.Loan
-import com.github.caay2000.librarykata.hexagonal.context.primaryadapter.http.book.transformer.toJsonApiBookDocument
+import com.github.caay2000.librarykata.hexagonal.context.book.domain.Book
+import com.github.caay2000.librarykata.hexagonal.context.book.primaryadapter.http.transformer.toJsonApiBookDocument
+import com.github.caay2000.librarykata.hexagonal.context.loan.domain.Loan
 
 object BookDocumentMother {
     internal fun random(book: Book = BookMother.random()) = book.toJsonApiBookDocument()

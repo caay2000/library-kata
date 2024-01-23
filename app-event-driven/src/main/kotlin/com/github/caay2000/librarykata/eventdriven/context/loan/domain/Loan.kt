@@ -1,10 +1,10 @@
 package com.github.caay2000.librarykata.eventdriven.context.loan.domain
 
+import com.github.caay2000.common.date.DateTime
 import com.github.caay2000.common.ddd.Aggregate
 import com.github.caay2000.common.ddd.AggregateId
 import com.github.caay2000.librarykata.eventdriven.events.loan.LoanCreatedEvent
 import com.github.caay2000.librarykata.eventdriven.events.loan.LoanFinishedEvent
-import java.time.LocalDateTime
 
 data class Loan(
     override val id: LoanId,
@@ -55,8 +55,5 @@ data class Loan(
 @JvmInline
 value class LoanId(val value: String) : AggregateId
 
-@JvmInline
-value class CreatedAt(val value: LocalDateTime)
-
-@JvmInline
-value class FinishedAt(val value: LocalDateTime)
+typealias CreatedAt = DateTime
+typealias FinishedAt = DateTime

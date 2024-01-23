@@ -1,6 +1,6 @@
 package com.github.caay2000.librarykata.core.configuration.eventdriven
 
-import com.github.caay2000.common.dateprovider.LocalDateProvider
+import com.github.caay2000.common.date.provider.LocalDateProvider
 import com.github.caay2000.common.event.AsyncDomainEventBus
 import com.github.caay2000.common.event.DomainEventBus
 import com.github.caay2000.common.event.init
@@ -9,7 +9,7 @@ import com.github.caay2000.common.eventbus.EventBus
 import com.github.caay2000.common.idgenerator.UUIDGenerator
 import com.github.caay2000.dikt.DiKt
 import com.github.caay2000.librarykata.eventdriven.context.account.primaryadapter.event.CreateLoanOnLoanCreatedEventSubscriber
-import com.github.caay2000.librarykata.eventdriven.context.account.primaryadapter.event.DecreaseLoansOnLoanCreatedEventSubscriber
+import com.github.caay2000.librarykata.eventdriven.context.account.primaryadapter.event.DecreaseLoansOnLoanFinishedEventSubscriber
 import com.github.caay2000.librarykata.eventdriven.context.account.primaryadapter.event.IncreaseLoansOnLoanCreatedEventSubscriber
 import com.github.caay2000.librarykata.eventdriven.context.account.primaryadapter.event.RemoveLoanOnLoanFinishedEventSubscriber
 import com.github.caay2000.librarykata.eventdriven.context.account.primaryadapter.http.CreateAccountController
@@ -31,7 +31,7 @@ import com.github.caay2000.librarykata.eventdriven.context.loan.secondaryadapter
 import com.github.caay2000.memorydb.InMemoryDatasource
 import io.ktor.server.application.createApplicationPlugin
 import com.github.caay2000.librarykata.eventdriven.context.account.secondaryadapter.database.InMemoryLoanRepository as InMemoryLoanRepositoryAccountContext
-import com.github.caay2000.librarykata.eventdriven.context.loan.primaryadapter.event.account.DecreaseLoansOnLoanCreatedEventSubscriber as LoanDecreaseLoansOnLoanCreatedEventSubscriber
+import com.github.caay2000.librarykata.eventdriven.context.loan.primaryadapter.event.account.DecreaseLoansOnLoanFinishedEventSubscriber as LoanDecreaseLoansOnLoanCreatedEventSubscriber
 import com.github.caay2000.librarykata.eventdriven.context.loan.primaryadapter.event.account.IncreaseLoansOnLoanCreatedEventSubscriber as LoanIncreaseLoansOnLoanCreatedEventSubscriber
 import com.github.caay2000.librarykata.eventdriven.context.loan.secondaryadapter.database.InMemoryAccountRepository as InMemoryAccountRepositoryLoanContext
 import com.github.caay2000.librarykata.eventdriven.context.loan.secondaryadapter.database.InMemoryBookRepository as InMemoryBookRepositoryLoanContext
@@ -57,7 +57,7 @@ val DependencyInjectionConfiguration =
             .subscribe(CreateLoanOnLoanCreatedEventSubscriber(DiKt.bind()))
             .subscribe(RemoveLoanOnLoanFinishedEventSubscriber(DiKt.bind()))
             .subscribe(IncreaseLoansOnLoanCreatedEventSubscriber(DiKt.bind()))
-            .subscribe(DecreaseLoansOnLoanCreatedEventSubscriber(DiKt.bind()))
+            .subscribe(DecreaseLoansOnLoanFinishedEventSubscriber(DiKt.bind()))
             .subscribe(CreateAccountOnAccountCreatedEventSubscriber(DiKt.bind()))
             .subscribe(CreateBookOnBookCreatedEventSubscriber(DiKt.bind()))
             .subscribe(LoanIncreaseLoansOnLoanCreatedEventSubscriber(DiKt.bind()))

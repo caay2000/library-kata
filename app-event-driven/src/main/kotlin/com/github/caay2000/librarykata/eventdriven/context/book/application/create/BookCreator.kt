@@ -1,11 +1,8 @@
 package com.github.caay2000.librarykata.eventdriven.context.book.application.create
 
 import arrow.core.Either
-import arrow.core.flatMap
 import arrow.core.left
-import arrow.core.recover
 import arrow.core.right
-import com.github.caay2000.common.database.RepositoryError
 import com.github.caay2000.common.event.DomainEventPublisher
 import com.github.caay2000.librarykata.eventdriven.context.book.domain.Book
 import com.github.caay2000.librarykata.eventdriven.context.book.domain.BookId
@@ -25,13 +22,8 @@ class BookCreator(
 
     private fun guardBookIsNotAlreadyCreated(bookId: BookId): Either<BookCreatorError, Unit> =
         bookRepository.find(FindBookCriteria.ById(bookId))
-            .flatMap { BookCreatorError.BookAlreadyExists(bookId).left() }
-            .recover { error ->
-                when (error) {
-                    is RepositoryError.NotFoundError -> Unit.right()
-                    is BookCreatorError -> raise(error)
-                }
-            }
+            ?.let { BookCreatorError.BookAlreadyExists(bookId).left() }
+            ?: Unit.right()
 }
 
 sealed class BookCreatorError(message: String) : RuntimeException(message) {

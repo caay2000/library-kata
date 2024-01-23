@@ -11,8 +11,7 @@ import com.github.caay2000.librarykata.eventdriven.context.account.domain.Create
 import com.github.caay2000.librarykata.eventdriven.context.account.domain.Email
 import com.github.caay2000.librarykata.eventdriven.context.account.domain.IdentityNumber
 import com.github.caay2000.librarykata.eventdriven.context.account.domain.Name
-import com.github.caay2000.librarykata.eventdriven.context.account.domain.PhoneNumber
-import com.github.caay2000.librarykata.eventdriven.context.account.domain.PhonePrefix
+import com.github.caay2000.librarykata.eventdriven.context.account.domain.Phone
 import com.github.caay2000.librarykata.eventdriven.context.account.domain.RegisterDate
 import com.github.caay2000.librarykata.eventdriven.context.account.domain.Surname
 import mu.KLogger
@@ -37,8 +36,7 @@ class CreateAccountCommandHandler(
                 surname = Surname(command.surname),
                 birthdate = Birthdate(command.birthdate),
                 email = Email(command.email),
-                phonePrefix = PhonePrefix(command.phonePrefix),
-                phoneNumber = PhoneNumber(command.phoneNumber),
+                phone = Phone.create(command.phonePrefix, command.phoneNumber),
                 registerDate = RegisterDate(command.registerDate),
             ),
         ).getOrThrow()

@@ -11,7 +11,6 @@ data class AccountCreatedEvent(
     val surname: String,
     val birthdate: LocalDate,
     val email: String,
-    val phoneNumber: String,
-    val phonePrefix: String,
+    val phone: String,
     val registerDate: LocalDateTime,
 ) : DomainEvent(id)

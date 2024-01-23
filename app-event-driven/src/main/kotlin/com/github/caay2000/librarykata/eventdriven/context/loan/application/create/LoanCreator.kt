@@ -14,7 +14,6 @@ import com.github.caay2000.librarykata.eventdriven.context.loan.domain.CreatedAt
 import com.github.caay2000.librarykata.eventdriven.context.loan.domain.Loan
 import com.github.caay2000.librarykata.eventdriven.context.loan.domain.LoanId
 import com.github.caay2000.librarykata.eventdriven.context.loan.domain.LoanRepository
-import com.github.caay2000.librarykata.eventdriven.context.loan.domain.findOrElse
 
 class LoanCreator(
     private val accountRepository: AccountRepository,
@@ -43,12 +42,14 @@ class LoanCreator(
             .map { loan -> eventPublisher.publish(loan.pullEvents()) }
 
     private fun guardAccountCurrentLoans(accountId: AccountId): Either<LoanCreatorError, Unit> =
-        accountRepository.findOrElse(
-            id = accountId,
-            onResourceDoesNotExist = { LoanCreatorError.AccountNotFound(accountId) },
-        ).flatMap { account ->
-            if (account.hasReachedLoanLimit()) LoanCreatorError.AccountHasTooManyLoans(account.id).left() else Unit.right()
-        }
+        accountRepository.find(accountId)
+            .let { account ->
+                when {
+                    account == null -> LoanCreatorError.AccountNotFound(accountId).left()
+                    account.hasReachedLoanLimit() -> LoanCreatorError.AccountHasTooManyLoans(account.id).left()
+                    else -> Unit.right()
+                }
+            }
 
     private fun searchBook(bookIsbn: BookIsbn): List<Book> = bookRepository.search(bookIsbn)
 

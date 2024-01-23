@@ -14,7 +14,6 @@ include(
     "app-jsonapi",
     "libs:common-arrow",
     "libs:common-cqrs",
-    "libs:common-database",
     "libs:common-date",
     "libs:common-ddd",
     "libs:common-http",

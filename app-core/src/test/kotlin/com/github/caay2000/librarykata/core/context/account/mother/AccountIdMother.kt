@@ -1,6 +1,6 @@
 package com.github.caay2000.librarykata.core.context.account.mother
 
-import com.github.caay2000.librarykata.hexagonal.context.domain.account.AccountId
+import com.github.caay2000.librarykata.hexagonal.context.account.domain.AccountId
 import java.util.UUID
 
 object AccountIdMother {

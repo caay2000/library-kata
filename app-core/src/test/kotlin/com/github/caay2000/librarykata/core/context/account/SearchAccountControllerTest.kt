@@ -11,10 +11,10 @@ import com.github.caay2000.librarykata.core.context.account.mother.AccountDocume
 import com.github.caay2000.librarykata.core.context.account.mother.AccountMother
 import com.github.caay2000.librarykata.core.context.book.mother.BookMother
 import com.github.caay2000.librarykata.core.context.loan.mother.LoanMother
-import com.github.caay2000.librarykata.hexagonal.context.domain.account.CurrentLoans
-import com.github.caay2000.librarykata.hexagonal.context.domain.account.Email
-import com.github.caay2000.librarykata.hexagonal.context.domain.account.PhoneNumber
-import com.github.caay2000.librarykata.hexagonal.context.domain.account.TotalLoans
+import com.github.caay2000.librarykata.hexagonal.context.account.domain.CurrentLoans
+import com.github.caay2000.librarykata.hexagonal.context.account.domain.Email
+import com.github.caay2000.librarykata.hexagonal.context.account.domain.PhoneNumber
+import com.github.caay2000.librarykata.hexagonal.context.account.domain.TotalLoans
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.testing.testApplication
 import org.junit.jupiter.api.BeforeEach
@@ -63,7 +63,7 @@ class SearchAccountControllerTest {
             testUseCases.`account is created`(anotherAccount)
 
             val expected = AccountDocumentListMother.random(accounts = listOf(account, accountWithSimilarPhoneNumber))
-            testUseCases.`search account by phoneNumber`(account.phoneNumber.value.take(4))
+            testUseCases.`search account by phoneNumber`(account.phone.number.value.take(4))
                 .assertStatus(HttpStatusCode.OK)
                 .assertJsonApiResponse(expected)
         }
@@ -82,7 +82,7 @@ class SearchAccountControllerTest {
                     loans = listOf(loan),
                     include = listOf("loan"),
                 )
-            testUseCases.`search account by phoneNumber`(account.phoneNumber.value.take(4), listOf("loan"))
+            testUseCases.`search account by phoneNumber`(account.phone.number.value.take(4), listOf("loan"))
                 .assertStatus(HttpStatusCode.OK)
                 .assertJsonApiResponse(expected)
         }
@@ -144,7 +144,7 @@ class SearchAccountControllerTest {
     fun `no account is returned if phone number is not found`() =
         testApplication {
             val expected = AccountDocumentListMother.empty()
-            testUseCases.`search account by phoneNumber`(account.phoneNumber.value.take(4))
+            testUseCases.`search account by phoneNumber`(account.phone.number.value.take(4))
                 .assertStatus(HttpStatusCode.OK)
                 .assertJsonApiResponse(expected)
         }
@@ -166,8 +166,7 @@ class SearchAccountControllerTest {
     private val anotherLoan = LoanMother.random(accountId = anotherAccount.id, bookId = anotherBook.id)
 
     private val accountWithSimilarPhoneNumber =
-        AccountMother.random()
-            .copy(phoneNumber = PhoneNumber(account.phoneNumber.value.toInt().inc().toString()))
+        AccountMother.random().copy(phone = account.phone.copy(number = PhoneNumber(account.phone.number.value.toInt().inc().toString())))
 
     private val accountWithSimilarEmail =
         AccountMother.random()

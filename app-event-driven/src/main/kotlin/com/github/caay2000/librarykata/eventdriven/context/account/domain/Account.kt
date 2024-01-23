@@ -1,10 +1,10 @@
 package com.github.caay2000.librarykata.eventdriven.context.account.domain
 
+import com.github.caay2000.common.date.Date
+import com.github.caay2000.common.date.DateTime
 import com.github.caay2000.common.ddd.Aggregate
 import com.github.caay2000.common.ddd.AggregateId
 import com.github.caay2000.librarykata.eventdriven.events.account.AccountCreatedEvent
-import java.time.LocalDate
-import java.time.LocalDateTime
 import kotlin.math.max
 
 data class Account(
@@ -14,8 +14,7 @@ data class Account(
     val surname: Surname,
     val birthdate: Birthdate,
     val email: Email,
-    val phonePrefix: PhonePrefix,
-    val phoneNumber: PhoneNumber,
+    val phone: Phone,
     val registerDate: RegisterDate,
     val currentLoans: CurrentLoans,
     val totalLoans: TotalLoans,
@@ -29,13 +28,18 @@ data class Account(
                 surname = request.surname,
                 birthdate = request.birthdate,
                 email = request.email,
-                phonePrefix = request.phonePrefix,
-                phoneNumber = request.phoneNumber,
+                phone = request.phone,
                 registerDate = request.registerDate,
                 currentLoans = CurrentLoans(0),
                 totalLoans = TotalLoans(0),
             ).also { account -> account.pushEvent(account.toAccountCreatedEvent()) }
     }
+
+    // TODO we should validate inputs in their own VO, for example email should have an email format and birthdate cannot be in the future
+
+    fun increaseLoans(): Account = copy(currentLoans = currentLoans.increase(), totalLoans = totalLoans.increase())
+
+    fun decreaseLoans(): Account = copy(currentLoans = currentLoans.decrease())
 
     private fun toAccountCreatedEvent() =
         AccountCreatedEvent(
@@ -45,14 +49,9 @@ data class Account(
             surname = surname.value,
             birthdate = birthdate.value,
             email = email.value,
-            phonePrefix = phonePrefix.value,
-            phoneNumber = phoneNumber.value,
+            phone = phone.toString(),
             registerDate = registerDate.value,
         )
-
-    fun increaseLoans(): Account = copy(currentLoans = currentLoans.increase(), totalLoans = totalLoans.increase())
-
-    fun decreaseLoans(): Account = copy(currentLoans = currentLoans.decrease())
 }
 
 @JvmInline
@@ -63,6 +62,21 @@ value class IdentityNumber(val value: String)
 
 @JvmInline
 value class Email(val value: String)
+// TODO validate email format
+
+data class Phone(val prefix: PhonePrefix, val number: PhoneNumber) {
+    // TODO validate phone format
+    companion object {
+        fun create(
+            prefix: String,
+            number: String,
+        ): Phone = Phone(PhonePrefix(prefix), PhoneNumber(number))
+    }
+
+    override fun toString(): String {
+        return "$prefix $number"
+    }
+}
 
 @JvmInline
 value class PhoneNumber(val value: String)
@@ -76,11 +90,11 @@ value class Name(val value: String)
 @JvmInline
 value class Surname(val value: String)
 
-@JvmInline
-value class Birthdate(val value: LocalDate)
+typealias Birthdate = Date
+// TODO validate birthdate in the future or minimum age
 
-@JvmInline
-value class RegisterDate(val value: LocalDateTime)
+typealias RegisterDate = DateTime
+// TODO validate registerDate in the future
 
 @JvmInline
 value class CurrentLoans(val value: Int) {
@@ -101,7 +115,6 @@ data class CreateAccountRequest(
     val surname: Surname,
     val birthdate: Birthdate,
     val email: Email,
-    val phonePrefix: PhonePrefix,
-    val phoneNumber: PhoneNumber,
+    val phone: Phone,
     val registerDate: RegisterDate,
 )
