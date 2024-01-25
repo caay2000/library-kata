@@ -14,6 +14,7 @@ import com.github.caay2000.librarykata.hexagonal.context.book.secondaryadapter.d
 import com.github.caay2000.librarykata.hexagonal.context.loan.primaryadapter.http.CreateLoanController
 import com.github.caay2000.librarykata.hexagonal.context.loan.primaryadapter.http.FindLoanController
 import com.github.caay2000.librarykata.hexagonal.context.loan.primaryadapter.http.FinishLoanController
+import com.github.caay2000.librarykata.hexagonal.context.loan.primaryadapter.http.SearchLoanController
 import com.github.caay2000.librarykata.hexagonal.context.loan.secondaryadapter.database.InMemoryLoanRepository
 import com.github.caay2000.memorydb.InMemoryDatasource
 import io.ktor.server.application.createApplicationPlugin
@@ -33,11 +34,12 @@ val DependencyInjectionConfiguration =
         DiKt.register { FindAccountController(DiKt.bind(), DiKt.bind()) }
         DiKt.register { SearchAccountController(DiKt.bind(), DiKt.bind()) }
 
-        DiKt.register { CreateBookController(DiKt.bind(), DiKt.bind(), DiKt.bind()) }
-        DiKt.register { FindBookController(DiKt.bind(), DiKt.bind()) }
+        DiKt.register { CreateBookController(DiKt.bind(), DiKt.bind(), DiKt.bind(), DiKt.bind()) }
+        DiKt.register { FindBookController(DiKt.bind(), DiKt.bind(), DiKt.bind()) }
         DiKt.register { SearchBookController(DiKt.bind(), DiKt.bind()) }
 
         DiKt.register { FindLoanController(DiKt.bind(), DiKt.bind(), DiKt.bind()) }
+        DiKt.register { SearchLoanController(DiKt.bind(), DiKt.bind(), DiKt.bind()) }
         DiKt.register { CreateLoanController(DiKt.bind(), DiKt.bind(), DiKt.bind(), DiKt.bind(), DiKt.bind()) }
         DiKt.register { FinishLoanController(DiKt.bind(), DiKt.bind(), DiKt.bind(), DiKt.bind()) }
     }

@@ -32,6 +32,8 @@ class FindAccountControllerTest {
             mockDateProvider = mockDateProvider,
         )
 
+    // Book and Loan Includes needed
+
     @BeforeEach
     fun setUp() {
         DiKt.clear()
@@ -86,7 +88,7 @@ class FindAccountControllerTest {
         }
 
     @Test
-    fun `a user with multiple loans retrieves them`() =
+    fun `retrieve a user with multiple loans including loan data`() =
         testApplication {
             testUseCases.`account is created with a loan`(account, book, loan)
 
@@ -102,6 +104,27 @@ class FindAccountControllerTest {
             val expectedAccount = account.copy(currentLoans = CurrentLoans(1), totalLoans = TotalLoans(2))
             val expected = AccountDocumentMother.random(expectedAccount, listOf(loan), listOf("loan"))
             testUseCases.`find account`(account.id, listOf("loan"))
+                .assertStatus(HttpStatusCode.OK)
+                .assertJsonApiResponse(expected)
+        }
+
+    @Test
+    fun `retrieve a user with multiple loans including loan and account data`() =
+        testApplication {
+            testUseCases.`account is created with a loan`(account, book, loan)
+
+            testUseCases.`book is created`(anotherBook)
+            testUseCases.`loan is created`(
+                id = anotherLoan.id,
+                bookIsbn = anotherBook.isbn,
+                accountId = AccountId(account.id.value),
+                createdAt = anotherLoan.createdAt,
+            )
+            testUseCases.`loan is finished`(bookId = BookId(anotherBook.id.value), finishedAt = anotherLoan.finishedAt)
+
+            val expectedAccount = account.copy(currentLoans = CurrentLoans(1), totalLoans = TotalLoans(2))
+            val expected = AccountDocumentMother.random(expectedAccount, listOf(loan), listOf("book", "loan"))
+            testUseCases.`find account`(account.id, listOf("book", "loan"))
                 .assertStatus(HttpStatusCode.OK)
                 .assertJsonApiResponse(expected)
         }

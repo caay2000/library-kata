@@ -14,8 +14,8 @@ data class JsonApiDocument<R>(
 @Serializable
 @Schema(name = "JsonApiDocumentList")
 data class JsonApiDocumentList<R>(
-    val data: List<R>,
-    val included: List<JsonApiIncludedResource>? = null,
+    val data: Collection<R>,
+    val included: Collection<JsonApiIncludedResource>? = null,
     val meta: JsonApiMeta,
 ) where R : JsonApiResource
 
@@ -55,7 +55,7 @@ data class JsonApiIncludedResource(
     val type: String,
     val attributes: JsonApiResourceAttributes,
     // TODO should be enabled when an include has a relationship
-    // val relationships: Map<String, JsonApiRelationshipData>?,
+    val relationships: Map<String, JsonApiRelationshipData>?,
 )
 
 @Serializable

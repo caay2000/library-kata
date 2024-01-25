@@ -11,7 +11,7 @@ import com.github.caay2000.librarykata.hexagonal.context.loan.application.search
 import com.github.caay2000.librarykata.hexagonal.context.loan.application.search.SearchLoanQueryResponse
 import com.github.caay2000.librarykata.hexagonal.context.loan.domain.Loan
 import com.github.caay2000.librarykata.hexagonal.context.loan.domain.LoanRepository
-import com.github.caay2000.librarykata.hexagonal.context.loan.primaryadapter.http.serialization.toJsonApiLoanResource
+import com.github.caay2000.librarykata.hexagonal.context.loan.primaryadapter.http.transformer.toJsonApiLoanResource
 import com.github.caay2000.librarykata.jsonapi.context.account.AccountResource
 import com.github.caay2000.librarykata.jsonapi.context.book.BookGroupResource
 import com.github.caay2000.librarykata.jsonapi.context.loan.LoanResource

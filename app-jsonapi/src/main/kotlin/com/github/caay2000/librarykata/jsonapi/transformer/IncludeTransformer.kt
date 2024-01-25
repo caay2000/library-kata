@@ -10,6 +10,7 @@ object IncludeTransformer : Transformer<Collection<JsonApiResource>, List<JsonAp
             id = value.id,
             type = value.type,
             attributes = value.attributes,
+            relationships = value.relationships,
         )
 
     override fun invoke(
@@ -24,6 +25,7 @@ object IncludeTransformer : Transformer<Collection<JsonApiResource>, List<JsonAp
                     id = it.id,
                     type = it.type,
                     attributes = it.attributes,
+                    relationships = it.relationships,
                 )
             }
         }

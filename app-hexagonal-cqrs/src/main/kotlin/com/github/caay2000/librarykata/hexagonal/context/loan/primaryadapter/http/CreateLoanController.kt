@@ -23,7 +23,7 @@ import com.github.caay2000.librarykata.hexagonal.context.loan.application.find.F
 import com.github.caay2000.librarykata.hexagonal.context.loan.domain.Loan
 import com.github.caay2000.librarykata.hexagonal.context.loan.domain.LoanId
 import com.github.caay2000.librarykata.hexagonal.context.loan.domain.LoanRepository
-import com.github.caay2000.librarykata.hexagonal.context.loan.primaryadapter.http.serialization.LoanDocumentTransformer
+import com.github.caay2000.librarykata.hexagonal.context.loan.primaryadapter.http.transformer.LoanDocumentTransformer
 import com.github.caay2000.librarykata.jsonapi.context.loan.LoanRequestResource
 import com.github.caay2000.librarykata.jsonapi.context.loan.LoanResource
 import io.github.smiley4.ktorswaggerui.dsl.OpenApiRoute

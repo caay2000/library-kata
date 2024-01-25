@@ -202,6 +202,16 @@ class LibraryClient {
         }
 
     context(ApplicationTestBuilder)
+    fun searchLoan(include: List<String>): HttpDataResponse<JsonApiDocumentList<LoanResource>> =
+        runBlocking {
+            val includeQuery =
+                include.joinToString { it.lowercase() }.let {
+                    if (it.isNotBlank()) "?include=$it" else ""
+                }
+            client.get("/loan$includeQuery").toHttpDataResponse<JsonApiDocumentList<LoanResource>>()
+        }
+
+    context(ApplicationTestBuilder)
     fun finishLoan(bookId: BookId): HttpDataResponse<Unit> =
         runBlocking {
             client.post("/loan/${bookId.value}").toHttpDataResponse()

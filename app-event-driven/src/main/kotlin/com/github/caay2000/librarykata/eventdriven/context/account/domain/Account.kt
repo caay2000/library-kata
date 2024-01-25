@@ -74,7 +74,7 @@ data class Phone(val prefix: PhonePrefix, val number: PhoneNumber) {
     }
 
     override fun toString(): String {
-        return "$prefix $number"
+        return "${prefix.value} ${number.value}"
     }
 }
 
