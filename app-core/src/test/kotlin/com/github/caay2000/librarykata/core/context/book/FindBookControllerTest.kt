@@ -12,6 +12,8 @@ import com.github.caay2000.librarykata.core.context.account.mother.AccountMother
 import com.github.caay2000.librarykata.core.context.book.mother.BookDocumentMother
 import com.github.caay2000.librarykata.core.context.book.mother.BookMother
 import com.github.caay2000.librarykata.core.context.loan.mother.LoanMother
+import com.github.caay2000.librarykata.hexagonal.context.account.domain.CurrentLoans
+import com.github.caay2000.librarykata.hexagonal.context.account.domain.TotalLoans
 import com.github.caay2000.librarykata.hexagonal.context.book.domain.BookAvailable
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.testing.testApplication
@@ -22,6 +24,8 @@ class FindBookControllerTest {
     private val mockIdGenerator = MockIdGenerator()
     private val mockDateProvider = MockDateProvider()
     private val testUseCases = TestUseCases(mockIdGenerator = mockIdGenerator, mockDateProvider = mockDateProvider)
+
+    // Account and Loan Includes needed
 
     @BeforeEach
     fun setUp() {
@@ -46,7 +50,7 @@ class FindBookControllerTest {
         testApplication {
             testUseCases.`account is created with a loan`(account, book, loan)
 
-            val expected = BookDocumentMother.random(notAvailableBook, listOf(loan))
+            val expected = BookDocumentMother.random(notAvailableBook, listOf(account), listOf(loan))
             testUseCases.`find book by id`(book.id)
                 .assertStatus(HttpStatusCode.OK)
                 .assertJsonApiResponse(expected)
@@ -57,8 +61,20 @@ class FindBookControllerTest {
         testApplication {
             testUseCases.`account is created with a loan`(account, book, loan)
 
-            val expected = BookDocumentMother.random(notAvailableBook, listOf(loan), listOf("loan"))
+            val expected = BookDocumentMother.random(notAvailableBook, listOf(account), listOf(loan), listOf("loan"))
             testUseCases.`find book by id`(book.id, listOf("loan"))
+                .assertStatus(HttpStatusCode.OK)
+                .assertJsonApiResponse(expected)
+        }
+
+    @Test
+    fun `a lent book can be retrieved by Id including loan and account information`() =
+        testApplication {
+            testUseCases.`account is created with a loan`(account, book, loan)
+
+            val expectedAccount = account.copy(currentLoans = CurrentLoans(1), totalLoans = TotalLoans(2))
+            val expected = BookDocumentMother.random(notAvailableBook, listOf(expectedAccount), listOf(loan), listOf("account", "loan"))
+            testUseCases.`find book by id`(book.id, listOf("account", "loan"))
                 .assertStatus(HttpStatusCode.OK)
                 .assertJsonApiResponse(expected)
         }

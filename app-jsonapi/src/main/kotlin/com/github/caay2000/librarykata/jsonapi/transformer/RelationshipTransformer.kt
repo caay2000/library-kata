@@ -3,7 +3,6 @@ package com.github.caay2000.librarykata.jsonapi.transformer
 import com.github.caay2000.common.http.Transformer
 import com.github.caay2000.common.jsonapi.JsonApiRelationshipData
 import com.github.caay2000.common.jsonapi.JsonApiRelationshipIdentifier
-import com.github.caay2000.librarykata.jsonapi.context.loan.LoanResource
 
 object RelationshipTransformer : Transformer<Collection<RelationshipIdentifier>, Map<String, JsonApiRelationshipData>?> {
     fun invoke(
@@ -18,11 +17,13 @@ object RelationshipTransformer : Transformer<Collection<RelationshipIdentifier>,
         if (value.isEmpty()) {
             null
         } else {
-            mapOf(
-                LoanResource.TYPE to
+            value.groupBy { it.type }
+                .mapValues { relationships ->
                     JsonApiRelationshipData(
-                        value.map { JsonApiRelationshipIdentifier(id = it.id, type = it.type) },
-                    ),
-            )
+                        relationships.value.map {
+                            JsonApiRelationshipIdentifier(id = it.id, type = it.type)
+                        },
+                    )
+                }
         }
 }

@@ -177,6 +177,10 @@ class TestUseCases(
 
     context(ApplicationTestBuilder)
     @TestCase
+    fun `search loan`(include: List<String> = emptyList()): HttpDataResponse<JsonApiDocumentList<LoanResource>> = libraryClient.searchLoan(include)
+
+    context(ApplicationTestBuilder)
+    @TestCase
     fun `loan is finished`(
         loan: Loan = LoanMother.random(),
         bookId: BookId? = null,

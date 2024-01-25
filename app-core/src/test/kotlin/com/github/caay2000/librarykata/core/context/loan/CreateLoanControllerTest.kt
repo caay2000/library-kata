@@ -14,7 +14,7 @@ import com.github.caay2000.librarykata.core.context.book.mother.BookMother
 import com.github.caay2000.librarykata.core.context.loan.mother.LoanMother
 import com.github.caay2000.librarykata.hexagonal.context.account.domain.AccountId
 import com.github.caay2000.librarykata.hexagonal.context.book.domain.BookId
-import com.github.caay2000.librarykata.hexagonal.context.loan.primaryadapter.http.serialization.toJsonApiDocument
+import com.github.caay2000.librarykata.hexagonal.context.loan.primaryadapter.http.transformer.toJsonApiDocument
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.testing.testApplication
 import org.junit.jupiter.api.BeforeEach

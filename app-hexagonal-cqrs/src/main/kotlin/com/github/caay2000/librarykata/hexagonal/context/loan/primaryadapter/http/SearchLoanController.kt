@@ -4,21 +4,19 @@ import com.github.caay2000.common.cqrs.QueryHandler
 import com.github.caay2000.common.http.ContentType
 import com.github.caay2000.common.http.Controller
 import com.github.caay2000.common.http.Transformer
-import com.github.caay2000.common.jsonapi.JsonApiDocument
+import com.github.caay2000.common.jsonapi.JsonApiDocumentList
 import com.github.caay2000.common.jsonapi.ServerResponse
 import com.github.caay2000.common.jsonapi.documentation.errorResponses
-import com.github.caay2000.common.jsonapi.documentation.responseExample
 import com.github.caay2000.common.jsonapi.toJsonApiRequestParams
 import com.github.caay2000.librarykata.hexagonal.context.account.domain.AccountRepository
 import com.github.caay2000.librarykata.hexagonal.context.book.domain.BookRepository
-import com.github.caay2000.librarykata.hexagonal.context.loan.application.find.FindLoanByIdQuery
-import com.github.caay2000.librarykata.hexagonal.context.loan.application.find.FindLoanByIdQueryHandler
-import com.github.caay2000.librarykata.hexagonal.context.loan.application.find.FindLoanByIdQueryResponse
 import com.github.caay2000.librarykata.hexagonal.context.loan.application.find.LoanFinderError
+import com.github.caay2000.librarykata.hexagonal.context.loan.application.search.SearchLoanQuery
+import com.github.caay2000.librarykata.hexagonal.context.loan.application.search.SearchLoanQueryHandler
+import com.github.caay2000.librarykata.hexagonal.context.loan.application.search.SearchLoanQueryResponse
 import com.github.caay2000.librarykata.hexagonal.context.loan.domain.Loan
-import com.github.caay2000.librarykata.hexagonal.context.loan.domain.LoanId
 import com.github.caay2000.librarykata.hexagonal.context.loan.domain.LoanRepository
-import com.github.caay2000.librarykata.hexagonal.context.loan.primaryadapter.http.transformer.LoanDocumentTransformer
+import com.github.caay2000.librarykata.hexagonal.context.loan.primaryadapter.http.transformer.LoanDocumentListTransformer
 import com.github.caay2000.librarykata.jsonapi.context.loan.LoanResource
 import io.github.smiley4.ktorswaggerui.dsl.OpenApiRoute
 import io.ktor.http.HttpStatusCode
@@ -27,25 +25,23 @@ import io.ktor.server.response.respond
 import io.ktor.util.toMap
 import mu.KLogger
 import mu.KotlinLogging
-import java.util.UUID
 
-class FindLoanController(
+class SearchLoanController(
     accountRepository: AccountRepository,
     bookRepository: BookRepository,
     loanRepository: LoanRepository,
 ) : Controller {
     override val logger: KLogger = KotlinLogging.logger {}
 
-    private val queryHandler: QueryHandler<FindLoanByIdQuery, FindLoanByIdQueryResponse> = FindLoanByIdQueryHandler(loanRepository)
-    private val transformer: Transformer<Loan, JsonApiDocument<LoanResource>> = LoanDocumentTransformer(accountRepository, bookRepository)
+    private val queryHandler: QueryHandler<SearchLoanQuery, SearchLoanQueryResponse> = SearchLoanQueryHandler(loanRepository)
+    private val transformer: Transformer<List<Loan>, JsonApiDocumentList<LoanResource>> = LoanDocumentListTransformer(accountRepository, bookRepository)
 
     override suspend fun handle(call: ApplicationCall) {
-        val loanId = UUID.fromString(call.parameters["loanId"]!!)
         val jsonApiParams = call.request.queryParameters.toMap().toJsonApiRequestParams()
 
-        val queryResult = queryHandler.invoke(FindLoanByIdQuery(LoanId(loanId.toString())))
+        val queryResult = queryHandler.invoke(SearchLoanQuery.All)
 
-        call.respond(HttpStatusCode.OK, transformer.invoke(queryResult.loan, jsonApiParams.include))
+        call.respond(HttpStatusCode.OK, transformer.invoke(queryResult.value, jsonApiParams.include))
     }
 
     override suspend fun handleExceptions(
@@ -63,27 +59,15 @@ class FindLoanController(
     companion object {
         val documentation: OpenApiRoute.() -> Unit = {
             tags = listOf("Loan")
-            description = "Find Loan"
-            request {
-                pathParameter<String>("id") {
-                    description = "Loan Id"
-                    required = true
-                    example = "00000000-0000-0000-0000-000000000000"
-                }
-            }
+            description = "Search All Loans"
 
             response {
                 HttpStatusCode.OK to {
-                    description = "Loan Information"
-                    body<JsonApiDocument<LoanResource>> {
+                    description = "Loans retrieved"
+                    body<JsonApiDocumentList<LoanResource>> {
                         mediaType(ContentType.JsonApi)
                     }
                 }
-                errorResponses(
-                    httpStatusCode = HttpStatusCode.NotFound,
-                    summary = "Error finding Loan",
-                    responseExample("LoanNotFoundError", "Loan {loanId} not found"),
-                )
                 errorResponses(
                     httpStatusCode = HttpStatusCode.InternalServerError,
                     summary = "Something unexpected happened",

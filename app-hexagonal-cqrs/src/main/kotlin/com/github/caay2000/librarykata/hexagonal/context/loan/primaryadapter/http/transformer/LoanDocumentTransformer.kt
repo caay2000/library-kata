@@ -1,4 +1,4 @@
-package com.github.caay2000.librarykata.hexagonal.context.loan.primaryadapter.http.serialization
+package com.github.caay2000.librarykata.hexagonal.context.loan.primaryadapter.http.transformer
 
 import com.github.caay2000.common.cqrs.QueryHandler
 import com.github.caay2000.common.http.Transformer
@@ -47,7 +47,7 @@ fun Loan.toJsonApiDocument(
 ): JsonApiDocument<LoanResource> =
     JsonApiDocument(
         data = toJsonApiLoanResource(account, book),
-        included = manageLoanIncludes(include, account, book),
+        included = this.manageLoanIncludes(include, account, book),
     )
 
 internal fun Loan.toJsonApiLoanResource(
@@ -63,7 +63,7 @@ internal fun Loan.toJsonApiLoanResource(
 fun manageLoanRelationships(
     account: Account?,
     book: Book?,
-): Map<String, JsonApiRelationshipData> {
+): Map<String, JsonApiRelationshipData>? {
     val map = mutableMapOf<String, JsonApiRelationshipData>()
     if (account != null) {
         val relationship = RelationshipTransformer.invoke(RelationshipIdentifier(account.id.value, AccountResource.TYPE))
@@ -77,23 +77,22 @@ fun manageLoanRelationships(
             map.putAll(relationship)
         }
     }
-    return map
+    return map.ifEmpty { null }
 }
 
-private fun manageLoanIncludes(
-    include: List<String>,
+internal fun Loan.manageLoanIncludes(
+    include: Collection<String>,
     account: Account?,
     book: Book?,
 ): MutableSet<JsonApiIncludedResource>? {
-    if (include.isEmpty()) return null
     val included = mutableSetOf<JsonApiIncludedResource>()
     if (include.shouldProcess(AccountResource.TYPE) && account != null) {
-        included.add(IncludeTransformer.invoke(account.toJsonApiAccountResource()))
+        included.add(IncludeTransformer.invoke(account.toJsonApiAccountResource(loans = listOf(this))))
     }
     if (include.shouldProcess(BookResource.TYPE) && book != null) {
-        included.add(IncludeTransformer.invoke(book.toJsonApiBookResource()))
+        included.add(IncludeTransformer.invoke(book.toJsonApiBookResource(loans = listOf(this))))
     }
-    return included
+    return included.ifEmpty { null }
 }
 
 internal fun Loan.toJsonApiDocumentLoanAttributes() =

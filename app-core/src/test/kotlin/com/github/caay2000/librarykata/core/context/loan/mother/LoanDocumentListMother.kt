@@ -4,14 +4,15 @@ import com.github.caay2000.librarykata.hexagonal.context.account.domain.Account
 import com.github.caay2000.librarykata.hexagonal.context.book.domain.Book
 import com.github.caay2000.librarykata.hexagonal.context.loan.domain.Loan
 import com.github.caay2000.librarykata.hexagonal.context.loan.primaryadapter.http.transformer.toJsonApiDocument
+import com.github.caay2000.librarykata.hexagonal.context.loan.primaryadapter.http.transformer.toJsonApiLoanDocumentList
 
-object LoanDocumentMother {
+object LoanDocumentListMother {
     fun random(loan: Loan = LoanMother.random()) = loan.toJsonApiDocument()
 
     fun random(
-        loan: Loan = LoanMother.random(),
-        account: Account? = null,
-        book: Book? = null,
+        loans: List<Loan> = listOf(LoanMother.random()),
+        accounts: List<Account> = emptyList(),
+        books: List<Book> = emptyList(),
         include: List<String> = emptyList(),
-    ) = loan.toJsonApiDocument(account, book, include)
+    ) = loans.toJsonApiLoanDocumentList(accounts, books, include)
 }
