@@ -72,7 +72,7 @@ class FindBookControllerTest {
         testApplication {
             testUseCases.`account is created with a loan`(account, book, loan)
 
-            val expectedAccount = account.copy(currentLoans = CurrentLoans(1), totalLoans = TotalLoans(2))
+            val expectedAccount = account.copy(currentLoans = CurrentLoans(1), totalLoans = TotalLoans(1))
             val expected = BookDocumentMother.random(notAvailableBook, listOf(expectedAccount), listOf(loan), listOf("account", "loan"))
             testUseCases.`find book by id`(book.id, listOf("account", "loan"))
                 .assertStatus(HttpStatusCode.OK)
