@@ -18,6 +18,7 @@ include(
     "libs:common-ddd",
     "libs:common-http",
     "libs:common-id-generator",
+    "libs:common-resource-bus",
     "libs:common-test",
     "libs:lib-memory-database",
     "libs:lib-event-bus",

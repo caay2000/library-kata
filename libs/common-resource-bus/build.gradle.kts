@@ -4,6 +4,8 @@ plugins {
 }
 
 dependencies {
+    implementation(project(":libs:common-http"))
+
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
 
     testImplementation(project(":libs:common-test"))

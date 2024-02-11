@@ -32,8 +32,6 @@ class FindAccountControllerTest {
             mockDateProvider = mockDateProvider,
         )
 
-    // Book and Loan Includes needed
-
     @BeforeEach
     fun setUp() {
         DiKt.clear()
@@ -81,7 +79,9 @@ class FindAccountControllerTest {
             testUseCases.`account is created with a loan`(account, book, loan)
 
             val expectedAccount = account.copy(currentLoans = CurrentLoans(1), totalLoans = TotalLoans(1))
+
             val expected = AccountDocumentMother.random(expectedAccount, listOf(loan), listOf("loan"))
+
             testUseCases.`find account`(account.id, listOf("loan"))
                 .assertStatus(HttpStatusCode.OK)
                 .assertJsonApiResponse(expected)

@@ -5,4 +5,7 @@ plugins {
 
 dependencies {
     implementation(project(":libs:common-http"))
+    implementation(project(":libs:common-resource-bus"))
+
+    testImplementation(project(":libs:common-test"))
 }

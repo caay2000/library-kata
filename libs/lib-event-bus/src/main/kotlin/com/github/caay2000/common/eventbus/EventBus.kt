@@ -20,22 +20,13 @@ class EventBus(
     private val _events = List(numPartitions) { MutableSharedFlow<Event>() }
     val events = _events.map { it.asSharedFlow() }
 
-    private val _partitions: MutableMap<Int, MutableList<Event>> =
-        MutableList(numPartitions) { it }
-            .associateWith<Int, MutableList<Event>> { mutableListOf() }
-            .toMutableMap()
-
     val subscribers: MutableMap<String, List<EventSubscriber<*>>> = mutableMapOf()
-
-    val partitions: Map<Int, List<Event>>
-        get() = _partitions.toMap()
 
     override fun <EVENT : Event> publish(event: EVENT) {
         runBlocking {
             val partition = Integer.decode("0x${event.aggregateId.last()}") % numPartitions
             logger.trace { "publishing event ${event::class.java.simpleName} into partition $partition" }
             _events[partition].emit(event)
-//            _partitions[partition]!!.add(event)
         }
     }
 

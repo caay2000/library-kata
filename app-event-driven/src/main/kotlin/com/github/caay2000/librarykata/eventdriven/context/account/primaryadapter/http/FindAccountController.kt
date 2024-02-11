@@ -1,23 +1,17 @@
 package com.github.caay2000.librarykata.eventdriven.context.account.primaryadapter.http
 
-import com.github.caay2000.common.cqrs.QueryHandler
 import com.github.caay2000.common.http.ContentType
 import com.github.caay2000.common.http.Controller
-import com.github.caay2000.common.http.Transformer
 import com.github.caay2000.common.jsonapi.JsonApiDocument
 import com.github.caay2000.common.jsonapi.ServerResponse
 import com.github.caay2000.common.jsonapi.documentation.errorResponses
 import com.github.caay2000.common.jsonapi.documentation.responseExample
 import com.github.caay2000.common.jsonapi.toJsonApiRequestParams
+import com.github.caay2000.common.resourcebus.JsonApiResourceBus
 import com.github.caay2000.librarykata.eventdriven.context.account.application.find.AccountFinderError
-import com.github.caay2000.librarykata.eventdriven.context.account.application.find.FindAccountQuery
-import com.github.caay2000.librarykata.eventdriven.context.account.application.find.FindAccountQueryHandler
-import com.github.caay2000.librarykata.eventdriven.context.account.application.find.FindAccountQueryResponse
-import com.github.caay2000.librarykata.eventdriven.context.account.domain.Account
 import com.github.caay2000.librarykata.eventdriven.context.account.domain.AccountId
 import com.github.caay2000.librarykata.eventdriven.context.account.domain.AccountRepository
-import com.github.caay2000.librarykata.eventdriven.context.account.domain.LoanRepository
-import com.github.caay2000.librarykata.eventdriven.context.account.primaryadapter.http.transformer.AccountDocumentTransformer
+import com.github.caay2000.librarykata.eventdriven.context.account.primaryadapter.http.jsonapi.JsonApiAccountBuilder
 import com.github.caay2000.librarykata.jsonapi.context.account.AccountResource
 import io.github.smiley4.ktorswaggerui.dsl.OpenApiRoute
 import io.ktor.http.HttpStatusCode
@@ -30,20 +24,23 @@ import java.util.UUID
 
 class FindAccountController(
     accountRepository: AccountRepository,
-    loanRepository: LoanRepository,
+    resourceBus: JsonApiResourceBus,
 ) : Controller {
     override val logger: KLogger = KotlinLogging.logger {}
 
-    private val accountQueryHandler: QueryHandler<FindAccountQuery, FindAccountQueryResponse> = FindAccountQueryHandler(accountRepository)
-    private val transformer: Transformer<Account, JsonApiDocument<AccountResource>> = AccountDocumentTransformer(loanRepository)
+    private val jsonApiBuilder = JsonApiAccountBuilder(resourceBus)
+//    private val accountQueryHandler: QueryHandler<FindAccountQuery, FindAccountQueryResponse> = FindAccountQueryHandler(accountRepository)
+//    private val transformer: Transformer<Account, JsonApiDocument<AccountResource>> = AccountDocumentTransformer(loanRepository)
 
     override suspend fun handle(call: ApplicationCall) {
         val accountId = AccountId(UUID.fromString(call.parameters["id"]!!).toString())
         val jsonApiParams = call.request.queryParameters.toMap().toJsonApiRequestParams()
 
-        val queryResponse = accountQueryHandler.invoke(FindAccountQuery(accountId))
-        val responseDocument = transformer.invoke(queryResponse.account, jsonApiParams.include)
-        call.respond(HttpStatusCode.OK, responseDocument)
+//        val queryResponse = accountQueryHandler.invoke(FindAccountQuery(accountId))
+//        val resource = resourceBus.retrieve<AccountResource>(accountId.value)
+        val document = jsonApiBuilder.getDocument(accountId.value, jsonApiParams)
+//        val responseDocument = transformer.invoke(queryResponse.account, jsonApiParams.include)
+        call.respond(HttpStatusCode.OK, document)
     }
 
     override suspend fun handleExceptions(

@@ -34,8 +34,8 @@ class LoanDocumentTransformer(accountRepository: AccountRepository, bookReposito
         value: Loan,
         include: List<String>,
     ): JsonApiDocument<LoanResource> {
-        val account = accountQueryHandler.handle(FindAccountQuery(value.accountId)).account
-        val book = bookQueryHandler.handle(FindBookQuery(value.bookId)).book
+        val account = accountQueryHandler.invoke(FindAccountQuery(value.accountId)).account
+        val book = bookQueryHandler.invoke(FindBookQuery(value.bookId)).book
         return value.toJsonApiDocument(account, book, include)
     }
 }
@@ -46,37 +46,22 @@ fun Loan.toJsonApiDocument(
     include: List<String> = emptyList(),
 ): JsonApiDocument<LoanResource> =
     JsonApiDocument(
-        data = toJsonApiLoanResource(account, book),
+        data = toJsonApiLoanResource(),
         included = this.manageLoanIncludes(include, account, book),
     )
 
-internal fun Loan.toJsonApiLoanResource(
-    account: Account? = null,
-    book: Book? = null,
-) = LoanResource(
-    id = id.value,
-    type = LoanResource.TYPE,
-    attributes = toJsonApiDocumentLoanAttributes(),
-    relationships = manageLoanRelationships(account, book),
-)
+internal fun Loan.toJsonApiLoanResource() =
+    LoanResource(
+        id = id.value,
+        type = LoanResource.TYPE,
+        attributes = toJsonApiDocumentLoanAttributes(),
+        relationships = manageLoanRelationships(),
+    )
 
-fun manageLoanRelationships(
-    account: Account?,
-    book: Book?,
-): Map<String, JsonApiRelationshipData>? {
+fun Loan.manageLoanRelationships(): Map<String, JsonApiRelationshipData>? {
     val map = mutableMapOf<String, JsonApiRelationshipData>()
-    if (account != null) {
-        val relationship = RelationshipTransformer.invoke(RelationshipIdentifier(account.id.value, AccountResource.TYPE))
-        if (relationship != null) {
-            map.putAll(relationship)
-        }
-    }
-    if (book != null) {
-        val relationship = RelationshipTransformer.invoke(RelationshipIdentifier(book.id.value, BookResource.TYPE))
-        if (relationship != null) {
-            map.putAll(relationship)
-        }
-    }
+    map.putAll(RelationshipTransformer.invoke(RelationshipIdentifier(this.accountId.value, AccountResource.TYPE)) ?: emptyMap())
+    map.putAll(RelationshipTransformer.invoke(RelationshipIdentifier(this.bookId.value, BookResource.TYPE)) ?: emptyMap())
     return map.ifEmpty { null }
 }
 

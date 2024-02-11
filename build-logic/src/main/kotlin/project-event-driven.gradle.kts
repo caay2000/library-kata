@@ -14,6 +14,7 @@ dependencies {
     implementation(project(":libs:common-http"))
     implementation(project(":libs:common-ddd"))
     implementation(project(":libs:common-id-generator"))
+    implementation(project(":libs:common-resource-bus"))
     implementation(project(":libs:lib-dependency-injection"))
     implementation(project(":libs:lib-memory-database"))
     implementation(project(":libs:lib-event-bus"))

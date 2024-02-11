@@ -6,6 +6,8 @@ import com.github.caay2000.common.http.shouldProcess
 import com.github.caay2000.common.jsonapi.JsonApiDocument
 import com.github.caay2000.common.jsonapi.JsonApiIncludedResource
 import com.github.caay2000.common.jsonapi.JsonApiRelationshipData
+import com.github.caay2000.common.resourcebus.JsonApiResourceBus
+import com.github.caay2000.common.resourcebus.JsonApiResourceBusError
 import com.github.caay2000.librarykata.eventdriven.context.loan.application.account.find.FindAccountQuery
 import com.github.caay2000.librarykata.eventdriven.context.loan.application.account.find.FindAccountQueryHandler
 import com.github.caay2000.librarykata.eventdriven.context.loan.application.account.find.FindAccountQueryResponse
@@ -28,6 +30,7 @@ import com.github.caay2000.librarykata.jsonapi.transformer.RelationshipTransform
 class LoanDocumentTransformer(
     accountRepository: AccountRepository,
     bookRepository: BookRepository,
+    private val resourceBus: JsonApiResourceBus,
 ) : Transformer<Loan, JsonApiDocument<LoanResource>> {
     private val accountQueryHandler: QueryHandler<FindAccountQuery, FindAccountQueryResponse> =
         FindAccountQueryHandler(accountRepository)
@@ -37,23 +40,51 @@ class LoanDocumentTransformer(
         value: Loan,
         include: List<String>,
     ): JsonApiDocument<LoanResource> {
-        val account = accountQueryHandler.handle(FindAccountQuery(value.accountId)).account
-        val book = bookQueryHandler.handle(FindBookQuery(value.bookId)).book
+        val account = accountQueryHandler.invoke(FindAccountQuery(value.accountId)).account
+        val book = bookQueryHandler.invoke(FindBookQuery(value.bookId)).book
         return value.toJsonApiDocument(account, book, include)
+    }
+
+    private fun Loan.toJsonApiDocument(
+        account: Account? = null,
+        book: Book? = null,
+        include: List<String> = emptyList(),
+    ): JsonApiDocument<LoanResource> =
+        JsonApiDocument(
+            data = toJsonApiLoanResource(account, book),
+            included = manageLoanIncludes(include, null, null),
+        )
+
+    private fun manageLoanIncludes(
+        include: List<String>,
+        accountId: String?,
+        book: Book?,
+    ): MutableSet<JsonApiIncludedResource>? {
+        if (include.isEmpty()) return null
+        val included = mutableSetOf<JsonApiIncludedResource>()
+        if (include.shouldProcess(AccountResource.TYPE) && accountId != null) {
+            val resource =
+                try {
+                    resourceBus.retrieve<LoanResource>(accountId)
+                } catch (e: JsonApiResourceBusError.ResourceHandlerNotFound) {
+                    null
+                }
+            if (resource != null) {
+//                included.addAll(listOf(resource.toJsonApiIncludedResource()))
+            }
+        }
+        if (include.shouldProcess(BookResource.TYPE) && book != null) {
+//        val elements = BookIncludeTransformer().invoke(listOf(book))
+            val elements = emptyList<JsonApiIncludedResource>()
+            if (elements != null) {
+                included.addAll(elements)
+            }
+        }
+        return included
     }
 }
 
-fun Loan.toJsonApiDocument(
-    account: Account? = null,
-    book: Book? = null,
-    include: List<String> = emptyList(),
-): JsonApiDocument<LoanResource> =
-    JsonApiDocument(
-        data = toJsonApiLoanResource(account, book),
-        included = manageLoanIncludes(include, null, null),
-    )
-
-internal fun Loan.toJsonApiLoanResource(
+fun Loan.toJsonApiLoanResource(
     account: Account? = null,
     book: Book? = null,
 ) = LoanResource(
@@ -81,30 +112,6 @@ private fun manageLoanRelationships(
         }
     }
     return map
-}
-
-private fun manageLoanIncludes(
-    include: List<String>,
-    account: Account?,
-    book: Book?,
-): MutableSet<JsonApiIncludedResource>? {
-    if (include.isEmpty()) return null
-    val included = mutableSetOf<JsonApiIncludedResource>()
-    if (include.shouldProcess(AccountResource.TYPE) && account != null) {
-//        val elements = AccountIncludeTransformer().invoke(listOf(account))
-        val elements = emptyList<JsonApiIncludedResource>()
-        if (elements != null) {
-            included.addAll(elements)
-        }
-    }
-    if (include.shouldProcess(BookResource.TYPE) && book != null) {
-//        val elements = BookIncludeTransformer().invoke(listOf(book))
-        val elements = emptyList<JsonApiIncludedResource>()
-        if (elements != null) {
-            included.addAll(elements)
-        }
-    }
-    return included
 }
 
 internal fun Loan.toJsonApiDocumentLoanAttributes() =

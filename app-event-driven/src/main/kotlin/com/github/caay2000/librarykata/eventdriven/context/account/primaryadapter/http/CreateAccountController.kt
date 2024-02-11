@@ -1,29 +1,22 @@
 package com.github.caay2000.librarykata.eventdriven.context.account.primaryadapter.http
 
 import com.github.caay2000.common.cqrs.CommandHandler
-import com.github.caay2000.common.cqrs.QueryHandler
 import com.github.caay2000.common.date.provider.DateProvider
 import com.github.caay2000.common.event.DomainEventPublisher
 import com.github.caay2000.common.http.ContentType
 import com.github.caay2000.common.http.Controller
-import com.github.caay2000.common.http.Transformer
 import com.github.caay2000.common.idgenerator.IdGenerator
 import com.github.caay2000.common.jsonapi.JsonApiDocument
 import com.github.caay2000.common.jsonapi.JsonApiRequestDocument
 import com.github.caay2000.common.jsonapi.ServerResponse
 import com.github.caay2000.common.jsonapi.documentation.errorResponses
 import com.github.caay2000.common.jsonapi.documentation.responseExample
+import com.github.caay2000.common.resourcebus.JsonApiResourceBus
 import com.github.caay2000.librarykata.eventdriven.context.account.application.create.AccountCreatorError
 import com.github.caay2000.librarykata.eventdriven.context.account.application.create.CreateAccountCommand
 import com.github.caay2000.librarykata.eventdriven.context.account.application.create.CreateAccountCommandHandler
-import com.github.caay2000.librarykata.eventdriven.context.account.application.find.FindAccountQuery
-import com.github.caay2000.librarykata.eventdriven.context.account.application.find.FindAccountQueryHandler
-import com.github.caay2000.librarykata.eventdriven.context.account.application.find.FindAccountQueryResponse
-import com.github.caay2000.librarykata.eventdriven.context.account.domain.Account
-import com.github.caay2000.librarykata.eventdriven.context.account.domain.AccountId
 import com.github.caay2000.librarykata.eventdriven.context.account.domain.AccountRepository
-import com.github.caay2000.librarykata.eventdriven.context.account.domain.LoanRepository
-import com.github.caay2000.librarykata.eventdriven.context.account.primaryadapter.http.transformer.AccountDocumentTransformer
+import com.github.caay2000.librarykata.eventdriven.context.account.primaryadapter.http.jsonapi.JsonApiAccountBuilder
 import com.github.caay2000.librarykata.jsonapi.context.account.AccountRequestResource
 import com.github.caay2000.librarykata.jsonapi.context.account.AccountResource
 import io.github.smiley4.ktorswaggerui.dsl.OpenApiRoute
@@ -41,13 +34,12 @@ class CreateAccountController(
     private val dateProvider: DateProvider,
     accountRepository: AccountRepository,
     eventPublisher: DomainEventPublisher,
-    loanRepository: LoanRepository,
+    resourceBus: JsonApiResourceBus,
 ) : Controller {
     override val logger: KLogger = KotlinLogging.logger {}
 
     private val commandHandler: CommandHandler<CreateAccountCommand> = CreateAccountCommandHandler(accountRepository, eventPublisher)
-    private val queryHandler: QueryHandler<FindAccountQuery, FindAccountQueryResponse> = FindAccountQueryHandler(accountRepository)
-    private val transformer: Transformer<Account, JsonApiDocument<AccountResource>> = AccountDocumentTransformer(loanRepository)
+    private val jsonApiBuilder = JsonApiAccountBuilder(resourceBus)
 
     override suspend fun handle(call: ApplicationCall) {
         val request = call.receive<JsonApiRequestDocument<AccountRequestResource>>()
@@ -55,8 +47,8 @@ class CreateAccountController(
         val registerDate = dateProvider.dateTime()
         commandHandler.invoke(request.toCommand(accountId, registerDate))
 
-        val queryResponse = queryHandler.invoke(FindAccountQuery(AccountId(accountId)))
-        call.respond(HttpStatusCode.Created, transformer.invoke(queryResponse.account))
+        val document = jsonApiBuilder.getDocument(accountId)
+        call.respond(HttpStatusCode.Created, document)
     }
 
     private fun JsonApiRequestDocument<AccountRequestResource>.toCommand(

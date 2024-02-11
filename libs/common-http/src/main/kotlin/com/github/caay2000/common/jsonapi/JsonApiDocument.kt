@@ -58,6 +58,14 @@ data class JsonApiIncludedResource(
     val relationships: Map<String, JsonApiRelationshipData>?,
 )
 
+fun JsonApiResource.toJsonApiIncludedResource() =
+    JsonApiIncludedResource(
+        id = id,
+        type = type,
+        attributes = attributes,
+        relationships = relationships,
+    )
+
 @Serializable
 @Schema(name = "JsonApiMeta")
 data class JsonApiMeta(
