@@ -15,7 +15,7 @@ import com.github.caay2000.librarykata.jsonapi.context.loan.LoanResource
 import com.github.caay2000.librarykata.jsonapi.transformer.RelationshipIdentifier
 import com.github.caay2000.librarykata.jsonapi.transformer.RelationshipTransformer
 
-class AccountResourceQueryHandler(
+class FindAccountResourceQueryHandler(
     accountRepository: AccountRepository,
     loanRepository: LoanRepository,
 ) : ResourceBusQueryHandler<AccountResource> {

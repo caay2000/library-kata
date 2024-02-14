@@ -10,6 +10,8 @@ import com.github.caay2000.librarykata.eventdriven.context.loan.primaryadapter.h
 import com.github.caay2000.librarykata.jsonapi.context.account.AccountResource
 import com.github.caay2000.librarykata.jsonapi.context.loan.LoanResource
 import com.github.caay2000.librarykata.jsonapi.transformer.IncludeTransformer
+import com.github.caay2000.librarykata.jsonapi.transformer.RelationshipIdentifier
+import com.github.caay2000.librarykata.jsonapi.transformer.RelationshipTransformer
 
 class AccountDocumentListTransformer : Transformer<List<Account>, JsonApiDocumentList<AccountResource>> {
 //    private val loanQueryHandler: QueryHandler<SearchLoanQuery, SearchLoanQueryResponse> = SearchLoanQueryHandler(loanRepository)
@@ -31,3 +33,24 @@ fun List<Account>.toJsonApiAccountDocumentList(
     included = if (include.shouldProcess(LoanResource.TYPE)) IncludeTransformer.invoke(loans.map { it.toJsonApiLoanResource() }) else null,
     meta = JsonApiMeta(total = size),
 )
+
+internal fun Account.toJsonApiAccountResource(loans: Collection<com.github.caay2000.librarykata.eventdriven.context.account.domain.Loan> = emptyList()) =
+    AccountResource(
+        id = id.value,
+        type = AccountResource.TYPE,
+        attributes = toJsonApiAccountAttributes(),
+        relationships = RelationshipTransformer.invoke(loans.map { RelationshipIdentifier(it.id.value, LoanResource.TYPE) }),
+    )
+
+internal fun Account.toJsonApiAccountAttributes() =
+    AccountResource.Attributes(
+        identityNumber = identityNumber.value,
+        name = name.value,
+        surname = surname.value,
+        birthdate = birthdate.value,
+        email = email.value,
+        phone = phone.toString(),
+        registerDate = registerDate.value,
+        currentLoans = currentLoans.value,
+        totalLoans = totalLoans.value,
+    )

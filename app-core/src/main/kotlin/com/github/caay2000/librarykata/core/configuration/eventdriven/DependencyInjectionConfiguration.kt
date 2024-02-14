@@ -16,7 +16,7 @@ import com.github.caay2000.librarykata.eventdriven.context.account.primaryadapte
 import com.github.caay2000.librarykata.eventdriven.context.account.primaryadapter.http.CreateAccountController
 import com.github.caay2000.librarykata.eventdriven.context.account.primaryadapter.http.FindAccountController
 import com.github.caay2000.librarykata.eventdriven.context.account.primaryadapter.http.SearchAccountController
-import com.github.caay2000.librarykata.eventdriven.context.account.primaryadapter.http.resourcebus.AccountResourceQueryHandler
+import com.github.caay2000.librarykata.eventdriven.context.account.primaryadapter.http.resourcebus.FindAccountResourceQueryHandler
 import com.github.caay2000.librarykata.eventdriven.context.account.secondaryadapter.database.InMemoryAccountRepository
 import com.github.caay2000.librarykata.eventdriven.context.book.primaryadapter.http.CreateBookController
 import com.github.caay2000.librarykata.eventdriven.context.book.primaryadapter.http.FindBookController
@@ -72,12 +72,12 @@ val DependencyInjectionConfiguration =
 
         DiKt.register { JsonApiResourceBus() }
         DiKt.get<JsonApiResourceBus>()
-            .register(AccountResourceQueryHandler(DiKt.bind(), DiKt.bind()))
+            .register(FindAccountResourceQueryHandler(DiKt.bind(), DiKt.bind()))
             .register(BookResourceQueryHandler(DiKt.bind()))
             .register(LoanResourceQueryHandler(DiKt.bind(), DiKt.bind(), DiKt.bind()))
 
         DiKt.register { CreateAccountController(DiKt.bind(), DiKt.bind(), DiKt.bind(), DiKt.bind(), DiKt.bind()) }
-        DiKt.register { FindAccountController(DiKt.bind(), DiKt.bind()) }
+        DiKt.register { FindAccountController(DiKt.bind()) }
         DiKt.register { SearchAccountController(DiKt.bind()) }
 
         DiKt.register { CreateBookController(DiKt.bind(), DiKt.bind(), DiKt.bind()) }

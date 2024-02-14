@@ -16,7 +16,7 @@ import com.github.caay2000.librarykata.eventdriven.context.account.application.c
 import com.github.caay2000.librarykata.eventdriven.context.account.application.create.CreateAccountCommand
 import com.github.caay2000.librarykata.eventdriven.context.account.application.create.CreateAccountCommandHandler
 import com.github.caay2000.librarykata.eventdriven.context.account.domain.AccountRepository
-import com.github.caay2000.librarykata.eventdriven.context.account.primaryadapter.http.jsonapi.JsonApiAccountBuilder
+import com.github.caay2000.librarykata.eventdriven.context.account.primaryadapter.http.resourcebus.JsonApiAccountBuilder
 import com.github.caay2000.librarykata.jsonapi.context.account.AccountRequestResource
 import com.github.caay2000.librarykata.jsonapi.context.account.AccountResource
 import io.github.smiley4.ktorswaggerui.dsl.OpenApiRoute

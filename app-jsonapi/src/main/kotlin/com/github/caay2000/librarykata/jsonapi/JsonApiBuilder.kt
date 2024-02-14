@@ -1,6 +1,7 @@
 package com.github.caay2000.librarykata.jsonapi
 
 import com.github.caay2000.common.jsonapi.JsonApiDocument
+import com.github.caay2000.common.jsonapi.JsonApiDocumentList
 import com.github.caay2000.common.jsonapi.JsonApiRequestParams
 import com.github.caay2000.common.jsonapi.JsonApiResource
 
@@ -14,4 +15,8 @@ interface JsonApiBuilder<T : JsonApiResource> {
         identifier: String,
         params: JsonApiRequestParams = JsonApiRequestParams(),
     ): JsonApiDocument<T>
+
+    fun getDocumentList(
+        params: JsonApiRequestParams,
+    ): JsonApiDocumentList<T>
 }

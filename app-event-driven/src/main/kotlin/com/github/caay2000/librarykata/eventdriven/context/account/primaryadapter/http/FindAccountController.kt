@@ -10,8 +10,7 @@ import com.github.caay2000.common.jsonapi.toJsonApiRequestParams
 import com.github.caay2000.common.resourcebus.JsonApiResourceBus
 import com.github.caay2000.librarykata.eventdriven.context.account.application.find.AccountFinderError
 import com.github.caay2000.librarykata.eventdriven.context.account.domain.AccountId
-import com.github.caay2000.librarykata.eventdriven.context.account.domain.AccountRepository
-import com.github.caay2000.librarykata.eventdriven.context.account.primaryadapter.http.jsonapi.JsonApiAccountBuilder
+import com.github.caay2000.librarykata.eventdriven.context.account.primaryadapter.http.resourcebus.JsonApiAccountBuilder
 import com.github.caay2000.librarykata.jsonapi.context.account.AccountResource
 import io.github.smiley4.ktorswaggerui.dsl.OpenApiRoute
 import io.ktor.http.HttpStatusCode
@@ -22,24 +21,16 @@ import mu.KLogger
 import mu.KotlinLogging
 import java.util.UUID
 
-class FindAccountController(
-    accountRepository: AccountRepository,
-    resourceBus: JsonApiResourceBus,
-) : Controller {
+class FindAccountController(resourceBus: JsonApiResourceBus) : Controller {
     override val logger: KLogger = KotlinLogging.logger {}
 
     private val jsonApiBuilder = JsonApiAccountBuilder(resourceBus)
-//    private val accountQueryHandler: QueryHandler<FindAccountQuery, FindAccountQueryResponse> = FindAccountQueryHandler(accountRepository)
-//    private val transformer: Transformer<Account, JsonApiDocument<AccountResource>> = AccountDocumentTransformer(loanRepository)
 
     override suspend fun handle(call: ApplicationCall) {
         val accountId = AccountId(UUID.fromString(call.parameters["id"]!!).toString())
         val jsonApiParams = call.request.queryParameters.toMap().toJsonApiRequestParams()
 
-//        val queryResponse = accountQueryHandler.invoke(FindAccountQuery(accountId))
-//        val resource = resourceBus.retrieve<AccountResource>(accountId.value)
         val document = jsonApiBuilder.getDocument(accountId.value, jsonApiParams)
-//        val responseDocument = transformer.invoke(queryResponse.account, jsonApiParams.include)
         call.respond(HttpStatusCode.OK, document)
     }
 
