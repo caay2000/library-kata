@@ -24,6 +24,8 @@ interface JsonApiResource {
     val type: String
     val attributes: JsonApiResourceAttributes
     val relationships: Map<String, JsonApiRelationshipData>?
+
+    fun findAllRelationshipWithType(type: String) = this.relationships?.flatMap { it.value.data }?.filter { it.type == type } ?: emptyList()
 }
 
 interface JsonApiResourceAttributes
@@ -57,6 +59,14 @@ data class JsonApiIncludedResource(
     // TODO should be enabled when an include has a relationship
     val relationships: Map<String, JsonApiRelationshipData>?,
 )
+
+fun JsonApiResource.toJsonApiIncludedResource() =
+    JsonApiIncludedResource(
+        id = id,
+        type = type,
+        attributes = attributes,
+        relationships = relationships,
+    )
 
 @Serializable
 @Schema(name = "JsonApiMeta")

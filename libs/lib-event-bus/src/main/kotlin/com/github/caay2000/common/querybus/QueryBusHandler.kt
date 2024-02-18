@@ -1,8 +1,8 @@
-package com.github.caay2000.common.cqrs
+package com.github.caay2000.common.querybus
 
 import mu.KLogger
 
-interface QueryHandler<Q : Query, R : QueryResponse> {
+interface QueryBusHandler<Q : Query, R : QueryResponse> {
     val logger: KLogger
 
     fun invoke(query: Q): R {

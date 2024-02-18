@@ -5,6 +5,7 @@ plugins {
 dependencies {
 
     api(project(":libs:common-arrow"))
+    api(project(":libs:common-cqrs"))
     api(project(":libs:lib-event-bus"))
 
     implementation("io.arrow-kt:arrow-fx-coroutines")

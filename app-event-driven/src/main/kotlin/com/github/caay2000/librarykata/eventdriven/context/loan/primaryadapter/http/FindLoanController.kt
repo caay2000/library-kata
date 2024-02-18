@@ -9,8 +9,8 @@ import com.github.caay2000.common.jsonapi.ServerResponse
 import com.github.caay2000.common.jsonapi.documentation.errorResponses
 import com.github.caay2000.common.jsonapi.documentation.responseExample
 import com.github.caay2000.common.jsonapi.toJsonApiRequestParams
-import com.github.caay2000.librarykata.eventdriven.context.loan.application.find.FindLoanHandler
 import com.github.caay2000.librarykata.eventdriven.context.loan.application.find.FindLoanQuery
+import com.github.caay2000.librarykata.eventdriven.context.loan.application.find.FindLoanQueryHandler
 import com.github.caay2000.librarykata.eventdriven.context.loan.application.find.FindLoanQueryResponse
 import com.github.caay2000.librarykata.eventdriven.context.loan.application.find.LoanFinderError
 import com.github.caay2000.librarykata.eventdriven.context.loan.domain.AccountRepository
@@ -36,8 +36,8 @@ class FindLoanController(
 ) : Controller {
     override val logger: KLogger = KotlinLogging.logger {}
 
-    private val queryHandler: QueryHandler<FindLoanQuery, FindLoanQueryResponse> = FindLoanHandler(loanRepository)
-    private val transformer: Transformer<Loan, JsonApiDocument<LoanResource>> = LoanDocumentTransformer(accountRepository, bookRepository)
+    private val queryHandler: QueryHandler<FindLoanQuery, FindLoanQueryResponse> = FindLoanQueryHandler(loanRepository)
+    private val transformer: Transformer<Loan, JsonApiDocument<LoanResource>> = LoanDocumentTransformer()
 
     override suspend fun handle(call: ApplicationCall) {
         val loanId = UUID.fromString(call.parameters["loanId"]!!)

@@ -19,4 +19,4 @@ class SearchLoanQueryHandler(loanRepository: LoanRepository) : QueryHandler<Sear
 
 data class SearchLoanQuery(val accountId: AccountId) : Query
 
-data class SearchLoanQueryResponse(val accounts: List<Loan>) : QueryResponse
+data class SearchLoanQueryResponse(val loans: List<Loan>) : QueryResponse

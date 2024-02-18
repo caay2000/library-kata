@@ -7,6 +7,7 @@ import com.github.caay2000.common.event.init
 import com.github.caay2000.common.event.subscribe
 import com.github.caay2000.common.eventbus.EventBus
 import com.github.caay2000.common.idgenerator.UUIDGenerator
+import com.github.caay2000.common.querybus.SyncQueryBusHandler
 import com.github.caay2000.dikt.DiKt
 import com.github.caay2000.librarykata.eventdriven.context.account.primaryadapter.event.CreateLoanOnLoanCreatedEventSubscriber
 import com.github.caay2000.librarykata.eventdriven.context.account.primaryadapter.event.DecreaseLoansOnLoanFinishedEventSubscriber
@@ -15,10 +16,12 @@ import com.github.caay2000.librarykata.eventdriven.context.account.primaryadapte
 import com.github.caay2000.librarykata.eventdriven.context.account.primaryadapter.http.CreateAccountController
 import com.github.caay2000.librarykata.eventdriven.context.account.primaryadapter.http.FindAccountController
 import com.github.caay2000.librarykata.eventdriven.context.account.primaryadapter.http.SearchAccountController
+import com.github.caay2000.librarykata.eventdriven.context.account.primaryadapter.http.transformer.AccountResourceQueryBusHandler
 import com.github.caay2000.librarykata.eventdriven.context.account.secondaryadapter.database.InMemoryAccountRepository
 import com.github.caay2000.librarykata.eventdriven.context.book.primaryadapter.http.CreateBookController
 import com.github.caay2000.librarykata.eventdriven.context.book.primaryadapter.http.FindBookController
 import com.github.caay2000.librarykata.eventdriven.context.book.primaryadapter.http.SearchBookController
+import com.github.caay2000.librarykata.eventdriven.context.book.primaryadapter.http.transformer.BookResourceQueryBusHandler
 import com.github.caay2000.librarykata.eventdriven.context.book.secondaryadapter.database.InMemoryBookRepository
 import com.github.caay2000.librarykata.eventdriven.context.loan.primaryadapter.event.account.CreateAccountOnAccountCreatedEventSubscriber
 import com.github.caay2000.librarykata.eventdriven.context.loan.primaryadapter.event.book.CreateBookOnBookCreatedEventSubscriber
@@ -27,6 +30,7 @@ import com.github.caay2000.librarykata.eventdriven.context.loan.primaryadapter.e
 import com.github.caay2000.librarykata.eventdriven.context.loan.primaryadapter.http.CreateLoanController
 import com.github.caay2000.librarykata.eventdriven.context.loan.primaryadapter.http.FindLoanController
 import com.github.caay2000.librarykata.eventdriven.context.loan.primaryadapter.http.FinishLoanController
+import com.github.caay2000.librarykata.eventdriven.context.loan.primaryadapter.http.transformer.LoanResourceQueryBusHandler
 import com.github.caay2000.librarykata.eventdriven.context.loan.secondaryadapter.database.InMemoryLoanRepository
 import com.github.caay2000.memorydb.InMemoryDatasource
 import io.ktor.server.application.createApplicationPlugin
@@ -66,9 +70,15 @@ val DependencyInjectionConfiguration =
             .subscribe(UpdateBookAvailabilityOnLoanFinishedEventSubscriber(DiKt.bind()))
             .init()
 
-        DiKt.register { CreateAccountController(DiKt.bind(), DiKt.bind(), DiKt.bind(), DiKt.bind(), DiKt.bind()) }
-        DiKt.register { FindAccountController(DiKt.bind(), DiKt.bind()) }
-        DiKt.register { SearchAccountController(DiKt.bind()) }
+        DiKt.register { SyncQueryBusHandler() }
+        DiKt.get<SyncQueryBusHandler>()
+            .register(AccountResourceQueryBusHandler(DiKt.bind(), DiKt.bind()))
+            .register(BookResourceQueryBusHandler(DiKt.bind()))
+            .register(LoanResourceQueryBusHandler(DiKt.bind()))
+
+        DiKt.register { CreateAccountController(DiKt.bind(), DiKt.bind(), DiKt.bind(), DiKt.bind(), DiKt.bind(), DiKt.bind()) }
+        DiKt.register { FindAccountController(DiKt.bind(), DiKt.bind(), DiKt.bind()) }
+        DiKt.register { SearchAccountController(DiKt.bind(), DiKt.bind(), DiKt.bind()) }
 
         DiKt.register { CreateBookController(DiKt.bind(), DiKt.bind(), DiKt.bind()) }
         DiKt.register { FindBookController(DiKt.bind()) }

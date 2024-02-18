@@ -64,7 +64,7 @@ internal fun Book.manageBookIncludes(
         if (elements != null) included.addAll(elements)
     }
     if (include.shouldProcess(LoanResource.TYPE)) {
-        val elements = IncludeTransformer.invoke(loans.map { it.toJsonApiLoanResource(accounts.firstOrNull { account -> it.accountId == account.id }) })
+        val elements = IncludeTransformer.invoke(loans.map { it.toJsonApiLoanResource() })
         if (elements != null) included.addAll(elements)
     }
     return included

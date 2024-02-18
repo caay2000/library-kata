@@ -37,9 +37,7 @@ fun List<Account>.toJsonApiAccountDocumentList(
         if (include.shouldProcess(LoanResource.TYPE))
             IncludeTransformer.invoke(
                 loans.map { loan ->
-                    loan.toJsonApiLoanResource(
-                        account = this.firstOrNull { it.id.value == loan.accountId.value },
-                    )
+                    loan.toJsonApiLoanResource()
                 },
             )
         else

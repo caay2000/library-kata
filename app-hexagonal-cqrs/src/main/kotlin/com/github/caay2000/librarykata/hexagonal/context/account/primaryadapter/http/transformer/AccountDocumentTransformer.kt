@@ -37,7 +37,7 @@ fun Account.toJsonApiAccountDocument(
     data = toJsonApiAccountResource(loans),
     included =
         if (include.shouldProcess(LoanResource.TYPE)) {
-            IncludeTransformer.invoke(loans.map { it.toJsonApiLoanResource(this) })
+            IncludeTransformer.invoke(loans.map { it.toJsonApiLoanResource() })
         } else {
             null
         },
