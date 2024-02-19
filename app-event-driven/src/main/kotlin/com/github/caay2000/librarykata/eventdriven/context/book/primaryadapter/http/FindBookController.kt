@@ -9,6 +9,7 @@ import com.github.caay2000.common.jsonapi.ServerResponse
 import com.github.caay2000.common.jsonapi.documentation.errorResponses
 import com.github.caay2000.common.jsonapi.documentation.responseExample
 import com.github.caay2000.common.jsonapi.toJsonApiRequestParams
+import com.github.caay2000.common.query.ResourceQueryBus
 import com.github.caay2000.librarykata.eventdriven.context.book.application.find.BookFinderError
 import com.github.caay2000.librarykata.eventdriven.context.book.application.find.FindBookQuery
 import com.github.caay2000.librarykata.eventdriven.context.book.application.find.FindBookQueryHandler
@@ -27,11 +28,14 @@ import mu.KLogger
 import mu.KotlinLogging
 import java.util.UUID
 
-class FindBookController(bookRepository: BookRepository) : Controller {
+class FindBookController(
+    bookRepository: BookRepository,
+    resourceBus: ResourceQueryBus,
+) : Controller {
     override val logger: KLogger = KotlinLogging.logger {}
 
     private val queryHandler: QueryHandler<FindBookQuery, FindBookQueryResponse> = FindBookQueryHandler(bookRepository)
-    private val transformer: Transformer<Book, JsonApiDocument<BookResource>> = BookDocumentTransformer()
+    private val transformer: Transformer<Book, JsonApiDocument<BookResource>> = BookDocumentTransformer(resourceBus)
 
     override suspend fun handle(call: ApplicationCall) {
         val bookId = BookId(UUID.fromString(call.parameters["id"]!!).toString())

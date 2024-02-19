@@ -26,6 +26,7 @@ class SearchLoanQueryHandler(
             is SearchLoanQuery.SearchLoanByAccountIdQuery -> SearchLoanCriteria.ByAccountId(AccountId(accountId))
             is SearchLoanQuery.SearchLoanByBookIdQuery -> SearchLoanCriteria.ByBookId(BookId(bookId))
             is SearchLoanQuery.SearchLoanByBookIsbnQuery -> SearchLoanCriteria.ByBookIsbn(BookIsbn(bookIsbn))
+            is SearchLoanQuery.AllLoan -> SearchLoanCriteria.AllLoan
         }
 }
 
@@ -35,6 +36,8 @@ sealed class SearchLoanQuery : Query {
     data class SearchLoanByBookIdQuery(val bookId: String) : SearchLoanQuery()
 
     data class SearchLoanByBookIsbnQuery(val bookIsbn: String) : SearchLoanQuery()
+
+    data object AllLoan : SearchLoanQuery()
 }
 
 data class SearchLoanQueryResponse(val value: List<Loan>) : QueryResponse

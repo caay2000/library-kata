@@ -9,7 +9,6 @@ import com.github.caay2000.common.jsonapi.ServerResponse
 import com.github.caay2000.common.jsonapi.documentation.errorResponses
 import com.github.caay2000.common.jsonapi.documentation.responseExample
 import com.github.caay2000.common.jsonapi.toJsonApiRequestParams
-import com.github.caay2000.librarykata.hexagonal.context.account.domain.AccountRepository
 import com.github.caay2000.librarykata.hexagonal.context.book.application.find.BookFinderError
 import com.github.caay2000.librarykata.hexagonal.context.book.application.find.FindBookQuery
 import com.github.caay2000.librarykata.hexagonal.context.book.application.find.FindBookQueryHandler
@@ -18,7 +17,6 @@ import com.github.caay2000.librarykata.hexagonal.context.book.domain.Book
 import com.github.caay2000.librarykata.hexagonal.context.book.domain.BookId
 import com.github.caay2000.librarykata.hexagonal.context.book.domain.BookRepository
 import com.github.caay2000.librarykata.hexagonal.context.book.primaryadapter.http.transformer.BookDocumentTransformer
-import com.github.caay2000.librarykata.hexagonal.context.loan.domain.LoanRepository
 import com.github.caay2000.librarykata.jsonapi.context.book.BookResource
 import io.github.smiley4.ktorswaggerui.dsl.OpenApiRoute
 import io.ktor.http.HttpStatusCode
@@ -29,11 +27,11 @@ import mu.KLogger
 import mu.KotlinLogging
 import java.util.UUID
 
-class FindBookController(accountRepository: AccountRepository, bookRepository: BookRepository, loanRepository: LoanRepository) : Controller {
+class FindBookController(bookRepository: BookRepository) : Controller {
     override val logger: KLogger = KotlinLogging.logger {}
 
     private val queryHandler: QueryHandler<FindBookQuery, FindBookQueryResponse> = FindBookQueryHandler(bookRepository)
-    private val transformer: Transformer<Book, JsonApiDocument<BookResource>> = BookDocumentTransformer(accountRepository, loanRepository)
+    private val transformer: Transformer<Book, JsonApiDocument<BookResource>> = BookDocumentTransformer()
 
     override suspend fun handle(call: ApplicationCall) {
         val bookId = BookId(UUID.fromString(call.parameters["id"]!!).toString())

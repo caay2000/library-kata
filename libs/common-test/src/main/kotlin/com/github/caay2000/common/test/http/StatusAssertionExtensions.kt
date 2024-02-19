@@ -9,6 +9,7 @@ import mu.KLogger
 import mu.KotlinLogging
 import org.assertj.core.api.Assertions.assertThat
 import org.skyscreamer.jsonassert.JSONAssert
+import org.skyscreamer.jsonassert.JSONCompareMode
 
 val logger: KLogger = KotlinLogging.logger {}
 
@@ -23,7 +24,7 @@ fun <T> HttpDataResponse<T>.assertResponse(response: T): HttpDataResponse<T> =
 suspend inline fun <reified T> HttpDataResponse<T>.assertJsonApiResponse(expected: T): HttpDataResponse<T> =
     with(body()) {
         try {
-            JSONAssert.assertEquals(testJsonMapper.encodeToString(expected), this, true).let { this }
+            JSONAssert.assertEquals(testJsonMapper.encodeToString(expected), this, JSONCompareMode.NON_EXTENSIBLE).let { this }
             this@assertJsonApiResponse.assureJsonApiSchema()
         } catch (e: Throwable) {
             logger.warn { "expected: ${testJsonMapper.encodeToString(expected)}" }

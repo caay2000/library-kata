@@ -39,10 +39,7 @@ fun List<Loan>.toJsonApiLoanDocumentList(
     return JsonApiDocumentList(
         data =
             map {
-                it.toJsonApiLoanResource(
-                    account = accounts.firstOrNull { account -> account.id == it.accountId },
-                    book = books.firstOrNull { book -> book.id == it.bookId },
-                )
+                it.toJsonApiLoanResource()
             },
         included =
             mapNotNull {
@@ -51,7 +48,7 @@ fun List<Loan>.toJsonApiLoanDocumentList(
                     account = accounts.firstOrNull { account -> account.id == it.accountId },
                     book = books.firstOrNull { book -> book.id == it.bookId },
                 )
-            }.flatten(),
+            }.flatten().toSet().ifEmpty { null },
         meta = JsonApiMeta(total = size),
     )
 }

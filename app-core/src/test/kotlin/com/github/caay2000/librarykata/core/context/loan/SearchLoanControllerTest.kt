@@ -1,5 +1,6 @@
 package com.github.caay2000.librarykata.core.context.loan
 
+import com.github.caay2000.common.test.awaitAssertion
 import com.github.caay2000.common.test.http.assertJsonApiResponse
 import com.github.caay2000.common.test.http.assertStatus
 import com.github.caay2000.common.test.mock.MockDateProvider
@@ -37,7 +38,8 @@ class SearchLoanControllerTest {
     fun `all loan can be retrieved`() =
         testApplication {
             testUseCases.`account is created with a loan`(account, book, loan)
-            testUseCases.`account is created with a loan`(account, sameBook, finishedLoan)
+            testUseCases.`book is created`(sameBook)
+            testUseCases.`loan is created`(finishedLoan)
             testUseCases.`loan is finished`(finishedLoan)
             testUseCases.`account is created with a loan`(anotherAccount, anotherBook, anotherLoan)
 
@@ -47,16 +49,19 @@ class SearchLoanControllerTest {
                     accounts = listOf(account, anotherAccount),
                     books = listOf(book, sameBook, anotherBook),
                 )
-            testUseCases.`search loan`()
-                .assertStatus(HttpStatusCode.OK)
-                .assertJsonApiResponse(expected)
+            awaitAssertion {
+                testUseCases.`search loan`()
+                    .assertStatus(HttpStatusCode.OK)
+                    .assertJsonApiResponse(expected)
+            }
         }
 
     @Test
     fun `all loan can be retrieved with account and book information`() =
         testApplication {
             testUseCases.`account is created with a loan`(account, book, loan)
-            testUseCases.`account is created with a loan`(account, sameBook, finishedLoan)
+            testUseCases.`book is created`(sameBook)
+            testUseCases.`loan is created`(finishedLoan)
             testUseCases.`loan is finished`(finishedLoan)
             testUseCases.`account is created with a loan`(anotherAccount, anotherBook, anotherLoan)
 
@@ -69,9 +74,11 @@ class SearchLoanControllerTest {
                     books = listOf(book.unavailable(), sameBook, anotherBook.unavailable()),
                     include = listOf("account", "book"),
                 )
-            testUseCases.`search loan`(listOf("account", "book"))
-                .assertStatus(HttpStatusCode.OK)
-                .assertJsonApiResponse(expected)
+            awaitAssertion {
+                testUseCases.`search loan`(listOf("account", "book"))
+                    .assertStatus(HttpStatusCode.OK)
+                    .assertJsonApiResponse(expected)
+            }
         }
 
     private val now = LocalDateTime.now()

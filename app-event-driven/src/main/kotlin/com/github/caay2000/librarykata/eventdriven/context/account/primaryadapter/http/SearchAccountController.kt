@@ -8,11 +8,13 @@ import com.github.caay2000.common.jsonapi.JsonApiDocumentList
 import com.github.caay2000.common.jsonapi.JsonApiRequestParams
 import com.github.caay2000.common.jsonapi.documentation.errorResponses
 import com.github.caay2000.common.jsonapi.toJsonApiRequestParams
+import com.github.caay2000.common.query.ResourceQueryBus
 import com.github.caay2000.librarykata.eventdriven.context.account.application.search.SearchAccountQuery
 import com.github.caay2000.librarykata.eventdriven.context.account.application.search.SearchAccountQueryHandler
 import com.github.caay2000.librarykata.eventdriven.context.account.application.search.SearchAccountQueryResponse
 import com.github.caay2000.librarykata.eventdriven.context.account.domain.Account
 import com.github.caay2000.librarykata.eventdriven.context.account.domain.AccountRepository
+import com.github.caay2000.librarykata.eventdriven.context.account.domain.LoanRepository
 import com.github.caay2000.librarykata.eventdriven.context.account.primaryadapter.http.transformer.AccountDocumentListTransformer
 import com.github.caay2000.librarykata.jsonapi.context.account.AccountResource
 import io.github.smiley4.ktorswaggerui.dsl.OpenApiRoute
@@ -25,11 +27,13 @@ import mu.KotlinLogging
 
 class SearchAccountController(
     accountRepository: AccountRepository,
+    loanRepository: LoanRepository,
+    resourceBus: ResourceQueryBus,
 ) : Controller {
     override val logger: KLogger = KotlinLogging.logger {}
 
     private val queryHandler: QueryHandler<SearchAccountQuery, SearchAccountQueryResponse> = SearchAccountQueryHandler(accountRepository)
-    private val transformer: Transformer<List<Account>, JsonApiDocumentList<AccountResource>> = AccountDocumentListTransformer()
+    private val transformer: Transformer<List<Account>, JsonApiDocumentList<AccountResource>> = AccountDocumentListTransformer(loanRepository, resourceBus)
 
     override suspend fun handle(call: ApplicationCall) {
         val jsonApiParams = call.parameters.toMap().toJsonApiRequestParams()

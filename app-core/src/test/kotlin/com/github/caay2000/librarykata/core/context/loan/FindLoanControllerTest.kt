@@ -1,6 +1,7 @@
 package com.github.caay2000.librarykata.core.context.loan
 
 import com.github.caay2000.common.jsonapi.jsonApiErrorDocument
+import com.github.caay2000.common.test.awaitAssertion
 import com.github.caay2000.common.test.http.assertJsonApiErrorDocument
 import com.github.caay2000.common.test.http.assertJsonApiResponse
 import com.github.caay2000.common.test.http.assertStatus
@@ -67,9 +68,12 @@ class FindLoanControllerTest {
 
             val expectedAccount = account.copy(currentLoans = CurrentLoans(1), totalLoans = TotalLoans(1))
             val expected = LoanDocumentMother.random(loan, expectedAccount, lentBook, listOf("account", "book"))
-            testUseCases.`find loan`(loan.id, listOf("account", "book"))
-                .assertStatus(HttpStatusCode.OK)
-                .assertJsonApiResponse(expected)
+
+            awaitAssertion {
+                testUseCases.`find loan`(loan.id, listOf("account", "book"))
+                    .assertStatus(HttpStatusCode.OK)
+                    .assertJsonApiResponse(expected)
+            }
         }
 
     @Test
@@ -79,9 +83,11 @@ class FindLoanControllerTest {
             testUseCases.`loan is finished`(finishedLoan)
 
             val expected = LoanDocumentMother.random(finishedLoan, account, book)
-            testUseCases.`find loan`(finishedLoan.id)
-                .assertStatus(HttpStatusCode.OK)
-                .assertJsonApiResponse(expected)
+            awaitAssertion {
+                testUseCases.`find loan`(finishedLoan.id)
+                    .assertStatus(HttpStatusCode.OK)
+                    .assertJsonApiResponse(expected)
+            }
         }
 
     @Test
@@ -92,9 +98,12 @@ class FindLoanControllerTest {
 
             val expectedAccount = account.copy(currentLoans = CurrentLoans(0), totalLoans = TotalLoans(1))
             val expected = LoanDocumentMother.random(finishedLoan, expectedAccount, book, listOf("account", "book"))
-            testUseCases.`find loan`(finishedLoan.id, listOf("account", "book"))
-                .assertStatus(HttpStatusCode.OK)
-                .assertJsonApiResponse(expected)
+
+            awaitAssertion {
+                testUseCases.`find loan`(finishedLoan.id, listOf("account", "book"))
+                    .assertStatus(HttpStatusCode.OK)
+                    .assertJsonApiResponse(expected)
+            }
         }
 
     private val now = LocalDateTime.now()

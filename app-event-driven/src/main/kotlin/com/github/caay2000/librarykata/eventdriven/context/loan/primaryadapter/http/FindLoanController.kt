@@ -9,12 +9,11 @@ import com.github.caay2000.common.jsonapi.ServerResponse
 import com.github.caay2000.common.jsonapi.documentation.errorResponses
 import com.github.caay2000.common.jsonapi.documentation.responseExample
 import com.github.caay2000.common.jsonapi.toJsonApiRequestParams
-import com.github.caay2000.librarykata.eventdriven.context.loan.application.find.FindLoanHandler
+import com.github.caay2000.common.query.ResourceQueryBus
 import com.github.caay2000.librarykata.eventdriven.context.loan.application.find.FindLoanQuery
+import com.github.caay2000.librarykata.eventdriven.context.loan.application.find.FindLoanQueryHandler
 import com.github.caay2000.librarykata.eventdriven.context.loan.application.find.FindLoanQueryResponse
 import com.github.caay2000.librarykata.eventdriven.context.loan.application.find.LoanFinderError
-import com.github.caay2000.librarykata.eventdriven.context.loan.domain.AccountRepository
-import com.github.caay2000.librarykata.eventdriven.context.loan.domain.BookRepository
 import com.github.caay2000.librarykata.eventdriven.context.loan.domain.Loan
 import com.github.caay2000.librarykata.eventdriven.context.loan.domain.LoanId
 import com.github.caay2000.librarykata.eventdriven.context.loan.domain.LoanRepository
@@ -30,14 +29,13 @@ import mu.KotlinLogging
 import java.util.UUID
 
 class FindLoanController(
-    accountRepository: AccountRepository,
-    bookRepository: BookRepository,
     loanRepository: LoanRepository,
+    resourceBus: ResourceQueryBus,
 ) : Controller {
     override val logger: KLogger = KotlinLogging.logger {}
 
-    private val queryHandler: QueryHandler<FindLoanQuery, FindLoanQueryResponse> = FindLoanHandler(loanRepository)
-    private val transformer: Transformer<Loan, JsonApiDocument<LoanResource>> = LoanDocumentTransformer(accountRepository, bookRepository)
+    private val queryHandler: QueryHandler<FindLoanQuery, FindLoanQueryResponse> = FindLoanQueryHandler(loanRepository)
+    private val transformer: Transformer<Loan, JsonApiDocument<LoanResource>> = LoanDocumentTransformer(resourceBus)
 
     override suspend fun handle(call: ApplicationCall) {
         val loanId = UUID.fromString(call.parameters["loanId"]!!)

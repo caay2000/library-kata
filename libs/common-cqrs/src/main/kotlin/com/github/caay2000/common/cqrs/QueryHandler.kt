@@ -6,9 +6,9 @@ interface QueryHandler<Q : Query, R : QueryResponse> {
     val logger: KLogger
 
     fun invoke(query: Q): R {
-        logger.trace { ">> processing $query" }
+        logger.info { ">> processing $query" }
         return handle(query).also {
-            logger.trace { "<< response for $query: $it" }
+            logger.info { "<< response for $query: $it" }
         }
     }
 

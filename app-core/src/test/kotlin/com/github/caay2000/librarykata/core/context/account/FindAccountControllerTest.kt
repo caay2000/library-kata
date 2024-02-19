@@ -109,6 +109,26 @@ class FindAccountControllerTest {
         }
 
     @Test
+    fun `retrieve a user with multiple non-finished loans`() =
+        testApplication {
+            testUseCases.`account is created with a loan`(account, book, loan)
+
+            testUseCases.`book is created`(anotherBook)
+            testUseCases.`loan is created`(
+                id = anotherLoan.id,
+                bookIsbn = anotherBook.isbn,
+                accountId = AccountId(account.id.value),
+                createdAt = anotherLoan.createdAt,
+            )
+
+            val expectedAccount = account.copy(currentLoans = CurrentLoans(2), totalLoans = TotalLoans(2))
+            val expected = AccountDocumentMother.random(expectedAccount, listOf(loan, anotherLoan))
+            testUseCases.`find account`(account.id)
+                .assertStatus(HttpStatusCode.OK)
+                .assertJsonApiResponse(expected)
+        }
+
+    @Test
     fun `retrieve a user with multiple loans including loan and account data`() =
         testApplication {
             testUseCases.`account is created with a loan`(account, book, loan)

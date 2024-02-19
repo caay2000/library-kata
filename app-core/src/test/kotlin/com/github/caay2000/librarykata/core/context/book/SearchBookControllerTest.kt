@@ -1,5 +1,6 @@
 package com.github.caay2000.librarykata.core.context.book
 
+import com.github.caay2000.common.test.awaitAssertion
 import com.github.caay2000.common.test.http.assertJsonApiResponse
 import com.github.caay2000.common.test.http.assertStatus
 import com.github.caay2000.common.test.mock.MockDateProvider
@@ -57,9 +58,11 @@ class SearchBookControllerTest {
             testUseCases.`book is created`(differentBook)
 
             val expected = BookGroupDocumentMother.random(book, copies = 2, available = 2)
-            testUseCases.`find book by isbn`(book.isbn)
-                .assertStatus(HttpStatusCode.OK)
-                .assertJsonApiResponse(expected)
+            awaitAssertion {
+                testUseCases.`find book by isbn`(book.isbn)
+                    .assertStatus(HttpStatusCode.OK)
+                    .assertJsonApiResponse(expected)
+            }
         }
 
     @Test
@@ -69,10 +72,12 @@ class SearchBookControllerTest {
             testUseCases.`book is created`(sameBook)
             testUseCases.`book is created`(differentBook)
 
-            val expected = BookGroupDocumentMother.random(book, copies = 2, available = 1, listOf(loan))
-            testUseCases.`find book by isbn`(book.isbn)
-                .assertStatus(HttpStatusCode.OK)
-                .assertJsonApiResponse(expected)
+            val expected = BookGroupDocumentMother.random(book, copies = 2, available = 1)
+            awaitAssertion {
+                testUseCases.`find book by isbn`(book.isbn)
+                    .assertStatus(HttpStatusCode.OK)
+                    .assertJsonApiResponse(expected)
+            }
         }
 
     @Test
@@ -89,12 +94,13 @@ class SearchBookControllerTest {
                         BookGroupDocumentMother.BookCopies(book, 5, 4),
                         BookGroupDocumentMother.BookCopies(differentBook, 3),
                     ),
-                    listOf(loan),
                 )
 
-            testUseCases.`search book`()
-                .assertStatus(HttpStatusCode.OK)
-                .assertJsonApiResponse(expected)
+            awaitAssertion {
+                testUseCases.`search book`()
+                    .assertStatus(HttpStatusCode.OK)
+                    .assertJsonApiResponse(expected)
+            }
         }
 
     private val book = BookMother.random()

@@ -24,4 +24,6 @@ sealed class SearchLoanCriteria {
     class ByBookId(val bookId: BookId) : SearchLoanCriteria()
 
     class ByBookIsbn(val bookIsbn: BookIsbn) : SearchLoanCriteria()
+
+    data object AllLoan : SearchLoanCriteria()
 }

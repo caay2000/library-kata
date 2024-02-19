@@ -10,7 +10,7 @@ import com.github.caay2000.librarykata.eventdriven.context.loan.domain.LoanRepos
 import mu.KLogger
 import mu.KotlinLogging
 
-class FindLoanHandler(loanRepository: LoanRepository) : QueryHandler<FindLoanQuery, FindLoanQueryResponse> {
+class FindLoanQueryHandler(loanRepository: LoanRepository) : QueryHandler<FindLoanQuery, FindLoanQueryResponse> {
     override val logger: KLogger = KotlinLogging.logger {}
 
     private val finder = LoanFinder(loanRepository)
