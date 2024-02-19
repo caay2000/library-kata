@@ -9,7 +9,7 @@ import com.github.caay2000.common.jsonapi.ServerResponse
 import com.github.caay2000.common.jsonapi.documentation.errorResponses
 import com.github.caay2000.common.jsonapi.documentation.responseExample
 import com.github.caay2000.common.jsonapi.toJsonApiRequestParams
-import com.github.caay2000.common.querybus.SyncQueryBusHandler
+import com.github.caay2000.common.query.ResourceQueryBus
 import com.github.caay2000.librarykata.eventdriven.context.account.application.find.AccountFinderError
 import com.github.caay2000.librarykata.eventdriven.context.account.application.find.FindAccountQuery
 import com.github.caay2000.librarykata.eventdriven.context.account.application.find.FindAccountQueryHandler
@@ -32,12 +32,12 @@ import java.util.UUID
 class FindAccountController(
     accountRepository: AccountRepository,
     loanRepository: LoanRepository,
-    queryBusHandler: SyncQueryBusHandler,
+    queryBus: ResourceQueryBus,
 ) : Controller {
     override val logger: KLogger = KotlinLogging.logger {}
 
     private val accountQueryHandler: QueryHandler<FindAccountQuery, FindAccountQueryResponse> = FindAccountQueryHandler(accountRepository)
-    private val transformer: Transformer<Account, JsonApiDocument<AccountResource>> = AccountDocumentTransformer(loanRepository, queryBusHandler)
+    private val transformer: Transformer<Account, JsonApiDocument<AccountResource>> = AccountDocumentTransformer(loanRepository, queryBus)
 
     override suspend fun handle(call: ApplicationCall) {
         val accountId = AccountId(UUID.fromString(call.parameters["id"]!!).toString())

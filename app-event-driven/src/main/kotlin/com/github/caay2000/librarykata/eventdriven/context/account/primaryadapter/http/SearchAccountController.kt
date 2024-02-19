@@ -8,7 +8,7 @@ import com.github.caay2000.common.jsonapi.JsonApiDocumentList
 import com.github.caay2000.common.jsonapi.JsonApiRequestParams
 import com.github.caay2000.common.jsonapi.documentation.errorResponses
 import com.github.caay2000.common.jsonapi.toJsonApiRequestParams
-import com.github.caay2000.common.querybus.SyncQueryBusHandler
+import com.github.caay2000.common.query.ResourceQueryBus
 import com.github.caay2000.librarykata.eventdriven.context.account.application.search.SearchAccountQuery
 import com.github.caay2000.librarykata.eventdriven.context.account.application.search.SearchAccountQueryHandler
 import com.github.caay2000.librarykata.eventdriven.context.account.application.search.SearchAccountQueryResponse
@@ -28,12 +28,12 @@ import mu.KotlinLogging
 class SearchAccountController(
     accountRepository: AccountRepository,
     loanRepository: LoanRepository,
-    queryBusHandler: SyncQueryBusHandler,
+    queryBus: ResourceQueryBus,
 ) : Controller {
     override val logger: KLogger = KotlinLogging.logger {}
 
     private val queryHandler: QueryHandler<SearchAccountQuery, SearchAccountQueryResponse> = SearchAccountQueryHandler(accountRepository)
-    private val transformer: Transformer<List<Account>, JsonApiDocumentList<AccountResource>> = AccountDocumentListTransformer(loanRepository, queryBusHandler)
+    private val transformer: Transformer<List<Account>, JsonApiDocumentList<AccountResource>> = AccountDocumentListTransformer(loanRepository, queryBus)
 
     override suspend fun handle(call: ApplicationCall) {
         val jsonApiParams = call.parameters.toMap().toJsonApiRequestParams()

@@ -5,15 +5,14 @@ import com.github.caay2000.common.jsonapi.JsonApiDocumentList
 import com.github.caay2000.common.jsonapi.JsonApiIncludedResource
 import com.github.caay2000.common.jsonapi.JsonApiMeta
 import com.github.caay2000.common.jsonapi.toJsonApiIncludedResource
-import com.github.caay2000.common.querybus.SyncQueryBusHandler
+import com.github.caay2000.common.query.ResourceQuery
+import com.github.caay2000.common.query.ResourceQueryBus
 import com.github.caay2000.librarykata.eventdriven.context.account.domain.Account
 import com.github.caay2000.librarykata.eventdriven.context.account.domain.LoanRepository
-import com.github.caay2000.librarykata.eventdriven.context.loan.primaryadapter.http.transformer.LoanResourceQuery
-import com.github.caay2000.librarykata.eventdriven.context.loan.primaryadapter.http.transformer.LoanResourceQueryResponse
 import com.github.caay2000.librarykata.jsonapi.context.account.AccountResource
 import com.github.caay2000.librarykata.jsonapi.context.loan.LoanResource
 
-class AccountDocumentListTransformer(loanRepository: LoanRepository, private val queryBusHandler: SyncQueryBusHandler) : Transformer<List<Account>, JsonApiDocumentList<AccountResource>> {
+class AccountDocumentListTransformer(loanRepository: LoanRepository, private val queryBus: ResourceQueryBus) : Transformer<List<Account>, JsonApiDocumentList<AccountResource>> {
     private val resourceTransformer = AccountResourceTransformer(loanRepository)
 
     override fun invoke(
@@ -39,7 +38,7 @@ class AccountDocumentListTransformer(loanRepository: LoanRepository, private val
             val loans =
                 resources.flatMap {
                     it.findAllRelationshipWithType(LoanResource.TYPE).map {
-                        queryBusHandler.invoke<LoanResourceQuery, LoanResourceQueryResponse>(LoanResourceQuery.ByIdentifier(it.id)).resource.toJsonApiIncludedResource()
+                        queryBus.invoke(ResourceQuery(it.id, LoanResource.TYPE)).resource.toJsonApiIncludedResource()
                     }
                 }
             includes.addAll(loans)

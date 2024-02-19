@@ -12,6 +12,7 @@ import com.github.caay2000.common.jsonapi.JsonApiRequestDocument
 import com.github.caay2000.common.jsonapi.ServerResponse
 import com.github.caay2000.common.jsonapi.documentation.errorResponses
 import com.github.caay2000.common.jsonapi.documentation.responseExample
+import com.github.caay2000.common.query.ResourceQueryBus
 import com.github.caay2000.librarykata.eventdriven.context.book.application.create.BookCreatorError
 import com.github.caay2000.librarykata.eventdriven.context.book.application.create.CreateBookCommand
 import com.github.caay2000.librarykata.eventdriven.context.book.application.create.CreateBookCommandHandler
@@ -37,12 +38,13 @@ class CreateBookController(
     private val idGenerator: IdGenerator,
     bookRepository: BookRepository,
     eventPublisher: DomainEventPublisher,
+    queryBus: ResourceQueryBus,
 ) : Controller {
     override val logger: KLogger = KotlinLogging.logger {}
 
     private val commandHandler: CommandHandler<CreateBookCommand> = CreateBookCommandHandler(bookRepository, eventPublisher)
     private val queryHandler: QueryHandler<FindBookQuery, FindBookQueryResponse> = FindBookQueryHandler(bookRepository)
-    private val transformer: Transformer<Book, JsonApiDocument<BookResource>> = BookDocumentTransformer()
+    private val transformer: Transformer<Book, JsonApiDocument<BookResource>> = BookDocumentTransformer(queryBus)
 
     override suspend fun handle(call: ApplicationCall) {
         val request = call.receive<JsonApiRequestDocument<BookRequestResource>>()

@@ -1,39 +1,28 @@
 package com.github.caay2000.librarykata.eventdriven.context.book.primaryadapter.http.transformer
 
-import com.github.caay2000.common.jsonapi.JsonApiResource
-import com.github.caay2000.common.querybus.Query
-import com.github.caay2000.common.querybus.QueryBusHandler
-import com.github.caay2000.common.querybus.QueryResponse
+import com.github.caay2000.common.query.ResourceQuery
+import com.github.caay2000.common.query.ResourceQueryHandler
+import com.github.caay2000.common.query.ResourceQueryResponse
 import com.github.caay2000.librarykata.eventdriven.context.book.application.find.FindBookQuery
 import com.github.caay2000.librarykata.eventdriven.context.book.application.find.FindBookQueryHandler
 import com.github.caay2000.librarykata.eventdriven.context.book.domain.Book
 import com.github.caay2000.librarykata.eventdriven.context.book.domain.BookId
 import com.github.caay2000.librarykata.eventdriven.context.book.domain.BookRepository
+import com.github.caay2000.librarykata.jsonapi.context.book.BookResource
 import mu.KLogger
 import mu.KotlinLogging
 
-class BookResourceQueryBusHandler(bookRepository: BookRepository) : QueryBusHandler<BookResourceQuery, BookResourceQueryResponse> {
+class BookResourceQueryBusHandler(bookRepository: BookRepository) : ResourceQueryHandler {
     private val bookQueryHandler = FindBookQueryHandler(bookRepository)
     private val bookResourceTransformer = BookResourceTransformer()
 
     override val logger: KLogger = KotlinLogging.logger {}
+    override val type: String = BookResource.TYPE
 
-    override fun handle(query: BookResourceQuery): BookResourceQueryResponse {
+    override fun handle(query: ResourceQuery): ResourceQueryResponse {
         val account = retrieveBook(query)
-        return BookResourceQueryResponse(bookResourceTransformer.invoke(account))
+        return ResourceQueryResponse(bookResourceTransformer.invoke(account))
     }
 
-    private fun retrieveBook(query: BookResourceQuery): Book =
-        when (query) {
-            is BookResourceQuery.ByIdentifier -> bookQueryHandler.invoke(FindBookQuery(BookId(query.identifier))).book
-            is BookResourceQuery.ByValue -> query.value
-        }
+    private fun retrieveBook(query: ResourceQuery): Book = bookQueryHandler.invoke(FindBookQuery(BookId(query.identifier))).book
 }
-
-sealed class BookResourceQuery : Query {
-    data class ByIdentifier(val identifier: String) : BookResourceQuery()
-
-    data class ByValue(val value: Book) : BookResourceQuery()
-}
-
-data class BookResourceQueryResponse(val resource: JsonApiResource) : QueryResponse

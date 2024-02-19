@@ -13,6 +13,7 @@ import com.github.caay2000.common.jsonapi.JsonApiRequestDocument
 import com.github.caay2000.common.jsonapi.ServerResponse
 import com.github.caay2000.common.jsonapi.documentation.errorResponses
 import com.github.caay2000.common.jsonapi.documentation.responseExample
+import com.github.caay2000.common.query.ResourceQueryBus
 import com.github.caay2000.librarykata.eventdriven.context.loan.application.create.CreateLoanCommand
 import com.github.caay2000.librarykata.eventdriven.context.loan.application.create.CreateLoanCommandHandler
 import com.github.caay2000.librarykata.eventdriven.context.loan.application.create.LoanCreatorError
@@ -44,12 +45,13 @@ class CreateLoanController(
     bookRepository: BookRepository,
     loanRepository: LoanRepository,
     eventPublisher: DomainEventPublisher,
+    queryBus: ResourceQueryBus,
 ) : Controller {
     override val logger: KLogger = KotlinLogging.logger {}
 
     private val commandHandler: CommandHandler<CreateLoanCommand> = CreateLoanCommandHandler(accountRepository, bookRepository, loanRepository, eventPublisher)
     private val loanQueryHandler: QueryHandler<FindLoanQuery, FindLoanQueryResponse> = FindLoanQueryHandler(loanRepository)
-    private val transformer: Transformer<Loan, JsonApiDocument<LoanResource>> = LoanDocumentTransformer()
+    private val transformer: Transformer<Loan, JsonApiDocument<LoanResource>> = LoanDocumentTransformer(queryBus)
 
     override suspend fun handle(call: ApplicationCall) {
         val request = call.receive<JsonApiRequestDocument<LoanRequestResource>>()
