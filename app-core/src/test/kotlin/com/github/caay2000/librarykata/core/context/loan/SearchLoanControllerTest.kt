@@ -38,7 +38,8 @@ class SearchLoanControllerTest {
     fun `all loan can be retrieved`() =
         testApplication {
             testUseCases.`account is created with a loan`(account, book, loan)
-            testUseCases.`account is created with a loan`(account, sameBook, finishedLoan)
+            testUseCases.`book is created`(sameBook)
+            testUseCases.`loan is created`(finishedLoan)
             testUseCases.`loan is finished`(finishedLoan)
             testUseCases.`account is created with a loan`(anotherAccount, anotherBook, anotherLoan)
 
@@ -59,7 +60,8 @@ class SearchLoanControllerTest {
     fun `all loan can be retrieved with account and book information`() =
         testApplication {
             testUseCases.`account is created with a loan`(account, book, loan)
-            testUseCases.`account is created with a loan`(account, sameBook, finishedLoan)
+            testUseCases.`book is created`(sameBook)
+            testUseCases.`loan is created`(finishedLoan)
             testUseCases.`loan is finished`(finishedLoan)
             testUseCases.`account is created with a loan`(anotherAccount, anotherBook, anotherLoan)
 

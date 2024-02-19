@@ -48,7 +48,7 @@ fun List<Loan>.toJsonApiLoanDocumentList(
                     account = accounts.firstOrNull { account -> account.id == it.accountId },
                     book = books.firstOrNull { book -> book.id == it.bookId },
                 )
-            }.flatten().ifEmpty { null },
+            }.flatten().toSet().ifEmpty { null },
         meta = JsonApiMeta(total = size),
     )
 }

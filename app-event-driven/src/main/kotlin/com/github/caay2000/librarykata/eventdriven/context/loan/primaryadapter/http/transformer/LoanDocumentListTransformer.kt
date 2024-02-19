@@ -40,7 +40,7 @@ class LoanDocumentListTransformer(private val queryBus: ResourceQueryBus) : Tran
                     it.findAllRelationshipWithType(AccountResource.TYPE).map {
                         queryBus.invoke(ResourceQuery(it.id, AccountResource.TYPE)).resource.toJsonApiIncludedResource()
                     }
-                }
+                }.toSet()
             includes.addAll(loans)
         }
 
@@ -50,7 +50,7 @@ class LoanDocumentListTransformer(private val queryBus: ResourceQueryBus) : Tran
                     it.findAllRelationshipWithType(BookResource.TYPE).map {
                         queryBus.invoke(ResourceQuery(it.id, BookResource.TYPE)).resource.toJsonApiIncludedResource()
                     }
-                }
+                }.toSet()
             includes.addAll(loans)
         }
         return includes.ifEmpty { null }
