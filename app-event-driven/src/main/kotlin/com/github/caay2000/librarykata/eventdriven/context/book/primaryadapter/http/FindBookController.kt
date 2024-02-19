@@ -30,12 +30,12 @@ import java.util.UUID
 
 class FindBookController(
     bookRepository: BookRepository,
-    queryBus: ResourceQueryBus,
+    resourceBus: ResourceQueryBus,
 ) : Controller {
     override val logger: KLogger = KotlinLogging.logger {}
 
     private val queryHandler: QueryHandler<FindBookQuery, FindBookQueryResponse> = FindBookQueryHandler(bookRepository)
-    private val transformer: Transformer<Book, JsonApiDocument<BookResource>> = BookDocumentTransformer(queryBus)
+    private val transformer: Transformer<Book, JsonApiDocument<BookResource>> = BookDocumentTransformer(resourceBus)
 
     override suspend fun handle(call: ApplicationCall) {
         val bookId = BookId(UUID.fromString(call.parameters["id"]!!).toString())

@@ -10,6 +10,7 @@ import com.github.caay2000.librarykata.eventdriven.context.book.primaryadapter.h
 import com.github.caay2000.librarykata.eventdriven.context.loan.primaryadapter.http.CreateLoanController
 import com.github.caay2000.librarykata.eventdriven.context.loan.primaryadapter.http.FindLoanController
 import com.github.caay2000.librarykata.eventdriven.context.loan.primaryadapter.http.FinishLoanController
+import com.github.caay2000.librarykata.eventdriven.context.loan.primaryadapter.http.SearchLoanController
 import io.github.smiley4.ktorswaggerui.dsl.get
 import io.github.smiley4.ktorswaggerui.dsl.post
 import io.ktor.server.application.call
@@ -29,6 +30,7 @@ val RoutingConfiguration =
             post("/book", CreateBookController.documentation) { DiKt.get<CreateBookController>().invoke(this.call) }
 
             get("/loan/{loanId}", FindLoanController.documentation) { DiKt.get<FindLoanController>().invoke(this.call) }
+            get("/loan", SearchLoanController.documentation) { DiKt.get<SearchLoanController>().invoke(this.call) }
             post("/loan/{bookId}", FinishLoanController.documentation) { DiKt.get<FinishLoanController>().invoke(this.call) }
             post("/loan", CreateLoanController.documentation) { DiKt.get<CreateLoanController>().invoke(this.call) }
         }

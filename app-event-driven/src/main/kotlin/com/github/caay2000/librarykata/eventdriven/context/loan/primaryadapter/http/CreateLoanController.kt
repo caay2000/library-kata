@@ -45,13 +45,13 @@ class CreateLoanController(
     bookRepository: BookRepository,
     loanRepository: LoanRepository,
     eventPublisher: DomainEventPublisher,
-    queryBus: ResourceQueryBus,
+    resourceBus: ResourceQueryBus,
 ) : Controller {
     override val logger: KLogger = KotlinLogging.logger {}
 
     private val commandHandler: CommandHandler<CreateLoanCommand> = CreateLoanCommandHandler(accountRepository, bookRepository, loanRepository, eventPublisher)
     private val loanQueryHandler: QueryHandler<FindLoanQuery, FindLoanQueryResponse> = FindLoanQueryHandler(loanRepository)
-    private val transformer: Transformer<Loan, JsonApiDocument<LoanResource>> = LoanDocumentTransformer(queryBus)
+    private val transformer: Transformer<Loan, JsonApiDocument<LoanResource>> = LoanDocumentTransformer(resourceBus)
 
     override suspend fun handle(call: ApplicationCall) {
         val request = call.receive<JsonApiRequestDocument<LoanRequestResource>>()

@@ -32,12 +32,12 @@ import java.util.UUID
 class FindAccountController(
     accountRepository: AccountRepository,
     loanRepository: LoanRepository,
-    queryBus: ResourceQueryBus,
+    resourceBus: ResourceQueryBus,
 ) : Controller {
     override val logger: KLogger = KotlinLogging.logger {}
 
     private val accountQueryHandler: QueryHandler<FindAccountQuery, FindAccountQueryResponse> = FindAccountQueryHandler(accountRepository)
-    private val transformer: Transformer<Account, JsonApiDocument<AccountResource>> = AccountDocumentTransformer(loanRepository, queryBus)
+    private val transformer: Transformer<Account, JsonApiDocument<AccountResource>> = AccountDocumentTransformer(loanRepository, resourceBus)
 
     override suspend fun handle(call: ApplicationCall) {
         val accountId = AccountId(UUID.fromString(call.parameters["id"]!!).toString())

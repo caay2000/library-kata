@@ -43,13 +43,13 @@ class CreateAccountController(
     accountRepository: AccountRepository,
     eventPublisher: DomainEventPublisher,
     loanRepository: LoanRepository,
-    queryBus: ResourceQueryBus,
+    resourceBus: ResourceQueryBus,
 ) : Controller {
     override val logger: KLogger = KotlinLogging.logger {}
 
     private val commandHandler: CommandHandler<CreateAccountCommand> = CreateAccountCommandHandler(accountRepository, eventPublisher)
     private val queryHandler: QueryHandler<FindAccountQuery, FindAccountQueryResponse> = FindAccountQueryHandler(accountRepository)
-    private val transformer: Transformer<Account, JsonApiDocument<AccountResource>> = AccountDocumentTransformer(loanRepository, queryBus)
+    private val transformer: Transformer<Account, JsonApiDocument<AccountResource>> = AccountDocumentTransformer(loanRepository, resourceBus)
 
     override suspend fun handle(call: ApplicationCall) {
         val request = call.receive<JsonApiRequestDocument<AccountRequestResource>>()

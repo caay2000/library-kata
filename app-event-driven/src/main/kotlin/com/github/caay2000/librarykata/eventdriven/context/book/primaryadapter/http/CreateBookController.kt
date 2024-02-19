@@ -38,13 +38,13 @@ class CreateBookController(
     private val idGenerator: IdGenerator,
     bookRepository: BookRepository,
     eventPublisher: DomainEventPublisher,
-    queryBus: ResourceQueryBus,
+    resourceBus: ResourceQueryBus,
 ) : Controller {
     override val logger: KLogger = KotlinLogging.logger {}
 
     private val commandHandler: CommandHandler<CreateBookCommand> = CreateBookCommandHandler(bookRepository, eventPublisher)
     private val queryHandler: QueryHandler<FindBookQuery, FindBookQueryResponse> = FindBookQueryHandler(bookRepository)
-    private val transformer: Transformer<Book, JsonApiDocument<BookResource>> = BookDocumentTransformer(queryBus)
+    private val transformer: Transformer<Book, JsonApiDocument<BookResource>> = BookDocumentTransformer(resourceBus)
 
     override suspend fun handle(call: ApplicationCall) {
         val request = call.receive<JsonApiRequestDocument<BookRequestResource>>()

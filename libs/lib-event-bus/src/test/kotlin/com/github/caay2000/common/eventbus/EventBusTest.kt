@@ -113,8 +113,6 @@ internal class EventBusTest {
                     sut.publish(stringEvent1)
                     sut.publish(stringEvent2)
                     sut.publish(stringEvent3)
-
-                    partitions = { sut.partitions }
                 }
 
             job.cancel()

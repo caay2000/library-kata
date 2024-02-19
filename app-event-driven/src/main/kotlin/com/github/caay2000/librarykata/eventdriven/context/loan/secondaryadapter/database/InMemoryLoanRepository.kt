@@ -20,6 +20,7 @@ class InMemoryLoanRepository(private val datasource: InMemoryDatasource) : LoanR
             is SearchLoanCriteria.ByAccountId -> datasource.getAll<Loan>(TABLE_NAME).filter { it.accountId.value == criteria.accountId.value }
             is SearchLoanCriteria.ByBookId -> datasource.getAll<Loan>(TABLE_NAME).filter { it.bookId.value == criteria.bookId.value }
             is SearchLoanCriteria.ByBookIsbn -> TODO()
+            is SearchLoanCriteria.AllLoan -> datasource.getAll(TABLE_NAME)
         }
 
     companion object {

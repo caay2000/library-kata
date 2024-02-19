@@ -1,5 +1,6 @@
 package com.github.caay2000.librarykata.core.context.loan
 
+import com.github.caay2000.common.test.awaitAssertion
 import com.github.caay2000.common.test.http.assertJsonApiResponse
 import com.github.caay2000.common.test.http.assertStatus
 import com.github.caay2000.common.test.mock.MockDateProvider
@@ -47,9 +48,11 @@ class SearchLoanControllerTest {
                     accounts = listOf(account, anotherAccount),
                     books = listOf(book, sameBook, anotherBook),
                 )
-            testUseCases.`search loan`()
-                .assertStatus(HttpStatusCode.OK)
-                .assertJsonApiResponse(expected)
+            awaitAssertion {
+                testUseCases.`search loan`()
+                    .assertStatus(HttpStatusCode.OK)
+                    .assertJsonApiResponse(expected)
+            }
         }
 
     @Test
@@ -69,9 +72,11 @@ class SearchLoanControllerTest {
                     books = listOf(book.unavailable(), sameBook, anotherBook.unavailable()),
                     include = listOf("account", "book"),
                 )
-            testUseCases.`search loan`(listOf("account", "book"))
-                .assertStatus(HttpStatusCode.OK)
-                .assertJsonApiResponse(expected)
+            awaitAssertion {
+                testUseCases.`search loan`(listOf("account", "book"))
+                    .assertStatus(HttpStatusCode.OK)
+                    .assertJsonApiResponse(expected)
+            }
         }
 
     private val now = LocalDateTime.now()

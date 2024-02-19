@@ -3,7 +3,7 @@ package com.github.caay2000.librarykata.eventdriven.context.account.primaryadapt
 import arrow.core.Either
 import arrow.core.getOrElse
 import com.github.caay2000.common.http.Transformer
-import com.github.caay2000.librarykata.eventdriven.context.account.application.loan.search.SearchLoanQuery
+import com.github.caay2000.librarykata.eventdriven.context.account.application.loan.search.SearchLoanByAccountIdQuery
 import com.github.caay2000.librarykata.eventdriven.context.account.application.loan.search.SearchLoanQueryHandler
 import com.github.caay2000.librarykata.eventdriven.context.account.domain.Account
 import com.github.caay2000.librarykata.eventdriven.context.account.domain.AccountId
@@ -28,7 +28,7 @@ internal class AccountResourceTransformer(loanRepository: LoanRepository) : Tran
             relationships = RelationshipTransformer.invoke(retrieveAccountLoans(value.id).map { RelationshipIdentifier(it.id.value, LoanResource.TYPE) }),
         )
 
-    private fun retrieveAccountLoans(id: AccountId): List<Loan> = Either.catch { searchLoanQueryHandler.invoke(SearchLoanQuery(id)).loans }.getOrElse { emptyList() }
+    private fun retrieveAccountLoans(id: AccountId): List<Loan> = Either.catch { searchLoanQueryHandler.invoke(SearchLoanByAccountIdQuery(id)).loans }.getOrElse { emptyList() }
 
     private fun Account.toJsonApiAccountAttributes() =
         AccountResource.Attributes(

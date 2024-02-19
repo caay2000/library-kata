@@ -72,10 +72,10 @@ internal fun Loan.manageLoanIncludes(
 ): MutableSet<JsonApiIncludedResource>? {
     val included = mutableSetOf<JsonApiIncludedResource>()
     if (include.shouldProcess(AccountResource.TYPE) && account != null) {
-        included.add(IncludeTransformer.invoke(account.toJsonApiAccountResource(loans = listOf(this))))
+        included.add(IncludeTransformer.invoke(account.toJsonApiAccountResource(loans = if (this.isFinished) emptyList() else listOf(this))))
     }
     if (include.shouldProcess(BookResource.TYPE) && book != null) {
-        included.add(IncludeTransformer.invoke(book.toJsonApiBookResource(loans = listOf(this))))
+        included.add(IncludeTransformer.invoke(book.toJsonApiBookResource()))
     }
     return included.ifEmpty { null }
 }

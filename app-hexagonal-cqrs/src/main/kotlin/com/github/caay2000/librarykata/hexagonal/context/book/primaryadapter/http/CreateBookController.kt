@@ -11,7 +11,6 @@ import com.github.caay2000.common.jsonapi.JsonApiRequestDocument
 import com.github.caay2000.common.jsonapi.ServerResponse
 import com.github.caay2000.common.jsonapi.documentation.errorResponses
 import com.github.caay2000.common.jsonapi.documentation.responseExample
-import com.github.caay2000.librarykata.hexagonal.context.account.domain.AccountRepository
 import com.github.caay2000.librarykata.hexagonal.context.book.application.create.BookCreatorError
 import com.github.caay2000.librarykata.hexagonal.context.book.application.create.CreateBookCommand
 import com.github.caay2000.librarykata.hexagonal.context.book.application.create.CreateBookCommandHandler
@@ -22,7 +21,6 @@ import com.github.caay2000.librarykata.hexagonal.context.book.domain.Book
 import com.github.caay2000.librarykata.hexagonal.context.book.domain.BookId
 import com.github.caay2000.librarykata.hexagonal.context.book.domain.BookRepository
 import com.github.caay2000.librarykata.hexagonal.context.book.primaryadapter.http.transformer.BookDocumentTransformer
-import com.github.caay2000.librarykata.hexagonal.context.loan.domain.LoanRepository
 import com.github.caay2000.librarykata.jsonapi.context.book.BookRequestResource
 import com.github.caay2000.librarykata.jsonapi.context.book.BookResource
 import io.github.smiley4.ktorswaggerui.dsl.OpenApiRoute
@@ -36,15 +34,13 @@ import java.util.UUID
 
 class CreateBookController(
     private val idGenerator: IdGenerator,
-    accountRepository: AccountRepository,
     bookRepository: BookRepository,
-    loanRepository: LoanRepository,
 ) : Controller {
     override val logger: KLogger = KotlinLogging.logger {}
 
     private val commandHandler: CommandHandler<CreateBookCommand> = CreateBookCommandHandler(bookRepository)
     private val queryHandler: QueryHandler<FindBookQuery, FindBookQueryResponse> = FindBookQueryHandler(bookRepository)
-    private val transformer: Transformer<Book, JsonApiDocument<BookResource>> = BookDocumentTransformer(accountRepository, loanRepository)
+    private val transformer: Transformer<Book, JsonApiDocument<BookResource>> = BookDocumentTransformer()
 
     override suspend fun handle(call: ApplicationCall) {
         val request = call.receive<JsonApiRequestDocument<BookRequestResource>>()

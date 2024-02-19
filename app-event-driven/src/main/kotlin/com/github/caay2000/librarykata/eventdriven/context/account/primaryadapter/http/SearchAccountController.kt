@@ -28,12 +28,12 @@ import mu.KotlinLogging
 class SearchAccountController(
     accountRepository: AccountRepository,
     loanRepository: LoanRepository,
-    queryBus: ResourceQueryBus,
+    resourceBus: ResourceQueryBus,
 ) : Controller {
     override val logger: KLogger = KotlinLogging.logger {}
 
     private val queryHandler: QueryHandler<SearchAccountQuery, SearchAccountQueryResponse> = SearchAccountQueryHandler(accountRepository)
-    private val transformer: Transformer<List<Account>, JsonApiDocumentList<AccountResource>> = AccountDocumentListTransformer(loanRepository, queryBus)
+    private val transformer: Transformer<List<Account>, JsonApiDocumentList<AccountResource>> = AccountDocumentListTransformer(loanRepository, resourceBus)
 
     override suspend fun handle(call: ApplicationCall) {
         val jsonApiParams = call.parameters.toMap().toJsonApiRequestParams()

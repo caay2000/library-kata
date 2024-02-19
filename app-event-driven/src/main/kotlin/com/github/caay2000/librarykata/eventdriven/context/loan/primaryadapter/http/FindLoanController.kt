@@ -30,12 +30,12 @@ import java.util.UUID
 
 class FindLoanController(
     loanRepository: LoanRepository,
-    queryBus: ResourceQueryBus,
+    resourceBus: ResourceQueryBus,
 ) : Controller {
     override val logger: KLogger = KotlinLogging.logger {}
 
     private val queryHandler: QueryHandler<FindLoanQuery, FindLoanQueryResponse> = FindLoanQueryHandler(loanRepository)
-    private val transformer: Transformer<Loan, JsonApiDocument<LoanResource>> = LoanDocumentTransformer(queryBus)
+    private val transformer: Transformer<Loan, JsonApiDocument<LoanResource>> = LoanDocumentTransformer(resourceBus)
 
     override suspend fun handle(call: ApplicationCall) {
         val loanId = UUID.fromString(call.parameters["loanId"]!!)
