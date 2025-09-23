@@ -1,6 +1,3 @@
-import gradle.kotlin.dsl.accessors._11edc5ca6fa1b1db1cca8a72d7d24483.ext
-import gradle.kotlin.dsl.accessors._11edc5ca6fa1b1db1cca8a72d7d24483.implementation
-
 plugins {
     `java-library`
     id("project-common")
